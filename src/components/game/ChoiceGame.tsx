@@ -1,18 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { generateRound, type Option, type Round } from "@/lib/games";
+import { roundForKind } from "@/lib/rounds";
 import { chime, say, setNarration } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 
-const ROUNDS = 5;
-
 export function ChoiceGame({
   skill,
+  kind,
+  rounds: ROUNDS = 5,
   onFinish,
   mascot = "🦊",
 }: {
   skill: SkillId;
-  onFinish: (stars: number) => void;
+  kind?: string;
+  rounds?: number;
+  onFinish: (stars: number, accuracy: number) => void;
   mascot?: string;
 }) {
   const { profile, update, hydrated } = useProfile();
@@ -25,26 +28,30 @@ export function ChoiceGame({
   const [stars, setStars] = useState(0);
   const [message, setMessage] = useState("");
   const started = useRef(Date.now());
+  const tally = useRef({ right: 0, total: 0 });
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
   const nextRound = useCallback(() => {
-    const r = generateRound(skill, level);
+    const r = kind ? roundForKind(kind, level) : generateRound(skill, level);
     setRound(r);
     setState("asking");
     setMisses(0);
     started.current = Date.now();
     say(r.spoken);
-  }, [skill, level]);
+  }, [skill, kind, level]);
 
   useEffect(() => {
     if (hydrated && !round) nextRound();
   }, [hydrated, round, nextRound]);
 
+
   const answer = (opt: Option) => {
     if (!round || state === "correct") return;
     const correct = opt.id === round.answerId;
     const responseMs = Date.now() - started.current;
+    tally.current.total += 1;
+    if (correct) tally.current.right += 1;
     update((p) => recordAnswer(p, { skill, correct, responseMs, itemId: round.answerId }));
 
     if (correct) {
@@ -58,7 +65,7 @@ export function ChoiceGame({
         if (index + 1 >= ROUNDS) {
           const total = stars + (misses === 0 ? 2 : 1);
           update((p) => recordGameComplete(p, skill, total, 1));
-          onFinish(total);
+          onFinish(total, tally.current.right / Math.max(1, tally.current.total));
         } else {
           setIndex((i) => i + 1);
           nextRound();
@@ -74,6 +81,7 @@ export function ChoiceGame({
       window.setTimeout(() => setState("asking"), 1200);
     }
   };
+
 
   const gridCols = useMemo(
     () => (round?.skill === "wordsearch" ? "grid-cols-3" : round?.options.length === 2 ? "grid-cols-2" : "grid-cols-3"),
@@ -93,7 +101,7 @@ export function ChoiceGame({
           onClick={() => say(round.spoken)}
           className="relative flex-1 rounded-3xl rounded-tl-md felt-panel px-4 py-3 text-left"
         >
-          <p className="font-ui text-[22px] font-semibold leading-tight text-ink">{round.prompt}</p>
+          <p className="whitespace-pre-line font-ui text-[22px] font-semibold leading-tight text-ink">{round.prompt}</p>
           <span className="absolute bottom-2 right-3 text-lg text-sky" aria-hidden>
             🔊
           </span>

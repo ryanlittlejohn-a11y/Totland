@@ -22,22 +22,41 @@ export interface DayStat {
   games: number;
 }
 
+export interface GameStat {
+  plays: number;
+  stars: number;
+  bestAccuracy: number;
+  lastPlayed: string;
+}
+
 export interface Profile {
   childName: string;
   age: number;
+  /** set once by a grown-up at first launch */
+  ageMode: "explorer" | "learner" | "reader" | null;
+  characterId: string | null;
+  outfit: string;
+  avatarBg: string;
+  onboarded: boolean;
   narration: boolean;
   sfx: boolean;
   music: boolean;
   reducedMotion: boolean;
+  highContrast: boolean;
   premium: boolean;
   stars: number;
   stickers: string[];
+  badges: string[];
+  companions: string[];
   gamesCompleted: number;
   skills: Record<string, SkillStat>;
+  games: Record<string, GameStat>;
   days: DayStat[];
   favorites: Record<string, number>;
+  recent: string[];
   lastAdventure?: string;
 }
+
 
 export const emptySkill = (): SkillStat => ({
   attempts: 0,
@@ -51,18 +70,29 @@ export const emptySkill = (): SkillStat => ({
 export const defaultProfile = (): Profile => ({
   childName: "Friend",
   age: 4,
+  ageMode: null,
+  characterId: null,
+  outfit: "🎒",
+  avatarBg: "moss",
+  onboarded: false,
   narration: true,
   sfx: true,
   music: false,
   reducedMotion: false,
+  highContrast: false,
   premium: false,
   stars: 0,
   stickers: [],
+  badges: [],
+  companions: [],
   gamesCompleted: 0,
   skills: {},
+  games: {},
   days: [],
   favorites: {},
+  recent: [],
 });
+
 
 export function loadProfile(): Profile {
   if (typeof window === "undefined") return defaultProfile();
@@ -193,4 +223,76 @@ export function useProfile() {
   }, []);
 
   return { profile, update, hydrated };
+}
+
+/* ------------------------------------------------------------------ *
+ * Learning engine — mastery scoring (0–100, shown to grown-ups only)
+ * ------------------------------------------------------------------ */
+
+export function masteryScore(s: SkillStat): number {
+  if (!s.attempts) return 0;
+  const acc = s.correct / s.attempts;
+  const volume = Math.min(1, s.attempts / 20);
+  const speed = s.avgResponseMs ? Math.max(0, Math.min(1, 6000 / s.avgResponseMs)) : 0.5;
+  const levelBoost = (s.level - 1) / 4;
+  return Math.max(0, Math.min(100, Math.round(acc * 70 + volume * 15 + speed * 5 + levelBoost * 10)));
+}
+
+export type MasteryLabel = "Beginning" | "Practicing" | "Progressing" | "Strong" | "Mastered";
+
+export function masteryLabel(score: number): MasteryLabel {
+  if (score >= 90) return "Mastered";
+  if (score >= 75) return "Strong";
+  if (score >= 55) return "Progressing";
+  if (score >= 30) return "Practicing";
+  return "Beginning";
+}
+
+export function skillMastery(p: Profile, skill: SkillId): number {
+  return masteryScore(skillOf(p, skill));
+}
+
+/** Per-game session record — powers history and recommendations. */
+export function recordSession(
+  p: Profile,
+  gameId: string,
+  data: { stars: number; accuracy: number; minutes: number },
+): Profile {
+  const prev = p.games[gameId] ?? { plays: 0, stars: 0, bestAccuracy: 0, lastPlayed: "" };
+  const recent = [gameId, ...(p.recent ?? []).filter((g) => g !== gameId)].slice(0, 12);
+  return {
+    ...p,
+    recent,
+    games: {
+      ...p.games,
+      [gameId]: {
+        plays: prev.plays + 1,
+        stars: prev.stars + data.stars,
+        bestAccuracy: Math.max(prev.bestAccuracy, Math.round(data.accuracy * 100)),
+        lastPlayed: new Date().toISOString(),
+      },
+    },
+  };
+}
+
+export function awardBadge(p: Profile, badge: string): Profile {
+  return (p.badges ?? []).includes(badge) ? p : { ...p, badges: [...(p.badges ?? []), badge] };
+}
+
+export function awardCompanion(p: Profile, companion: string): Profile {
+  return (p.companions ?? []).includes(companion)
+    ? p
+    : { ...p, companions: [...(p.companions ?? []), companion] };
+}
+
+/** Badges are earned by playing, never bought. */
+export function checkBadges(p: Profile): Profile {
+  let next = p;
+  if (p.gamesCompleted >= 1) next = awardBadge(next, "First Steps");
+  if (p.gamesCompleted >= 10) next = awardBadge(next, "Ten Games");
+  if (p.gamesCompleted >= 50) next = awardBadge(next, "Big Explorer");
+  if (p.stars >= 25) next = awardBadge(next, "Star Collector");
+  if (p.stickers.length >= 10) next = awardCompanion(next, "🐢");
+  if (p.stars >= 60) next = awardCompanion(next, "🦜");
+  return next;
 }

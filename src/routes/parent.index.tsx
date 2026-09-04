@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
 import { accuracy, recommendations, skillOf, strengths, useProfile } from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
+import { masteryTable, weeklyReport, activeMode, gameCountForMode } from "@/lib/mastery";
+import { AGE_MODES, type AgeMode } from "@/lib/catalog";
 
 export const Route = createFileRoute("/parent/")({
   head: () => ({
@@ -23,6 +25,9 @@ function Dashboard() {
   const totalAttempts = Object.values(profile.skills).reduce((n, s) => n + s.attempts, 0);
   const totalCorrect = Object.values(profile.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+  const report = weeklyReport(profile);
+  const mastery = masteryTable(profile);
+  const mode = activeMode(profile);
 
   return (
     <div className="space-y-4">
@@ -105,6 +110,64 @@ function Dashboard() {
             <span className="text-xs font-semibold text-sky">Open</span>
           </Link>
         ))}
+      </section>
+
+      <section className="rounded-3xl bg-card p-5 wood-block">
+        <h2 className="font-ui text-lg font-bold text-ink">Weekly summary</h2>
+        <ul className="mt-3 space-y-1.5">
+          {report.lines.map((l) => (
+            <li key={l} className="text-sm text-inksoft">• {l}</li>
+          ))}
+        </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
+          {report.recommended.map((g) => (
+            <Link
+              key={g.id}
+              to="/game/$id"
+              params={{ id: g.id }}
+              className="rounded-xl bg-felt px-3 py-2 text-[13px] font-semibold text-ink"
+            >
+              {g.emoji} {g.title}
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-3xl bg-card p-5 wood-block">
+        <div className="flex items-center justify-between">
+          <h2 className="font-ui text-lg font-bold text-ink">Learning level</h2>
+          <span className="text-xs text-inksoft">{gameCountForMode(profile)} games available</span>
+        </div>
+        <div className="mt-3 flex gap-2">
+          {AGE_MODES.map((m) => (
+            <button
+              key={m.id}
+              type="button"
+              onClick={() => update((p) => ({ ...p, ageMode: m.id as AgeMode }))}
+              className={`flex-1 rounded-xl px-3 py-2 text-sm font-semibold ${
+                mode === m.id ? "bg-night text-cream" : "bg-felt text-ink"
+              }`}
+            >
+              {m.title}
+            </button>
+          ))}
+        </div>
+        <p className="mt-2 text-xs text-inksoft">Difficulty still adapts automatically inside each level.</p>
+      </section>
+
+      <section className="rounded-3xl bg-card p-5 wood-block">
+        <h2 className="font-ui text-lg font-bold text-ink">Skill mastery</h2>
+        <div className="mt-3 space-y-2">
+          {mastery.map((m) => (
+            <div key={m.skill} className="flex items-center gap-3">
+              <span className="w-24 shrink-0 text-sm font-medium capitalize text-ink">{m.skill}</span>
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-felt">
+                <div className="h-full rounded-full bg-sky" style={{ width: `${m.score}%` }} />
+              </div>
+              <span className="w-24 shrink-0 text-right text-xs text-inksoft">{m.label}</span>
+            </div>
+          ))}
+        </div>
       </section>
 
       <section className="rounded-3xl bg-card p-5 wood-block">

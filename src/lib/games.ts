@@ -16,6 +16,10 @@ export interface Option {
   swatch?: string;
   clip?: string;
   big?: boolean;
+  /** render as a dark silhouette (shadow-matching games) */
+  shadow?: boolean;
+  /** relative size, for bigger/smaller comparisons */
+  size?: "sm" | "lg";
 }
 
 export interface Round {

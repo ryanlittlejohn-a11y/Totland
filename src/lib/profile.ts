@@ -37,6 +37,16 @@ export interface Profile {
   days: DayStat[];
   favorites: Record<string, number>;
   lastAdventure?: string;
+  /** parent-selected age mode; falls back to the child's age */
+  ageMode?: "explorer" | "learner" | "reader";
+  /** chosen buddy from the original character set */
+  character?: string;
+  /** onboarding finished (age mode + character chosen) */
+  onboarded?: boolean;
+  /** last few catalog game ids, so we don't repeat the same activity */
+  recentGames?: string[] | undefined;
+  /** rolling per-skill session accuracy, used for the 3-session difficulty rule */
+  sessions?: Record<string, number[]>;
 }
 
 export const emptySkill = (): SkillStat => ({
@@ -62,6 +72,8 @@ export const defaultProfile = (): Profile => ({
   skills: {},
   days: [],
   favorites: {},
+  recentGames: [],
+  sessions: {},
 });
 
 export function loadProfile(): Profile {
@@ -126,7 +138,27 @@ export function recordAnswer(p: Profile, e: AnswerEvent): Profile {
   return { ...p, skills: { ...p.skills, [e.skill]: s } };
 }
 
-export function recordGameComplete(p: Profile, skill: SkillId, stars: number, minutes = 1): Profile {
+/**
+ * Session-level adaptive rule: 90%+ across three sessions moves a skill up a
+ * level, 50–69% adds hints by easing complexity, below 50% steps down.
+ * Difficulty never falls below 1 and stars are never taken away.
+ */
+export function recordSession(p: Profile, skill: SkillId, sessionAccuracy: number): Profile {
+  const sessions = { ...(p.sessions ?? {}) };
+  const list = [...(sessions[skill] ?? []), Math.round(sessionAccuracy)].slice(-3);
+  sessions[skill] = list;
+
+  const s = { ...skillOf(p, skill) };
+  if (list.length === 3 && list.every((a) => a >= 90) && s.level < 5) {
+    s.level += 1;
+    sessions[skill] = [];
+  } else if (sessionAccuracy < 50 && s.level > 1) {
+    s.level -= 1;
+  }
+  return { ...p, sessions, skills: { ...p.skills, [skill]: s } };
+}
+
+export function recordGameComplete(p: Profile, skill: SkillId, stars: number, minutes = 1, gameId?: string): Profile {
   const d = today();
   const days = [...p.days];
   const i = days.findIndex((x) => x.date === d);
@@ -135,8 +167,10 @@ export function recordGameComplete(p: Profile, skill: SkillId, stars: number, mi
   else days.push({ date: d, minutes, games: 1 });
 
   const stickers = [...p.stickers];
+  const recentGames = gameId ? [gameId, ...(p.recentGames ?? []).filter((g) => g !== gameId)].slice(0, 8) : p.recentGames;
   return {
     ...p,
+    recentGames,
     stars: p.stars + stars,
     gamesCompleted: p.gamesCompleted + 1,
     days: days.slice(-30),

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { LETTERS, SEARCH_BANKS, pick, shuffle } from "@/lib/content";
+import { LETTERS, SEARCH_BANKS, pick } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 
@@ -114,7 +114,6 @@ export function WordSearchGame({
       >
         🔊 Say it again
       </button>
-      <span className="sr-only">{shuffle([]).length}</span>
     </div>
   );
 }

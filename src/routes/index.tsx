@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, CHARACTERS, LIBRARY_SIZE } from "@/lib/content";
+import { GAMES, WORLDS, gameById } from "@/lib/catalog";
 import { skillOf, useProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/")({

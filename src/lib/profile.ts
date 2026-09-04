@@ -44,7 +44,7 @@ export interface Profile {
   /** onboarding finished (age mode + character chosen) */
   onboarded?: boolean;
   /** last few catalog game ids, so we don't repeat the same activity */
-  recentGames?: string[];
+  recentGames?: string[] | undefined;
   /** rolling per-skill session accuracy, used for the 3-session difficulty rule */
   sessions?: Record<string, number[]>;
 }

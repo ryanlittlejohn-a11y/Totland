@@ -19,7 +19,7 @@ export interface CatalogGame {
   objective: string;
   emoji: string;
   template: TemplateId;
-  opts?: TemplateOpts;
+  opts?: TemplateOpts | undefined;
   ageMin: number;
   ageMax: number;
   modes: AgeMode[];

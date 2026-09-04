@@ -1,24 +1,148 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { AREAS, CHARACTERS, LIBRARY_SIZE } from "@/lib/content";
+import { skillOf, useProfile } from "@/lib/profile";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
-  component: Index,
+  head: () => ({
+    meta: [
+      { title: "Totland — Learning That Feels Like Play" },
+      {
+        name: "description",
+        content:
+          "A gentle, offline-first learning world for ages 2–6: ABCs, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+      },
+      { property: "og:title", content: "Totland — Learning That Feels Like Play" },
+      {
+        property: "og:description",
+        content: "Hundreds of bite-sized learning games for toddlers and preschoolers. Offline, ad-free, privacy-first.",
+      },
+    ],
+  }),
+  component: Home,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
-function Index() {
+const TINT: Record<string, string> = {
+  clay: "bg-clay/20",
+  amber: "bg-amber/25",
+  moss: "bg-moss/20",
+  sky: "bg-sky/20",
+  plum: "bg-plum/20",
+  wood: "bg-wood/30",
+};
+
+function Home() {
+  const { profile } = useProfile();
+
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-4 pb-10 pt-4">
+      <header className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <div className="grid size-11 place-items-center rounded-2xl bg-clay font-ui text-xl font-bold text-primary-foreground wood-block">
+            T
+          </div>
+          <div>
+            <p className="font-ui text-[15px] font-bold leading-none text-ink">Totland</p>
+            <p className="font-ui text-[11px] text-inksoft">Learning that feels like play</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="flex items-center gap-1.5 rounded-full bg-card px-3 py-2 font-ui text-sm font-bold text-ink wood-block">
+            <span className="text-amber anim-twinkle">★</span>
+            {profile.stars}
+          </span>
+          <Link
+            to="/rewards"
+            aria-label="Sticker shelf"
+            className="grid size-11 place-items-center rounded-2xl bg-card text-xl wood-block"
+          >
+            🎁
+          </Link>
+        </div>
+      </header>
+
+      <section className="mt-5 rounded-[2rem] felt-panel p-4">
+        <div className="flex items-center justify-between">
+          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">Welcome back</p>
+          <span className="font-ui text-xs text-inksoft">{profile.childName}</span>
+        </div>
+
+        <Link
+          to="/adventure"
+          className="mt-3 flex items-center justify-between rounded-3xl bg-clay p-4 wood-block active:translate-y-1"
+        >
+          <div>
+            <p className="font-ui text-2xl font-bold leading-tight text-primary-foreground">Today's Adventure</p>
+            <p className="font-ui text-sm font-semibold text-primary-foreground/85">5 little games · Bramble &amp; You</p>
+          </div>
+          <span className="grid size-14 place-items-center rounded-full bg-card text-3xl anim-floaty">🐻</span>
+        </Link>
+
+        <div className="mt-4 grid grid-cols-4 gap-2.5">
+          {AREAS.slice(0, 8).map((a) => (
+            <Link
+              key={a.id}
+              to="/play/$area"
+              params={{ area: a.id }}
+              aria-label={a.title}
+              className={`grid aspect-square place-items-center rounded-2xl ${TINT[a.tint]} bg-card text-3xl wood-block active:translate-y-1`}
+            >
+              <span className="anim-bob">{a.emoji}</span>
+            </Link>
+          ))}
+        </div>
+
+        <div className="mt-4 flex items-center justify-end gap-2 pr-1 text-3xl">
+          {CHARACTERS.slice(0, 3).map((c, i) => (
+            <span key={c.id} className="anim-floaty" style={{ animationDelay: `${i * 0.4}s` }}>
+              {c.emoji}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <section className="mt-6">
+        <div className="flex items-center justify-between px-1">
+          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">Learning worlds</p>
+          <span className="font-ui text-xs text-inksoft">{LIBRARY_SIZE} activities offline</span>
+        </div>
+        <div className="mt-3 space-y-3">
+          {AREAS.map((a) => {
+            const s = skillOf(profile, a.id);
+            const locked = !a.free && !profile.premium;
+            return (
+              <Link
+                key={a.id}
+                to={locked ? "/parent/subscription" : "/play/$area"}
+                params={locked ? {} : { area: a.id }}
+                className="flex items-center gap-4 rounded-3xl bg-card p-4 wood-block active:translate-y-1"
+              >
+                <span className={`grid size-16 shrink-0 place-items-center rounded-2xl ${TINT[a.tint]} text-3xl`}>
+                  {locked ? "🔒" : a.emoji}
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="font-ui text-lg font-bold leading-tight text-ink">{a.title}</p>
+                  <p className="truncate font-ui text-sm text-inksoft">{locked ? "Premium world" : a.blurb}</p>
+                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-felt">
+                    <div className="h-full rounded-full bg-moss" style={{ width: `${(s.level / 5) * 100}%` }} />
+                  </div>
+                </div>
+                <span className="font-ui text-xl text-inksoft">›</span>
+              </Link>
+            );
+          })}
+        </div>
+      </section>
+
+      <Link
+        to="/parent"
+        className="mt-7 flex items-center justify-between rounded-3xl bg-night px-5 py-4 text-cream wood-block"
+      >
+        <span className="font-semibold">Parents &amp; settings</span>
+        <span className="text-sm text-cream/60">🔒 Grown-ups only</span>
+      </Link>
+      <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
+        Offline-first · No ads · Data stays on device
+      </p>
+    </main>
   );
 }

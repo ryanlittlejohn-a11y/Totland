@@ -10,7 +10,7 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
   const story = STORIES.find((s) => s.id === storyId);
 
   useEffect(() => {
-    if (story) say(story.pages[page].text);
+    if (story) say(story.pages[page]!.text);
   }, [story, page]);
 
   if (!story) {
@@ -37,7 +37,7 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
     );
   }
 
-  const p = story.pages[page];
+  const p = story.pages[page]!;
   const last = page === story.pages.length - 1;
 
   return (

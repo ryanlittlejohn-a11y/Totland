@@ -130,7 +130,8 @@ export function recordGameComplete(p: Profile, skill: SkillId, stars: number, mi
   const d = today();
   const days = [...p.days];
   const i = days.findIndex((x) => x.date === d);
-  if (i >= 0) days[i] = { ...days[i], minutes: days[i].minutes + minutes, games: days[i].games + 1 };
+  const existing = i >= 0 ? days[i]! : null;
+  if (existing) days[i] = { date: existing.date, minutes: existing.minutes + minutes, games: existing.games + 1 };
   else days.push({ date: d, minutes, games: 1 });
 
   const stickers = [...p.stickers];

@@ -60,8 +60,8 @@ function AdventurePage() {
       ) : step < plan.length ? (
         <ChoiceGame
           key={step}
-          skill={plan[step]}
-          mascot={CHARACTERS[step % CHARACTERS.length].emoji}
+          skill={plan[step]!}
+          mascot={CHARACTERS[step % CHARACTERS.length]!.emoji}
           onFinish={advance}
         />
       ) : (

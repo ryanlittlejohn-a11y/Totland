@@ -26,9 +26,9 @@ function PlayPage() {
   const [key, setKey] = useState(0);
   const [stars, setStars] = useState<number | null>(null);
 
-  const meta = AREAS.find((a) => a.id === area) ?? AREAS[0];
+  const meta = AREAS.find((a) => a.id === area) ?? AREAS[0]!;
   const skill = meta.id as SkillId;
-  const mascot = CHARACTERS[Math.abs(skill.length * 7) % CHARACTERS.length].emoji;
+  const mascot = CHARACTERS[Math.abs(skill.length * 7) % CHARACTERS.length]!.emoji;
 
   const restart = () => {
     setStars(null);

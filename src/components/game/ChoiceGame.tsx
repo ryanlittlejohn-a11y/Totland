@@ -1,18 +1,21 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { generateRound, type Option, type Round } from "@/lib/games";
+import { roundForKind } from "@/lib/rounds";
 import { chime, say, setNarration } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 
-const ROUNDS = 5;
-
 export function ChoiceGame({
   skill,
+  kind,
+  rounds: ROUNDS = 5,
   onFinish,
   mascot = "🦊",
 }: {
   skill: SkillId;
-  onFinish: (stars: number) => void;
+  kind?: string;
+  rounds?: number;
+  onFinish: (stars: number, accuracy: number) => void;
   mascot?: string;
 }) {
   const { profile, update, hydrated } = useProfile();
@@ -25,21 +28,23 @@ export function ChoiceGame({
   const [stars, setStars] = useState(0);
   const [message, setMessage] = useState("");
   const started = useRef(Date.now());
+  const tally = useRef({ right: 0, total: 0 });
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
   const nextRound = useCallback(() => {
-    const r = generateRound(skill, level);
+    const r = kind ? roundForKind(kind, level) : generateRound(skill, level);
     setRound(r);
     setState("asking");
     setMisses(0);
     started.current = Date.now();
     say(r.spoken);
-  }, [skill, level]);
+  }, [skill, kind, level]);
 
   useEffect(() => {
     if (hydrated && !round) nextRound();
   }, [hydrated, round, nextRound]);
+
 
   const answer = (opt: Option) => {
     if (!round || state === "correct") return;

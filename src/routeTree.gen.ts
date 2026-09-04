@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdventureRouteImport } from './routes/adventure'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as StartRouteImport } from './routes/start'
 import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as GameIdRouteImport } from './routes/game.$id'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
@@ -40,6 +41,11 @@ const ParentRoute = ParentRouteImport.update({
 const RewardsRoute = RewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const StartRoute = StartRouteImport.update({
+  id: '/start',
+  path: '/start',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorldsRoute = WorldsRouteImport.update({
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/start': typeof StartRoute
   '/worlds': typeof WorldsRoute
   '/game/$id': typeof GameIdRoute
   '/parent/cms': typeof ParentCmsRoute
@@ -101,6 +108,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/rewards': typeof RewardsRoute
+  '/start': typeof StartRoute
   '/worlds': typeof WorldsRoute
   '/game/$id': typeof GameIdRoute
   '/parent/cms': typeof ParentCmsRoute
@@ -116,6 +124,7 @@ export interface FileRoutesById {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/start': typeof StartRoute
   '/worlds': typeof WorldsRoute
   '/game/$id': typeof GameIdRoute
   '/parent/cms': typeof ParentCmsRoute
@@ -132,6 +141,7 @@ export interface FileRouteTypes {
     | '/adventure'
     | '/parent'
     | '/rewards'
+    | '/start'
     | '/worlds'
     | '/game/$id'
     | '/parent/cms'
@@ -145,6 +155,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/rewards'
+    | '/start'
     | '/worlds'
     | '/game/$id'
     | '/parent/cms'
@@ -159,6 +170,7 @@ export interface FileRouteTypes {
     | '/adventure'
     | '/parent'
     | '/rewards'
+    | '/start'
     | '/worlds'
     | '/game/$id'
     | '/parent/cms'
@@ -174,6 +186,7 @@ export interface RootRouteChildren {
   AdventureRoute: typeof AdventureRoute
   ParentRoute: typeof ParentRouteWithChildren
   RewardsRoute: typeof RewardsRoute
+  StartRoute: typeof StartRoute
   WorldsRoute: typeof WorldsRoute
   GameIdRoute: typeof GameIdRoute
   PlayAreaRoute: typeof PlayAreaRoute
@@ -208,6 +221,13 @@ declare module '@tanstack/react-router' {
       path: '/rewards'
       fullPath: '/rewards'
       preLoaderRoute: typeof RewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/start': {
+      id: '/start'
+      path: '/start'
+      fullPath: '/start'
+      preLoaderRoute: typeof StartRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/worlds': {
@@ -291,6 +311,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdventureRoute: AdventureRoute,
   ParentRoute: ParentRouteWithChildren,
   RewardsRoute: RewardsRoute,
+  StartRoute: StartRoute,
   WorldsRoute: WorldsRoute,
   GameIdRoute: GameIdRoute,
   PlayAreaRoute: PlayAreaRoute,

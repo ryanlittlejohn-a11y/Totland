@@ -9,18 +9,20 @@ const GATE_KEY = "totland.gate";
 
 function ParentLayout() {
   const [open, setOpen] = useState(false);
-  const [a] = useState(() => 3 + Math.floor(Math.random() * 6));
-  const [b] = useState(() => 2 + Math.floor(Math.random() * 6));
+  const [a, setA] = useState(4);
+  const [b, setB] = useState(3);
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
 
   useEffect(() => {
+    setA(3 + Math.floor(Math.random() * 6));
+    setB(2 + Math.floor(Math.random() * 6));
     setOpen(sessionStorage.getItem(GATE_KEY) === "1");
   }, []);
 
   if (!open) {
     return (
-      <main className="mx-auto flex min-h-screen w-full max-w-[520px] flex-col justify-center px-4 py-10">
+      <main className="mx-auto flex min-h-dvh w-full max-w-[520px] flex-col justify-center px-4 py-10">
         <div className="rounded-[2rem] bg-night p-6 text-cream wood-block">
           <div className="flex items-center gap-2">
             <span className="grid size-8 place-items-center rounded-lg bg-cream/10">🔒</span>
@@ -62,7 +64,7 @@ function ParentLayout() {
   }
 
   return (
-    <main className="mx-auto min-h-screen w-full max-w-[560px] px-4 pb-12 pt-5">
+    <main className="mx-auto min-h-dvh w-full max-w-[560px] px-4 pb-12 pt-5">
       <div className="flex items-center justify-between">
         <h1 className="font-ui text-2xl font-bold text-ink">Parents</h1>
         <Link to="/" className="rounded-xl bg-card px-4 py-2 font-ui font-semibold wood-block">

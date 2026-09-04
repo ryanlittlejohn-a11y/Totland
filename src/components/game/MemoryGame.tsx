@@ -1,12 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
-import { memoryDeck } from "@/lib/games";
+import { memorySet } from "@/lib/rounds";
+import { shuffle } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 
-export function MemoryGame({ onFinish }: { onFinish: (stars: number) => void }) {
+export function MemoryGame({
+  kind = "animals",
+  onFinish,
+}: {
+  kind?: string;
+  onFinish: (stars: number, accuracy: number) => void;
+}) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, "memory").level;
-  const deck = useMemo(() => (hydrated ? memoryDeck(level) : []), [hydrated, level]);
+  const deck = useMemo(() => (hydrated ? shuffle(memorySet(kind, level)) : []), [hydrated, kind, level]);
 
   const [flipped, setFlipped] = useState<string[]>([]);
   const [found, setFound] = useState<string[]>([]);
@@ -22,12 +29,12 @@ export function MemoryGame({ onFinish }: { onFinish: (stars: number) => void }) 
     const b = deck.find((c) => c.key === flipped[1])!;
     const match = a.pairId === b.pairId;
     setTries((t) => t + 1);
-    update((p) => recordAnswer(p, { skill: "memory", correct: match, responseMs: 2000 }));
+    update((p) => recordAnswer(p, { skill: "memory", correct: match, responseMs: 2000, itemId: a.pairId }));
     const timer = window.setTimeout(() => {
       if (match) {
         setFound((f) => [...f, a.pairId]);
         chime("correct", profile.sfx);
-        say(`${a.pairId}! Great job!`);
+        say(`${a.label}! Great job!`);
       }
       setFlipped([]);
     }, 700);
@@ -36,12 +43,12 @@ export function MemoryGame({ onFinish }: { onFinish: (stars: number) => void }) 
 
   useEffect(() => {
     if (!deck.length || found.length !== deck.length / 2) return undefined;
-    {
-      const stars = tries <= deck.length / 2 + 1 ? 3 : 2;
-      update((p) => recordGameComplete(p, "memory", stars, 2));
-      const t = window.setTimeout(() => onFinish(stars), 900);
-      return () => window.clearTimeout(t);
-    }
+    const pairs = deck.length / 2;
+    const accuracy = pairs / Math.max(1, tries);
+    const stars = tries <= pairs + 1 ? 3 : 2;
+    update((p) => recordGameComplete(p, "memory", stars, 2));
+    const t = window.setTimeout(() => onFinish(stars, accuracy), 900);
+    return () => window.clearTimeout(t);
   }, [found, deck.length, tries, onFinish, update]);
 
   return (
@@ -54,7 +61,7 @@ export function MemoryGame({ onFinish }: { onFinish: (stars: number) => void }) 
             <button
               key={card.key}
               type="button"
-              aria-label={open ? card.pairId : "hidden card"}
+              aria-label={open ? card.label : "hidden card"}
               onClick={() => {
                 if (open || flipped.length === 2) return;
                 setFlipped((f) => [...f, card.key]);
@@ -63,7 +70,9 @@ export function MemoryGame({ onFinish }: { onFinish: (stars: number) => void }) 
                 open ? "bg-card" : "bg-wood"
               }`}
             >
-              <span className="text-5xl">{open ? card.emoji : "❔"}</span>
+              <span className={card.emoji.length > 2 ? "font-ui text-2xl font-bold text-ink" : "text-5xl"}>
+                {open ? card.emoji : "❔"}
+              </span>
             </button>
           );
         })}

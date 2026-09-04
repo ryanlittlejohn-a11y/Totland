@@ -231,3 +231,110 @@ export function shuffle<T>(arr: T[]): T[] {
 
 /** Total bundled activity count, shown to parents. */
 export const LIBRARY_SIZE = AREAS.reduce((n, a) => n + a.activities, 0);
+
+/* ------------------------------------------------------------------ *
+ * Extra structured content used by the 100-game catalog.
+ * All original / generic vocabulary — no third-party assets.
+ * ------------------------------------------------------------------ */
+
+export const NUMBER_WORDS = [
+  "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten",
+  "eleven", "twelve", "thirteen", "fourteen", "fifteen", "sixteen", "seventeen", "eighteen",
+  "nineteen", "twenty",
+];
+
+export const RHYMES: string[][] = [
+  ["cat", "hat"], ["dog", "frog"], ["star", "car"], ["bee", "tree"], ["moon", "spoon"],
+  ["sun", "bun"], ["snake", "cake"], ["goat", "boat"], ["mouse", "house"], ["duck", "truck"],
+];
+
+export const RHYME_EMOJI: Record<string, string> = {
+  cat: "🐱", hat: "🎩", dog: "🐶", frog: "🐸", star: "⭐", car: "🚗", bee: "🐝", tree: "🌳",
+  moon: "🌙", spoon: "🥄", sun: "☀️", bun: "🥐", snake: "🐍", cake: "🍰", goat: "🐐", boat: "⛵",
+  mouse: "🐭", house: "🏠", duck: "🦆", truck: "🚚",
+};
+
+export interface CategorySet {
+  id: string;
+  title: string;
+  items: { label: string; emoji: string }[];
+}
+
+export const CATEGORIES: CategorySet[] = [
+  {
+    id: "animals", title: "Animals",
+    items: [
+      { label: "cat", emoji: "🐱" }, { label: "dog", emoji: "🐶" }, { label: "cow", emoji: "🐄" },
+      { label: "fox", emoji: "🦊" }, { label: "bear", emoji: "🐻" }, { label: "duck", emoji: "🦆" },
+      { label: "pig", emoji: "🐷" }, { label: "lion", emoji: "🦁" },
+    ],
+  },
+  {
+    id: "food", title: "Food",
+    items: [
+      { label: "apple", emoji: "🍎" }, { label: "banana", emoji: "🍌" }, { label: "cake", emoji: "🍰" },
+      { label: "pizza", emoji: "🍕" }, { label: "pear", emoji: "🍐" }, { label: "carrot", emoji: "🥕" },
+      { label: "milk", emoji: "🥛" }, { label: "egg", emoji: "🥚" },
+    ],
+  },
+  {
+    id: "toys", title: "Toys",
+    items: [
+      { label: "ball", emoji: "⚽" }, { label: "kite", emoji: "🪁" }, { label: "drum", emoji: "🥁" },
+      { label: "yo-yo", emoji: "🪀" }, { label: "robot", emoji: "🤖" }, { label: "teddy", emoji: "🧸" },
+    ],
+  },
+  {
+    id: "vehicles", title: "Things that go",
+    items: [
+      { label: "car", emoji: "🚗" }, { label: "bus", emoji: "🚌" }, { label: "train", emoji: "🚂" },
+      { label: "boat", emoji: "⛵" }, { label: "airplane", emoji: "✈️" }, { label: "rocket", emoji: "🚀" },
+    ],
+  },
+  {
+    id: "nature", title: "Nature",
+    items: [
+      { label: "tree", emoji: "🌳" }, { label: "flower", emoji: "🌻" }, { label: "leaf", emoji: "🍃" },
+      { label: "cloud", emoji: "☁️" }, { label: "star", emoji: "⭐" }, { label: "moon", emoji: "🌙" },
+    ],
+  },
+  {
+    id: "home", title: "Home",
+    items: [
+      { label: "house", emoji: "🏠" }, { label: "key", emoji: "🔑" }, { label: "bed", emoji: "🛏️" },
+      { label: "cup", emoji: "🍵" }, { label: "lamp", emoji: "💡" }, { label: "door", emoji: "🚪" },
+    ],
+  },
+  {
+    id: "body", title: "My body",
+    items: [
+      { label: "eye", emoji: "👁️" }, { label: "nose", emoji: "👃" }, { label: "hand", emoji: "✋" },
+      { label: "ear", emoji: "👂" }, { label: "foot", emoji: "🦶" }, { label: "hair", emoji: "💇" },
+    ],
+  },
+  {
+    id: "clothing", title: "Clothes",
+    items: [
+      { label: "hat", emoji: "🎩" }, { label: "socks", emoji: "🧦" }, { label: "shoe", emoji: "👟" },
+      { label: "shirt", emoji: "👕" }, { label: "coat", emoji: "🧥" }, { label: "glove", emoji: "🧤" },
+    ],
+  },
+];
+
+/** Simple CVC words used for spelling / word building. */
+export const CVC_WORDS: { word: string; emoji: string }[] = [
+  { word: "cat", emoji: "🐱" }, { word: "dog", emoji: "🐶" }, { word: "sun", emoji: "☀️" },
+  { word: "hat", emoji: "🎩" }, { word: "bus", emoji: "🚌" }, { word: "pig", emoji: "🐷" },
+  { word: "cow", emoji: "🐄" }, { word: "bee", emoji: "🐝" }, { word: "fox", emoji: "🦊" },
+  { word: "cup", emoji: "🍵" }, { word: "net", emoji: "🥅" }, { word: "van", emoji: "🚐" },
+  { word: "bed", emoji: "🛏️" }, { word: "key", emoji: "🔑" }, { word: "egg", emoji: "🥚" },
+];
+
+/** Word-search banks per theme. */
+export const SEARCH_BANKS: Record<string, string[]> = {
+  animals: ["cat", "dog", "cow", "fox", "bee", "pig", "owl", "bat"],
+  colors: ["red", "blue", "pink", "green"],
+  numbers: ["one", "two", "six", "ten", "four", "five"],
+  food: ["egg", "jam", "pie", "bun", "milk"],
+  letters: LETTERS,
+};

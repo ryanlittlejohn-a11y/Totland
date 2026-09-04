@@ -22,22 +22,41 @@ export interface DayStat {
   games: number;
 }
 
+export interface GameStat {
+  plays: number;
+  stars: number;
+  bestAccuracy: number;
+  lastPlayed: string;
+}
+
 export interface Profile {
   childName: string;
   age: number;
+  /** set once by a grown-up at first launch */
+  ageMode: "explorer" | "learner" | "reader" | null;
+  characterId: string | null;
+  outfit: string;
+  avatarBg: string;
+  onboarded: boolean;
   narration: boolean;
   sfx: boolean;
   music: boolean;
   reducedMotion: boolean;
+  highContrast: boolean;
   premium: boolean;
   stars: number;
   stickers: string[];
+  badges: string[];
+  companions: string[];
   gamesCompleted: number;
   skills: Record<string, SkillStat>;
+  games: Record<string, GameStat>;
   days: DayStat[];
   favorites: Record<string, number>;
+  recent: string[];
   lastAdventure?: string;
 }
+
 
 export const emptySkill = (): SkillStat => ({
   attempts: 0,

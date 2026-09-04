@@ -14,6 +14,7 @@ import { Route as AdventureRouteImport } from './routes/adventure'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
+import { Route as ParentCmsRouteImport } from './routes/parent.cms'
 import { Route as ParentRightsRouteImport } from './routes/parent.rights'
 import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscription'
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
@@ -43,6 +44,11 @@ const ParentIndexRoute = ParentIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ParentRoute,
 } as any)
+const ParentCmsRoute = ParentCmsRouteImport.update({
+  id: '/cms',
+  path: '/cms',
+  getParentRoute: () => ParentRoute,
+} as any)
 const ParentRightsRoute = ParentRightsRouteImport.update({
   id: '/rights',
   path: '/rights',
@@ -64,6 +70,7 @@ export interface FileRoutesByFullPath {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
@@ -73,6 +80,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/rewards': typeof RewardsRoute
+  '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
@@ -84,6 +92,7 @@ export interface FileRoutesById {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
@@ -96,6 +105,7 @@ export interface FileRouteTypes {
     | '/adventure'
     | '/parent'
     | '/rewards'
+    | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
@@ -105,6 +115,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/rewards'
+    | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
@@ -115,6 +126,7 @@ export interface FileRouteTypes {
     | '/adventure'
     | '/parent'
     | '/rewards'
+    | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
@@ -166,6 +178,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentIndexRouteImport
       parentRoute: typeof ParentRoute
     }
+    '/parent/cms': {
+      id: '/parent/cms'
+      path: '/cms'
+      fullPath: '/parent/cms'
+      preLoaderRoute: typeof ParentCmsRouteImport
+      parentRoute: typeof ParentRoute
+    }
     '/parent/rights': {
       id: '/parent/rights'
       path: '/rights'
@@ -191,12 +210,14 @@ declare module '@tanstack/react-router' {
 }
 
 interface ParentRouteChildren {
+  ParentCmsRoute: typeof ParentCmsRoute
   ParentRightsRoute: typeof ParentRightsRoute
   ParentSubscriptionRoute: typeof ParentSubscriptionRoute
   ParentIndexRoute: typeof ParentIndexRoute
 }
 
 const ParentRouteChildren: ParentRouteChildren = {
+  ParentCmsRoute: ParentCmsRoute,
   ParentRightsRoute: ParentRightsRoute,
   ParentSubscriptionRoute: ParentSubscriptionRoute,
   ParentIndexRoute: ParentIndexRoute,

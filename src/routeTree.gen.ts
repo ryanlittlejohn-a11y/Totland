@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdventureRouteImport } from './routes/adventure'
+import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const AdventureRoute = AdventureRouteImport.update({
   id: '/adventure',
   path: '/adventure',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ParentRoute = ParentRouteImport.update({
+  id: '/parent',
+  path: '/parent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RewardsRoute = RewardsRouteImport.update({
@@ -38,12 +44,14 @@ const PlayAreaRoute = PlayAreaRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
+  '/parent': typeof ParentRoute
   '/rewards': typeof RewardsRoute
   '/play/$area': typeof PlayAreaRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
+  '/parent': typeof ParentRoute
   '/rewards': typeof RewardsRoute
   '/play/$area': typeof PlayAreaRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
+  '/parent': typeof ParentRoute
   '/rewards': typeof RewardsRoute
   '/play/$area': typeof PlayAreaRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/adventure' | '/rewards' | '/play/$area'
+  fullPaths: '/' | '/adventure' | '/parent' | '/rewards' | '/play/$area'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/adventure' | '/rewards' | '/play/$area'
-  id: '__root__' | '/' | '/adventure' | '/rewards' | '/play/$area'
+  to: '/' | '/adventure' | '/parent' | '/rewards' | '/play/$area'
+  id: '__root__' | '/' | '/adventure' | '/parent' | '/rewards' | '/play/$area'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdventureRoute: typeof AdventureRoute
+  ParentRoute: typeof ParentRoute
   RewardsRoute: typeof RewardsRoute
   PlayAreaRoute: typeof PlayAreaRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/adventure'
       fullPath: '/adventure'
       preLoaderRoute: typeof AdventureRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/parent': {
+      id: '/parent'
+      path: '/parent'
+      fullPath: '/parent'
+      preLoaderRoute: typeof ParentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/rewards': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdventureRoute: AdventureRoute,
+  ParentRoute: ParentRoute,
   RewardsRoute: RewardsRoute,
   PlayAreaRoute: PlayAreaRoute,
 }

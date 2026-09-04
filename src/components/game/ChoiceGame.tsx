@@ -101,7 +101,7 @@ export function ChoiceGame({
           onClick={() => say(round.spoken)}
           className="relative flex-1 rounded-3xl rounded-tl-md felt-panel px-4 py-3 text-left"
         >
-          <p className="font-ui text-[22px] font-semibold leading-tight text-ink">{round.prompt}</p>
+          <p className="whitespace-pre-line font-ui text-[22px] font-semibold leading-tight text-ink">{round.prompt}</p>
           <span className="absolute bottom-2 right-3 text-lg text-sky" aria-hidden>
             🔊
           </span>

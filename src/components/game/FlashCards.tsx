@@ -10,11 +10,11 @@ export function FlashCards({ onFinish }: { onFinish: (stars: number) => void }) 
   const [flipped, setFlipped] = useState(false);
 
   useEffect(() => {
-    if (cards.length) say(cards[i].word);
+    if (cards.length) say(cards[i]!.word);
   }, [i, cards]);
 
   if (!cards.length) return <div className="h-72 rounded-3xl felt-panel" />;
-  const card = cards[i];
+  const card = cards[i]!;
 
   const next = () => {
     if (i + 1 >= cards.length) {

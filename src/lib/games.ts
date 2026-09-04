@@ -134,7 +134,7 @@ function puzzleRound(level: number): Round {
     .split("")
     .map((ch, i) => (i === missingIndex ? "_" : ch))
     .join("");
-  const answer = target.word[missingIndex].toUpperCase();
+  const answer = target.word.charAt(missingIndex).toUpperCase();
   const others = shuffle(LETTERS.filter((l) => l !== answer)).slice(0, choiceCount(level) - 1);
   return {
     skill: "puzzles",

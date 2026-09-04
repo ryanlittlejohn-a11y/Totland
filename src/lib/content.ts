@@ -81,7 +81,7 @@ export const WORDS: WordItem[] = [
   ["xylophone", "🎹"],
   ["yarn", "🧶"], ["yo-yo", "🪀"],
   ["zebra", "🦓"], ["zipper", "🤐"],
-].map(([word, emoji]) => ({ word: word as string, emoji: emoji as string, letter: (word as string)[0].toUpperCase() }));
+].map(([word, emoji]) => ({ word: word as string, emoji: emoji as string, letter: (word as string).charAt(0).toUpperCase() }));
 
 export function wordsForLetter(letter: string) {
   return WORDS.filter((w) => w.letter === letter.toUpperCase());
@@ -217,14 +217,14 @@ export const PRAISE: Praise = {
 };
 
 export function pick<T>(arr: T[], rnd = Math.random): T {
-  return arr[Math.floor(rnd() * arr.length)];
+  return arr[Math.floor(rnd() * arr.length)] as T;
 }
 
 export function shuffle<T>(arr: T[]): T[] {
   const a = [...arr];
   for (let i = a.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
+    [a[i], a[j]] = [a[j] as T, a[i] as T];
   }
   return a;
 }

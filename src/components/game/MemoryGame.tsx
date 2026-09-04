@@ -17,8 +17,9 @@ export function MemoryGame({ onFinish }: { onFinish: (stars: number) => void }) 
   }, [hydrated]);
 
   useEffect(() => {
-    if (flipped.length !== 2) return;
-    const [a, b] = flipped.map((k) => deck.find((c) => c.key === k)!);
+    if (flipped.length !== 2) return undefined;
+    const a = deck.find((c) => c.key === flipped[0])!;
+    const b = deck.find((c) => c.key === flipped[1])!;
     const match = a.pairId === b.pairId;
     setTries((t) => t + 1);
     update((p) => recordAnswer(p, { skill: "memory", correct: match, responseMs: 2000 }));
@@ -34,7 +35,8 @@ export function MemoryGame({ onFinish }: { onFinish: (stars: number) => void }) 
   }, [flipped, deck, update, profile.sfx]);
 
   useEffect(() => {
-    if (deck.length && found.length === deck.length / 2) {
+    if (!deck.length || found.length !== deck.length / 2) return undefined;
+    {
       const stars = tries <= deck.length / 2 + 1 ? 3 : 2;
       update((p) => recordGameComplete(p, "memory", stars, 2));
       const t = window.setTimeout(() => onFinish(stars), 900);

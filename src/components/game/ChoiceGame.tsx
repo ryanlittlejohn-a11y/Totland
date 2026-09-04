@@ -50,6 +50,8 @@ export function ChoiceGame({
     if (!round || state === "correct") return;
     const correct = opt.id === round.answerId;
     const responseMs = Date.now() - started.current;
+    tally.current.total += 1;
+    if (correct) tally.current.right += 1;
     update((p) => recordAnswer(p, { skill, correct, responseMs, itemId: round.answerId }));
 
     if (correct) {
@@ -63,7 +65,7 @@ export function ChoiceGame({
         if (index + 1 >= ROUNDS) {
           const total = stars + (misses === 0 ? 2 : 1);
           update((p) => recordGameComplete(p, skill, total, 1));
-          onFinish(total);
+          onFinish(total, tally.current.right / Math.max(1, tally.current.total));
         } else {
           setIndex((i) => i + 1);
           nextRound();
@@ -79,6 +81,7 @@ export function ChoiceGame({
       window.setTimeout(() => setState("asking"), 1200);
     }
   };
+
 
   const gridCols = useMemo(
     () => (round?.skill === "wordsearch" ? "grid-cols-3" : round?.options.length === 2 ? "grid-cols-2" : "grid-cols-3"),

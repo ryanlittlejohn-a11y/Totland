@@ -100,11 +100,75 @@ function Home() {
         </div>
       </section>
 
+      {!profile.onboarded && (
+        <Link
+          to="/welcome"
+          className="mt-4 flex items-center justify-between rounded-3xl bg-amber/30 p-4 wood-block"
+        >
+          <span>
+            <span className="block font-ui text-lg font-bold text-ink">Set up your child</span>
+            <span className="block font-ui text-sm text-inksoft">Name, age mode and a play buddy · 1 minute</span>
+          </span>
+          <span className="text-2xl">✨</span>
+        </Link>
+      )}
+
+      <section className="mt-6">
+        <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+          The five worlds
+        </p>
+        <div className="mt-3 grid grid-cols-5 gap-2">
+          {WORLDS.map((w) => (
+            <Link
+              key={w.id}
+              to="/world/$worldId"
+              params={{ worldId: w.id }}
+              aria-label={w.title}
+              className={`grid aspect-square place-items-center rounded-2xl ${TINT[w.tint]} bg-card text-3xl wood-block active:translate-y-1`}
+            >
+              {w.emoji}
+            </Link>
+          ))}
+        </div>
+        <Link
+          to="/worlds"
+          className="mt-3 block rounded-2xl bg-card py-3 text-center font-ui font-bold text-ink wood-block"
+        >
+          Browse all {GAMES.length} games ›
+        </Link>
+      </section>
+
+      {profile.recent?.length ? (
+        <section className="mt-6">
+          <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+            Play again
+          </p>
+          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+            {profile.recent.slice(0, 6).map((id) => {
+              const g = gameById(id);
+              if (!g) return null;
+              return (
+                <Link
+                  key={id}
+                  to="/game/$gameId"
+                  params={{ gameId: id }}
+                  className="w-28 shrink-0 rounded-2xl bg-card p-3 text-center wood-block"
+                >
+                  <span className="block text-3xl">{g.emoji}</span>
+                  <span className="mt-1 block font-ui text-xs font-bold leading-tight text-ink">{g.title}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+
       <section className="mt-6">
         <div className="flex items-center justify-between px-1">
           <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">Learning worlds</p>
           <span className="font-ui text-xs text-inksoft">{LIBRARY_SIZE} activities offline</span>
         </div>
+
         <div className="mt-3 space-y-3">
           {AREAS.map((a) => {
             const s = skillOf(profile, a.id);

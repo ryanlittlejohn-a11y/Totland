@@ -14,6 +14,7 @@ import { Route as AdventureRouteImport } from './routes/adventure'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
+import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscription'
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
 
 const IndexRoute = IndexRouteImport.update({
@@ -41,6 +42,11 @@ const ParentIndexRoute = ParentIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ParentRoute,
 } as any)
+const ParentSubscriptionRoute = ParentSubscriptionRouteImport.update({
+  id: '/subscription',
+  path: '/subscription',
+  getParentRoute: () => ParentRoute,
+} as any)
 const PlayAreaRoute = PlayAreaRouteImport.update({
   id: '/play/$area',
   path: '/play/$area',
@@ -52,6 +58,7 @@ export interface FileRoutesByFullPath {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
   '/parent/': typeof ParentIndexRoute
 }
@@ -59,6 +66,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/rewards': typeof RewardsRoute
+  '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
   '/parent': typeof ParentIndexRoute
 }
@@ -68,21 +76,35 @@ export interface FileRoutesById {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
   '/parent/': typeof ParentIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/adventure' | '/parent' | '/rewards' | '/play/$area' | '/parent/'
+    | '/'
+    | '/adventure'
+    | '/parent'
+    | '/rewards'
+    | '/parent/subscription'
+    | '/play/$area'
+    | '/parent/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/adventure' | '/rewards' | '/play/$area' | '/parent'
+  to:
+    | '/'
+    | '/adventure'
+    | '/rewards'
+    | '/parent/subscription'
+    | '/play/$area'
+    | '/parent'
   id:
     | '__root__'
     | '/'
     | '/adventure'
     | '/parent'
     | '/rewards'
+    | '/parent/subscription'
     | '/play/$area'
     | '/parent/'
   fileRoutesById: FileRoutesById
@@ -132,6 +154,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentIndexRouteImport
       parentRoute: typeof ParentRoute
     }
+    '/parent/subscription': {
+      id: '/parent/subscription'
+      path: '/subscription'
+      fullPath: '/parent/subscription'
+      preLoaderRoute: typeof ParentSubscriptionRouteImport
+      parentRoute: typeof ParentRoute
+    }
     '/play/$area': {
       id: '/play/$area'
       path: '/play/$area'
@@ -143,10 +172,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface ParentRouteChildren {
+  ParentSubscriptionRoute: typeof ParentSubscriptionRoute
   ParentIndexRoute: typeof ParentIndexRoute
 }
 
 const ParentRouteChildren: ParentRouteChildren = {
+  ParentSubscriptionRoute: ParentSubscriptionRoute,
   ParentIndexRoute: ParentIndexRoute,
 }
 

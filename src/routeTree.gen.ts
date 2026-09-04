@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdventureRouteImport } from './routes/adventure'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as GameIdRouteImport } from './routes/game.$id'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
 import { Route as ParentCmsRouteImport } from './routes/parent.cms'
 import { Route as ParentRightsRouteImport } from './routes/parent.rights'
@@ -37,6 +38,11 @@ const ParentRoute = ParentRouteImport.update({
 const RewardsRoute = RewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GameIdRoute = GameIdRouteImport.update({
+  id: '/game/$id',
+  path: '/game/$id',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ParentIndexRoute = ParentIndexRouteImport.update({
@@ -70,6 +76,7 @@ export interface FileRoutesByFullPath {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/game/$id': typeof GameIdRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
@@ -80,6 +87,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/rewards': typeof RewardsRoute
+  '/game/$id': typeof GameIdRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
@@ -92,6 +100,7 @@ export interface FileRoutesById {
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
   '/rewards': typeof RewardsRoute
+  '/game/$id': typeof GameIdRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
@@ -105,6 +114,7 @@ export interface FileRouteTypes {
     | '/adventure'
     | '/parent'
     | '/rewards'
+    | '/game/$id'
     | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/rewards'
+    | '/game/$id'
     | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '/adventure'
     | '/parent'
     | '/rewards'
+    | '/game/$id'
     | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
@@ -138,6 +150,7 @@ export interface RootRouteChildren {
   AdventureRoute: typeof AdventureRoute
   ParentRoute: typeof ParentRouteWithChildren
   RewardsRoute: typeof RewardsRoute
+  GameIdRoute: typeof GameIdRoute
   PlayAreaRoute: typeof PlayAreaRoute
 }
 
@@ -169,6 +182,13 @@ declare module '@tanstack/react-router' {
       path: '/rewards'
       fullPath: '/rewards'
       preLoaderRoute: typeof RewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/game/$id': {
+      id: '/game/$id'
+      path: '/game/$id'
+      fullPath: '/game/$id'
+      preLoaderRoute: typeof GameIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/parent/': {
@@ -231,6 +251,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdventureRoute: AdventureRoute,
   ParentRoute: ParentRouteWithChildren,
   RewardsRoute: RewardsRoute,
+  GameIdRoute: GameIdRoute,
   PlayAreaRoute: PlayAreaRoute,
 }
 export const routeTree = rootRouteImport

@@ -1,8 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, CHARACTERS, LIBRARY_SIZE } from "@/lib/content";
 import { skillOf, useProfile } from "@/lib/profile";
-import { recommendedGames } from "@/lib/mastery";
-import { GAME_COUNT } from "@/lib/catalog";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,11 +31,10 @@ const TINT: Record<string, string> = {
 };
 
 function Home() {
-  const { profile, hydrated } = useProfile();
-  const picks = hydrated ? recommendedGames(profile, 3) : [];
+  const { profile } = useProfile();
 
   return (
-    <main className="mx-auto flex min-h-dvh w-full max-w-[520px] flex-col px-4 pb-10 pt-4">
+    <main className="mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-4 pb-10 pt-4">
       <header className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="grid size-11 place-items-center rounded-2xl bg-clay font-ui text-xl font-bold text-primary-foreground wood-block">
@@ -102,43 +99,6 @@ function Home() {
           ))}
         </div>
       </section>
-
-      {!profile.onboarded && (
-        <Link
-          to="/start"
-          className="mt-5 flex items-center justify-between rounded-3xl bg-amber px-5 py-4 font-ui font-bold text-ink wood-block"
-        >
-          Set up your buddy &amp; level
-          <span aria-hidden>›</span>
-        </Link>
-      )}
-
-      {picks.length > 0 && (
-        <section className="mt-6">
-          <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">Picked for you</p>
-          <div className="mt-3 grid grid-cols-3 gap-3">
-            {picks.map((g) => (
-              <Link
-                key={g.id}
-                to="/game/$id"
-                params={{ id: g.id }}
-                className="rounded-3xl bg-card p-3 text-center wood-block active:translate-y-1"
-              >
-                <span className="block text-4xl">{g.emoji}</span>
-                <span className="mt-1 block font-ui text-[13px] font-bold leading-tight text-ink">{g.title}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <Link
-        to="/worlds"
-        className="mt-6 flex items-center justify-between rounded-3xl bg-moss/25 bg-card px-5 py-4 wood-block active:translate-y-1"
-      >
-        <span className="font-ui text-lg font-bold text-ink">🗺️ Explore all {GAME_COUNT} games</span>
-        <span className="font-ui text-xl text-inksoft" aria-hidden>›</span>
-      </Link>
 
       <section className="mt-6">
         <div className="flex items-center justify-between px-1">

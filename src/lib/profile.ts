@@ -70,18 +70,29 @@ export const emptySkill = (): SkillStat => ({
 export const defaultProfile = (): Profile => ({
   childName: "Friend",
   age: 4,
+  ageMode: null,
+  characterId: null,
+  outfit: "🎒",
+  avatarBg: "moss",
+  onboarded: false,
   narration: true,
   sfx: true,
   music: false,
   reducedMotion: false,
+  highContrast: false,
   premium: false,
   stars: 0,
   stickers: [],
+  badges: [],
+  companions: [],
   gamesCompleted: 0,
   skills: {},
+  games: {},
   days: [],
   favorites: {},
+  recent: [],
 });
+
 
 export function loadProfile(): Profile {
   if (typeof window === "undefined") return defaultProfile();

@@ -20,6 +20,7 @@ import { Route as ParentCmsRouteImport } from './routes/parent.cms'
 import { Route as ParentRightsRouteImport } from './routes/parent.rights'
 import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscription'
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
+import { Route as WorldWorldRouteImport } from './routes/world.$world'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -76,6 +77,11 @@ const PlayAreaRoute = PlayAreaRouteImport.update({
   path: '/play/$area',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WorldWorldRoute = WorldWorldRouteImport.update({
+  id: '/world/$world',
+  path: '/world/$world',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -88,6 +94,7 @@ export interface FileRoutesByFullPath {
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
+  '/world/$world': typeof WorldWorldRoute
   '/parent/': typeof ParentIndexRoute
 }
 export interface FileRoutesByTo {
@@ -100,6 +107,7 @@ export interface FileRoutesByTo {
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
+  '/world/$world': typeof WorldWorldRoute
   '/parent': typeof ParentIndexRoute
 }
 export interface FileRoutesById {
@@ -114,6 +122,7 @@ export interface FileRoutesById {
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
+  '/world/$world': typeof WorldWorldRoute
   '/parent/': typeof ParentIndexRoute
 }
 export interface FileRouteTypes {
@@ -129,6 +138,7 @@ export interface FileRouteTypes {
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
+    | '/world/$world'
     | '/parent/'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
+    | '/world/$world'
     | '/parent'
   id:
     | '__root__'
@@ -154,6 +165,7 @@ export interface FileRouteTypes {
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
+    | '/world/$world'
     | '/parent/'
   fileRoutesById: FileRoutesById
 }
@@ -165,6 +177,7 @@ export interface RootRouteChildren {
   WorldsRoute: typeof WorldsRoute
   GameIdRoute: typeof GameIdRoute
   PlayAreaRoute: typeof PlayAreaRoute
+  WorldWorldRoute: typeof WorldWorldRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -246,6 +259,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PlayAreaRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/world/$world': {
+      id: '/world/$world'
+      path: '/world/$world'
+      fullPath: '/world/$world'
+      preLoaderRoute: typeof WorldWorldRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -274,6 +294,7 @@ const rootRouteChildren: RootRouteChildren = {
   WorldsRoute: WorldsRoute,
   GameIdRoute: GameIdRoute,
   PlayAreaRoute: PlayAreaRoute,
+  WorldWorldRoute: WorldWorldRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

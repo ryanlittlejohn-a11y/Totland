@@ -33,7 +33,7 @@ export function WordSearchGame({
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, "wordsearch").level;
-  const bank = SEARCH_BANKS[kind] ?? SEARCH_BANKS.animals!;
+  const bank = SEARCH_BANKS[kind] ?? SEARCH_BANKS["animals"]!;
   const puzzle = useMemo(() => (hydrated ? buildGrid(bank, level) : null), [hydrated, bank, level]);
 
   const [hit, setHit] = useState<number[]>([]);

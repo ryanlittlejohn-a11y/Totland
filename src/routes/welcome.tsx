@@ -107,7 +107,7 @@ function Welcome() {
                   aria-label={c.name}
                   onClick={() => {
                     setCharacter(c.id);
-                    say(`${c.name}! ${c.line}`);
+                    say(c.name);
                   }}
                   className={`aspect-square grid place-items-center rounded-2xl text-3xl ${
                     character === c.id ? "bg-amber/50" : "bg-felt"

@@ -1,9 +1,23 @@
 import { useEffect, useRef, useState } from "react";
-import { LETTERS, pick } from "@/lib/content";
+import { LETTERS, SHAPES, pick } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, useProfile } from "@/lib/profile";
 
-export function TracingGame({ onFinish }: { onFinish: (stars: number) => void }) {
+/** Tracing engine — letters, numbers or shapes, chosen by the catalog row. */
+const glyphs = (kind: string) =>
+  kind === "numbers"
+    ? Array.from({ length: 10 }, (_, i) => String(i))
+    : kind === "shapes"
+      ? SHAPES.map((s) => s.name)
+      : LETTERS;
+
+export function TracingGame({
+  kind = "letters",
+  onFinish,
+}: {
+  kind?: string;
+  onFinish: (stars: number, accuracy: number) => void;
+}) {
   const { profile, update, hydrated } = useProfile();
   const [letter, setLetter] = useState("A");
   const [lower, setLower] = useState(false);
@@ -15,10 +29,10 @@ export function TracingGame({ onFinish }: { onFinish: (stars: number) => void })
 
   useEffect(() => {
     if (!hydrated) return;
-    const l = pick(LETTERS);
+    const l = pick(glyphs(kind));
     setLetter(l);
-    say(`Let's trace the letter ${l}. Follow the line with your finger.`);
-  }, [hydrated]);
+    say(`Let's trace ${l}. Follow the line with your finger.`);
+  }, [hydrated, kind]);
 
   const reset = () => {
     const c = canvasRef.current;
@@ -56,9 +70,9 @@ export function TracingGame({ onFinish }: { onFinish: (stars: number) => void })
     reset();
     if (next >= 3) {
       update((p) => recordGameComplete(p, "tracing", 3, 2));
-      onFinish(3);
+      onFinish(3, 1);
     } else {
-      const l = pick(LETTERS);
+      const l = pick(glyphs(kind));
       setLetter(l);
       setLower((v) => !v);
       say(`Now trace ${l}.`);
@@ -68,15 +82,16 @@ export function TracingGame({ onFinish }: { onFinish: (stars: number) => void })
   return (
     <div>
       <p className="font-ui text-[22px] font-semibold text-ink">
-        Trace the letter {lower ? letter.toLowerCase() : letter}
+        Trace {kind === "letters" ? "the letter " : ""}
+        {lower && kind === "letters" ? letter.toLowerCase() : letter}
       </p>
       <div className="relative mt-4 aspect-square w-full overflow-hidden rounded-3xl bg-card wood-block">
         <span
           className="pointer-events-none absolute inset-0 grid place-items-center font-ui font-bold text-felt"
-          style={{ fontSize: "16rem", lineHeight: 1 }}
+          style={{ fontSize: letter.length > 1 ? "5rem" : "16rem", lineHeight: 1 }}
           aria-hidden
         >
-          {lower ? letter.toLowerCase() : letter}
+          {lower && kind === "letters" ? letter.toLowerCase() : letter}
         </span>
         <canvas
           ref={canvasRef}

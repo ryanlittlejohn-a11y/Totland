@@ -178,7 +178,7 @@ function rhyme(level: number): Round {
     skill: "words",
     prompt: `${RHYME_EMOJI[a]} ${a} — which word rhymes?`,
     spoken: `Which word rhymes with ${a}?`,
-    options: shuffle([b, ...others]).map((w) => ({ id: w, emoji: RHYME_EMOJI[w], label: w })),
+    options: shuffle([b, ...others]).map((w) => ({ id: w, emoji: RHYME_EMOJI[w] ?? "🔤", label: w })),
     answerId: b,
     hint: `${a}… ${b}. They sound the same at the end.`,
     reveal: `${a} and ${b} rhyme!`,

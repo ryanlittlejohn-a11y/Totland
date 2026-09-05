@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
 import { accuracy, recommendations, skillOf, strengths, useProfile } from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
+import { setLang, type Lang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/parent/")({
   head: () => ({
@@ -151,6 +152,31 @@ function Dashboard() {
               className="w-44 rounded-xl bg-felt px-3 py-2 outline-none ring-1 ring-border"
             />
           </label>
+          <div className="flex items-center justify-between text-sm font-medium text-ink">
+            App language
+            <div className="flex gap-2">
+              {(
+                [
+                  ["en", "English"],
+                  ["es", "Español"],
+                ] as const
+              ).map(([code, label]) => (
+                <button
+                  key={code}
+                  type="button"
+                  onClick={() => {
+                    setLang(code as Lang);
+                    update((p) => ({ ...p, language: code as Lang }));
+                  }}
+                  className={`rounded-xl px-3 py-2 text-sm font-semibold ring-1 ring-border ${
+                    profile.language === code ? "bg-clay text-primary-foreground" : "bg-felt text-ink"
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
           {(
             [
               ["narration", "Voice narration"],

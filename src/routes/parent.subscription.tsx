@@ -65,8 +65,8 @@ function Subscription() {
   }, [user, fetchSubscription, update]);
 
   useEffect(() => {
-    if (ready && user) void sync();
-    if (ready && !user) setSub(null);
+    if (ready && user?.email_confirmed_at) void sync();
+    if (ready && (!user || !user.email_confirmed_at)) setSub(null);
   }, [ready, user, sync]);
 
   // After checkout the payment provider confirms by webhook; poll briefly.
@@ -87,7 +87,21 @@ function Subscription() {
 
   const { openCheckout, loading, error } = usePaddleCheckout(() => void waitForActivation());
 
-  const active = sub?.active ?? false;
+  const emailVerified = Boolean(user?.email_confirmed_at);
+  const [resendState, setResendState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  const resendVerification = async () => {
+    if (!user?.email) return;
+    setResendState("sending");
+    const { error: err } = await supabase.auth.resend({
+      type: "signup",
+      email: user.email,
+      options: { emailRedirectTo: `${window.location.origin}/parent/subscription` },
+    });
+    setResendState(err ? "error" : "sent");
+  };
+
+  const active = emailVerified && (sub?.active ?? false);
   const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
 
   return (
@@ -120,6 +134,29 @@ function Subscription() {
           <p className="mt-4 rounded-2xl bg-felt p-4 text-sm text-inksoft">
             Sign in below to subscribe or to restore a subscription you already bought.
           </p>
+         ) : !emailVerified ? (
+          <div className="mt-4 rounded-2xl bg-amber/20 p-4 text-sm text-ink">
+            <p className="font-semibold">Please verify your email address.</p>
+            <p className="mt-2 text-inksoft">
+              We sent a confirmation link to {user.email}. Open it, then come back here — verified emails are required
+              before subscribing or restoring a purchase, so your account stays protected.
+            </p>
+            <button
+              type="button"
+              onClick={() => void resendVerification()}
+              disabled={resendState === "sending" || resendState === "sent"}
+              className="mt-3 rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream disabled:opacity-60"
+            >
+              {resendState === "sending"
+                ? "Sending…"
+                : resendState === "sent"
+                  ? "Email sent — check your inbox"
+                  : "Resend verification email"}
+            </button>
+            {resendState === "error" && (
+              <p className="mt-2 text-clay">Couldn't send the email right now. Please try again in a minute.</p>
+            )}
+          </div>
         ) : active ? (
           <div className="mt-4 rounded-2xl bg-moss/15 p-4 text-sm text-ink">
             <p className="font-semibold">🎉 Premium is active — the whole library is unlocked.</p>
@@ -193,7 +230,7 @@ function Subscription() {
               <button
                 type="button"
                 onClick={() => void sync()}
-                disabled={checking}
+                disabled={checking || !emailVerified}
                 className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink disabled:opacity-60"
               >
                 {checking ? "Checking…" : "Restore purchase"}

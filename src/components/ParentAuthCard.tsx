@@ -28,7 +28,7 @@ export function ParentAuthCard() {
           options: { emailRedirectTo: `${window.location.origin}/parent/subscription` },
         });
         if (err) throw err;
-        setMessage("Account created. If we sent you a confirmation email, open it to finish.");
+        setMessage("Account created. We've emailed you a confirmation link — open it to verify your email before subscribing.");
       } else {
         const { error: err } = await supabase.auth.signInWithPassword({ email, password });
         if (err) throw err;

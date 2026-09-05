@@ -225,6 +225,7 @@ function Home() {
         </p>
         <Link
           to="/parent/subscription"
+          search={{ checkout: undefined }}
           className="mt-3 block rounded-2xl bg-clay py-3 text-center font-ui font-bold text-primary-foreground wood-block"
         >
           Get Premium

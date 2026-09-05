@@ -70,7 +70,7 @@ export function ChoiceGame({
           setIndex((i) => i + 1);
           nextRound();
         }
-      }, 1800);
+      }, 3000);
     } else {
       const praise = pick(PRAISE.retry);
       setMisses((m) => m + 1);

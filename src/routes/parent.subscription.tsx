@@ -6,7 +6,7 @@ import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
 
 export const Route = createFileRoute("/parent/subscription")({
   validateSearch: (search: Record<string, unknown>) => ({
-    checkout: typeof search.checkout === "string" ? search.checkout : undefined,
+    checkout: typeof search["checkout"] === "string" ? (search["checkout"] as string) : undefined,
   }),
   head: () => ({
     meta: [

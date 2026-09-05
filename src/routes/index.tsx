@@ -3,6 +3,7 @@ import { AREAS, CHARACTERS, LIBRARY_SIZE } from "@/lib/content";
 import { GAMES, WORLDS, gameById } from "@/lib/catalog";
 import { skillOf, useProfile } from "@/lib/profile";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { L, title as tTitle } from "@/lib/i18n";
 
 
 export const Route = createFileRoute("/")({
@@ -45,7 +46,7 @@ function Home() {
           </div>
           <div>
             <p className="font-ui text-[15px] font-bold leading-none text-ink">Totland</p>
-            <p className="font-ui text-[11px] text-inksoft">Learning that feels like play</p>
+            <p className="font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -55,7 +56,7 @@ function Home() {
           </span>
           <Link
             to="/rewards"
-            aria-label="Sticker shelf"
+            aria-label={L("Sticker shelf", "Estante de calcomanías")}
             className="grid size-11 place-items-center rounded-2xl bg-card text-xl wood-block"
           >
             🎁
@@ -65,7 +66,7 @@ function Home() {
 
       <section className="mt-5 rounded-[2rem] felt-panel p-4">
         <div className="flex items-center justify-between">
-          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">Welcome back</p>
+          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Welcome back", "Hola de nuevo")}</p>
           <span className="font-ui text-xs text-inksoft">{profile.childName}</span>
         </div>
 
@@ -74,8 +75,8 @@ function Home() {
           className="mt-3 flex items-center justify-between rounded-3xl bg-clay p-4 wood-block active:translate-y-1"
         >
           <div>
-            <p className="font-ui text-2xl font-bold leading-tight text-primary-foreground">Today's Adventure</p>
-            <p className="font-ui text-sm font-semibold text-primary-foreground/85">5 little games · Bramble &amp; You</p>
+            <p className="font-ui text-2xl font-bold leading-tight text-primary-foreground">{L("Today's Adventure", "La aventura de hoy")}</p>
+            <p className="font-ui text-sm font-semibold text-primary-foreground/85">{L("5 little games · Bramble & You", "5 juegos cortos · Zarza y tú")}</p>
           </div>
           <span className="grid size-14 place-items-center rounded-full bg-card text-3xl anim-floaty">🐻</span>
         </Link>
@@ -86,7 +87,7 @@ function Home() {
               key={a.id}
               to="/play/$area"
               params={{ area: a.id }}
-              aria-label={a.title}
+              aria-label={tTitle(a.title)}
               className={`grid aspect-square place-items-center rounded-2xl ${TINT[a.tint]} bg-card text-3xl wood-block active:translate-y-1`}
             >
               <span className="anim-bob">{a.emoji}</span>
@@ -109,8 +110,8 @@ function Home() {
           className="mt-4 flex items-center justify-between rounded-3xl bg-amber/30 p-4 wood-block"
         >
           <span>
-            <span className="block font-ui text-lg font-bold text-ink">Set up your child</span>
-            <span className="block font-ui text-sm text-inksoft">Name, age mode and a play buddy · 1 minute</span>
+            <span className="block font-ui text-lg font-bold text-ink">{L("Set up your child", "Configura el perfil")}</span>
+            <span className="block font-ui text-sm text-inksoft">{L("Name, age mode and a play buddy · 1 minute", "Nombre, edad y un amigo de juego · 1 minuto")}</span>
           </span>
           <span className="text-2xl">✨</span>
         </Link>
@@ -118,7 +119,7 @@ function Home() {
 
       <section className="mt-6">
         <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
-          The five worlds
+          {L("The five worlds", "Los cinco mundos")}
         </p>
         <div className="mt-3 grid grid-cols-5 gap-2">
           {WORLDS.map((w) => (
@@ -126,7 +127,7 @@ function Home() {
               key={w.id}
               to="/world/$worldId"
               params={{ worldId: w.id }}
-              aria-label={w.title}
+              aria-label={tTitle(w.title)}
               className={`grid aspect-square place-items-center rounded-2xl ${TINT[w.tint]} bg-card text-3xl wood-block active:translate-y-1`}
             >
               {w.emoji}
@@ -137,14 +138,14 @@ function Home() {
           to="/worlds"
           className="mt-3 block rounded-2xl bg-card py-3 text-center font-ui font-bold text-ink wood-block"
         >
-          Browse all {GAMES.length} games ›
+          {L(`Browse all ${GAMES.length} games ›`, `Ver los ${GAMES.length} juegos ›`)}
         </Link>
       </section>
 
       {profile.recent?.length ? (
         <section className="mt-6">
           <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
-            Play again
+            {L("Play again", "Juega otra vez")}
           </p>
           <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
             {profile.recent.slice(0, 6).map((id) => {
@@ -158,7 +159,7 @@ function Home() {
                   className="w-28 shrink-0 rounded-2xl bg-card p-3 text-center wood-block"
                 >
                   <span className="block text-3xl">{g.emoji}</span>
-                  <span className="mt-1 block font-ui text-xs font-bold leading-tight text-ink">{g.title}</span>
+                  <span className="mt-1 block font-ui text-xs font-bold leading-tight text-ink">{tTitle(g.title)}</span>
                 </Link>
               );
             })}
@@ -168,8 +169,8 @@ function Home() {
 
       <section className="mt-6">
         <div className="flex items-center justify-between px-1">
-          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">Learning worlds</p>
-          <span className="font-ui text-xs text-inksoft">{LIBRARY_SIZE} activities offline</span>
+          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Learning worlds", "Mundos de aprendizaje")}</p>
+          <span className="font-ui text-xs text-inksoft">{L(`${LIBRARY_SIZE} activities offline`, `${LIBRARY_SIZE} actividades sin conexión`)}</span>
         </div>
 
         <div className="mt-3 space-y-3">
@@ -187,8 +188,8 @@ function Home() {
                   {locked ? "🔒" : a.emoji}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className="font-ui text-lg font-bold leading-tight text-ink">{a.title}</p>
-                  <p className="truncate font-ui text-sm text-inksoft">{locked ? "Premium world" : a.blurb}</p>
+                  <p className="font-ui text-lg font-bold leading-tight text-ink">{tTitle(a.title)}</p>
+                  <p className="truncate font-ui text-sm text-inksoft">{locked ? L("Premium world", "Mundo premium") : tTitle(a.blurb)}</p>
                   <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-felt">
                     <div className="h-full rounded-full bg-moss" style={{ width: `${(s.level / 5) * 100}%` }} />
                   </div>
@@ -202,20 +203,19 @@ function Home() {
 
       <section className="mt-7 rounded-[2rem] felt-panel p-4">
         <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
-          Totland Premium
+          {L("Totland Premium", "Totland Premium")}
         </p>
         <p className="mt-2 px-1 font-ui text-sm text-inksoft">
-          Unlock every world, puzzle, storybook and tracing game — with no ads
-          and no tracking. Cancel anytime through Paddle.
+          {L("Unlock every world, puzzle, storybook and tracing game — with no ads and no tracking. Cancel anytime through Paddle.", "Desbloquea todos los mundos, rompecabezas, cuentos y trazos — sin anuncios ni rastreo. Cancela cuando quieras con Paddle.")}
         </p>
         <div className="mt-3 grid grid-cols-2 gap-2.5">
           <div className="rounded-2xl bg-card p-3 text-center wood-block">
             <p className="font-ui text-xl font-bold text-ink">$2.99</p>
-            <p className="font-ui text-xs text-inksoft">per month</p>
+            <p className="font-ui text-xs text-inksoft">{L("per month", "al mes")}</p>
           </div>
           <div className="rounded-2xl bg-card p-3 text-center wood-block">
             <p className="font-ui text-xl font-bold text-ink">$19.99</p>
-            <p className="font-ui text-xs text-inksoft">per year · best value</p>
+            <p className="font-ui text-xs text-inksoft">{L("per year · best value", "al año · mejor precio")}</p>
           </div>
         </div>
         <p className="mt-2 px-1 font-ui text-xs text-inksoft">
@@ -230,7 +230,7 @@ function Home() {
           search={{ checkout: undefined }}
           className="mt-3 block rounded-2xl bg-clay py-3 text-center font-ui font-bold text-primary-foreground wood-block"
         >
-          Get Premium
+          {L("Get Premium", "Obtener Premium")}
         </Link>
       </section>
 
@@ -238,8 +238,8 @@ function Home() {
         to="/parent"
         className="mt-6 flex items-center justify-between rounded-3xl bg-night px-5 py-4 text-cream wood-block"
       >
-        <span className="font-semibold">Parents &amp; settings</span>
-        <span className="text-sm text-cream/60">🔒 Grown-ups only</span>
+        <span className="font-semibold">{L("Parents & settings", "Familia y ajustes")}</span>
+        <span className="text-sm text-cream/60">{L("🔒 Grown-ups only", "🔒 Solo adultos")}</span>
       </Link>
       <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
         Offline-first · No ads · Data stays on device

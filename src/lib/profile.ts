@@ -4,6 +4,7 @@
  */
 import { useCallback, useEffect, useState } from "react";
 import type { SkillId } from "./content";
+import { setLang, type Lang } from "./i18n";
 
 const KEY = "totland.profile.v1";
 
@@ -32,6 +33,8 @@ export interface GameStat {
 export interface Profile {
   childName: string;
   age: number;
+  /** UI + narration language, chosen by a grown-up */
+  language: Lang;
   /** set once by a grown-up at first launch */
   ageMode: "explorer" | "learner" | "reader" | null;
   characterId: string | null;
@@ -70,6 +73,7 @@ export const emptySkill = (): SkillStat => ({
 export const defaultProfile = (): Profile => ({
   childName: "Friend",
   age: 4,
+  language: "en",
   ageMode: null,
   characterId: null,
   outfit: "🎒",
@@ -99,7 +103,9 @@ export function loadProfile(): Profile {
   try {
     const raw = window.localStorage.getItem(KEY);
     if (!raw) return defaultProfile();
-    return { ...defaultProfile(), ...JSON.parse(raw) } as Profile;
+    const p = { ...defaultProfile(), ...JSON.parse(raw) } as Profile;
+    setLang(p.language);
+    return p;
   } catch {
     return defaultProfile();
   }
@@ -107,6 +113,7 @@ export function loadProfile(): Profile {
 
 export function saveProfile(p: Profile) {
   if (typeof window === "undefined") return;
+  setLang(p.language);
   window.localStorage.setItem(KEY, JSON.stringify(p));
   window.dispatchEvent(new CustomEvent("totland:profile"));
 }

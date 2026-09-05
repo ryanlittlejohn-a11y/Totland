@@ -14,6 +14,7 @@ import { RewardScreen } from "@/components/game/RewardScreen";
 import { gameById } from "@/lib/catalog";
 import { CHARACTERS } from "@/lib/content";
 import { checkBadges, recordSession, useProfile } from "@/lib/profile";
+import { L, title as tTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/game/$gameId")({
   head: () => ({
@@ -36,8 +37,8 @@ function GameHost() {
   const game = gameById(gameId);
   if (!game) {
     return (
-      <PlayFrame title="Game not found">
-        <p className="font-ui text-lg text-ink">That game isn't here. Tap the house to go home.</p>
+      <PlayFrame title={L("Game not found", "Juego no encontrado")}>
+        <p className="font-ui text-lg text-ink">{L("That game isn't here. Tap the house to go home.", "Ese juego no está aquí. Toca la casita para volver.")}</p>
       </PlayFrame>
     );
   }
@@ -61,11 +62,11 @@ function GameHost() {
 
   if (locked) {
     return (
-      <PlayFrame title={game.title}>
+      <PlayFrame title={tTitle(game.title)}>
         <div className="rounded-3xl bg-card p-6 text-center wood-block">
           <p className="text-6xl">🔒</p>
-          <p className="mt-3 font-ui text-xl font-bold text-ink">This game is part of Totland Premium</p>
-          <p className="mt-2 font-ui text-sm text-inksoft">A grown-up can unlock it from the parent area.</p>
+          <p className="mt-3 font-ui text-xl font-bold text-ink">{L("This game is part of Totland Premium", "Este juego es parte de Totland Premium")}</p>
+          <p className="mt-2 font-ui text-sm text-inksoft">{L("A grown-up can unlock it from the parent area.", "Un adulto puede desbloquearlo en el área de familia.")}</p>
         </div>
       </PlayFrame>
     );
@@ -74,7 +75,7 @@ function GameHost() {
   const engine = game.engine;
 
   return (
-    <PlayFrame title={game.title}>
+    <PlayFrame title={tTitle(game.title)}>
       {stars !== null ? (
         <RewardScreen stars={stars} onAgain={restart} />
       ) : engine === "hunt" ? (
@@ -104,7 +105,7 @@ function GameHost() {
         />
       )}
       <p className="mt-4 text-center font-ui text-xs text-inksoft">
-        Game {game.number} of 100 · {game.objective}
+        {L(`Game ${game.number} of 100`, `Juego ${game.number} de 100`)} · {tTitle(game.objective)}
       </p>
     </PlayFrame>
   );

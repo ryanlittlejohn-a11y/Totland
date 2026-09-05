@@ -3,6 +3,7 @@ import { memorySet } from "@/lib/rounds";
 import { shuffle } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { L } from "@/lib/i18n";
 
 export function MemoryGame({
   kind = "animals",
@@ -20,7 +21,7 @@ export function MemoryGame({
   const [tries, setTries] = useState(0);
 
   useEffect(() => {
-    if (hydrated) say("Find the matching pairs.");
+    if (hydrated) say(L("Find the matching pairs.", "Encuentra las parejas."));
   }, [hydrated]);
 
   useEffect(() => {
@@ -34,7 +35,7 @@ export function MemoryGame({
       if (match) {
         setFound((f) => [...f, a.pairId]);
         chime("correct", profile.sfx);
-        say(`${a.label}! Great job!`);
+        say(L(`${a.label}! Great job!`, `¡${a.label}! ¡Muy bien!`));
       }
       setFlipped([]);
     }, 700);
@@ -53,7 +54,7 @@ export function MemoryGame({
 
   return (
     <div>
-      <p className="font-ui text-[22px] font-semibold text-ink">Find the matching pairs!</p>
+      <p className="font-ui text-[22px] font-semibold text-ink">{L("Find the matching pairs!", "¡Encuentra las parejas!")}</p>
       <div className="mt-4 grid grid-cols-3 gap-3">
         {deck.map((card) => {
           const open = flipped.includes(card.key) || found.includes(card.pairId);

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { STORIES } from "@/lib/content";
 import { say } from "@/lib/speech";
 import { recordGameComplete, useProfile } from "@/lib/profile";
+import { L, storyPage, storyTitle } from "@/lib/i18n";
 
 export function StoryReader({ onFinish }: { onFinish: (stars: number) => void }) {
   const { update } = useProfile();
@@ -10,13 +11,13 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
   const story = STORIES.find((s) => s.id === storyId);
 
   useEffect(() => {
-    if (story) say(story.pages[page]!.text);
+    if (story) say(storyPage(story.id, page, story.pages[page]!.text));
   }, [story, page]);
 
   if (!story) {
     return (
       <div>
-        <p className="font-ui text-[22px] font-semibold text-ink">Choose a story</p>
+        <p className="font-ui text-[22px] font-semibold text-ink">{L("Choose a story", "Elige un cuento")}</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
           {STORIES.map((s) => (
             <button
@@ -29,7 +30,7 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
               className="rounded-3xl bg-card p-4 text-left wood-block active:translate-y-1"
             >
               <span className="text-5xl">{s.cover}</span>
-              <p className="mt-3 font-ui font-bold leading-tight text-ink">{s.title}</p>
+              <p className="mt-3 font-ui font-bold leading-tight text-ink">{storyTitle(s.id, s.title)}</p>
             </button>
           ))}
         </div>
@@ -45,7 +46,7 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
       <div className="rounded-[2rem] bg-card p-6 text-center wood-block">
         <span className="block text-[6rem] leading-none anim-floaty">{p.emoji}</span>
         <p className="mt-5 font-ui text-2xl font-bold leading-snug text-ink">
-          {p.text.split(" ").map((w, i) => (
+          {storyPage(story.id, page, p.text).split(" ").map((w, i) => (
             <button key={i} type="button" onClick={() => say(w)} className="mx-0.5 rounded-lg px-1 active:bg-amber/40">
               {w}
             </button>
@@ -57,7 +58,7 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
           type="button"
           onClick={() => setPage((n) => Math.max(0, n - 1))}
           className="grid size-16 place-items-center rounded-2xl bg-card text-2xl wood-block"
-          aria-label="Previous page"
+          aria-label={L("Previous page", "Página anterior")}
         >
           ◀
         </button>
@@ -71,11 +72,11 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
           }}
           className="flex-1 rounded-2xl bg-clay py-4 font-ui text-xl font-bold text-primary-foreground wood-block"
         >
-          {last ? "The end 🌟" : "Next page"}
+          {last ? L("The end 🌟", "Fin 🌟") : L("Next page", "Siguiente página")}
         </button>
       </div>
       <p className="mt-3 text-center font-ui text-sm text-inksoft">
-        Page {page + 1} of {story.pages.length}
+        {L(`Page ${page + 1} of ${story.pages.length}`, `Página ${page + 1} de ${story.pages.length}`)}
       </p>
     </div>
   );

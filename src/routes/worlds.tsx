@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { GAMES, WORLDS } from "@/lib/catalog";
 import { useProfile } from "@/lib/profile";
+import { L, title as tTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/worlds")({
   head: () => ({
@@ -22,8 +23,8 @@ function WorldsPage() {
 
   return (
     <main className="mx-auto w-full max-w-md px-4 py-6">
-      <h1 className="font-ui text-3xl font-bold text-ink">Pick a world</h1>
-      <p className="mt-1 font-ui text-sm text-inksoft">100 games to play — no timers, no rush.</p>
+      <h1 className="font-ui text-3xl font-bold text-ink">{L("Pick a world", "Elige un mundo")}</h1>
+      <p className="mt-1 font-ui text-sm text-inksoft">{L("100 games to play — no timers, no rush.", "100 juegos para jugar — sin reloj y sin prisa.")}</p>
 
       <div className="mt-5 space-y-3">
         {WORLDS.map((w) => {
@@ -38,9 +39,9 @@ function WorldsPage() {
             >
               <span className="grid size-16 shrink-0 place-items-center rounded-2xl bg-felt text-4xl">{w.emoji}</span>
               <span className="flex-1">
-                <span className="block font-ui text-xl font-bold text-ink">{w.title}</span>
+                <span className="block font-ui text-xl font-bold text-ink">{tTitle(w.title)}</span>
                 <span className="block font-ui text-sm text-inksoft">
-                  {w.blurb} · {played}/{games.length} played
+                  {tTitle(w.blurb)} · {L(`${played}/${games.length} played`, `${played}/${games.length} jugados`)}
                 </span>
               </span>
               <span className="text-2xl text-inksoft" aria-hidden>
@@ -55,7 +56,7 @@ function WorldsPage() {
         to="/"
         className="mt-6 block rounded-2xl bg-felt py-3 text-center font-ui font-bold text-ink wood-block"
       >
-        🏠 Home
+        {L("🏠 Home", "🏠 Inicio")}
       </Link>
     </main>
   );

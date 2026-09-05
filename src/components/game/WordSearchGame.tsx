@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LETTERS, SEARCH_BANKS, pick } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { L } from "@/lib/i18n";
 
 /** Age-adaptive word search: 3×3 for Explorer up to 7×7 for Reader. */
 function buildGrid(bank: string[], level: number) {
@@ -40,7 +41,7 @@ export function WordSearchGame({
   const [taps, setTaps] = useState(0);
 
   useEffect(() => {
-    if (puzzle) say(`Find the word ${puzzle.word.split("").join(" ")}. ${puzzle.word}.`);
+    if (puzzle) say(L(`Find the word ${puzzle.word.split("").join(" ")}. ${puzzle.word}.`, `Busca la palabra ${puzzle.word.split("").join(" ")}. ${puzzle.word}.`));
   }, [puzzle]);
 
   useEffect(() => {
@@ -49,7 +50,7 @@ export function WordSearchGame({
     const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;
     update((p) => recordGameComplete(p, "wordsearch", stars, 2));
     chime("reward", profile.sfx);
-    say(`You found ${puzzle.word}!`);
+    say(L(`You found ${puzzle.word}!`, `¡Encontraste ${puzzle.word}!`));
     const t = window.setTimeout(() => onFinish(stars, accuracy), 900);
     return () => window.clearTimeout(t);
   }, [hit, puzzle, taps, update, onFinish, profile.sfx]);
@@ -67,7 +68,7 @@ export function WordSearchGame({
       chime("correct", profile.sfx);
     } else {
       chime("retry", profile.sfx);
-      say(`Keep looking. The next letter is ${puzzle.word[hit.length]}.`);
+      say(L(`Keep looking. The next letter is ${puzzle.word[hit.length]}.`, `Sigue buscando. La siguiente letra es ${puzzle.word[hit.length]}.`));
     }
   };
 
@@ -76,7 +77,7 @@ export function WordSearchGame({
       <p className="font-ui text-[22px] font-semibold text-ink">
         Find the word <span className="text-clay">{puzzle.word}</span>
       </p>
-      <p className="mt-1 font-ui text-sm text-inksoft">Tap the letters in order</p>
+      <p className="mt-1 font-ui text-sm text-inksoft">{L("Tap the letters in order", "Toca las letras en orden")}</p>
       <div
         className="mt-4 grid gap-2"
         style={{ gridTemplateColumns: `repeat(${puzzle.size}, minmax(0, 1fr))` }}
@@ -109,7 +110,7 @@ export function WordSearchGame({
       </div>
       <button
         type="button"
-        onClick={() => say(`The word is ${puzzle.word}.`)}
+        onClick={() => say(L(`The word is ${puzzle.word}.`, `La palabra es ${puzzle.word}.`))}
         className="mt-5 w-full rounded-2xl bg-card py-3 font-ui font-semibold text-ink wood-block"
       >
         🔊 Say it again

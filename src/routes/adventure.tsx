@@ -7,6 +7,7 @@ import { RewardScreen } from "@/components/game/RewardScreen";
 import { adventurePlan } from "@/lib/games";
 import { CHARACTERS, type SkillId } from "@/lib/content";
 import { skillOf, useProfile } from "@/lib/profile";
+import { L } from "@/lib/i18n";
 
 export const Route = createFileRoute("/adventure")({
   head: () => ({
@@ -37,7 +38,7 @@ function AdventurePage() {
   const [stars, setStars] = useState(0);
   const [finished, setFinished] = useState(false);
 
-  if (!hydrated) return <PlayFrame title="Today's Adventure">{null}</PlayFrame>;
+  if (!hydrated) return <PlayFrame title={L("Today's Adventure", "La aventura de hoy")}>{null}</PlayFrame>;
 
   const total = plan.length + 1; // + flash cards
   const advance = (earned: number) => {
@@ -47,7 +48,7 @@ function AdventurePage() {
   };
 
   return (
-    <PlayFrame title="Today's Adventure" progress={{ done: step, total }}>
+    <PlayFrame title={L("Today's Adventure", "La aventura de hoy")} progress={{ done: step, total }}>
       {finished ? (
         <RewardScreen
           stars={Math.min(3, Math.round(stars / total))}

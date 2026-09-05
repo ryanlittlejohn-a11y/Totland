@@ -1,41 +1,43 @@
 import { useState } from "react";
 import { chime, say } from "@/lib/speech";
 import { recordGameComplete, useProfile } from "@/lib/profile";
+import { L } from "@/lib/i18n";
 
-const HEROES = [
-  { id: "bear", emoji: "🐻", name: "Bramble Bear" },
-  { id: "fox", emoji: "🦊", name: "Fern Fox" },
-  { id: "dino", emoji: "🦖", name: "Dot the Dino" },
-  { id: "robot", emoji: "🤖", name: "Bolt" },
+type Item = { id: string; emoji: string; name: string };
+const heroes = (): Item[] => [
+  { id: "bear", emoji: "🐻", name: L("Bramble Bear", "Zarza el oso") },
+  { id: "fox", emoji: "🦊", name: L("Fern Fox", "Elena la zorra") },
+  { id: "dino", emoji: "🦖", name: L("Dot the Dino", "Dina la dinosaurio") },
+  { id: "robot", emoji: "🤖", name: L("Bolt", "Chispa") },
 ];
-const THINGS = [
-  { id: "kite", emoji: "🪁", name: "a red kite" },
-  { id: "cake", emoji: "🍰", name: "a big cake" },
-  { id: "ball", emoji: "⚽", name: "a bouncy ball" },
-  { id: "book", emoji: "📕", name: "a story book" },
+const things = (): Item[] => [
+  { id: "kite", emoji: "🪁", name: L("a red kite", "una cometa roja") },
+  { id: "cake", emoji: "🍰", name: L("a big cake", "un pastel grande") },
+  { id: "ball", emoji: "⚽", name: L("a bouncy ball", "una pelota saltarina") },
+  { id: "book", emoji: "📕", name: L("a story book", "un libro de cuentos") },
 ];
-const PLACES = [
-  { id: "hill", emoji: "⛰️", name: "the green hill" },
-  { id: "beach", emoji: "🏖️", name: "the sunny beach" },
-  { id: "forest", emoji: "🌳", name: "the tall forest" },
-  { id: "home", emoji: "🏠", name: "the cosy house" },
+const places = (): Item[] => [
+  { id: "hill", emoji: "⛰️", name: L("the green hill", "la colina verde") },
+  { id: "beach", emoji: "🏖️", name: L("the sunny beach", "la playa soleada") },
+  { id: "forest", emoji: "🌳", name: L("the tall forest", "el bosque alto") },
+  { id: "home", emoji: "🏠", name: L("the cosy house", "la casita acogedora") },
 ];
 
 /** Story Builder — the child picks, the app writes a safe, simple story. */
 export function StoryBuilder({ onFinish }: { onFinish: (stars: number, accuracy: number) => void }) {
   const { profile, update } = useProfile();
-  const [hero, setHero] = useState<typeof HEROES[number] | null>(null);
-  const [thing, setThing] = useState<typeof THINGS[number] | null>(null);
-  const [place, setPlace] = useState<typeof PLACES[number] | null>(null);
+  const [hero, setHero] = useState<Item | null>(null);
+  const [thing, setThing] = useState<Item | null>(null);
+  const [place, setPlace] = useState<Item | null>(null);
   const [page, setPage] = useState(0);
 
   const story =
     hero && thing && place
       ? [
-          `${hero.name} found ${thing.name}.`,
-          `Off they went to ${place.name}.`,
-          `They played all day long.`,
-          `Then ${hero.name} went home to sleep.`,
+          L(`${hero.name} found ${thing.name}.`, `${hero.name} encontró ${thing.name}.`),
+          L(`Off they went to ${place.name}.`, `Se fueron a ${place.name}.`),
+          L(`They played all day long.`, `Jugaron todo el día.`),
+          L(`Then ${hero.name} went home to sleep.`, `Luego ${hero.name} volvió a casa a dormir.`),
         ]
       : [];
 
@@ -91,7 +93,7 @@ export function StoryBuilder({ onFinish }: { onFinish: (stars: number, accuracy:
           }}
           className="mt-6 w-full rounded-2xl bg-felt py-3 font-ui font-bold text-ink wood-block"
         >
-          {page < story.length ? "Next page" : "The end"}
+          {page < story.length ? L("Next page", "Siguiente página") : L("The end", "Fin")}
         </button>
         {page >= story.length && (
           <button
@@ -103,7 +105,7 @@ export function StoryBuilder({ onFinish }: { onFinish: (stars: number, accuracy:
             }}
             className="mt-3 w-full rounded-2xl bg-clay py-4 font-ui text-lg font-bold text-primary-foreground wood-block"
           >
-            Finish my story
+            {L("Finish my story", "Terminar mi cuento")}
           </button>
         )}
       </div>
@@ -112,10 +114,10 @@ export function StoryBuilder({ onFinish }: { onFinish: (stars: number, accuracy:
 
   return (
     <div>
-      <p className="font-ui text-[22px] font-semibold text-ink">Let's make a story together!</p>
-      <Row title="Who?" items={HEROES} chosen={hero?.id ?? null} onPick={(i) => setHero(i as never)} />
-      <Row title="What?" items={THINGS} chosen={thing?.id ?? null} onPick={(i) => setThing(i as never)} />
-      <Row title="Where?" items={PLACES} chosen={place?.id ?? null} onPick={(i) => setPlace(i as never)} />
+      <p className="font-ui text-[22px] font-semibold text-ink">{L("Let's make a story together!", "¡Hagamos un cuento juntos!")}</p>
+      <Row title={L("Who?", "¿Quién?")} items={heroes()} chosen={hero?.id ?? null} onPick={(i) => setHero(i as never)} />
+      <Row title={L("What?", "¿Qué?")} items={things()} chosen={thing?.id ?? null} onPick={(i) => setThing(i as never)} />
+      <Row title={L("Where?", "¿Dónde?")} items={places()} chosen={place?.id ?? null} onPick={(i) => setPlace(i as never)} />
       <button
         type="button"
         disabled={!hero || !thing || !place}
@@ -125,7 +127,7 @@ export function StoryBuilder({ onFinish }: { onFinish: (stars: number, accuracy:
         }}
         className="mt-6 w-full rounded-2xl bg-clay py-4 font-ui text-lg font-bold text-primary-foreground wood-block disabled:opacity-40"
       >
-        Read my story
+        {L("Read my story", "Leer mi cuento")}
       </button>
     </div>
   );

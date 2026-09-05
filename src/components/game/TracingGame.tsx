@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { LETTERS, SHAPES, pick } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, useProfile } from "@/lib/profile";
+import { L } from "@/lib/i18n";
 
 /** Tracing engine — letters, numbers or shapes, chosen by the catalog row. */
 const glyphs = (kind: string) =>
@@ -31,7 +32,7 @@ export function TracingGame({
     if (!hydrated) return;
     const l = pick(glyphs(kind));
     setLetter(l);
-    say(`Let's trace ${l}. Follow the line with your finger.`);
+    say(L(`Let's trace ${l}. Follow the line with your finger.`, `Vamos a trazar la ${l}. Sigue la línea con tu dedo.`));
   }, [hydrated, kind]);
 
   const reset = () => {
@@ -60,7 +61,7 @@ export function TracingGame({
     const good = coverage >= 55;
     update((p) => recordAnswer(p, { skill: "tracing", correct: good, responseMs: 4000, itemId: letter }));
     chime(good ? "correct" : "retry", profile.sfx);
-    say(good ? `Beautiful ${letter}! Great job!` : "Great try! Let's trace it again.");
+    say(good ? L(`Beautiful ${letter}! Great job!` , `¡Qué bonita ${letter}! ¡Muy bien!`) : L("Great try! Let's trace it again.", "¡Buen intento! Vamos a trazarla otra vez."));
     if (!good) {
       reset();
       return;
@@ -75,7 +76,7 @@ export function TracingGame({
       const l = pick(glyphs(kind));
       setLetter(l);
       setLower((v) => !v);
-      say(`Now trace ${l}.`);
+      say(L(`Now trace ${l}.`, `Ahora traza la ${l}.`));
     }
   };
 

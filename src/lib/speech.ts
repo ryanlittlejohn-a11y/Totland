@@ -1,4 +1,5 @@
 /** Narration + gentle sound feedback. Works offline via the platform voice. */
+import { getLang, speechLang } from "./i18n";
 
 /** Remove emoji/pictographs so the voice only speaks words. */
 export function stripEmoji(text: string): string {
@@ -18,6 +19,10 @@ export function setNarration(on: boolean) {
 }
 
 /** Prefer warm, natural-sounding voices over robotic defaults. */
+const PREFERRED_VOICES_ES = [
+  "monica", "paulina", "helena", "laura", "google español", "sabina", "elvira",
+];
+
 const PREFERRED_VOICES = [
   "samantha", // iOS/macOS — warm and clear
   "karen", "moira", "tessa", // iOS accents, gentle
@@ -27,19 +32,24 @@ const PREFERRED_VOICES = [
 ];
 
 let cachedVoice: SpeechSynthesisVoice | null = null;
+let cachedFor: string = "";
 
 function pickWarmVoice(): SpeechSynthesisVoice | null {
+  if (cachedFor !== getLang()) cachedVoice = null;
+  cachedFor = getLang();
   if (cachedVoice) return cachedVoice;
   if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
-  const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith("en"));
-  for (const pref of PREFERRED_VOICES) {
+  const es = getLang() === "es";
+  const prefix = es ? "es" : "en";
+  const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith(prefix));
+  for (const pref of es ? PREFERRED_VOICES_ES : PREFERRED_VOICES) {
     const match = voices.find((v) => v.name.toLowerCase().includes(pref));
     if (match) {
       cachedVoice = match;
       return match;
     }
   }
-  cachedVoice = voices.find((v) => v.localService && v.lang === "en-US") ?? voices[0] ?? null;
+  cachedVoice = voices.find((v) => v.localService) ?? voices[0] ?? null;
   return cachedVoice;
 }
 
@@ -61,7 +71,7 @@ export function say(text: string, opts: { rate?: number; pitch?: number } = {}) 
     u.rate = opts.rate ?? 0.85; // slightly slower, calmer pacing for little ears
     u.pitch = opts.pitch ?? 1.15; // gentle warmth without sounding squeaky
     u.volume = 0.95;
-    u.lang = voice?.lang ?? "en-US";
+    u.lang = voice?.lang ?? speechLang();
     window.speechSynthesis.speak(u);
   } catch {
     /* narration is optional */

@@ -8,6 +8,7 @@ import { FlashCards } from "@/components/game/FlashCards";
 import { StoryReader } from "@/components/game/StoryReader";
 import { RewardScreen } from "@/components/game/RewardScreen";
 import { AREAS, CHARACTERS, type SkillId } from "@/lib/content";
+import { L, title as tTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/play/$area")({
   head: () => ({
@@ -36,7 +37,7 @@ function PlayPage() {
   };
 
   return (
-    <PlayFrame title={meta.title}>
+    <PlayFrame title={tTitle(meta.title)}>
       {stars !== null ? (
         <RewardScreen stars={stars} onAgain={restart} />
       ) : skill === "memory" ? (

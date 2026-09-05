@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
+import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { generateRound, type Option, type Round } from "@/lib/games";
 import { roundForKind } from "@/lib/rounds";
 import { chime, say, setNarration, stripEmoji } from "@/lib/speech";
@@ -55,7 +56,7 @@ export function ChoiceGame({
     update((p) => recordAnswer(p, { skill, correct, responseMs, itemId: round.answerId }));
 
     if (correct) {
-      const praise = pick(PRAISE.correct);
+      const praise = pick(getLang() === "es" ? PRAISE_ES.correct : PRAISE.correct);
       setState("correct");
       setStars((s) => s + (misses === 0 ? 2 : 1));
       setMessage(`${praise} ${round.reveal ?? ""}`.trim());
@@ -72,7 +73,7 @@ export function ChoiceGame({
         }
       }, 3000);
     } else {
-      const praise = pick(PRAISE.retry);
+      const praise = pick(getLang() === "es" ? PRAISE_ES.retry : PRAISE.retry);
       setMisses((m) => m + 1);
       setState("retry");
       setMessage(misses >= 1 ? `${praise} ${round.hint}` : praise);
@@ -115,7 +116,7 @@ export function ChoiceGame({
               {ch}
             </span>
           ))}
-          <span className="sr-only">{round.visual.length} items</span>
+          <span className="sr-only">{L(`${round.visual.length} items`, `${round.visual.length} objetos`)}</span>
         </div>
       ) : null}
 
@@ -157,7 +158,7 @@ export function ChoiceGame({
           {state === "correct" ? "🌟" : state === "retry" ? "💛" : "👆"}
         </span>
         <p className="font-ui font-semibold text-ink">
-          {message || "Tap your answer — take your time."}
+          {message || L("Tap your answer — take your time.", "Toca tu respuesta — tómate tu tiempo.")}
         </p>
       </div>
     </div>

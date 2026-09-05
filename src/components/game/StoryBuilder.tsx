@@ -3,19 +3,20 @@ import { chime, say } from "@/lib/speech";
 import { recordGameComplete, useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
 
-const HEROES = [
+type Item = { id: string; emoji: string; name: string };
+const heroes = (): Item[] => [
   { id: "bear", emoji: "🐻", name: L("Bramble Bear", "Zarza el oso") },
   { id: "fox", emoji: "🦊", name: L("Fern Fox", "Elena la zorra") },
   { id: "dino", emoji: "🦖", name: L("Dot the Dino", "Dina la dinosaurio") },
   { id: "robot", emoji: "🤖", name: L("Bolt", "Chispa") },
 ];
-const THINGS = [
+const things = (): Item[] => [
   { id: "kite", emoji: "🪁", name: L("a red kite", "una cometa roja") },
   { id: "cake", emoji: "🍰", name: L("a big cake", "un pastel grande") },
   { id: "ball", emoji: "⚽", name: L("a bouncy ball", "una pelota saltarina") },
   { id: "book", emoji: "📕", name: L("a story book", "un libro de cuentos") },
 ];
-const PLACES = [
+const places = (): Item[] => [
   { id: "hill", emoji: "⛰️", name: L("the green hill", "la colina verde") },
   { id: "beach", emoji: "🏖️", name: L("the sunny beach", "la playa soleada") },
   { id: "forest", emoji: "🌳", name: L("the tall forest", "el bosque alto") },
@@ -25,9 +26,9 @@ const PLACES = [
 /** Story Builder — the child picks, the app writes a safe, simple story. */
 export function StoryBuilder({ onFinish }: { onFinish: (stars: number, accuracy: number) => void }) {
   const { profile, update } = useProfile();
-  const [hero, setHero] = useState<typeof HEROES[number] | null>(null);
-  const [thing, setThing] = useState<typeof THINGS[number] | null>(null);
-  const [place, setPlace] = useState<typeof PLACES[number] | null>(null);
+  const [hero, setHero] = useState<Item | null>(null);
+  const [thing, setThing] = useState<Item | null>(null);
+  const [place, setPlace] = useState<Item | null>(null);
   const [page, setPage] = useState(0);
 
   const story =
@@ -114,9 +115,9 @@ export function StoryBuilder({ onFinish }: { onFinish: (stars: number, accuracy:
   return (
     <div>
       <p className="font-ui text-[22px] font-semibold text-ink">{L("Let's make a story together!", "¡Hagamos un cuento juntos!")}</p>
-      <Row title={L("Who?", "¿Quién?")} items={HEROES} chosen={hero?.id ?? null} onPick={(i) => setHero(i as never)} />
-      <Row title={L("What?", "¿Qué?")} items={THINGS} chosen={thing?.id ?? null} onPick={(i) => setThing(i as never)} />
-      <Row title={L("Where?", "¿Dónde?")} items={PLACES} chosen={place?.id ?? null} onPick={(i) => setPlace(i as never)} />
+      <Row title={L("Who?", "¿Quién?")} items={heroes()} chosen={hero?.id ?? null} onPick={(i) => setHero(i as never)} />
+      <Row title={L("What?", "¿Qué?")} items={things()} chosen={thing?.id ?? null} onPick={(i) => setThing(i as never)} />
+      <Row title={L("Where?", "¿Dónde?")} items={places()} chosen={place?.id ?? null} onPick={(i) => setPlace(i as never)} />
       <button
         type="button"
         disabled={!hero || !thing || !place}

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { generateRound, type Option, type Round } from "@/lib/games";
 import { roundForKind } from "@/lib/rounds";
-import { chime, say, setNarration } from "@/lib/speech";
+import { chime, say, setNarration, stripEmoji } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 
 export function ChoiceGame({

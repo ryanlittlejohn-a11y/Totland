@@ -1,5 +1,13 @@
 /** Narration + gentle sound feedback. Works offline via the platform voice. */
 
+/** Remove emoji/pictographs so the voice only speaks words. */
+export function stripEmoji(text: string): string {
+  return text
+    .replace(/\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
 let enabled = true;
 
 export function setNarration(on: boolean) {

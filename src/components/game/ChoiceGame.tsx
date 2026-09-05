@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { generateRound, type Option, type Round } from "@/lib/games";
 import { roundForKind } from "@/lib/rounds";
-import { chime, say, setNarration } from "@/lib/speech";
+import { chime, say, setNarration, stripEmoji } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 
 export function ChoiceGame({
@@ -60,7 +60,7 @@ export function ChoiceGame({
       setStars((s) => s + (misses === 0 ? 2 : 1));
       setMessage(`${praise} ${round.reveal ?? ""}`.trim());
       chime("correct", profile.sfx);
-      say(`${praise} ${round.reveal ?? ""}`);
+      say(stripEmoji(`${praise} ${round.reveal ?? ""}`));
       window.setTimeout(() => {
         if (index + 1 >= ROUNDS) {
           const total = stars + (misses === 0 ? 2 : 1);
@@ -77,7 +77,7 @@ export function ChoiceGame({
       setState("retry");
       setMessage(misses >= 1 ? `${praise} ${round.hint}` : praise);
       chime("retry", profile.sfx);
-      say(misses >= 1 ? `${praise} ${round.hint}` : praise);
+      say(stripEmoji(misses >= 1 ? `${praise} ${round.hint}` : praise));
       window.setTimeout(() => setState("asking"), 1200);
     }
   };

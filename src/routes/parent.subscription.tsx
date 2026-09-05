@@ -65,8 +65,8 @@ function Subscription() {
   }, [user, fetchSubscription, update]);
 
   useEffect(() => {
-    if (ready && user) void sync();
-    if (ready && !user) setSub(null);
+    if (ready && user?.email_confirmed_at) void sync();
+    if (ready && (!user || !user.email_confirmed_at)) setSub(null);
   }, [ready, user, sync]);
 
   // After checkout the payment provider confirms by webhook; poll briefly.
@@ -230,7 +230,7 @@ function Subscription() {
               <button
                 type="button"
                 onClick={() => void sync()}
-                disabled={checking}
+                disabled={checking || !emailVerified}
                 className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink disabled:opacity-60"
               >
                 {checking ? "Checking…" : "Restore purchase"}

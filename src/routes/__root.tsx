@@ -12,6 +12,8 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
+import { useEntitlementSync } from "../hooks/useEntitlementSync";
+
 
 function NotFoundComponent() {
   return (
@@ -124,6 +126,9 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useEntitlementSync();
+
+
 
   return (
     <QueryClientProvider client={queryClient}>

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
+import { L } from "@/lib/i18n";
 
 export function PlayFrame({
   title,
@@ -15,17 +16,17 @@ export function PlayFrame({
       <div className="flex items-center gap-3">
         <Link
           to="/"
-          aria-label="Back to the map"
+          aria-label={L("Back to the map", "Volver al mapa")}
           className="grid size-14 shrink-0 place-items-center rounded-2xl bg-card text-2xl wood-block"
         >
           🏠
         </Link>
         <div className="flex-1">
-          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">Playing now</p>
+          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Playing now", "Jugando ahora")}</p>
           <h1 className="font-ui text-xl font-bold leading-tight text-ink">{title}</h1>
         </div>
         {progress && (
-          <div className="flex gap-1.5" aria-label={`${progress.done} of ${progress.total} done`}>
+          <div className="flex gap-1.5" aria-label={L(`${progress.done} of ${progress.total} done`, `${progress.done} de ${progress.total} listos`)}>
             {Array.from({ length: progress.total }, (_, i) => (
               <span
                 key={i}

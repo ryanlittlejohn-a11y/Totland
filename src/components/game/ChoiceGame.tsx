@@ -60,7 +60,7 @@ export function ChoiceGame({
       setStars((s) => s + (misses === 0 ? 2 : 1));
       setMessage(`${praise} ${round.reveal ?? ""}`.trim());
       chime("correct", profile.sfx);
-      say(`${praise} ${round.reveal ?? ""}`);
+      say(stripEmoji(`${praise} ${round.reveal ?? ""}`));
       window.setTimeout(() => {
         if (index + 1 >= ROUNDS) {
           const total = stars + (misses === 0 ? 2 : 1);

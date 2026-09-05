@@ -1,5 +1,4 @@
 import {
-import { translateRound } from "./i18n";
   COLORS,
   LETTERS,
   SHAPES,
@@ -9,6 +8,7 @@ import { translateRound } from "./i18n";
   wordsForLetter,
   type SkillId,
 } from "./content";
+import { translateRound } from "./i18n";
 
 export interface Option {
   id: string;

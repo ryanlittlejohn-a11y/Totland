@@ -8,7 +8,7 @@ export function usePaddleCheckout(onCompleted: () => void) {
   const [loading, setLoading] = useState<PlanId | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const openCheckout = async (priceId: PlanId, opts: { userId: string; email?: string }) => {
+  const openCheckout = async (priceId: PlanId, opts: { userId: string; email?: string | undefined }) => {
     setLoading(priceId);
     setError(null);
     try {

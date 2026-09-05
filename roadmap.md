@@ -5,7 +5,18 @@
 - [x] Create products: Premium Monthly $2.99/mo, Premium Yearly $19.99/yr
 - [x] Checkout utilities: src/lib/paddle.ts, price resolver server fn, test-mode banner
 - [x] Wire parent.subscription.tsx to real checkout (parent gate stays in front)
-- [x] Unlock premium on checkout completion (local profile, offline-friendly)
 - [x] Test full flow in test mode — checkout opens with correct products/pricing
-- [ ] Optional later: Lovable Cloud + webhook to restore premium across devices (needs user accounts)
-- [ ] Go live: verify identity in Payments tab, publish (products sync to live automatically)
+
+## Accounts + verified entitlement (done)
+- [x] Lovable Cloud enabled; `subscriptions` table + `has_active_subscription`, RLS (read-own only, writes service-role only)
+- [x] Parent sign-in (email/password + Google) behind the parental gate; kids never sign in
+- [x] Checkout passes `customData.userId` + customer email
+- [x] Webhook `src/routes/api/public/payments/webhook.ts` (signature-verified) is the only writer of entitlement
+- [x] Server fn `getMySubscription` — premium is verified server-side, cached locally for offline play
+- [x] Removed the spoofable `?checkout=success` unlock; success now polls for webhook confirmation
+- [x] Renewal/cancel/past-due surfaced; canceled keeps access until period end
+- [x] Restore purchase + sign out; checkout error message when a price can't be resolved
+
+## Remaining
+- [ ] Go live: verify identity in the Payments tab, publish (products + webhook sync to live)
+- [ ] Kids-app policy pages required by the provider review (terms, refund policy, privacy notice)

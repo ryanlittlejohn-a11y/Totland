@@ -255,6 +255,7 @@ function Home() {
           Refunds
         </Link>
       </footer>
+      <InstallPrompt />
     </main>
   );
 }

@@ -9,14 +9,51 @@ export function setNarration(on: boolean) {
   }
 }
 
+/** Prefer warm, natural-sounding voices over robotic defaults. */
+const PREFERRED_VOICES = [
+  "samantha", // iOS/macOS — warm and clear
+  "karen", "moira", "tessa", // iOS accents, gentle
+  "google us english", // Chrome — natural female voice
+  "zira", // Windows — softer than David
+  "aria", "jenny", // Edge neural voices
+];
+
+let cachedVoice: SpeechSynthesisVoice | null = null;
+
+function pickWarmVoice(): SpeechSynthesisVoice | null {
+  if (cachedVoice) return cachedVoice;
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return null;
+  const voices = window.speechSynthesis.getVoices().filter((v) => v.lang.startsWith("en"));
+  for (const pref of PREFERRED_VOICES) {
+    const match = voices.find((v) => v.name.toLowerCase().includes(pref));
+    if (match) {
+      cachedVoice = match;
+      return match;
+    }
+  }
+  cachedVoice = voices.find((v) => v.localService && v.lang === "en-US") ?? voices[0] ?? null;
+  return cachedVoice;
+}
+
+// Voices load asynchronously in some browsers — re-resolve when ready.
+if (typeof window !== "undefined" && "speechSynthesis" in window) {
+  window.speechSynthesis.onvoiceschanged = () => {
+    cachedVoice = null;
+    pickWarmVoice();
+  };
+}
+
 export function say(text: string, opts: { rate?: number; pitch?: number } = {}) {
   if (!enabled || typeof window === "undefined" || !("speechSynthesis" in window)) return;
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
-    u.rate = opts.rate ?? 0.9;
-    u.pitch = opts.pitch ?? 1.2;
-    u.lang = "en-US";
+    const voice = pickWarmVoice();
+    if (voice) u.voice = voice;
+    u.rate = opts.rate ?? 0.85; // slightly slower, calmer pacing for little ears
+    u.pitch = opts.pitch ?? 1.15; // gentle warmth without sounding squeaky
+    u.volume = 0.95;
+    u.lang = voice?.lang ?? "en-US";
     window.speechSynthesis.speak(u);
   } catch {
     /* narration is optional */

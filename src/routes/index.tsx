@@ -198,9 +198,42 @@ function Home() {
         </div>
       </section>
 
+      <section className="mt-7 rounded-[2rem] felt-panel p-4">
+        <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+          Totland Premium
+        </p>
+        <p className="mt-2 px-1 font-ui text-sm text-inksoft">
+          Unlock every world, puzzle, storybook and tracing game — with no ads
+          and no tracking. Cancel anytime through Paddle.
+        </p>
+        <div className="mt-3 grid grid-cols-2 gap-2.5">
+          <div className="rounded-2xl bg-card p-3 text-center wood-block">
+            <p className="font-ui text-xl font-bold text-ink">$2.99</p>
+            <p className="font-ui text-xs text-inksoft">per month</p>
+          </div>
+          <div className="rounded-2xl bg-card p-3 text-center wood-block">
+            <p className="font-ui text-xl font-bold text-ink">$19.99</p>
+            <p className="font-ui text-xs text-inksoft">per year · best value</p>
+          </div>
+        </div>
+        <p className="mt-2 px-1 font-ui text-xs text-inksoft">
+          30-day money-back guarantee. See our{" "}
+          <Link to="/refund" className="underline">
+            Refund Policy
+          </Link>
+          .
+        </p>
+        <Link
+          to="/parent/subscription"
+          className="mt-3 block rounded-2xl bg-clay py-3 text-center font-ui font-bold text-primary-foreground wood-block"
+        >
+          Get Premium
+        </Link>
+      </section>
+
       <Link
         to="/parent"
-        className="mt-7 flex items-center justify-between rounded-3xl bg-night px-5 py-4 text-cream wood-block"
+        className="mt-6 flex items-center justify-between rounded-3xl bg-night px-5 py-4 text-cream wood-block"
       >
         <span className="font-semibold">Parents &amp; settings</span>
         <span className="text-sm text-cream/60">🔒 Grown-ups only</span>
@@ -208,6 +241,17 @@ function Home() {
       <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
         Offline-first · No ads · Data stays on device
       </p>
+      <footer className="mt-3 flex justify-center gap-4 font-ui text-[11px] text-inksoft">
+        <Link to="/terms" className="underline">
+          Terms
+        </Link>
+        <Link to="/privacy" className="underline">
+          Privacy
+        </Link>
+        <Link to="/refund" className="underline">
+          Refunds
+        </Link>
+      </footer>
     </main>
   );
 }

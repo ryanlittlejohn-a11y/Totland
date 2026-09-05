@@ -132,7 +132,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEntitlementSync();
 
-
+  useEffect(() => {
+    registerPWA();
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>

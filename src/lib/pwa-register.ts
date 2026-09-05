@@ -1,14 +1,6 @@
 // Guarded service-worker registration for production only.
 // Never registers in dev, Lovable preview, or iframes.
 
-declare module "virtual:pwa-register" {
-  export function registerSW(options: {
-    immediate?: boolean;
-    onRegistered?: (registration: ServiceWorkerRegistration | undefined) => void;
-    onRegisterError?: (error: Error) => void;
-  }): void;
-}
-
 function shouldRegister(): boolean {
   if (typeof window === "undefined") return false;
   if (!("serviceWorker" in navigator)) return false;

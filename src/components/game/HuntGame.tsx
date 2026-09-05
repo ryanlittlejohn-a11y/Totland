@@ -3,6 +3,7 @@ import { huntSet } from "@/lib/rounds";
 import type { SkillId } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { L } from "@/lib/i18n";
 
 /** "Find every…" engine — tap-many interaction with no timer and no penalty. */
 export function HuntGame({
@@ -22,7 +23,7 @@ export function HuntGame({
   const [taps, setTaps] = useState(0);
 
   useEffect(() => {
-    if (set) say(`Find ${set.label}. Tap every one you can see.`);
+    if (set) say(L(`Find ${set.label}. Tap every one you can see.`, `Busca ${set.label}. Toca todos los que veas.`));
   }, [set]);
 
   useEffect(() => {
@@ -45,17 +46,17 @@ export function HuntGame({
     chime(hit ? "correct" : "retry", profile.sfx);
     if (hit) {
       setFound((f) => [...f, id]);
-      say("Found one!");
+      say(L("Found one!", "¡Encontraste uno!"));
     } else {
-      say(`Keep looking for ${set.label}.`);
+      say(L(`Keep looking for ${set.label}.`, `Sigue buscando ${set.label}.`));
     }
   };
 
   return (
     <div>
-      <p className="font-ui text-[22px] font-semibold text-ink">Find {set.label}!</p>
+      <p className="font-ui text-[22px] font-semibold text-ink">{L(`Find ${set.label}!`, `¡Busca ${set.label}!`)}</p>
       <p className="mt-1 font-ui text-sm text-inksoft">
-        {found.length} of {set.targetIds.length} found
+        {L(`${found.length} of ${set.targetIds.length} found`, `${found.length} de ${set.targetIds.length} encontrados`)}
       </p>
       <div className="mt-4 grid grid-cols-4 gap-2.5">
         {set.cells.map((cell) => {

@@ -4,6 +4,7 @@ import { AGE_MODES, type AgeMode } from "@/lib/catalog";
 import { CHARACTERS } from "@/lib/content";
 import { useProfile } from "@/lib/profile";
 import { say } from "@/lib/speech";
+import { L, title as tTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/welcome")({
   head: () => ({
@@ -46,29 +47,29 @@ function Welcome() {
       avatarBg: bg,
       onboarded: true,
     }));
-    say(`Hello ${name.trim() || "friend"}! Let's play.`);
+    say(L(`Hello ${name.trim() || "friend"}! Let's play.`, `¡Hola ${name.trim() || "amigo"}! Vamos a jugar.`));
     navigate({ to: "/" });
   };
 
   return (
     <main className="mx-auto w-full max-w-md px-4 py-8">
-      <p className="font-ui text-xs uppercase tracking-[0.16em] text-inksoft">Grown-up setup · step {step + 1} of 3</p>
-      <h1 className="mt-1 font-ui text-3xl font-bold text-ink">Welcome to Totland</h1>
+      <p className="font-ui text-xs uppercase tracking-[0.16em] text-inksoft">{L(`Grown-up setup · step ${step + 1} of 3`, `Configuración · paso ${step + 1} de 3`)}</p>
+      <h1 className="mt-1 font-ui text-3xl font-bold text-ink">{L("Welcome to Totland", "Bienvenido a Totland")}</h1>
 
       {step === 0 && (
         <section className="mt-6 rounded-3xl bg-card p-5 wood-block">
           <label htmlFor="child-name" className="font-ui font-semibold text-ink">
-            What should we call your child?
+            {L("What should we call your child?", "¿Cómo se llama tu peque?")}
           </label>
           <input
             id="child-name"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="First name"
+            placeholder={L("First name", "Nombre")}
             maxLength={20}
             className="mt-3 w-full rounded-2xl bg-felt px-4 py-3 font-ui text-lg text-ink outline-none focus-visible:ring-2 focus-visible:ring-clay"
           />
-          <p className="mt-3 text-xs text-inksoft">Stored on this device only. No account, no sign-in.</p>
+          <p className="mt-3 text-xs text-inksoft">{L("Stored on this device only. No account, no sign-in.", "Se guarda solo en este dispositivo. Sin cuenta ni inicio de sesión.")}</p>
         </section>
       )}
 
@@ -86,9 +87,9 @@ function Welcome() {
               <span className="text-4xl">{m.emoji}</span>
               <span>
                 <span className="block font-ui text-lg font-bold text-ink">
-                  {m.title} · {m.ages}
+                  {tTitle(m.title)} · {tTitle(m.ages)}
                 </span>
-                <span className="block font-ui text-sm text-inksoft">{m.blurb}</span>
+                <span className="block font-ui text-sm text-inksoft">{tTitle(m.blurb)}</span>
               </span>
             </button>
           ))}
@@ -98,7 +99,7 @@ function Welcome() {
       {step === 2 && (
         <section className="mt-6 space-y-4">
           <div className="rounded-3xl bg-card p-4 wood-block">
-            <p className="font-ui font-semibold text-ink">Pick a play buddy</p>
+            <p className="font-ui font-semibold text-ink">{L("Pick a play buddy", "Elige un amigo de juego")}</p>
             <div className="mt-3 grid grid-cols-5 gap-2">
               {CHARACTERS.map((c) => (
                 <button
@@ -119,7 +120,7 @@ function Welcome() {
             </div>
           </div>
           <div className="rounded-3xl bg-card p-4 wood-block">
-            <p className="font-ui font-semibold text-ink">Give them something to wear</p>
+            <p className="font-ui font-semibold text-ink">{L("Give them something to wear", "Dale algo para ponerse")}</p>
             <div className="mt-3 grid grid-cols-6 gap-2">
               {OUTFITS.map((o) => (
                 <button
@@ -158,7 +159,7 @@ function Welcome() {
             onClick={() => setStep((s) => s - 1)}
             className="rounded-2xl bg-felt px-5 py-4 font-ui font-bold text-ink wood-block"
           >
-            Back
+            {L("Back", "Atrás")}
           </button>
         )}
         <button
@@ -167,7 +168,7 @@ function Welcome() {
           onClick={() => (step === 2 ? finish() : setStep((s) => s + 1))}
           className="flex-1 rounded-2xl bg-clay py-4 font-ui text-lg font-bold text-primary-foreground wood-block disabled:opacity-40"
         >
-          {step === 2 ? "Start playing" : "Next"}
+          {step === 2 ? L("Start playing", "Empezar a jugar") : L("Next", "Siguiente")}
         </button>
       </div>
     </main>

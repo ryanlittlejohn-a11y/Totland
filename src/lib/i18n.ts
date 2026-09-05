@@ -224,6 +224,20 @@ const SENTENCES: [string, string][] = [
   ["That one is long!", "¡Ese es largo!"],
   ["That one is short!", "¡Ese es corto!"],
   ["{} {}", "{} {}"],
+  // hunt / order / memory labels
+  ["the number {}", "el número {}"],
+  ["the letter {}", "la letra {}"],
+  ["everything {}", "todo lo que es {}"],
+  ["every {}", "todos los: {}"],
+  ["letter {}", "letra {}"],
+  ["number {}", "número {}"],
+  ["Put the numbers in order, smallest first", "Pon los números en orden, del más pequeño primero"],
+  ["Tap the numbers in order, starting with the smallest.", "Toca los números en orden, empezando por el más pequeño."],
+  ["Spell {} {}", "Deletrea {} {}"],
+  ["Spell the word {}.", "Deletrea la palabra {}."],
+  ["Tap the letters in alphabet order", "Toca las letras en orden alfabético"],
+  ["Tap the letters in alphabet order.", "Toca las letras en orden alfabético."],
+  ["Find {}. Tap every one you can see.", "Busca {}. Toca todos los que veas."],
 ];
 
 interface Compiled {

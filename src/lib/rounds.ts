@@ -245,8 +245,9 @@ function countObjects(level: number): Round {
   const others = shuffle(range(max).filter((x) => x !== n)).slice(0, count(level) - 1);
   return base({
     skill: "numbers",
-    prompt: `${item.repeat(n)}\nHow many do you see?`,
+    prompt: "How many do you see?",
     spoken: "How many do you see? Count them with me.",
+    visual: item.repeat(n),
     options: shuffle([n, ...others]).map((x) => ({ id: String(x), label: String(x), big: true })),
     answerId: String(n),
     hint: `Point and count: ${range(n).join(", ")}.`,

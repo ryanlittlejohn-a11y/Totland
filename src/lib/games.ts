@@ -26,6 +26,8 @@ export interface Round {
   answerId: string;
   hint: string;
   reveal?: string;
+  /** big visual shown above the options, e.g. items to count */
+  visual?: string;
   columns: 2 | 3;
 }
 
@@ -72,8 +74,9 @@ function numberRound(level: number): Round {
   ).slice(0, choiceCount(level) - 1);
   return {
     skill: "numbers",
-    prompt: `How many ${item} do you see?`,
+    prompt: "How many do you see?",
     spoken: "How many do you see? Count them with me.",
+    visual: item.repeat(count),
     options: shuffle([count, ...others]).map((n) => ({ id: String(n), label: String(n), big: true })),
     answerId: String(count),
     hint: `Point and count: ${Array.from({ length: count }, (_, i) => i + 1).join(", ")}.`,

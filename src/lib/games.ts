@@ -1,4 +1,5 @@
 import {
+import { translateRound } from "./i18n";
   COLORS,
   LETTERS,
   SHAPES,
@@ -169,7 +170,7 @@ function wordSearchRound(level: number): Round {
   };
 }
 
-export function generateRound(skill: SkillId, level: number): Round {
+function generateRoundEn(skill: SkillId, level: number): Round {
   switch (skill) {
     case "numbers":
       return numberRound(level);
@@ -206,4 +207,9 @@ export function memoryDeck(level: number) {
       { key: `${i}-b`, pairId: w.word, emoji: w.emoji },
     ]),
   );
+}
+
+/** Bilingual entry point used by every game screen. */
+export function generateRound(skill: SkillId, level: number): Round {
+  return translateRound(generateRoundEn(skill, level));
 }

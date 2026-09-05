@@ -20,6 +20,7 @@ import {
   wordsForLetter,
 } from "./content";
 import type { Round, Option } from "./games";
+import { getLang, noun, sentence, translateRound } from "./i18n";
 
 const count = (level: number) => (level <= 1 ? 2 : level <= 3 ? 3 : 4);
 const range = (n: number, from = 1) => Array.from({ length: n }, (_, i) => i + from);
@@ -567,7 +568,7 @@ function completePicture(level: number): Round {
 
 /* --------------------------------------------------------------- dispatch */
 
-export function roundForKind(kind: string, level: number): Round {
+function roundForKindEn(kind: string, level: number): Round {
   switch (kind) {
     case "findUpper": return findUpper(level);
     case "upperToLower": return caseMatch(level, true);
@@ -611,7 +612,7 @@ export function roundForKind(kind: string, level: number): Round {
 
 /* --------------------------------------------- non-choice engine configs */
 
-export function huntSet(kind: string, level: number) {
+function huntSetEn(kind: string, level: number) {
   const size = level <= 1 ? 9 : level <= 3 ? 12 : 16;
   const targets = level <= 1 ? 2 : level <= 3 ? 3 : 4;
 
@@ -664,7 +665,7 @@ export function huntSet(kind: string, level: number) {
   );
 }
 
-export function orderSet(kind: string, level: number) {
+function orderSetEn(kind: string, level: number) {
   if (kind === "numbers") {
     const len = level <= 1 ? 3 : level <= 3 ? 5 : 7;
     const start = 1 + Math.floor(Math.random() * Math.max(1, maxNumber(level) - len));
@@ -682,7 +683,7 @@ export function orderSet(kind: string, level: number) {
   return { label: "Tap the letters in alphabet order", spoken: "Tap the letters in alphabet order.", seq };
 }
 
-export function memorySet(kind: string, level: number) {
+function memorySetEn(kind: string, level: number) {
   const pairs = level <= 1 ? 3 : level <= 3 ? 4 : 6;
   if (kind === "letters") {
     return shuffle(LETTERS).slice(0, pairs).flatMap((l, i) => [
@@ -718,4 +719,32 @@ export function memorySet(kind: string, level: number) {
     { key: `${i}-a`, pairId: w.word, emoji: w.emoji, label: w.word },
     { key: `${i}-b`, pairId: w.word, emoji: w.emoji, label: w.word },
   ]);
+}
+
+/* ------------------------------------------------- bilingual wrappers */
+
+export function roundForKind(kind: string, level: number): Round {
+  return translateRound(roundForKindEn(kind, level));
+}
+
+export function huntSet(kind: string, level: number) {
+  const set = huntSetEn(kind, level);
+  if (getLang() === "en") return set;
+  return {
+    ...set,
+    label: sentence(set.label),
+    cells: set.cells.map((c) => (c.label ? { ...c, label: noun(c.label) } : c)),
+  };
+}
+
+export function orderSet(kind: string, level: number) {
+  const set = orderSetEn(kind, level);
+  if (getLang() === "en") return set;
+  return { ...set, label: sentence(set.label), spoken: sentence(set.spoken) };
+}
+
+export function memorySet(kind: string, level: number) {
+  const deck = memorySetEn(kind, level);
+  if (getLang() === "en") return deck;
+  return deck.map((c) => ({ ...c, label: sentence(c.label) }));
 }

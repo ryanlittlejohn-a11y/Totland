@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -266,6 +266,12 @@ function Subscription() {
           <li>· Purchases, settings and links sit behind the parental gate.</li>
         </ul>
       </section>
+
+      <footer className="flex flex-wrap gap-4 pb-6 text-sm text-inksoft">
+        <Link to="/terms" className="underline hover:text-ink">Terms &amp; Conditions</Link>
+        <Link to="/refund" className="underline hover:text-ink">Refund Policy</Link>
+        <Link to="/privacy" className="underline hover:text-ink">Privacy Notice</Link>
+      </footer>
     </div>
   );
 }

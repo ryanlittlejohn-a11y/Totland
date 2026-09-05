@@ -17,6 +17,7 @@ export function usePaddleCheckout(onPurchased: () => void) {
         items: [{ priceId: paddlePriceId, quantity: 1 }],
         settings: {
           displayMode: "overlay",
+          locale: "en",
           successUrl: `${window.location.origin}/parent/subscription?checkout=success`,
           allowLogout: false,
           variant: "one-page",

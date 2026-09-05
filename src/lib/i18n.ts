@@ -428,3 +428,90 @@ export const PRAISE_ES = {
 };
 
 export const speechLang = () => (current === "es" ? "es-ES" : "en-US");
+
+/* --------------------------------------------------------------- stories */
+
+export const STORIES_ES: Record<string, { title: string; pages: string[] }> = {
+  "bear-picnic": {
+    title: "El picnic del oso Zarza",
+    pages: [
+      "Zarza el oso prepara una cesta.",
+      "Sube por la colina verde.",
+      "Una abeja lo saluda.",
+      "Comparten pan con miel.",
+      "El sol se va a dormir.",
+    ],
+  },
+  "fox-lost-sock": {
+    title: "Zorra Elena y el calcetín perdido",
+    pages: [
+      "Elena la zorra tiene un calcetín.",
+      "Busca debajo de la cama.",
+      "Busca dentro de la caja.",
+      "¡El perrito lo tenía!",
+      "Ahora Elena tiene dos calcetines.",
+    ],
+  },
+  "robot-garden": {
+    title: "Chispa el robot cultiva un jardín",
+    pages: [
+      "Chispa planta una semilla pequeña.",
+      "Le da agua.",
+      "El sol brilla calentito.",
+      "Una flor lo saluda.",
+      "Chispa pita de alegría.",
+    ],
+  },
+  "dino-splash": {
+    title: "Dina la dinosaurio chapotea",
+    pages: [
+      "Dina encuentra un charco grande.",
+      "¡Chap! ¡Chap! ¡Chap!",
+      "Sus amigos saltan también.",
+      "Todos están llenos de lodo.",
+      "La hora del baño también es divertida.",
+    ],
+  },
+  "owl-stars": {
+    title: "Búho Olivo cuenta las estrellas",
+    pages: [
+      "Olivo el búho despierta de noche.",
+      "Cuenta una estrella brillante.",
+      "Luego dos, luego tres.",
+      "Diez estrellas en el cielo.",
+      "Olivo bosteza y se duerme.",
+    ],
+  },
+};
+
+export function storyTitle(id: string, en: string): string {
+  return current === "es" ? (STORIES_ES[id]?.title ?? en) : en;
+}
+
+export function storyPage(id: string, index: number, en: string): string {
+  return current === "es" ? (STORIES_ES[id]?.pages[index] ?? en) : en;
+}
+
+/* ---------------------------------------------------------------- rounds */
+
+interface TranslatableRound {
+  prompt: string;
+  spoken: string;
+  hint: string;
+  reveal?: string;
+  options: { label?: string; [k: string]: unknown }[];
+  [k: string]: unknown;
+}
+
+/** Translates a generated round in place of the English original. */
+export function translateRound<T extends TranslatableRound>(r: T): T {
+  if (current === "en") return r;
+  return {
+    ...r,
+    prompt: sentence(r.prompt),
+    spoken: sentence(r.spoken),
+    hint: sentence(r.hint),
+    reveal: r.reveal ? sentence(r.reveal) : r.reveal,
+    options: r.options.map((o) => (o.label ? { ...o, label: noun(o.label) } : o)),
+  };
+}

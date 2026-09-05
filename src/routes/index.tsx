@@ -2,6 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, CHARACTERS, LIBRARY_SIZE } from "@/lib/content";
 import { GAMES, WORLDS, gameById } from "@/lib/catalog";
 import { skillOf, useProfile } from "@/lib/profile";
+import { InstallPrompt } from "@/components/InstallPrompt";
+
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -253,6 +255,7 @@ function Home() {
           Refunds
         </Link>
       </footer>
+      <InstallPrompt />
     </main>
   );
 }

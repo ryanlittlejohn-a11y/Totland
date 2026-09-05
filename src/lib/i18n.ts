@@ -508,17 +508,15 @@ export function storyPage(id: string, index: number, en: string): string {
 
 /* ---------------------------------------------------------------- rounds */
 
-interface TranslatableRound {
+type AnyRound = {
   prompt: string;
   spoken: string;
   hint: string;
-  reveal?: string;
-  options: { label?: string; [k: string]: unknown }[];
-  [k: string]: unknown;
-}
+  reveal?: string | undefined;
+  options: { label?: string | undefined }[];
+};
 
-/** Translates a generated round in place of the English original. */
-export function translateRound<T extends TranslatableRound>(r: T): T {
+export function translateRound<T extends AnyRound>(r: T): T {
   if (current === "en") return r;
   return {
     ...r,
@@ -526,6 +524,6 @@ export function translateRound<T extends TranslatableRound>(r: T): T {
     spoken: sentence(r.spoken),
     hint: sentence(r.hint),
     reveal: r.reveal ? sentence(r.reveal) : r.reveal,
-    options: r.options.map((o) => (o.label ? { ...o, label: noun(o.label) } : o)),
+    options: r.options.map((o) => (o.label ? { ...o, label: noun(o.label) } : o)) as T["options"],
   };
 }

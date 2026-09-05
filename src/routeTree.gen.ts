@@ -12,7 +12,10 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdventureRouteImport } from './routes/adventure'
 import { Route as ParentRouteImport } from './routes/parent'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RewardsRouteImport } from './routes/rewards'
+import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
@@ -39,9 +42,24 @@ const ParentRoute = ParentRouteImport.update({
   path: '/parent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RefundRoute = RefundRouteImport.update({
+  id: '/refund',
+  path: '/refund',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RewardsRoute = RewardsRouteImport.update({
   id: '/rewards',
   path: '/rewards',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -100,7 +118,10 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
+  '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
@@ -115,7 +136,10 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
+  '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
@@ -132,7 +156,10 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/parent': typeof ParentRouteWithChildren
+  '/privacy': typeof PrivacyRoute
+  '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
+  '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
@@ -150,7 +177,10 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/parent'
+    | '/privacy'
+    | '/refund'
     | '/rewards'
+    | '/terms'
     | '/welcome'
     | '/worlds'
     | '/game/$gameId'
@@ -165,7 +195,10 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/adventure'
+    | '/privacy'
+    | '/refund'
     | '/rewards'
+    | '/terms'
     | '/welcome'
     | '/worlds'
     | '/game/$gameId'
@@ -181,7 +214,10 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/parent'
+    | '/privacy'
+    | '/refund'
     | '/rewards'
+    | '/terms'
     | '/welcome'
     | '/worlds'
     | '/game/$gameId'
@@ -198,7 +234,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdventureRoute: typeof AdventureRoute
   ParentRoute: typeof ParentRouteWithChildren
+  PrivacyRoute: typeof PrivacyRoute
+  RefundRoute: typeof RefundRoute
   RewardsRoute: typeof RewardsRoute
+  TermsRoute: typeof TermsRoute
   WelcomeRoute: typeof WelcomeRoute
   WorldsRoute: typeof WorldsRoute
   GameGameIdRoute: typeof GameGameIdRoute
@@ -230,11 +269,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/refund': {
+      id: '/refund'
+      path: '/refund'
+      fullPath: '/refund'
+      preLoaderRoute: typeof RefundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/rewards': {
       id: '/rewards'
       path: '/rewards'
       fullPath: '/rewards'
       preLoaderRoute: typeof RewardsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/welcome': {
@@ -331,7 +391,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdventureRoute: AdventureRoute,
   ParentRoute: ParentRouteWithChildren,
+  PrivacyRoute: PrivacyRoute,
+  RefundRoute: RefundRoute,
   RewardsRoute: RewardsRoute,
+  TermsRoute: TermsRoute,
   WelcomeRoute: WelcomeRoute,
   WorldsRoute: WorldsRoute,
   GameGameIdRoute: GameGameIdRoute,

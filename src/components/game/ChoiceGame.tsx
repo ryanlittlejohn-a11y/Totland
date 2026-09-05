@@ -108,6 +108,17 @@ export function ChoiceGame({
         </button>
       </div>
 
+      {round.visual ? (
+        <div className="mt-5 flex flex-wrap items-center justify-center gap-2 rounded-3xl felt-panel px-4 py-4">
+          {Array.from(round.visual).map((ch, i) => (
+            <span key={i} className="text-4xl anim-floaty" style={{ animationDelay: `${i * 120}ms` }} aria-hidden>
+              {ch}
+            </span>
+          ))}
+          <span className="sr-only">{round.visual.length} items</span>
+        </div>
+      ) : null}
+
       <div className={`mt-5 grid ${gridCols} gap-3`}>
         {round.options.map((opt) => {
           const isAnswer = opt.id === round.answerId;

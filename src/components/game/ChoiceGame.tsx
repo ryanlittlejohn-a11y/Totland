@@ -77,7 +77,7 @@ export function ChoiceGame({
       setState("retry");
       setMessage(misses >= 1 ? `${praise} ${round.hint}` : praise);
       chime("retry", profile.sfx);
-      say(misses >= 1 ? `${praise} ${round.hint}` : praise);
+      say(stripEmoji(misses >= 1 ? `${praise} ${round.hint}` : praise));
       window.setTimeout(() => setState("asking"), 1200);
     }
   };

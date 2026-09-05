@@ -3,6 +3,7 @@ import { orderSet } from "@/lib/rounds";
 import { shuffle, type SkillId } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { L } from "@/lib/i18n";
 
 /** Sequencing engine: trains, bridges, races and word building. */
 export function OrderGame({
@@ -33,7 +34,7 @@ export function OrderGame({
     const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;
     update((p) => recordGameComplete(p, skill, stars, 1));
     chime("reward", profile.sfx);
-    say("You did it! The whole line is in order.");
+    say(L("You did it! The whole line is in order.", "¡Lo lograste! Toda la fila está en orden."));
     const t = window.setTimeout(() => onFinish(stars, accuracy), 900);
     return () => window.clearTimeout(t);
   }, [placed, set, taps, skill, update, onFinish, profile.sfx]);
@@ -48,12 +49,12 @@ export function OrderGame({
     update((p) => recordAnswer(p, { skill, correct, responseMs: 2500 }));
     if (correct) {
       setPlaced((p) => [...p, id]);
-      setMessage("Yes! Keep going.");
+      setMessage(L("Yes! Keep going.", "¡Sí! Sigue así."));
       chime("correct", profile.sfx);
     } else {
       setMessage(`Try the one that comes after ${placed.length ? set.seq[placed.length - 1]!.label : "the start"}.`);
       chime("retry", profile.sfx);
-      say("Great try! Which one comes next?");
+      say(L("Great try! Which one comes next?", "¡Buen intento! ¿Cuál sigue?"));
     }
   };
 
@@ -62,7 +63,7 @@ export function OrderGame({
       <p className="font-ui text-[22px] font-semibold text-ink">{set.label}</p>
 
       <div className="mt-4 flex min-h-[72px] flex-wrap items-center gap-2 rounded-3xl felt-panel p-3">
-        {placed.length === 0 && <span className="font-ui text-sm text-inksoft">Your line starts here…</span>}
+        {placed.length === 0 && <span className="font-ui text-sm text-inksoft">{L("Your line starts here…", "Tu fila empieza aquí…")}</span>}
         {placed.map((id) => {
           const item = set.seq.find((s) => s.id === id)!;
           return (
@@ -91,7 +92,7 @@ export function OrderGame({
       </div>
 
       <div className="mt-5 min-h-[54px] rounded-3xl bg-card/60 px-4 py-3" role="status">
-        <p className="font-ui font-semibold text-ink">{message || "Tap them one at a time, in order."}</p>
+        <p className="font-ui font-semibold text-ink">{message || L("Tap them one at a time, in order.", "Tócalos uno por uno, en orden.")}</p>
       </div>
     </div>
   );

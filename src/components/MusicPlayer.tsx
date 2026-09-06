@@ -1,11 +1,11 @@
 import { useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { setMusic, setMusicVolume, stopMusic } from "@/lib/music";
+import { setMusic, setMusicRoute, setMusicVolume, stopMusic } from "@/lib/music";
 import { useProfile } from "@/lib/profile";
 
 const SILENT_PREFIXES = ["/parent", "/terms", "/privacy", "/refund"];
 
-/** Runs the looping soundtrack on kid-facing screens only. */
+/** Runs the looping soundtracks on kid-facing screens only. */
 export function MusicPlayer() {
   const { profile } = useProfile();
   const { pathname } = useLocation();
@@ -13,7 +13,11 @@ export function MusicPlayer() {
   const on = Boolean(profile.music) && !silent;
 
   useEffect(() => {
-    setMusicVolume(profile.musicVolume ?? 1);
+    setMusicRoute(pathname);
+  }, [pathname]);
+
+  useEffect(() => {
+    setMusicVolume(profile.musicVolume ?? 0.5);
   }, [profile.musicVolume]);
 
   useEffect(() => {

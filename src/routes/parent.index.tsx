@@ -1,8 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useEffect } from "react";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
 import { accuracy, recommendations, skillOf, strengths, useProfile } from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
-import { setMusic, setMusicVolume } from "@/lib/music";
+import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/parent/")({
@@ -25,6 +26,12 @@ function Dashboard() {
   const totalAttempts = Object.values(profile.skills).reduce((n, s) => n + s.attempts, 0);
   const totalCorrect = Object.values(profile.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+
+  // Live music preview so the volume slider is audible while adjusting it.
+  useEffect(() => {
+    if (profile.music) previewMusic(true);
+    return () => previewMusic(false);
+  }, [profile.music]);
 
   return (
     <div className="space-y-4">

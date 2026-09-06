@@ -1,10 +1,15 @@
 import { useEffect, useState } from "react";
 import { STORIES } from "@/lib/content";
 import { say } from "@/lib/speech";
+import { setStoryMusic } from "@/lib/music";
 import { recordGameComplete, useProfile } from "@/lib/profile";
 import { L, storyPage, storyTitle } from "@/lib/i18n";
 
 export function StoryReader({ onFinish }: { onFinish: (stars: number) => void }) {
+  useEffect(() => {
+    setStoryMusic(true);
+    return () => setStoryMusic(false);
+  }, []);
   const { update } = useProfile();
   const [storyId, setStoryId] = useState<string | null>(null);
   const [page, setPage] = useState(0);

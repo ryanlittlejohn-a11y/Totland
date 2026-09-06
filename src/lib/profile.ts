@@ -84,7 +84,7 @@ export const defaultProfile = (): Profile => ({
   narration: true,
   sfx: true,
   music: true,
-  musicVolume: 1,
+  musicVolume: 0.5,
   reducedMotion: false,
   highContrast: false,
   premium: false,

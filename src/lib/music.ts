@@ -1,20 +1,39 @@
-/** Soft looping background soundtrack.
- *  Sits well under narration: base volume is low and it ducks further while
- *  Hannah is speaking. Autoplay blocks are handled by retrying on first tap. */
-import { MUSIC_URL } from "./music-track";
+/** Soft looping background soundtracks.
+ *  One track for the main screens, another inside activities. Both sit well
+ *  under narration: volume is low and ducks further while Hannah is speaking.
+ *  Autoplay blocks are handled by retrying on first tap. */
+import { ACTIVITY_TRACK_URL, MENU_TRACK_URL, STORY_TRACK_URL } from "./music-track";
 
-const BASE_VOLUME = 0.07;
-const DUCK_VOLUME = 0.02;
+/** Slider 0–1 maps to 0–0.25 playback volume; default 0.5 ≈ 7% (very soft). */
+const MAX_VOLUME = 0.25;
+const DEFAULT_LEVEL = 0.5;
+
+const ACTIVITY_PREFIXES = ["/play", "/game"];
+
+/** Which soundtrack a route belongs to. */
+export function isActivityRoute(pathname: string): boolean {
+  return ACTIVITY_PREFIXES.some((p) => pathname === p || pathname.startsWith(p));
+}
+
+let storyOverride = 0; // >0 while a storybook is open
+
+function trackFor(pathname: string): string | null {
+  if (storyOverride > 0 && STORY_TRACK_URL) return STORY_TRACK_URL;
+  return isActivityRoute(pathname) ? ACTIVITY_TRACK_URL : MENU_TRACK_URL;
+}
 
 let audio: HTMLAudioElement | null = null;
+let currentUrl: string | null = null;
 let wanted = false;
 let ducked = false;
-let level = 1; // parent-set loudness multiplier, 0–1
+let level = DEFAULT_LEVEL; // parent-set loudness, 0–1
+let route = "/";
 let gestureHooked = false;
 let fadeTimer: ReturnType<typeof setInterval> | null = null;
 
 function target(): number {
-  return (ducked ? DUCK_VOLUME : BASE_VOLUME) * level;
+  const base = MAX_VOLUME * level;
+  return ducked ? base * 0.3 : base;
 }
 
 function fadeTo(value: number) {
@@ -34,13 +53,20 @@ function fadeTo(value: number) {
 }
 
 function ensureAudio(): HTMLAudioElement | null {
-  if (typeof window === "undefined" || !MUSIC_URL) return null;
+  if (typeof window === "undefined") return null;
+  const url = trackFor(route);
+  if (!url) return null;
   if (!audio) {
-    audio = new Audio(MUSIC_URL);
+    audio = new Audio(url);
     audio.loop = true;
     audio.preload = "auto";
-    audio.volume = target();
+    currentUrl = url;
+  } else if (currentUrl !== url) {
+    audio.pause();
+    audio.src = url;
+    currentUrl = url;
   }
+  audio.volume = target();
   return audio;
 }
 
@@ -65,6 +91,19 @@ async function tryPlay() {
   }
 }
 
+/** Point the player at a new screen so the right soundtrack is selected. */
+export function setMusicRoute(pathname: string) {
+  if (route === pathname) return;
+  route = pathname;
+  if (wanted && audio && trackFor(route) !== currentUrl) void tryPlay();
+}
+
+/** Storybooks swap in their own soundtrack while open. */
+export function setStoryMusic(on: boolean) {
+  storyOverride = Math.max(0, storyOverride + (on ? 1 : -1));
+  if (wanted && audio && trackFor(route) !== currentUrl) void tryPlay();
+}
+
 /** Begin (or resume) the soundtrack. */
 export function startMusic() {
   wanted = true;
@@ -78,13 +117,22 @@ export function stopMusic() {
   audio?.pause();
 }
 
-/** Apply the parent dashboard on/off switch. */
-export function setMusic(on: boolean) {
-  if (on) startMusic();
+let previewCount = 0;
+
+/** Live preview from the parent dashboard (silent routes) while settings are shown. */
+export function previewMusic(on: boolean) {
+  previewCount = Math.max(0, previewCount + (on ? 1 : -1));
+  if (on || previewCount > 0) startMusic();
   else stopMusic();
 }
 
-/** Set the music loudness (0–1, where 1 is the default soft level). */
+/** Apply the parent dashboard on/off switch. */
+export function setMusic(on: boolean) {
+  if (on) startMusic();
+  else if (previewCount === 0) stopMusic();
+}
+
+/** Set the music loudness (0–1; 0.5 is the default soft level). */
 export function setMusicVolume(value: number) {
   level = Math.min(1, Math.max(0, value));
   if (audio && !audio.paused) fadeTo(target());

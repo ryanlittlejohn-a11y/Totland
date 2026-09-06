@@ -17,6 +17,7 @@ import { registerPWA } from "../lib/pwa-register";
 import { prewarmCommonNarration } from "../lib/voice-prewarm";
 
 import { OfflineGate } from "../components/OfflineGate";
+import { MusicPlayer } from "../components/MusicPlayer";
 
 
 
@@ -144,6 +145,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <PaymentTestModeBanner />
+      <MusicPlayer />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
       <OfflineGate>
         <Outlet />

@@ -4,6 +4,7 @@
  *  when a brand-new line is needed with no connection. */
 import { getLang, speechLang } from "./i18n";
 import { speakText } from "./tts.functions";
+import { duckMusic } from "./music";
 
 /** Remove emoji/pictographs so the voice only speaks words. */
 export function stripEmoji(text: string): string {
@@ -77,6 +78,9 @@ function sayWithDeviceVoice(text: string, opts: { rate?: number; pitch?: number 
     u.pitch = opts.pitch ?? 1.15;
     u.volume = 0.95;
     u.lang = voice?.lang ?? speechLang();
+    u.onend = () => duckMusic(false);
+    u.onerror = () => duckMusic(false);
+    duckMusic(true);
     window.speechSynthesis.speak(u);
   } catch {
     /* narration is optional */
@@ -148,16 +152,21 @@ function stopAudio() {
     player.pause();
     player.currentTime = 0;
   }
+  duckMusic(false);
 }
 
 function playUrl(url: string, token: number) {
   if (token !== playToken || !enabled) return;
   if (typeof window === "undefined") return;
   player ??= new Audio();
+  player.onended = () => duckMusic(false);
+  player.onpause = () => duckMusic(false);
   player.pause();
   player.src = url;
   player.volume = 1;
+  duckMusic(true);
   void player.play().catch(() => {
+    duckMusic(false);
     /* blocked before first tap — silence is fine */
   });
 }

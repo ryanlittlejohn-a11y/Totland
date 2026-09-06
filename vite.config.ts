@@ -43,6 +43,16 @@ export default defineConfig({
               },
             },
             {
+              urlPattern: ({ request }) => request.destination === "audio",
+              handler: "CacheFirst",
+              options: {
+                cacheName: "totland-music",
+                expiration: { maxEntries: 10, maxAgeSeconds: 60 * 60 * 24 * 90 },
+                cacheableResponse: { statuses: [0, 200] },
+                rangeRequests: true,
+              },
+            },
+            {
               urlPattern: ({ request }) => request.destination === "image",
               handler: "CacheFirst",
               options: {

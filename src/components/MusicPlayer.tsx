@@ -1,6 +1,6 @@
 import { useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { setMusic, stopMusic } from "@/lib/music";
+import { setMusic, setMusicVolume, stopMusic } from "@/lib/music";
 import { useProfile } from "@/lib/profile";
 
 const SILENT_PREFIXES = ["/parent", "/terms", "/privacy", "/refund"];
@@ -11,6 +11,10 @@ export function MusicPlayer() {
   const { pathname } = useLocation();
   const silent = SILENT_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
   const on = Boolean(profile.music) && !silent;
+
+  useEffect(() => {
+    setMusicVolume(profile.musicVolume ?? 1);
+  }, [profile.musicVolume]);
 
   useEffect(() => {
     setMusic(on);

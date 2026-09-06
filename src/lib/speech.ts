@@ -154,10 +154,14 @@ function playUrl(url: string, token: number) {
   if (token !== playToken || !enabled) return;
   if (typeof window === "undefined") return;
   player ??= new Audio();
+  player.onended = () => duckMusic(false);
+  player.onpause = () => duckMusic(false);
   player.pause();
   player.src = url;
   player.volume = 1;
+  duckMusic(true);
   void player.play().catch(() => {
+    duckMusic(false);
     /* blocked before first tap — silence is fine */
   });
 }

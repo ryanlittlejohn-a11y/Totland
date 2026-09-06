@@ -9,11 +9,12 @@ const DUCK_VOLUME = 0.04;
 let audio: HTMLAudioElement | null = null;
 let wanted = false;
 let ducked = false;
+let level = 1; // parent-set loudness multiplier, 0–1
 let gestureHooked = false;
 let fadeTimer: ReturnType<typeof setInterval> | null = null;
 
 function target(): number {
-  return ducked ? DUCK_VOLUME : BASE_VOLUME;
+  return (ducked ? DUCK_VOLUME : BASE_VOLUME) * level;
 }
 
 function fadeTo(value: number) {
@@ -81,6 +82,13 @@ export function stopMusic() {
 export function setMusic(on: boolean) {
   if (on) startMusic();
   else stopMusic();
+}
+
+/** Set the music loudness (0–1, where 1 is the default soft level). */
+export function setMusicVolume(value: number) {
+  level = Math.min(1, Math.max(0, value));
+  if (audio && !audio.paused) fadeTo(target());
+  else if (audio) audio.volume = target();
 }
 
 /** Dip the music while narration plays. */

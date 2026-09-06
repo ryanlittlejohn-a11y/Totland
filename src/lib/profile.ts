@@ -44,6 +44,8 @@ export interface Profile {
   narration: boolean;
   sfx: boolean;
   music: boolean;
+  /** 0–1 fine-tuning of background music loudness (1 = default soft level) */
+  musicVolume: number;
   reducedMotion: boolean;
   highContrast: boolean;
   premium: boolean;
@@ -82,6 +84,7 @@ export const defaultProfile = (): Profile => ({
   narration: true,
   sfx: true,
   music: true,
+  musicVolume: 1,
   reducedMotion: false,
   highContrast: false,
   premium: false,

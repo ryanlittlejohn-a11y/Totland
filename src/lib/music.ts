@@ -3,8 +3,8 @@
  *  Hannah is speaking. Autoplay blocks are handled by retrying on first tap. */
 import { MUSIC_URL } from "./music-track";
 
-const BASE_VOLUME = 0.12;
-const DUCK_VOLUME = 0.04;
+const BASE_VOLUME = 0.07;
+const DUCK_VOLUME = 0.02;
 
 let audio: HTMLAudioElement | null = null;
 let wanted = false;

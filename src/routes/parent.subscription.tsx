@@ -215,6 +215,7 @@ function Subscription() {
               {a.emoji} {a.title} — {a.activities} activities
             </li>
           ))}
+          <li>✈️ Play anywhere, even with no internet — offline play is part of Premium</li>
           <li>🎁 New content every month, downloaded for offline play</li>
         </ul>
       </section>

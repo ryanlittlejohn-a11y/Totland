@@ -208,6 +208,12 @@ function Home() {
         <p className="mt-2 px-1 font-ui text-sm text-inksoft">
           {L("Unlock every world, puzzle, storybook and tracing game — with no ads and no tracking. Cancel anytime through Paddle.", "Desbloquea todos los mundos, rompecabezas, cuentos y trazos — sin anuncios ni rastreo. Cancela cuando quieras con Paddle.")}
         </p>
+        <p className="mt-2 px-1 font-ui text-sm font-semibold text-ink">
+          {L(
+            "✈️ Play anywhere, even with no internet — offline play is part of Premium.",
+            "✈️ Juega donde sea, incluso sin internet — jugar sin conexión es parte de Premium.",
+          )}
+        </p>
         <div className="mt-3 grid grid-cols-2 gap-2.5">
           <div className="rounded-2xl bg-card p-3 text-center wood-block">
             <p className="font-ui text-xl font-bold text-ink">$2.99</p>

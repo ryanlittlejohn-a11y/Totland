@@ -14,6 +14,7 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
 import { useEntitlementSync } from "../hooks/useEntitlementSync";
 import { registerPWA } from "../lib/pwa-register";
+import { OfflineGate } from "../components/OfflineGate";
 
 
 
@@ -140,7 +141,9 @@ function RootComponent() {
     <QueryClientProvider client={queryClient}>
       <PaymentTestModeBanner />
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <OfflineGate>
+        <Outlet />
+      </OfflineGate>
     </QueryClientProvider>
   );
 }

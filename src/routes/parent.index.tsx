@@ -2,6 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
 import { accuracy, recommendations, skillOf, strengths, useProfile } from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
+import { setMusic } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/parent/")({
@@ -194,6 +195,7 @@ function Dashboard() {
                   const on = e.target.checked;
                   update((p) => ({ ...p, [key]: on }));
                   if (key === "narration") setNarration(on);
+                  if (key === "music") setMusic(on);
                 }}
                 className="size-6 accent-[oklch(0.68_0.148_32)]"
               />

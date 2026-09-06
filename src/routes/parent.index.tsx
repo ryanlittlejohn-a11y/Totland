@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
 import { accuracy, recommendations, skillOf, strengths, useProfile } from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
-import { setMusic } from "@/lib/music";
+import { setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
 
 export const Route = createFileRoute("/parent/")({
@@ -201,6 +201,25 @@ function Dashboard() {
               />
             </label>
           ))}
+          <label className="block text-sm font-medium text-ink">
+            <span className="flex items-center justify-between">
+              Music volume
+              <span className="text-xs font-normal text-inksoft">{Math.round((profile.musicVolume ?? 1) * 100)}%</span>
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={100}
+              step={5}
+              value={Math.round((profile.musicVolume ?? 1) * 100)}
+              onChange={(e) => {
+                const v = Number(e.target.value) / 100;
+                update((p) => ({ ...p, musicVolume: v }));
+                setMusicVolume(v);
+              }}
+              className="mt-1 w-full accent-[oklch(0.68_0.148_32)]"
+            />
+          </label>
         </div>
         <p className="mt-4 text-xs text-inksoft">
           {LIBRARY_SIZE} activities are stored on this device. Progress never leaves it — there is no child account, no

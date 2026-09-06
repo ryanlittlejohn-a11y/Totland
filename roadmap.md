@@ -20,3 +20,7 @@
 ## Remaining
 - [ ] Go live: verify identity in the Payments tab, publish (products + webhook sync to live)
 - [ ] Kids-app policy pages required by the provider review (terms, refund policy, privacy notice)
+
+## Soundtracks (done)
+- [x] Menu screens: Little Steps, Big Dreams; activities: Curious Steps; storybooks: Forest of Wonder
+- [x] Audible volume slider with live preview in the parent dashboard; wider range, ducking kept

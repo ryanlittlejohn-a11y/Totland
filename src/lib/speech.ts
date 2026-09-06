@@ -1,5 +1,9 @@
-/** Narration + gentle sound feedback. Works offline via the platform voice. */
+/** Narration + gentle sound feedback.
+ *  Primary voice: ElevenLabs "Hannah", cached on the device so repeat lines
+ *  play instantly and keep working offline. Falls back to the platform voice
+ *  when a brand-new line is needed with no connection. */
 import { getLang, speechLang } from "./i18n";
+import { speakText } from "./tts.functions";
 
 /** Remove emoji/pictographs so the voice only speaks words. */
 export function stripEmoji(text: string): string {
@@ -13,26 +17,28 @@ let enabled = true;
 
 export function setNarration(on: boolean) {
   enabled = on;
-  if (!on && typeof window !== "undefined" && "speechSynthesis" in window) {
-    window.speechSynthesis.cancel();
+  if (!on) {
+    stopAudio();
+    if (typeof window !== "undefined" && "speechSynthesis" in window) {
+      window.speechSynthesis.cancel();
+    }
   }
 }
 
-/** Prefer warm, natural-sounding voices over robotic defaults. */
+/* ------------------------------------------------------------------ *
+ * Device-voice fallback (used only when Hannah's audio isn't available)
+ * ------------------------------------------------------------------ */
+
 const PREFERRED_VOICES_ES = [
   "monica", "paulina", "helena", "laura", "google español", "sabina", "elvira",
 ];
 
 const PREFERRED_VOICES = [
-  "samantha", // iOS/macOS — warm and clear
-  "karen", "moira", "tessa", // iOS accents, gentle
-  "google us english", // Chrome — natural female voice
-  "zira", // Windows — softer than David
-  "aria", "jenny", // Edge neural voices
+  "samantha", "karen", "moira", "tessa", "google us english", "zira", "aria", "jenny",
 ];
 
 let cachedVoice: SpeechSynthesisVoice | null = null;
-let cachedFor: string = "";
+let cachedFor = "";
 
 function pickWarmVoice(): SpeechSynthesisVoice | null {
   if (cachedFor !== getLang()) cachedVoice = null;
@@ -53,7 +59,6 @@ function pickWarmVoice(): SpeechSynthesisVoice | null {
   return cachedVoice;
 }
 
-// Voices load asynchronously in some browsers — re-resolve when ready.
 if (typeof window !== "undefined" && "speechSynthesis" in window) {
   window.speechSynthesis.onvoiceschanged = () => {
     cachedVoice = null;
@@ -61,15 +66,15 @@ if (typeof window !== "undefined" && "speechSynthesis" in window) {
   };
 }
 
-export function say(text: string, opts: { rate?: number; pitch?: number } = {}) {
-  if (!enabled || typeof window === "undefined" || !("speechSynthesis" in window)) return;
+function sayWithDeviceVoice(text: string, opts: { rate?: number; pitch?: number }) {
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
   try {
     window.speechSynthesis.cancel();
     const u = new SpeechSynthesisUtterance(text);
     const voice = pickWarmVoice();
     if (voice) u.voice = voice;
-    u.rate = opts.rate ?? 0.85; // slightly slower, calmer pacing for little ears
-    u.pitch = opts.pitch ?? 1.15; // gentle warmth without sounding squeaky
+    u.rate = opts.rate ?? 0.85;
+    u.pitch = opts.pitch ?? 1.15;
     u.volume = 0.95;
     u.lang = voice?.lang ?? speechLang();
     window.speechSynthesis.speak(u);
@@ -77,6 +82,137 @@ export function say(text: string, opts: { rate?: number; pitch?: number } = {}) 
     /* narration is optional */
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * Hannah voice: fetch once, cache forever on the device
+ * ------------------------------------------------------------------ */
+
+const VOICE_CACHE = "totland-voice-v1";
+
+function keyFor(text: string, lang: string): string {
+  let h = 2166136261;
+  const s = `${lang}:${text}`;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return `https://voice.totland.local/${lang}-${(h >>> 0).toString(36)}-${s.length}.mp3`;
+}
+
+const memory = new Map<string, string>(); // cache key -> object URL
+
+async function cachedBlobUrl(text: string, lang: string): Promise<string | null> {
+  const key = keyFor(text, lang);
+  const hit = memory.get(key);
+  if (hit) return hit;
+  if (typeof caches === "undefined") return null;
+  try {
+    const cache = await caches.open(VOICE_CACHE);
+    const res = await cache.match(key);
+    if (!res) return null;
+    const url = URL.createObjectURL(await res.blob());
+    memory.set(key, url);
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+async function fetchAndStore(text: string, lang: string): Promise<string | null> {
+  try {
+    const { audio } = await speakText({ data: { text, lang } });
+    const bytes = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
+    const blob = new Blob([bytes], { type: "audio/mpeg" });
+    const key = keyFor(text, lang);
+    if (typeof caches !== "undefined") {
+      try {
+        const cache = await caches.open(VOICE_CACHE);
+        await cache.put(key, new Response(blob, { headers: { "Content-Type": "audio/mpeg" } }));
+      } catch {
+        /* storage full or unavailable — still play this once */
+      }
+    }
+    const url = URL.createObjectURL(blob);
+    memory.set(key, url);
+    return url;
+  } catch {
+    return null;
+  }
+}
+
+let player: HTMLAudioElement | null = null;
+let playToken = 0;
+
+function stopAudio() {
+  if (player) {
+    player.pause();
+    player.currentTime = 0;
+  }
+}
+
+function playUrl(url: string, token: number) {
+  if (token !== playToken || !enabled) return;
+  if (typeof window === "undefined") return;
+  player ??= new Audio();
+  player.pause();
+  player.src = url;
+  player.volume = 1;
+  void player.play().catch(() => {
+    /* blocked before first tap — silence is fine */
+  });
+}
+
+/** Speak a line in Hannah's voice (cached), falling back to the device voice. */
+export function say(text: string, opts: { rate?: number; pitch?: number } = {}) {
+  if (!enabled || typeof window === "undefined") return;
+  const clean = text.trim();
+  if (!clean) return;
+  const lang = getLang();
+  const token = ++playToken;
+
+  stopAudio();
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+  void (async () => {
+    const cached = await cachedBlobUrl(clean, lang);
+    if (cached) {
+      playUrl(cached, token);
+      return;
+    }
+    if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      if (token === playToken) sayWithDeviceVoice(clean, opts);
+      return;
+    }
+    const fresh = await fetchAndStore(clean, lang);
+    if (fresh) playUrl(fresh, token);
+    else if (token === playToken) sayWithDeviceVoice(clean, opts);
+  })();
+}
+
+/** Quietly download common lines so offline play still sounds like Hannah. */
+export async function prewarmVoice(lines: string[], lang = getLang()) {
+  if (typeof window === "undefined" || typeof caches === "undefined") return;
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+  const queue = [...new Set(lines.map((l) => l.trim()).filter(Boolean))];
+  const worker = async () => {
+    while (queue.length) {
+      const line = queue.shift()!;
+      const key = keyFor(line, lang);
+      try {
+        const cache = await caches.open(VOICE_CACHE);
+        if (await cache.match(key)) continue;
+      } catch {
+        return;
+      }
+      await fetchAndStore(line, lang);
+    }
+  };
+  await Promise.all([worker(), worker()]);
+}
+
+/* ------------------------------------------------------------------ *
+ * Sound feedback
+ * ------------------------------------------------------------------ */
 
 let ctx: AudioContext | null = null;
 function tone(freq: number, when: number, dur: number, gain: number) {

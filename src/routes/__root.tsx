@@ -14,6 +14,8 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
 import { useEntitlementSync } from "../hooks/useEntitlementSync";
 import { registerPWA } from "../lib/pwa-register";
+import { prewarmCommonNarration } from "../lib/voice-prewarm";
+
 import { OfflineGate } from "../components/OfflineGate";
 
 
@@ -135,7 +137,9 @@ function RootComponent() {
 
   useEffect(() => {
     registerPWA();
+    prewarmCommonNarration();
   }, []);
+
 
   return (
     <QueryClientProvider client={queryClient}>

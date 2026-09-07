@@ -62,7 +62,9 @@ function ensureAudio(): HTMLAudioElement | null {
     audio.loop = true;
     audio.preload = "auto";
     currentUrl = url;
-    registerAudio(audio);
+    // The soundtrack starts itself on the first tap (see hookGesture), so it
+    // must not be muted-primed like the narration element.
+
   } else if (currentUrl !== url) {
     // Keep the same element (it already has permission to make sound) and
     // simply swap the tune.

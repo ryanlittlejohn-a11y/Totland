@@ -3,6 +3,7 @@
  *  under narration: volume is low and ducks further while Hannah is speaking.
  *  Autoplay blocks are handled by retrying on first tap. */
 import { ACTIVITY_TRACK_URL, MENU_TRACK_URL, STORY_TRACK_URL } from "./music-track";
+import { onGesture, onUnlock } from "./audio-unlock";
 
 /** Slider 0–1 maps to 0–0.25 playback volume; default 0.5 ≈ 7% (very soft). */
 const MAX_VOLUME = 0.25;
@@ -61,10 +62,16 @@ function ensureAudio(): HTMLAudioElement | null {
     audio.loop = true;
     audio.preload = "auto";
     currentUrl = url;
+    // The soundtrack starts itself on the first tap (see hookGesture), so it
+    // must not be muted-primed like the narration element.
+
   } else if (currentUrl !== url) {
+    // Keep the same element (it already has permission to make sound) and
+    // simply swap the tune.
     audio.pause();
     audio.src = url;
     currentUrl = url;
+    audio.load();
   }
   audio.volume = target();
   return audio;
@@ -73,23 +80,25 @@ function ensureAudio(): HTMLAudioElement | null {
 function hookGesture() {
   if (gestureHooked || typeof window === "undefined") return;
   gestureHooked = true;
-  const retry = () => {
-    if (wanted) void tryPlay();
-  };
-  window.addEventListener("pointerdown", retry, { passive: true });
-  window.addEventListener("keydown", retry);
+  onGesture(() => {
+    if (wanted && audio?.paused) void tryPlay();
+  });
 }
 
 async function tryPlay() {
   const el = ensureAudio();
   if (!el) return;
+  hookGesture(); // always retry on the next tap if the browser refuses
   try {
     el.volume = target();
     await el.play();
   } catch {
-    hookGesture(); // blocked until the child taps — retry then
+    onUnlock(() => {
+      if (wanted) void tryPlay();
+    });
   }
 }
+
 
 /** Point the player at a new screen so the right soundtrack is selected. */
 export function setMusicRoute(pathname: string) {

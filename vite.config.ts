@@ -21,6 +21,8 @@ export default defineConfig({
         filename: "sw.js",
         devOptions: { enabled: false },
         workbox: {
+          skipWaiting: true,
+          clientsClaim: true,
           globPatterns: ["**/*.{js,css,html,ico,png,svg,webmanifest,woff2}"],
           navigateFallback: "/",
           navigateFallbackDenylist: [/^\/~oauth/],

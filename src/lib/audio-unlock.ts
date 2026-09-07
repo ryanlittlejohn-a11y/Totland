@@ -9,39 +9,52 @@ const onEveryGesture = new Set<() => void>();
 let unlocked = false;
 let hooked = false;
 
-function prime(el: HTMLAudioElement) {
+/** A fraction of a second of silence — enough for the browser to count the
+ *  element as "played by a tap" before it has any real audio loaded. */
+const SILENCE =
+  "data:audio/wav;base64,UklGRiwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgAAACAgICAgICAgA==";
+
+
+async function prime(el: HTMLAudioElement): Promise<void> {
   if (!el.paused) return;
   const wasMuted = el.muted;
+  const hadSource = Boolean(el.src);
   el.muted = true;
+  if (!hadSource) el.src = SILENCE;
   try {
-    const p = el.play();
-    if (p && typeof p.then === "function") {
-      void p
-        .then(() => {
-          el.pause();
-          el.muted = wasMuted;
-        })
-        .catch(() => {
-          el.muted = wasMuted;
-        });
-    } else {
-      el.pause();
-      el.muted = wasMuted;
-    }
+    await el.play();
+    el.pause();
   } catch {
+    /* still locked — the next tap tries again */
+  } finally {
     el.muted = wasMuted;
+    if (!hadSource) el.removeAttribute("src");
   }
 }
 
+function withTimeout(work: Promise<unknown>): Promise<unknown> {
+  return Promise.race([
+    work,
+    new Promise((resolve) => setTimeout(resolve, 500)),
+  ]);
+}
+
 function handleGesture() {
-  if (!unlocked) {
-    unlocked = true;
-    for (const el of elements) prime(el);
+  if (unlocked) {
+    for (const fn of onEveryGesture) fn();
+    return;
+  }
+  unlocked = true;
+  // Prime first, then let waiters play — otherwise priming's pause() aborts
+  // the very playback we just unlocked. Never wait longer than half a second.
+  void withTimeout(Promise.allSettled([...elements].map(prime))).then(() => {
     for (const fn of onceUnlocked) fn();
     onceUnlocked.clear();
-  }
-  for (const fn of onEveryGesture) fn();
+    for (const fn of onEveryGesture) fn();
+  });
 }
+
+
 
 function hook() {
   if (hooked || typeof window === "undefined") return;
@@ -57,7 +70,7 @@ hook();
 export function registerAudio(el: HTMLAudioElement) {
   hook();
   elements.add(el);
-  if (unlocked) prime(el);
+  if (unlocked) void prime(el);
 }
 
 /** Run once as soon as sound is allowed (immediately if it already is). */

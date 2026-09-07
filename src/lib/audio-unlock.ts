@@ -9,10 +9,19 @@ const onEveryGesture = new Set<() => void>();
 let unlocked = false;
 let hooked = false;
 
+/** A fraction of a second of silence — enough for the browser to count the
+ *  element as "played by a tap" before it has any real audio loaded. */
+const SILENCE =
+  "data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA" +
+  "gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgP/7kMQAAAAA" +
+  "AAAAAAAAAAAAAAAAAA==";
+
 async function prime(el: HTMLAudioElement): Promise<void> {
   if (!el.paused) return;
   const wasMuted = el.muted;
+  const hadSource = Boolean(el.src);
   el.muted = true;
+  if (!hadSource) el.src = SILENCE;
   try {
     await el.play();
     el.pause();
@@ -20,7 +29,15 @@ async function prime(el: HTMLAudioElement): Promise<void> {
     /* still locked — the next tap tries again */
   } finally {
     el.muted = wasMuted;
+    if (!hadSource) el.removeAttribute("src");
   }
+}
+
+function withTimeout(work: Promise<unknown>): Promise<unknown> {
+  return Promise.race([
+    work,
+    new Promise((resolve) => setTimeout(resolve, 500)),
+  ]);
 }
 
 function handleGesture() {
@@ -30,13 +47,14 @@ function handleGesture() {
   }
   unlocked = true;
   // Prime first, then let waiters play — otherwise priming's pause() aborts
-  // the very playback we just unlocked.
-  void Promise.all([...elements].map(prime)).then(() => {
+  // the very playback we just unlocked. Never wait longer than half a second.
+  void withTimeout(Promise.allSettled([...elements].map(prime))).then(() => {
     for (const fn of onceUnlocked) fn();
     onceUnlocked.clear();
     for (const fn of onEveryGesture) fn();
   });
 }
+
 
 
 function hook() {

@@ -61,10 +61,14 @@ function ensureAudio(): HTMLAudioElement | null {
     audio.loop = true;
     audio.preload = "auto";
     currentUrl = url;
+    registerAudio(audio);
   } else if (currentUrl !== url) {
+    // Keep the same element (it already has permission to make sound) and
+    // simply swap the tune.
     audio.pause();
     audio.src = url;
     currentUrl = url;
+    audio.load();
   }
   audio.volume = target();
   return audio;
@@ -73,23 +77,25 @@ function ensureAudio(): HTMLAudioElement | null {
 function hookGesture() {
   if (gestureHooked || typeof window === "undefined") return;
   gestureHooked = true;
-  const retry = () => {
-    if (wanted) void tryPlay();
-  };
-  window.addEventListener("pointerdown", retry, { passive: true });
-  window.addEventListener("keydown", retry);
+  onGesture(() => {
+    if (wanted && audio?.paused) void tryPlay();
+  });
 }
 
 async function tryPlay() {
   const el = ensureAudio();
   if (!el) return;
+  hookGesture(); // always retry on the next tap if the browser refuses
   try {
     el.volume = target();
     await el.play();
   } catch {
-    hookGesture(); // blocked until the child taps — retry then
+    onUnlock(() => {
+      if (wanted) void tryPlay();
+    });
   }
 }
+
 
 /** Point the player at a new screen so the right soundtrack is selected. */
 export function setMusicRoute(pathname: string) {

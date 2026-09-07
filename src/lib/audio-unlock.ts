@@ -12,9 +12,8 @@ let hooked = false;
 /** A fraction of a second of silence — enough for the browser to count the
  *  element as "played by a tap" before it has any real audio loaded. */
 const SILENCE =
-  "data:audio/mpeg;base64,//uQxAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAACcQCA" +
-  "gICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgP/7kMQAAAAA" +
-  "AAAAAAAAAAAAAAAAAA==";
+  "data:audio/wav;base64,UklGRiwAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQgAAACAgICAgICAgA==";
+
 
 async function prime(el: HTMLAudioElement): Promise<void> {
   if (!el.paused) return;

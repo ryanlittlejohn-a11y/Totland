@@ -53,7 +53,7 @@ hook();
 export function registerAudio(el: HTMLAudioElement) {
   hook();
   elements.add(el);
-  if (unlocked) prime(el);
+  if (unlocked) void prime(el);
 }
 
 /** Run once as soon as sound is allowed (immediately if it already is). */

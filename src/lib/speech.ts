@@ -144,8 +144,24 @@ async function fetchAndStore(text: string, lang: string): Promise<string | null>
   }
 }
 
-let player: HTMLAudioElement | null = null;
+/** One narration element for the whole session: created up front and primed on
+ *  the first tap, so Hannah is never blocked partway through an activity. */
+const player: HTMLAudioElement | null = typeof window === "undefined" ? null : new Audio();
+if (player) {
+  player.preload = "auto";
+  registerAudio(player);
+}
 let playToken = 0;
+let pendingUrl: string | null = null;
+
+if (typeof window !== "undefined") {
+  onGesture(() => {
+    if (!pendingUrl) return;
+    const url = pendingUrl;
+    pendingUrl = null;
+    playUrl(url, playToken);
+  });
+}
 
 function stopAudio() {
   if (player) {
@@ -157,19 +173,20 @@ function stopAudio() {
 
 function playUrl(url: string, token: number) {
   if (token !== playToken || !enabled) return;
-  if (typeof window === "undefined") return;
-  player ??= new Audio();
+  if (!player) return;
   player.onended = () => duckMusic(false);
   player.onpause = () => duckMusic(false);
   player.pause();
   player.src = url;
   player.volume = 1;
+  player.muted = false;
   duckMusic(true);
   void player.play().catch(() => {
     duckMusic(false);
-    /* blocked before first tap — silence is fine */
+    pendingUrl = url; // refused: replay on the next tap
   });
 }
+
 
 /** Speak a line in Hannah's voice (cached), falling back to the device voice. */
 export function say(text: string, opts: { rate?: number; pitch?: number } = {}) {

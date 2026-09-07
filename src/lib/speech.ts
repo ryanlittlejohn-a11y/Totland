@@ -5,6 +5,7 @@
 import { getLang, speechLang } from "./i18n";
 import { speakText } from "./tts.functions";
 import { duckMusic } from "./music";
+import { onGesture, registerAudio } from "./audio-unlock";
 
 /** Remove emoji/pictographs so the voice only speaks words. */
 export function stripEmoji(text: string): string {

@@ -9,39 +9,35 @@ const onEveryGesture = new Set<() => void>();
 let unlocked = false;
 let hooked = false;
 
-function prime(el: HTMLAudioElement) {
+async function prime(el: HTMLAudioElement): Promise<void> {
   if (!el.paused) return;
   const wasMuted = el.muted;
   el.muted = true;
   try {
-    const p = el.play();
-    if (p && typeof p.then === "function") {
-      void p
-        .then(() => {
-          el.pause();
-          el.muted = wasMuted;
-        })
-        .catch(() => {
-          el.muted = wasMuted;
-        });
-    } else {
-      el.pause();
-      el.muted = wasMuted;
-    }
+    await el.play();
+    el.pause();
   } catch {
+    /* still locked — the next tap tries again */
+  } finally {
     el.muted = wasMuted;
   }
 }
 
 function handleGesture() {
-  if (!unlocked) {
-    unlocked = true;
-    for (const el of elements) prime(el);
+  if (unlocked) {
+    for (const fn of onEveryGesture) fn();
+    return;
+  }
+  unlocked = true;
+  // Prime first, then let waiters play — otherwise priming's pause() aborts
+  // the very playback we just unlocked.
+  void Promise.all([...elements].map(prime)).then(() => {
     for (const fn of onceUnlocked) fn();
     onceUnlocked.clear();
-  }
-  for (const fn of onEveryGesture) fn();
+    for (const fn of onEveryGesture) fn();
+  });
 }
+
 
 function hook() {
   if (hooked || typeof window === "undefined") return;

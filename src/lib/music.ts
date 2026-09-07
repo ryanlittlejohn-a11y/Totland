@@ -3,6 +3,7 @@
  *  under narration: volume is low and ducks further while Hannah is speaking.
  *  Autoplay blocks are handled by retrying on first tap. */
 import { ACTIVITY_TRACK_URL, MENU_TRACK_URL, STORY_TRACK_URL } from "./music-track";
+import { onGesture, onUnlock, registerAudio } from "./audio-unlock";
 
 /** Slider 0–1 maps to 0–0.25 playback volume; default 0.5 ≈ 7% (very soft). */
 const MAX_VOLUME = 0.25;

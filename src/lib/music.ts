@@ -9,7 +9,7 @@ import { onGesture, onUnlock } from "./audio-unlock";
 const MAX_VOLUME = 0.25;
 const DEFAULT_LEVEL = 0.5;
 
-const ACTIVITY_PREFIXES = ["/play", "/game"];
+const ACTIVITY_PREFIXES = ["/play", "/game", "/adventure"];
 
 /** Which soundtrack a route belongs to. */
 export function isActivityRoute(pathname: string): boolean {

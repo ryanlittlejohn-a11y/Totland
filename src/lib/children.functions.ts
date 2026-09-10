@@ -8,7 +8,8 @@ export interface RemoteChild {
   age: number;
   outfit: string;
   avatarBg: string;
-  data: Record<string, unknown>;
+  /** the child's saved progress, as JSON text */
+  data: string;
   updatedAt: string;
 }
 
@@ -30,7 +31,7 @@ export const listChildren = createServerFn({ method: "GET" })
       age: row.age,
       outfit: row.outfit,
       avatarBg: row.avatar_bg,
-      data: (row.data ?? {}) as Record<string, unknown>,
+      data: JSON.stringify(row.data ?? {}),
       updatedAt: row.updated_at,
     }));
   });
@@ -44,7 +45,7 @@ export const upsertChild = createServerFn({ method: "POST" })
       age: number;
       outfit: string;
       avatarBg: string;
-      data: Record<string, unknown>;
+      data: string;
     }) => data,
   )
   .handler(async ({ data, context }) => {
@@ -56,7 +57,7 @@ export const upsertChild = createServerFn({ method: "POST" })
         age: data.age,
         outfit: data.outfit,
         avatar_bg: data.avatarBg,
-        data: data.data,
+        data: JSON.parse(data.data) as never,
         updated_at: new Date().toISOString(),
       },
       { onConflict: "id" },

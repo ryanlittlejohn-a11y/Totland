@@ -1,10 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
-import { accuracy, recommendations, skillOf, strengths, useProfile } from "@/lib/profile";
+import {
+  accuracy,
+  recommendations,
+  skillOf,
+  strengths,
+  updateChild,
+  useFamily,
+  useProfile,
+} from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
+
 
 export const Route = createFileRoute("/parent/")({
   head: () => ({
@@ -20,12 +29,17 @@ export const Route = createFileRoute("/parent/")({
 
 function Dashboard() {
   const { profile, update } = useProfile();
-  const letters = skillOf(profile, "letters");
-  const numbers = skillOf(profile, "numbers");
-  const today = profile.days.find((d) => d.date === new Date().toISOString().slice(0, 10));
-  const totalAttempts = Object.values(profile.skills).reduce((n, s) => n + s.attempts, 0);
-  const totalCorrect = Object.values(profile.skills).reduce((n, s) => n + s.correct, 0);
+  const { children, activeId } = useFamily();
+  const [selId, setSelId] = useState<string | null>(null);
+  const selected = children.find((c) => c.id === (selId ?? activeId)) ?? children[0] ?? null;
+  const stats = selected ? selected.profile : profile;
+  const letters = skillOf(stats, "letters");
+  const numbers = skillOf(stats, "numbers");
+  const today = stats.days.find((d) => d.date === new Date().toISOString().slice(0, 10));
+  const totalAttempts = Object.values(stats.skills).reduce((n, s) => n + s.attempts, 0);
+  const totalCorrect = Object.values(stats.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+
 
   // Live music preview so the volume slider is audible while adjusting it.
   useEffect(() => {
@@ -35,17 +49,35 @@ function Dashboard() {
 
   return (
     <div className="space-y-4">
+      {children.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {children.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setSelId(c.id)}
+              className={`shrink-0 rounded-xl px-4 py-2 font-ui text-sm font-semibold ${
+                selected?.id === c.id ? "bg-night text-cream" : "bg-card text-ink"
+              }`}
+            >
+              {c.profile.outfit} {c.profile.childName}
+              {c.id === activeId ? " · playing" : ""}
+            </button>
+          ))}
+        </div>
+      )}
       <section className="rounded-3xl bg-night p-5 text-cream wood-block">
         <div className="flex items-baseline justify-between">
           <p className="font-semibold">This week</p>
           <p className="text-sm text-cream/50">
-            {profile.childName} · age {profile.age}
+            {stats.childName} · age {stats.age}
           </p>
         </div>
+
         <div className="mt-4 grid grid-cols-3 gap-2">
           {[
             { label: "Time today", value: `${today?.minutes ?? 0}m` },
-            { label: "Games", value: profile.gamesCompleted },
+            { label: "Games", value: stats.gamesCompleted },
             { label: "Accuracy", value: `${overall}%` },
           ].map((s) => (
             <div key={s.label} className="rounded-xl bg-cream/5 p-3 ring-1 ring-cream/10">
@@ -88,12 +120,12 @@ function Dashboard() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-1.5">
-          {strengths(profile).map((s) => (
+          {strengths(stats).map((s) => (
             <span key={s} className="rounded-full bg-moss/15 px-2.5 py-1 text-[11px] font-medium text-moss">
               Strength · {s}
             </span>
           ))}
-          {recommendations(profile).map((r) => (
+          {recommendations(stats).map((r) => (
             <span key={r.skill} className="rounded-full bg-sky/15 px-2.5 py-1 text-[11px] font-medium text-sky">
               Practice · {r.skill}
             </span>
@@ -101,7 +133,7 @@ function Dashboard() {
         </div>
 
         <p className="mt-4 text-xs font-medium text-cream/60">Recommended next</p>
-        {recommendations(profile).map((r) => (
+        {recommendations(stats).map((r) => (
           <Link
             key={r.skill}
             to="/play/$area"
@@ -120,7 +152,7 @@ function Dashboard() {
         <h2 className="font-ui text-lg font-bold text-ink">Per-area progress</h2>
         <div className="mt-3 space-y-2">
           {AREAS.map((a) => {
-            const s = skillOf(profile, a.id);
+            const s = skillOf(stats, a.id);
             return (
               <div key={a.id} className="flex items-center gap-3">
                 <span className="w-40 shrink-0 text-sm font-medium text-ink">
@@ -144,8 +176,12 @@ function Dashboard() {
           <label className="flex items-center justify-between text-sm font-medium text-ink">
             Child's name
             <input
-              value={profile.childName}
-              onChange={(e) => update((p) => ({ ...p, childName: e.target.value }))}
+              value={stats.childName}
+              onChange={(e) =>
+                selected
+                  ? updateChild(selected.id, (p) => ({ ...p, childName: e.target.value }))
+                  : update((p) => ({ ...p, childName: e.target.value }))
+              }
               className="w-44 rounded-xl bg-felt px-3 py-2 outline-none ring-1 ring-border"
             />
           </label>
@@ -155,11 +191,16 @@ function Dashboard() {
               type="number"
               min={2}
               max={6}
-              value={profile.age}
-              onChange={(e) => update((p) => ({ ...p, age: Number(e.target.value) }))}
+              value={stats.age}
+              onChange={(e) =>
+                selected
+                  ? updateChild(selected.id, (p) => ({ ...p, age: Number(e.target.value) }))
+                  : update((p) => ({ ...p, age: Number(e.target.value) }))
+              }
               className="w-44 rounded-xl bg-felt px-3 py-2 outline-none ring-1 ring-border"
             />
           </label>
+
           <div className="flex items-center justify-between text-sm font-medium text-ink">
             App language
             <div className="flex gap-2">

@@ -72,7 +72,9 @@ function ParentLayout() {
       <nav className="mt-4 flex gap-2 overflow-x-auto pb-1">
         {[
           { to: "/parent", label: "Dashboard", exact: true },
+          { to: "/parent/children", label: "Children" },
           { to: "/parent/subscription", label: "Subscription" },
+
           { to: "/parent/rights", label: "Content rights" },
           { to: "/parent/cms", label: "Content studio" },
         ].map((t) => (

@@ -19,10 +19,10 @@
     "rolldown": "1.2.1"
   },
   "dependencies": {
-    "@capacitor/app": "^8.1.1",
+    "@capacitor/app": "^7",
     "@capacitor/core": "^7",
-    "@capacitor/splash-screen": "^8.0.2",
-    "@capacitor/status-bar": "^8.0.3",
+    "@capacitor/splash-screen": "^7",
+    "@capacitor/status-bar": "^7",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@paddle/paddle-node-sdk": "^3.10.0",

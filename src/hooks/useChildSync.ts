@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
-import { deleteChild, listChildren, upsertChild } from "@/lib/children.functions";
+import { deleteChild, listChildren, upsertChild, type RemoteChild } from "@/lib/children.functions";
 import {
   defaultProfile,
   loadFamily,
@@ -37,7 +37,7 @@ export function useChildSync() {
       if (!(await signedIn())) return;
       running = true;
       try {
-        const remote = await list();
+        const remote = (await list()) as RemoteChild[];
         const remoteById = new Map(remote.map((r) => [r.id, r]));
         const local = loadFamily();
         const next: ChildRecord[] = [];
@@ -55,7 +55,7 @@ export function useChildSync() {
           if (r && remoteNewer && !child.dirty) {
             next.push({
               id: r.id,
-              profile: { ...defaultProfile(), ...(r.data as Partial<Profile>), childName: r.name, age: r.age },
+              profile: { ...defaultProfile(), ...(JSON.parse(r.data) as Partial<Profile>), childName: r.name, age: r.age },
               updatedAt: r.updatedAt,
               dirty: false,
             });
@@ -69,7 +69,7 @@ export function useChildSync() {
               age: child.profile.age,
               outfit: child.profile.outfit,
               avatarBg: child.profile.avatarBg,
-              data: child.profile as unknown as Record<string, unknown>,
+              data: JSON.stringify(child.profile),
             },
           });
           next.push({ ...child, dirty: false });
@@ -79,7 +79,7 @@ export function useChildSync() {
         for (const r of remoteById.values()) {
           next.push({
             id: r.id,
-            profile: { ...defaultProfile(), ...(r.data as Partial<Profile>), childName: r.name, age: r.age },
+            profile: { ...defaultProfile(), ...(JSON.parse(r.data) as Partial<Profile>), childName: r.name, age: r.age },
             updatedAt: r.updatedAt,
             dirty: false,
           });

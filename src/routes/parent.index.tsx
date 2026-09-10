@@ -158,8 +158,12 @@ function Dashboard() {
           <label className="flex items-center justify-between text-sm font-medium text-ink">
             Child's name
             <input
-              value={profile.childName}
-              onChange={(e) => update((p) => ({ ...p, childName: e.target.value }))}
+              value={stats.childName}
+              onChange={(e) =>
+                selected
+                  ? updateChild(selected.id, (p) => ({ ...p, childName: e.target.value }))
+                  : update((p) => ({ ...p, childName: e.target.value }))
+              }
               className="w-44 rounded-xl bg-felt px-3 py-2 outline-none ring-1 ring-border"
             />
           </label>
@@ -169,11 +173,16 @@ function Dashboard() {
               type="number"
               min={2}
               max={6}
-              value={profile.age}
-              onChange={(e) => update((p) => ({ ...p, age: Number(e.target.value) }))}
+              value={stats.age}
+              onChange={(e) =>
+                selected
+                  ? updateChild(selected.id, (p) => ({ ...p, age: Number(e.target.value) }))
+                  : update((p) => ({ ...p, age: Number(e.target.value) }))
+              }
               className="w-44 rounded-xl bg-felt px-3 py-2 outline-none ring-1 ring-border"
             />
           </label>
+
           <div className="flex items-center justify-between text-sm font-medium text-ink">
             App language
             <div className="flex gap-2">

@@ -10,6 +10,8 @@ import { ParentAuthCard } from "@/components/ParentAuthCard";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription, type SubscriptionState } from "@/lib/subscription.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { isNativeApp, nativePlatform } from "@/lib/native";
+import { StorePurchasePanel } from "@/components/StorePurchasePanel";
 
 export const Route = createFileRoute("/parent/subscription")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -103,6 +105,8 @@ function Subscription() {
 
   const active = emailVerified && (sub?.active ?? false);
   const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
+  const native = isNativeApp();
+  const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
 
   return (
     <div className="space-y-4">
@@ -169,17 +173,26 @@ function Subscription() {
             )}
             {sub?.status === "past_due" && (
               <p className="mt-2 text-clay">
-                Your last payment didn't go through. Please update your card at paddle.net to keep premium.
+                Your last payment didn't go through. Please update your payment details to keep premium.
               </p>
             )}
-            <p className="mt-2 text-inksoft">
-              To switch plans, update your card, or cancel, visit{" "}
-              <a href="https://paddle.net" target="_blank" rel="noopener noreferrer" className="underline">
-                paddle.net
-              </a>{" "}
-              with the email you used at checkout. Canceling keeps premium until the end of your paid period.
-            </p>
+            {native ? (
+              <p className="mt-2 text-inksoft">
+                To switch plans or cancel, open your device settings and manage subscriptions in {storeName}.
+                Canceling keeps premium until the end of your paid period.
+              </p>
+            ) : (
+              <p className="mt-2 text-inksoft">
+                To switch plans, update your card, or cancel, visit{" "}
+                <a href="https://paddle.net" target="_blank" rel="noopener noreferrer" className="underline">
+                  paddle.net
+                </a>{" "}
+                with the email you used at checkout. Canceling keeps premium until the end of your paid period.
+              </p>
+            )}
           </div>
+        ) : native ? (
+          <StorePurchasePanel userId={user.id} onEntitlementChanged={() => void waitForActivation()} />
         ) : (
           <>
             <div className="mt-4 grid grid-cols-2 gap-3">

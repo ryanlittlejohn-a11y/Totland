@@ -62,6 +62,7 @@ export type Database = {
           paddle_subscription_id: string
           price_id: string
           product_id: string
+          source: string
           status: string
           updated_at: string
           user_id: string
@@ -77,6 +78,7 @@ export type Database = {
           paddle_subscription_id: string
           price_id: string
           product_id: string
+          source?: string
           status?: string
           updated_at?: string
           user_id: string
@@ -92,6 +94,7 @@ export type Database = {
           paddle_subscription_id?: string
           price_id?: string
           product_id?: string
+          source?: string
           status?: string
           updated_at?: string
           user_id?: string

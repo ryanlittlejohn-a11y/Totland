@@ -9,12 +9,20 @@
     "build:dev": "vite build --mode development",
     "preview": "vite preview",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "build:app": "CAP_BUILD=1 vite build && node scripts/prepare-native-bundle.mjs",
+    "sync:app": "bun run build:app && cap sync",
+    "open:ios": "cap open ios",
+    "open:android": "cap open android"
   },
   "overrides": {
     "rolldown": "1.2.1"
   },
   "dependencies": {
+    "@capacitor/app": "^7",
+    "@capacitor/core": "^7",
+    "@capacitor/splash-screen": "^7",
+    "@capacitor/status-bar": "^7",
     "@hookform/resolvers": "^5.2.2",
     "@lovable.dev/cloud-auth-js": "^1.1.2",
     "@paddle/paddle-node-sdk": "^3.10.0",
@@ -44,6 +52,7 @@
     "@radix-ui/react-toggle": "^1.1.10",
     "@radix-ui/react-toggle-group": "^1.1.11",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@revenuecat/purchases-capacitor": "^13.5.0",
     "@supabase/supabase-js": "^2.115.0",
     "@tailwindcss/vite": "^4.2.1",
     "@tanstack/react-query": "^5.101.1",
@@ -72,6 +81,9 @@
     "zod": "^3.24.2"
   },
   "devDependencies": {
+    "@capacitor/android": "^7",
+    "@capacitor/cli": "^7",
+    "@capacitor/ios": "^7",
     "@eslint/js": "^9.32.0",
     "@lovable.dev/vite-tanstack-config": "^2.20.0",
     "@types/node": "^22.16.5",

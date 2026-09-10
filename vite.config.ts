@@ -7,11 +7,24 @@
 import { defineConfig } from "@lovable.dev/vite-tanstack-config";
 import { VitePWA } from "vite-plugin-pwa";
 
+// Set by `bun run build:app` to produce the static bundle packaged inside the
+// iOS / Android app. The normal web build is untouched.
+const nativeBuild = process.env["CAP_BUILD"] === "1";
+
 export default defineConfig({
   tanstackStart: {
     // Redirect TanStack Start's bundled server entry to src/server.ts (our SSR error wrapper).
     // nitro/vite builds from this
     server: { entry: "server" },
+    ...(nativeBuild
+      ? {
+          spa: {
+            enabled: true,
+            maskPath: "/",
+            prerender: { enabled: true, crawlLinks: false, outputPath: "/index.html" },
+          },
+        }
+      : {}),
   },
   vite: {
     plugins: [

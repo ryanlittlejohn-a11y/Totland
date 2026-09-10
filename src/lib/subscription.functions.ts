@@ -18,32 +18,42 @@ export const getMySubscription = createServerFn({ method: "GET" })
   .middleware([requireSupabaseAuth])
   .inputValidator((data: { environment: "sandbox" | "live" }) => data)
   .handler(async ({ data, context }): Promise<SubscriptionState> => {
+    // Website purchases are scoped to the payment environment; App Store and
+    // Google Play purchases are always counted for the signed-in parent.
     const { data: rows, error } = await context.supabase
       .from("subscriptions")
-      .select("status, price_id, current_period_end, cancel_at_period_end")
+      .select("status, price_id, current_period_end, cancel_at_period_end, source, environment")
       .eq("user_id", context.userId)
-      .eq("environment", data.environment)
       .order("created_at", { ascending: false })
-      .limit(1);
+      .limit(20);
 
     if (error) throw error;
 
-    const row = rows?.[0];
-    if (!row) {
+    const relevant = (rows ?? []).filter(
+      (r) => r.source !== "paddle" || r.environment === data.environment,
+    );
+
+    const evaluate = (row: (typeof relevant)[number]) => {
+      const end = row.current_period_end ? new Date(row.current_period_end).getTime() : null;
+      const stillInPeriod = end === null || end > Date.now();
+      const active =
+        (["active", "trialing", "past_due"].includes(row.status) && stillInPeriod) ||
+        (row.status === "canceled" && end !== null && end > Date.now());
+      return { row, active };
+    };
+
+    const evaluated = relevant.map(evaluate);
+    const chosen = evaluated.find((e) => e.active) ?? evaluated[0];
+
+    if (!chosen) {
       return { active: false, status: null, priceId: null, currentPeriodEnd: null, cancelAtPeriodEnd: false };
     }
 
-    const end = row.current_period_end ? new Date(row.current_period_end).getTime() : null;
-    const stillInPeriod = end === null || end > Date.now();
-    const active =
-      (["active", "trialing", "past_due"].includes(row.status) && stillInPeriod) ||
-      (row.status === "canceled" && end !== null && end > Date.now());
-
     return {
-      active,
-      status: row.status,
-      priceId: row.price_id,
-      currentPeriodEnd: row.current_period_end,
-      cancelAtPeriodEnd: row.cancel_at_period_end ?? false,
+      active: chosen.active,
+      status: chosen.row.status,
+      priceId: chosen.row.price_id,
+      currentPeriodEnd: chosen.row.current_period_end,
+      cancelAtPeriodEnd: chosen.row.cancel_at_period_end ?? false,
     };
   });

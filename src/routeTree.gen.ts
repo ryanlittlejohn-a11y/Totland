@@ -27,7 +27,6 @@ import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscrip
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
 import { Route as WorldWorldIdRouteImport } from './routes/world.$worldId'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
-import { Route as ApiPublicRcWebhookRouteImport } from './routes/api/public/rc/webhook'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -120,11 +119,6 @@ const ApiPublicPaymentsWebhookRoute =
     path: '/api/public/payments/webhook',
     getParentRoute: () => rootRouteImport,
   } as any)
-const ApiPublicRcWebhookRoute = ApiPublicRcWebhookRouteImport.update({
-  id: '/api/public/rc/webhook',
-  path: '/api/public/rc/webhook',
-  getParentRoute: () => rootRouteImport,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -145,7 +139,6 @@ export interface FileRoutesByFullPath {
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/public/rc/webhook': typeof ApiPublicRcWebhookRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -165,7 +158,6 @@ export interface FileRoutesByTo {
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent': typeof ParentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/public/rc/webhook': typeof ApiPublicRcWebhookRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -187,7 +179,6 @@ export interface FileRoutesById {
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
-  '/api/public/rc/webhook': typeof ApiPublicRcWebhookRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -210,7 +201,6 @@ export interface FileRouteTypes {
     | '/world/$worldId'
     | '/parent/'
     | '/api/public/payments/webhook'
-    | '/api/public/rc/webhook'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -230,7 +220,6 @@ export interface FileRouteTypes {
     | '/world/$worldId'
     | '/parent'
     | '/api/public/payments/webhook'
-    | '/api/public/rc/webhook'
   id:
     | '__root__'
     | '/'
@@ -251,7 +240,6 @@ export interface FileRouteTypes {
     | '/world/$worldId'
     | '/parent/'
     | '/api/public/payments/webhook'
-    | '/api/public/rc/webhook'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -268,7 +256,6 @@ export interface RootRouteChildren {
   PlayAreaRoute: typeof PlayAreaRoute
   WorldWorldIdRoute: typeof WorldWorldIdRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
-  ApiPublicRcWebhookRoute: typeof ApiPublicRcWebhookRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -399,13 +386,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicPaymentsWebhookRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/api/public/rc/webhook': {
-      id: '/api/public/rc/webhook'
-      path: '/api/public/rc/webhook'
-      fullPath: '/api/public/rc/webhook'
-      preLoaderRoute: typeof ApiPublicRcWebhookRouteImport
-      parentRoute: typeof rootRouteImport
-    }
   }
 }
 
@@ -442,7 +422,6 @@ const rootRouteChildren: RootRouteChildren = {
   PlayAreaRoute: PlayAreaRoute,
   WorldWorldIdRoute: WorldWorldIdRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
-  ApiPublicRcWebhookRoute: ApiPublicRcWebhookRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

@@ -419,3 +419,56 @@ export function checkBadges(p: Profile): Profile {
   if (p.stars >= 60) next = awardCompanion(next, "🦜");
   return next;
 }
+
+/* ------------------------------------------------------------------ *
+ * Family helpers + hook (grown-up screens)
+ * ------------------------------------------------------------------ */
+
+export function addChild(name: string, age: number, outfit = "🎒", avatarBg = "moss"): ChildRecord {
+  const f = loadFamily();
+  const child = makeChild(name || "Friend", age);
+  child.profile = { ...child.profile, outfit, avatarBg, ...f.settings };
+  saveFamily({ ...f, children: [...f.children, child], activeChildId: f.activeChildId ?? child.id });
+  return child;
+}
+
+export function updateChild(id: string, fn: (p: Profile) => Profile) {
+  const f = loadFamily();
+  saveFamily({
+    ...f,
+    children: f.children.map((c) =>
+      c.id === id ? { ...c, profile: fn(c.profile), updatedAt: new Date().toISOString(), dirty: true } : c,
+    ),
+  });
+}
+
+export function removeChild(id: string) {
+  const f = loadFamily();
+  const children = f.children.map((c) => (c.id === id ? { ...c, deleted: true, dirty: true } : c));
+  const remaining = children.filter((c) => !c.deleted);
+  saveFamily({
+    ...f,
+    children,
+    activeChildId: f.activeChildId === id ? (remaining[0]?.id ?? null) : f.activeChildId,
+  });
+}
+
+export function setActiveChild(id: string) {
+  const f = loadFamily();
+  if (!f.children.some((c) => c.id === id && !c.deleted)) return;
+  saveFamily({ ...f, activeChildId: id });
+}
+
+export function useFamily() {
+  const [family, setFamily] = useState<Family | null>(null);
+
+  useEffect(() => {
+    setFamily(loadFamily());
+    const sync = () => setFamily(loadFamily());
+    window.addEventListener("totland:profile", sync);
+    return () => window.removeEventListener("totland:profile", sync);
+  }, []);
+
+  const children = (family?.children ?? []).filter((c) => !c.deleted);
+  return { family, children, activeId: family?.activeChildId ?? null, hydrated: family !== null };
+}

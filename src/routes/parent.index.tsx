@@ -1,10 +1,19 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
-import { accuracy, recommendations, skillOf, strengths, useProfile } from "@/lib/profile";
+import {
+  accuracy,
+  recommendations,
+  skillOf,
+  strengths,
+  updateChild,
+  useFamily,
+  useProfile,
+} from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
+
 
 export const Route = createFileRoute("/parent/")({
   head: () => ({

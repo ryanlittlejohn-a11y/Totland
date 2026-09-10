@@ -14,6 +14,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      child_profiles: {
+        Row: {
+          age: number
+          avatar_bg: string
+          created_at: string
+          data: Json
+          id: string
+          name: string
+          outfit: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          age?: number
+          avatar_bg?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          name?: string
+          outfit?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          age?: number
+          avatar_bg?: string
+          created_at?: string
+          data?: Json
+          id?: string
+          name?: string
+          outfit?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean

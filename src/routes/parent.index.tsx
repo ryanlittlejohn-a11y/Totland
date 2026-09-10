@@ -77,7 +77,7 @@ function Dashboard() {
         <div className="mt-4 grid grid-cols-3 gap-2">
           {[
             { label: "Time today", value: `${today?.minutes ?? 0}m` },
-            { label: "Games", value: profile.gamesCompleted },
+            { label: "Games", value: stats.gamesCompleted },
             { label: "Accuracy", value: `${overall}%` },
           ].map((s) => (
             <div key={s.label} className="rounded-xl bg-cream/5 p-3 ring-1 ring-cream/10">
@@ -120,12 +120,12 @@ function Dashboard() {
         </div>
 
         <div className="mt-4 flex flex-wrap gap-1.5">
-          {strengths(profile).map((s) => (
+          {strengths(stats).map((s) => (
             <span key={s} className="rounded-full bg-moss/15 px-2.5 py-1 text-[11px] font-medium text-moss">
               Strength · {s}
             </span>
           ))}
-          {recommendations(profile).map((r) => (
+          {recommendations(stats).map((r) => (
             <span key={r.skill} className="rounded-full bg-sky/15 px-2.5 py-1 text-[11px] font-medium text-sky">
               Practice · {r.skill}
             </span>
@@ -133,7 +133,7 @@ function Dashboard() {
         </div>
 
         <p className="mt-4 text-xs font-medium text-cream/60">Recommended next</p>
-        {recommendations(profile).map((r) => (
+        {recommendations(stats).map((r) => (
           <Link
             key={r.skill}
             to="/play/$area"
@@ -152,7 +152,7 @@ function Dashboard() {
         <h2 className="font-ui text-lg font-bold text-ink">Per-area progress</h2>
         <div className="mt-3 space-y-2">
           {AREAS.map((a) => {
-            const s = skillOf(profile, a.id);
+            const s = skillOf(stats, a.id);
             return (
               <div key={a.id} className="flex items-center gap-3">
                 <span className="w-40 shrink-0 text-sm font-medium text-ink">

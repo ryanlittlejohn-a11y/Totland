@@ -20,12 +20,17 @@ export const Route = createFileRoute("/parent/")({
 
 function Dashboard() {
   const { profile, update } = useProfile();
-  const letters = skillOf(profile, "letters");
-  const numbers = skillOf(profile, "numbers");
-  const today = profile.days.find((d) => d.date === new Date().toISOString().slice(0, 10));
-  const totalAttempts = Object.values(profile.skills).reduce((n, s) => n + s.attempts, 0);
-  const totalCorrect = Object.values(profile.skills).reduce((n, s) => n + s.correct, 0);
+  const { children, activeId } = useFamily();
+  const [selId, setSelId] = useState<string | null>(null);
+  const selected = children.find((c) => c.id === (selId ?? activeId)) ?? children[0] ?? null;
+  const stats = selected ? selected.profile : profile;
+  const letters = skillOf(stats, "letters");
+  const numbers = skillOf(stats, "numbers");
+  const today = stats.days.find((d) => d.date === new Date().toISOString().slice(0, 10));
+  const totalAttempts = Object.values(stats.skills).reduce((n, s) => n + s.attempts, 0);
+  const totalCorrect = Object.values(stats.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+
 
   // Live music preview so the volume slider is audible while adjusting it.
   useEffect(() => {

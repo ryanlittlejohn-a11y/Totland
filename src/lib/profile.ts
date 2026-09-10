@@ -101,25 +101,138 @@ export const defaultProfile = (): Profile => ({
 });
 
 
+/* ------------------------------------------------------------------ *
+ * Family store — several children under one account.
+ * Sound/language/premium settings are shared by the whole family;
+ * stars, stickers, badges and skill stats belong to each child.
+ * ------------------------------------------------------------------ */
+
+const FAMILY_KEY = "totland.family.v1";
+
+const SHARED_KEYS = [
+  "language",
+  "narration",
+  "sfx",
+  "music",
+  "musicVolume",
+  "reducedMotion",
+  "highContrast",
+  "premium",
+  "onboarded",
+] as const;
+
+type SharedKey = (typeof SHARED_KEYS)[number];
+export type SharedSettings = Pick<Profile, SharedKey>;
+
+export interface ChildRecord {
+  id: string;
+  profile: Profile;
+  /** ISO timestamp of the last local change — used to resolve sync conflicts */
+  updatedAt: string;
+  /** set when the child has local changes not yet pushed to the account */
+  dirty: boolean;
+  /** true once the child has been removed locally and needs deleting remotely */
+  deleted?: boolean;
+}
+
+export interface Family {
+  activeChildId: string | null;
+  children: ChildRecord[];
+  settings: SharedSettings;
+}
+
+const newId = () =>
+  typeof crypto !== "undefined" && "randomUUID" in crypto
+    ? crypto.randomUUID()
+    : `c_${Math.random().toString(36).slice(2)}${Date.now().toString(36)}`;
+
+const sharedOf = (p: Profile): SharedSettings =>
+  Object.fromEntries(SHARED_KEYS.map((k) => [k, p[k]])) as SharedSettings;
+
+export function makeChild(name = "Friend", age = 4): ChildRecord {
+  return {
+    id: newId(),
+    profile: { ...defaultProfile(), childName: name, age },
+    updatedAt: new Date().toISOString(),
+    dirty: true,
+  };
+}
+
+function emptyFamily(): Family {
+  const first = makeChild();
+  return { activeChildId: first.id, children: [first], settings: sharedOf(defaultProfile()) };
+}
+
+export function loadFamily(): Family {
+  if (typeof window === "undefined") return emptyFamily();
+  try {
+    const raw = window.localStorage.getItem(FAMILY_KEY);
+    if (raw) {
+      const f = JSON.parse(raw) as Family;
+      if (f && Array.isArray(f.children) && f.children.length) {
+        f.settings = { ...sharedOf(defaultProfile()), ...f.settings };
+        if (!f.children.some((c) => c.id === f.activeChildId)) f.activeChildId = f.children[0]!.id;
+        return f;
+      }
+    }
+    // One-time migration from the older single-child store.
+    const legacy = window.localStorage.getItem(KEY);
+    if (legacy) {
+      const p = { ...defaultProfile(), ...JSON.parse(legacy) } as Profile;
+      const child: ChildRecord = { id: newId(), profile: p, updatedAt: new Date().toISOString(), dirty: true };
+      const family: Family = { activeChildId: child.id, children: [child], settings: sharedOf(p) };
+      saveFamily(family);
+      return family;
+    }
+  } catch {
+    /* fall through to a fresh family */
+  }
+  return emptyFamily();
+}
+
+export function saveFamily(f: Family) {
+  if (typeof window === "undefined") return;
+  setLang(f.settings.language);
+  window.localStorage.setItem(FAMILY_KEY, JSON.stringify(f));
+  window.dispatchEvent(new CustomEvent("totland:profile"));
+}
+
+export function activeChild(f: Family): ChildRecord {
+  const visible = f.children.filter((c) => !c.deleted);
+  return visible.find((c) => c.id === f.activeChildId) ?? visible[0] ?? makeChild();
+}
+
+/** The profile the child screens use: their own progress + family settings. */
+export function profileOf(f: Family, child: ChildRecord): Profile {
+  return { ...child.profile, ...f.settings };
+}
+
 export function loadProfile(): Profile {
   if (typeof window === "undefined") return defaultProfile();
-  try {
-    const raw = window.localStorage.getItem(KEY);
-    if (!raw) return defaultProfile();
-    const p = { ...defaultProfile(), ...JSON.parse(raw) } as Profile;
-    setLang(p.language);
-    return p;
-  } catch {
-    return defaultProfile();
-  }
+  const f = loadFamily();
+  return profileOf(f, activeChild(f));
 }
 
 export function saveProfile(p: Profile) {
   if (typeof window === "undefined") return;
-  setLang(p.language);
-  window.localStorage.setItem(KEY, JSON.stringify(p));
-  window.dispatchEvent(new CustomEvent("totland:profile"));
+  const f = loadFamily();
+  const child = activeChild(f);
+  const rest = { ...p };
+  for (const k of SHARED_KEYS) delete (rest as Record<string, unknown>)[k];
+  const next: Family = {
+    ...f,
+    activeChildId: child.id,
+    settings: sharedOf(p),
+    children: f.children.map((c) =>
+      c.id === child.id
+        ? { ...c, profile: { ...c.profile, ...rest }, updatedAt: new Date().toISOString(), dirty: true }
+        : c,
+    ),
+  };
+  if (!next.children.some((c) => c.id === child.id)) next.children = [...next.children, { ...child, dirty: true }];
+  saveFamily(next);
 }
+
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -305,4 +418,57 @@ export function checkBadges(p: Profile): Profile {
   if (p.stickers.length >= 10) next = awardCompanion(next, "🐢");
   if (p.stars >= 60) next = awardCompanion(next, "🦜");
   return next;
+}
+
+/* ------------------------------------------------------------------ *
+ * Family helpers + hook (grown-up screens)
+ * ------------------------------------------------------------------ */
+
+export function addChild(name: string, age: number, outfit = "🎒", avatarBg = "moss"): ChildRecord {
+  const f = loadFamily();
+  const child = makeChild(name || "Friend", age);
+  child.profile = { ...child.profile, outfit, avatarBg, ...f.settings };
+  saveFamily({ ...f, children: [...f.children, child], activeChildId: f.activeChildId ?? child.id });
+  return child;
+}
+
+export function updateChild(id: string, fn: (p: Profile) => Profile) {
+  const f = loadFamily();
+  saveFamily({
+    ...f,
+    children: f.children.map((c) =>
+      c.id === id ? { ...c, profile: fn(c.profile), updatedAt: new Date().toISOString(), dirty: true } : c,
+    ),
+  });
+}
+
+export function removeChild(id: string) {
+  const f = loadFamily();
+  const children = f.children.map((c) => (c.id === id ? { ...c, deleted: true, dirty: true } : c));
+  const remaining = children.filter((c) => !c.deleted);
+  saveFamily({
+    ...f,
+    children,
+    activeChildId: f.activeChildId === id ? (remaining[0]?.id ?? null) : f.activeChildId,
+  });
+}
+
+export function setActiveChild(id: string) {
+  const f = loadFamily();
+  if (!f.children.some((c) => c.id === id && !c.deleted)) return;
+  saveFamily({ ...f, activeChildId: id });
+}
+
+export function useFamily() {
+  const [family, setFamily] = useState<Family | null>(null);
+
+  useEffect(() => {
+    setFamily(loadFamily());
+    const sync = () => setFamily(loadFamily());
+    window.addEventListener("totland:profile", sync);
+    return () => window.removeEventListener("totland:profile", sync);
+  }, []);
+
+  const children = (family?.children ?? []).filter((c) => !c.deleted);
+  return { family, children, activeId: family?.activeChildId ?? null, hydrated: family !== null };
 }

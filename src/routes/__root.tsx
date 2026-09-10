@@ -13,6 +13,8 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { PaymentTestModeBanner } from "../components/PaymentTestModeBanner";
 import { useEntitlementSync } from "../hooks/useEntitlementSync";
+import { useChildSync } from "../hooks/useChildSync";
+
 import { registerPWA } from "../lib/pwa-register";
 import { prewarmCommonNarration } from "../lib/voice-prewarm";
 
@@ -135,6 +137,8 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useEntitlementSync();
+  useChildSync();
+
 
   useEffect(() => {
     registerPWA();

@@ -20,6 +20,7 @@ import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
+import { Route as ParentChildrenRouteImport } from './routes/parent.children'
 import { Route as ParentCmsRouteImport } from './routes/parent.cms'
 import { Route as ParentRightsRouteImport } from './routes/parent.rights'
 import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscription'
@@ -82,6 +83,11 @@ const ParentIndexRoute = ParentIndexRouteImport.update({
   path: '/',
   getParentRoute: () => ParentRoute,
 } as any)
+const ParentChildrenRoute = ParentChildrenRouteImport.update({
+  id: '/children',
+  path: '/children',
+  getParentRoute: () => ParentRoute,
+} as any)
 const ParentCmsRoute = ParentCmsRouteImport.update({
   id: '/cms',
   path: '/cms',
@@ -125,6 +131,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/parent/children': typeof ParentChildrenRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/parent/children': typeof ParentChildrenRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/welcome': typeof WelcomeRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/parent/children': typeof ParentChildrenRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/worlds'
     | '/game/$gameId'
+    | '/parent/children'
     | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
@@ -202,6 +212,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/worlds'
     | '/game/$gameId'
+    | '/parent/children'
     | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
@@ -221,6 +232,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/worlds'
     | '/game/$gameId'
+    | '/parent/children'
     | '/parent/cms'
     | '/parent/rights'
     | '/parent/subscription'
@@ -325,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentIndexRouteImport
       parentRoute: typeof ParentRoute
     }
+    '/parent/children': {
+      id: '/parent/children'
+      path: '/children'
+      fullPath: '/parent/children'
+      preLoaderRoute: typeof ParentChildrenRouteImport
+      parentRoute: typeof ParentRoute
+    }
     '/parent/cms': {
       id: '/parent/cms'
       path: '/cms'
@@ -371,6 +390,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface ParentRouteChildren {
+  ParentChildrenRoute: typeof ParentChildrenRoute
   ParentCmsRoute: typeof ParentCmsRoute
   ParentRightsRoute: typeof ParentRightsRoute
   ParentSubscriptionRoute: typeof ParentSubscriptionRoute
@@ -378,6 +398,7 @@ interface ParentRouteChildren {
 }
 
 const ParentRouteChildren: ParentRouteChildren = {
+  ParentChildrenRoute: ParentChildrenRoute,
   ParentCmsRoute: ParentCmsRoute,
   ParentRightsRoute: ParentRightsRoute,
   ParentSubscriptionRoute: ParentSubscriptionRoute,

@@ -49,13 +49,31 @@ function Dashboard() {
 
   return (
     <div className="space-y-4">
+      {children.length > 1 && (
+        <div className="flex gap-2 overflow-x-auto pb-1">
+          {children.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => setSelId(c.id)}
+              className={`shrink-0 rounded-xl px-4 py-2 font-ui text-sm font-semibold ${
+                selected?.id === c.id ? "bg-night text-cream" : "bg-card text-ink"
+              }`}
+            >
+              {c.profile.outfit} {c.profile.childName}
+              {c.id === activeId ? " · playing" : ""}
+            </button>
+          ))}
+        </div>
+      )}
       <section className="rounded-3xl bg-night p-5 text-cream wood-block">
         <div className="flex items-baseline justify-between">
           <p className="font-semibold">This week</p>
           <p className="text-sm text-cream/50">
-            {profile.childName} · age {profile.age}
+            {stats.childName} · age {stats.age}
           </p>
         </div>
+
         <div className="mt-4 grid grid-cols-3 gap-2">
           {[
             { label: "Time today", value: `${today?.minutes ?? 0}m` },

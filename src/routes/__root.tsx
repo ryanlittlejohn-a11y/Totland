@@ -16,6 +16,8 @@ import { useEntitlementSync } from "../hooks/useEntitlementSync";
 import { useChildSync } from "../hooks/useChildSync";
 
 import { registerPWA } from "../lib/pwa-register";
+import { installNativeApiBridge } from "../lib/native-bridge";
+import { initNativeShell } from "../lib/native-shell";
 import { prewarmCommonNarration } from "../lib/voice-prewarm";
 
 import { OfflineGate } from "../components/OfflineGate";
@@ -141,6 +143,8 @@ function RootComponent() {
 
 
   useEffect(() => {
+    installNativeApiBridge();
+    initNativeShell();
     registerPWA();
     prewarmCommonNarration();
   }, []);

@@ -5,6 +5,9 @@ function shouldRegister(): boolean {
   if (typeof window === "undefined") return false;
   if (!("serviceWorker" in navigator)) return false;
   if (!import.meta.env.PROD) return false;
+  // In the packaged iOS/Android app every asset already ships with the app.
+  const cap = (window as unknown as { Capacitor?: { isNativePlatform?: () => boolean } }).Capacitor;
+  if (cap?.isNativePlatform?.()) return false;
 
   const hostname = window.location.hostname;
   const search = window.location.search;

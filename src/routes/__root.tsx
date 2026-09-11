@@ -139,16 +139,17 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const router = useRouter();
   useEntitlementSync();
   useChildSync();
 
 
   useEffect(() => {
     installNativeApiBridge();
-    initNativeShell();
+    initNativeShell(router);
     registerPWA();
     prewarmCommonNarration();
-  }, []);
+  }, [router]);
 
 
   return (

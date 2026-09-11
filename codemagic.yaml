@@ -36,7 +36,6 @@ workflows:
       - ios/App/build/ios/ipa/*.ipa
     publishing:
       app_store_connect:
-        auth: Totland
         submit_to_testflight: true
 
   android:

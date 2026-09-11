@@ -21,6 +21,12 @@
 - [ ] Go live: verify identity in the Payments tab, publish (products + webhook sync to live)
 - [ ] Kids-app policy pages required by the provider review (terms, refund policy, privacy notice)
 
+## Codemagic store builds (approved plan)
+- [ ] User: RevenueCat project + App Store app, `premium` entitlement, 2 products, webhook (blocked on RevenueCat account)
+- [ ] User: Codemagic groups `totland`, `appstore`; run iOS workflow to TestFlight (blocked on Stage 1)
+- [ ] User: Google Play account, `totland_keystore`, `google_play` group, RevenueCat Play app (blocked on Play dev account)
+- [x] Stored user's Paddle account API key as PADDLE_ACCOUNT_API_KEY (not needed by app — checkout uses managed integration)
+
 ## Soundtracks (done)
 - [x] Menu screens: Little Steps, Big Dreams; activities: Curious Steps; storybooks: Forest of Wonder
 - [x] Audible volume slider with live preview in the parent dashboard; wider range, ducking kept

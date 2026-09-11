@@ -9,13 +9,13 @@ import { L, title as tTitle } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Totland — Learning That Feels Like Play" },
+      { title: "Totland — Ad-Free Learning Games for Ages 2–6" },
       {
         name: "description",
         content:
           "A gentle, offline-first learning world for ages 2–6: ABCs, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
       },
-      { property: "og:title", content: "Totland — Learning That Feels Like Play" },
+      { property: "og:title", content: "Totland — Ad-Free Learning Games for Ages 2–6" },
       {
         property: "og:description",
         content: "Hundreds of bite-sized learning games for toddlers and preschoolers. Offline, ad-free, privacy-first.",
@@ -45,7 +45,10 @@ function Home() {
             T
           </div>
           <div>
-            <p className="font-ui text-[15px] font-bold leading-none text-ink">Totland</p>
+            <h1 className="font-ui text-[15px] font-bold leading-none text-ink">
+              Totland
+              <span className="sr-only"> — ad-free learning games for toddlers and preschoolers ages 2–6</span>
+            </h1>
             <p className="font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>
           </div>
         </div>

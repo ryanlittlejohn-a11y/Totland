@@ -121,9 +121,9 @@ function Home() {
       )}
 
       <section className="mt-6">
-        <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+        <h2 className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
           {L("The five worlds", "Los cinco mundos")}
-        </p>
+        </h2>
         <div className="mt-3 grid grid-cols-5 gap-2">
           {WORLDS.map((w) => (
             <Link
@@ -172,7 +172,7 @@ function Home() {
 
       <section className="mt-6">
         <div className="flex items-center justify-between px-1">
-          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Learning worlds", "Mundos de aprendizaje")}</p>
+          <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Learning worlds", "Mundos de aprendizaje")}</h2>
           <span className="font-ui text-xs text-inksoft">{L(`${LIBRARY_SIZE} activities offline`, `${LIBRARY_SIZE} actividades sin conexión`)}</span>
         </div>
 
@@ -205,9 +205,9 @@ function Home() {
       </section>
 
       <section className="mt-7 rounded-[2rem] felt-panel p-4">
-        <p className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+        <h2 className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
           {L("Totland Premium", "Totland Premium")}
-        </p>
+        </h2>
         <p className="mt-2 px-1 font-ui text-sm text-inksoft">
           {L("Unlock every world, puzzle, storybook and tracing game — with no ads and no tracking. Cancel anytime through Paddle.", "Desbloquea todos los mundos, rompecabezas, cuentos y trazos — sin anuncios ni rastreo. Cancela cuando quieras con Paddle.")}
         </p>

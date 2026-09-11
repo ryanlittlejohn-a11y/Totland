@@ -17,14 +17,45 @@ import { checkBadges, recordSession, useProfile } from "@/lib/profile";
 import { L, title as tTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/game/$gameId")({
-  head: () => ({
-    meta: [
-      { title: "Play a game — Totland" },
-      { name: "description", content: "A short, playful Totland learning game with gentle feedback and no timers." },
-      { property: "og:title", content: "Play a game — Totland" },
-      { property: "og:description", content: "Short toddler learning games that adapt to your child." },
-    ],
-  }),
+  head: ({ params }) => {
+    const game = gameById(params.gameId);
+    const title = game ? `${game.title} — Totland` : "Play a game — Totland";
+    const description = game
+      ? `${game.title}: a short, playful ${game.skill} game for ages 2–6 with gentle feedback and no timers.`
+      : "A short, playful Totland learning game with gentle feedback and no timers.";
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://totland.app/game/${params.gameId}` },
+        { property: "og:image", content: "https://totland.app/og-image.jpg" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: "https://totland.app/og-image.jpg" },
+      ],
+      links: [{ rel: "canonical", href: `https://totland.app/game/${params.gameId}` }],
+      scripts: game
+        ? [
+            {
+              type: "application/ld+json",
+              children: JSON.stringify({
+                "@context": "https://schema.org",
+                "@type": "Game",
+                name: `${game.title} — Totland`,
+                description,
+                url: `https://totland.app/game/${params.gameId}`,
+                applicationCategory: "EducationalGame",
+                operatingSystem: "Web, iOS, Android",
+                isFamilyFriendly: true,
+                audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },
+              }),
+            },
+          ]
+        : [],
+    };
+  },
   component: GameHost,
 });
 

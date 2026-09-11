@@ -11,14 +11,26 @@ import { AREAS, CHARACTERS, type SkillId } from "@/lib/content";
 import { L, title as tTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/play/$area")({
-  head: () => ({
-    meta: [
-      { title: "Play & Learn — Totland" },
-      { name: "description", content: "Short, playful learning activities for toddlers: letters, numbers, colors, shapes and words." },
-      { property: "og:title", content: "Play & Learn — Totland" },
-      { property: "og:description", content: "Bite-sized toddler learning games with instant, encouraging feedback." },
-    ],
-  }),
+  head: ({ params }) => {
+    const areaMeta = AREAS.find((a) => a.id === params.area) ?? AREAS[0]!;
+    const areaTitle = typeof areaMeta.title === "string" ? areaMeta.title : "Play & Learn";
+    const title = `${areaTitle} — Totland`;
+    const description = `${areaTitle} activities for toddlers and preschoolers: short, playful learning games with instant, encouraging feedback.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://totland.app/play/${params.area}` },
+        { property: "og:image", content: "https://totland.app/og-image.jpg" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: "https://totland.app/og-image.jpg" },
+      ],
+      links: [{ rel: "canonical", href: `https://totland.app/play/${params.area}` }],
+    };
+  },
   component: PlayPage,
 });
 

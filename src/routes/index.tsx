@@ -20,6 +20,33 @@ export const Route = createFileRoute("/")({
         property: "og:description",
         content: "Hundreds of bite-sized learning games for toddlers and preschoolers. Offline, ad-free, privacy-first.",
       },
+      { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://totland.app/" },
+    ],
+    links: [{ rel: "canonical", href: "https://totland.app/" }],
+    scripts: [
+      {
+        type: "application/ld+json",
+        children: JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "SoftwareApplication",
+          name: "Totland",
+          url: "https://totland.app/",
+          applicationCategory: "EducationalApplication",
+          applicationSubCategory: "Early learning games",
+          operatingSystem: "Web, iOS, Android",
+          description:
+            "A gentle, offline-first learning world for ages 2–6: ABCs, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+          isFamilyFriendly: true,
+          inLanguage: ["en", "es"],
+          audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },
+          offers: [
+            { "@type": "Offer", name: "Free", price: 0, priceCurrency: "USD" },
+            { "@type": "Offer", name: "Totland Premium Monthly", price: 2.99, priceCurrency: "USD" },
+            { "@type": "Offer", name: "Totland Premium Yearly", price: 19.99, priceCurrency: "USD" },
+          ],
+        }),
+      },
     ],
   }),
   component: Home,

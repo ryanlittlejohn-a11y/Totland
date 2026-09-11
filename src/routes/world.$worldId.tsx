@@ -4,14 +4,22 @@ import { useProfile } from "@/lib/profile";
 import { L, title as tTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/world/$worldId")({
-  head: () => ({
-    meta: [
-      { title: "World games — Totland" },
-      { name: "description", content: "Every learning game inside this Totland world, matched to your child's age mode." },
-      { property: "og:title", content: "World games — Totland" },
-      { property: "og:description", content: "Browse and play the games in this Totland learning world." },
-    ],
-  }),
+  head: ({ params }) => {
+    const world = WORLDS.find((w) => w.id === params.worldId) ?? WORLDS[0]!;
+    const title = `${world.title} — Totland`;
+    const description = `${world.blurb}: every learning game inside ${world.title}, matched to your child's age mode. Ad-free and offline-friendly.`;
+    return {
+      meta: [
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { property: "og:url", content: `https://totland.app/world/${params.worldId}` },
+      ],
+      links: [{ rel: "canonical", href: `https://totland.app/world/${params.worldId}` }],
+    };
+  },
   component: WorldPage,
 });
 

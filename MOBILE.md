@@ -20,8 +20,8 @@ Set these when building (Codemagic environment group `totland`):
 | Name | What it is |
 | --- | --- |
 | `VITE_NATIVE_API_ORIGIN` | Where the app talks to. Defaults to `https://totland.lovable.app` |
-| `VITE_REVENUECAT_IOS_KEY` | RevenueCat public key for Apple |
-| `VITE_REVENUECAT_ANDROID_KEY` | RevenueCat public key for Google |
+| `VITE_REVENUECAT_IOS_KEY` | RevenueCat public key for Apple. Already set in the repo to `appl_HsZozLYeDxkkUyvOYIOgbtRrVvo`; still include it in the `totland` group so Codemagic injects it at build time. |
+| `VITE_REVENUECAT_ANDROID_KEY` | RevenueCat public key for Google (`goog_...`). Add this when the Play app is ready. |
 
 On the backend, add a secret `REVENUECAT_WEBHOOK_SECRET` and paste the same
 value into RevenueCat's webhook settings, pointing at

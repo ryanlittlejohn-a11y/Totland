@@ -27,6 +27,16 @@ On the backend, add a secret `REVENUECAT_WEBHOOK_SECRET` and paste the same
 value into RevenueCat's webhook settings, pointing at
 `https://totland.lovable.app/api/public/rc/webhook`.
 
+## Custom URL scheme for deep links
+
+The app registers the custom URL scheme `app.totland.kids://` on both iOS and
+Android. Use it in RevenueCat for win-back links or promotional offers:
+
+- `app.totland.kids://premium`
+- `app.totland.kids://subscription`
+
+Both open the Totland app and land on the parent subscription screen.
+
 ## Subscriptions
 
 - On the website, families pay through Paddle (unchanged).

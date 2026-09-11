@@ -1,12 +1,14 @@
+import type { Router } from "@tanstack/react-router";
 import { isNativeApp } from "./native";
 
 /**
  * Small native-only touches: hide the splash screen once the app is up,
- * style the status bar, and make the Android back button behave.
+ * style the status bar, make the Android back button behave, and handle
+ * deep links from RevenueCat / other services via the custom URL scheme.
  */
 let started = false;
 
-export function initNativeShell(): void {
+export function initNativeShell(router: Router<any, any>): void {
   if (started) return;
   if (!isNativeApp()) return;
   started = true;
@@ -35,8 +37,33 @@ export function initNativeShell(): void {
           void App.exitApp();
         }
       });
+
+      await App.addListener("appUrlOpen", ({ url }) => {
+        handleDeepLink(url, router);
+      });
     } catch (e) {
       console.error(e);
     }
   })();
+}
+
+function handleDeepLink(url: string, router: Router<any, any>): void {
+  try {
+    const parsed = new URL(url);
+    const scheme = parsed.protocol.replace(":", "");
+    if (scheme !== "app.totland.kids") return;
+
+    const host = parsed.hostname;
+    const path = parsed.pathname.replace(/^\//, "");
+
+    // RevenueCat win-back / promotional links can use app.totland.kids://premium
+    // or app.totland.kids://subscription. Anything else lands at home.
+    const target = host === "premium" || host === "subscription" || path === "premium" || path === "subscription"
+      ? "/parent/subscription"
+      : "/";
+
+    void router.navigate({ to: target, replace: true });
+  } catch {
+    // malformed URL — ignore
+  }
 }

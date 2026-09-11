@@ -48,6 +48,14 @@ export function ParentAuthCard() {
     if (result.error) setError("Google sign-in didn't work. Please try email instead.");
   };
 
+  const apple = async () => {
+    setError(null);
+    const result = await lovable.auth.signInWithOAuth("apple", {
+      redirect_uri: `${window.location.origin}/parent/subscription`,
+    });
+    if (result.error) setError("Apple sign-in didn't work. Please try email instead.");
+  };
+
   return (
     <section className="rounded-3xl bg-card p-5 wood-block">
       <h2 className="font-ui text-lg font-bold text-ink">
@@ -95,6 +103,14 @@ export function ParentAuthCard() {
         className="mt-3 w-full rounded-xl bg-felt py-3 font-ui font-semibold text-ink"
       >
         Continue with Google
+      </button>
+
+      <button
+        type="button"
+        onClick={apple}
+        className="mt-3 w-full rounded-xl bg-felt py-3 font-ui font-semibold text-ink"
+      >
+         Continue with Apple
       </button>
 
       <button

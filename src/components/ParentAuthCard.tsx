@@ -107,6 +107,14 @@ export function ParentAuthCard() {
 
       <button
         type="button"
+        onClick={apple}
+        className="mt-3 w-full rounded-xl bg-felt py-3 font-ui font-semibold text-ink"
+      >
+         Continue with Apple
+      </button>
+
+      <button
+        type="button"
         onClick={() => {
           setMode(mode === "signin" ? "signup" : "signin");
           setError(null);

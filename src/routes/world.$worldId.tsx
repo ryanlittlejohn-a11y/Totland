@@ -16,6 +16,9 @@ export const Route = createFileRoute("/world/$worldId")({
         { property: "og:description", content: description },
         { property: "og:type", content: "website" },
         { property: "og:url", content: `https://totland.app/world/${params.worldId}` },
+        { property: "og:image", content: "https://totland.app/og-image.jpg" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:image", content: "https://totland.app/og-image.jpg" },
       ],
       links: [{ rel: "canonical", href: `https://totland.app/world/${params.worldId}` }],
     };

@@ -22,6 +22,9 @@ export const Route = createFileRoute("/")({
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://totland.app/" },
+      { property: "og:image", content: "https://totland.app/og-image.jpg" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:image", content: "https://totland.app/og-image.jpg" },
     ],
     links: [{ rel: "canonical", href: "https://totland.app/" }],
     scripts: [

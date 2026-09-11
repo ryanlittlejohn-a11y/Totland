@@ -26,6 +26,7 @@
 - [ ] User: Codemagic groups `totland`, `appstore`; run iOS workflow to TestFlight (blocked on Stage 1)
 - [ ] User: Google Play account, `totland_keystore`, `google_play` group, RevenueCat Play app (blocked on Play dev account)
 - [x] Stored user's Paddle account API key as PADDLE_ACCOUNT_API_KEY (not needed by app — checkout uses managed integration)
+- [x] Registered custom URL scheme `app.totland.kids://` on iOS/Android and wired deep links to `/parent/subscription`
 
 ## Soundtracks (done)
 - [x] Menu screens: Little Steps, Big Dreams; activities: Curious Steps; storybooks: Forest of Wonder

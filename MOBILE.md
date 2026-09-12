@@ -64,6 +64,30 @@ repository in Codemagic, add the environment groups listed above, add your Apple
 App Store Connect API key and Google Play service account, then run the
 `Totland iOS` and `Totland Android` workflows.
 
+### One-time iOS signing key setup
+
+The `appstore` environment group must contain a secure variable named exactly
+`CERTIFICATE_PRIVATE_KEY`. This is separate from the App Store Connect API
+private key and is used to create the Apple Distribution certificate.
+
+On a trusted Mac or Linux computer, generate a dedicated unencrypted PEM key:
+
+```sh
+ssh-keygen -t rsa -b 2048 -m PEM -f totland_ios_signing_key -q -N ""
+```
+
+In Codemagic, open **Teams → Team settings → Global variables and secrets**,
+edit the `appstore` group, and add the full contents of
+`totland_ios_signing_key` as a secure `CERTIFICATE_PRIVATE_KEY` variable. Do
+not use the `.pub` file. Keep both generated files out of GitHub and Lovable;
+store the private key in a password manager as a recovery copy, then delete the
+local files when setup is complete.
+
+After saving the variable, rerun **Totland iOS**. The workflow fetches or
+creates the distribution certificate and App Store provisioning profile for
+`App.totland.kids`, imports them into its temporary keychain, and builds the
+IPA for TestFlight.
+
 ## Known limitation
 
 Background music files stream from our media host, so in the packaged app the

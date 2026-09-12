@@ -26,6 +26,27 @@ workflows:
             exit 1
           fi
 
+          KEY_FILE="$CM_BUILD_DIR/.ios_signing_key.pem"
+          printf '%s\n' "$CERTIFICATE_PRIVATE_KEY" > "$KEY_FILE"
+
+          if grep -q -- "BEGIN OPENSSH PRIVATE KEY" "$KEY_FILE"; then
+            echo "Converting OpenSSH-format key to PEM."
+            ssh-keygen -p -P "" -N "" -m PEM -f "$KEY_FILE" -q
+          fi
+
+          if ! openssl rsa -in "$KEY_FILE" -check -noout >/dev/null 2>&1; then
+            rm -f "$KEY_FILE"
+            echo "CERTIFICATE_PRIVATE_KEY is not a valid RSA private key."
+            echo "Re-paste the FULL private key into the Codemagic appstore group:"
+            echo "every line including -----BEGIN RSA PRIVATE KEY----- and -----END RSA PRIVATE KEY-----."
+            echo "Do not paste the .pub file."
+            exit 1
+          fi
+
+          export CERTIFICATE_PRIVATE_KEY="$(cat "$KEY_FILE")"
+          rm -f "$KEY_FILE"
+          echo "Certificate private key validated."
+
           keychain initialize
           app-store-connect fetch-signing-files App.totland.kids --type IOS_APP_STORE --create
           keychain add-certificates

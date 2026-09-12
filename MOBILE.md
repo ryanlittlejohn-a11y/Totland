@@ -84,6 +84,17 @@ not use the `.pub` file. Keep both generated files out of GitHub and Lovable;
 store the private key in a password manager as a recovery copy, then delete the
 local files when setup is complete.
 
+### Troubleshooting: "Provided value is not valid" for the certificate key
+
+This means the pasted value is not a complete PEM private key. Fix it by
+re-pasting the **full** `cat totland_ios_signing_key` output — every line,
+including the `-----BEGIN RSA PRIVATE KEY-----` and
+`-----END RSA PRIVATE KEY-----` markers — into the secure
+`CERTIFICATE_PRIVATE_KEY` variable. Codemagic secure variables preserve line
+breaks, so paste the raw output exactly as printed. Never paste the `.pub`
+file. If you generated the key without `-m PEM`, the workflow converts it
+automatically, but regenerating with the command above is the cleaner fix.
+
 After saving the variable, rerun **Totland iOS**. The workflow fetches or
 creates the distribution certificate and App Store provisioning profile for
 `App.totland.kids`, imports them into its temporary keychain, and builds the

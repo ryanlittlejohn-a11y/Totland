@@ -49,6 +49,8 @@ workflows:
           xcode-project use-profiles
       - name: Install pods
         script: cd ios/App && pod install
+      - name: Set unique build number
+        script: cd ios/App && xcode-project build-version --build-version $CM_BUILD_NUMBER
       - name: Build ipa
         script: |
           cd ios/App

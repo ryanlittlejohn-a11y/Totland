@@ -3,6 +3,7 @@
 import { COLORS, LETTERS, NUMBER_WORDS, PRAISE, SHAPES, WORDS } from "./content";
 import { getLang, noun, PRAISE_ES } from "./i18n";
 import { prewarmVoice } from "./speech";
+import { isNativeApp } from "./native";
 
 function commonLines(lang: "en" | "es"): string[] {
   const es = lang === "es";

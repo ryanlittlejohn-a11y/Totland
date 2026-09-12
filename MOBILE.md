@@ -49,7 +49,8 @@ Both open the Totland app and land on the parent subscription screen.
 
 ## Store listings
 
-- Apple bundle ID / Android package: `app.totland.kids`
+- Apple bundle ID: `App.totland.kids` (capital A, matching the existing Apple record)
+- Android package: `app.totland.kids`
 - Apple: choose the Kids category (ages 5 and under / 6–8), declare no ads and
   no tracking, and point the privacy questionnaire at the existing
   `/privacy`, `/terms` and `/refund` pages.

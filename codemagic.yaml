@@ -28,12 +28,12 @@ workflows:
           xcode-project use-profiles
       - name: Install pods
         script: cd ios/App && pod install
-    integrations:
-      app_store_connect: Totland
       - name: Build ipa
         script: |
           cd ios/App
           xcode-project build-ipa --workspace App.xcworkspace --scheme App
+    integrations:
+      app_store_connect: Totland
     artifacts:
       - ios/App/build/ios/ipa/*.ipa
     publishing:

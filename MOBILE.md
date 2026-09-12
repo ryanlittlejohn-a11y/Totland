@@ -112,6 +112,13 @@ creates the distribution certificate and App Store provisioning profile for
 `App.totland.kids`, imports them into its temporary keychain, and builds the
 IPA for TestFlight.
 
+### iOS build numbers
+
+Each Codemagic run uses its positive `BUILD_NUMBER` as the App Store build
+number. If that value is unavailable, the workflow uses the current UTC Unix
+timestamp instead. This keeps every uploaded IPA newer than prior uploads and
+does not require a custom build-number variable.
+
 ## Known limitation
 
 Background music files stream from our media host, so in the packaged app the

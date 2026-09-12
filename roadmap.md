@@ -28,6 +28,7 @@
 - [x] Stored user's Paddle account API key as PADDLE_ACCOUNT_API_KEY (not needed by app — checkout uses managed integration)
 - [x] Registered custom URL scheme `app.totland.kids://` on iOS/Android and wired deep links to `/parent/subscription`
 - [x] Matched iOS and Codemagic signing to Apple's existing `App.totland.kids` bundle ID
+- [x] Made iOS App Store build numbers automatic with a timestamp fallback
 
 ## Soundtracks (done)
 - [x] Menu screens: Little Steps, Big Dreams; activities: Curious Steps; storybooks: Forest of Wonder

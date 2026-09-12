@@ -104,30 +104,66 @@ function keyFor(text: string, lang: string): string {
   return `https://voice.totland.local/${lang}-${(h >>> 0).toString(36)}-${s.length}.mp3`;
 }
 
+/** Only a handful of recent clips stay in memory; the rest live in the device
+ *  cache. Holding every clip of a session is what exhausted memory on phones. */
+const MEMORY_LIMIT = 12;
 const memory = new Map<string, string>(); // cache key -> object URL
+
+function remember(key: string, url: string) {
+  memory.delete(key);
+  memory.set(key, url);
+  while (memory.size > MEMORY_LIMIT) {
+    const oldest = memory.keys().next().value as string | undefined;
+    if (oldest === undefined) break;
+    const stale = memory.get(oldest);
+    memory.delete(oldest);
+    if (stale) {
+      try {
+        URL.revokeObjectURL(stale);
+      } catch {
+        /* already gone */
+      }
+    }
+  }
+}
 
 async function cachedBlobUrl(text: string, lang: string): Promise<string | null> {
   const key = keyFor(text, lang);
   const hit = memory.get(key);
-  if (hit) return hit;
+  if (hit) {
+    remember(key, hit); // keep the freshly used clip at the front
+    return hit;
+  }
   if (typeof caches === "undefined") return null;
   try {
     const cache = await caches.open(VOICE_CACHE);
     const res = await cache.match(key);
     if (!res) return null;
     const url = URL.createObjectURL(await res.blob());
-    memory.set(key, url);
+    remember(key, url);
     return url;
   } catch {
     return null;
   }
 }
 
-async function fetchAndStore(text: string, lang: string): Promise<string | null> {
+/** Decode base64 through the platform decoder (off the main thread) instead of
+ *  a per-character loop, which blocked touch handling on phones. */
+async function toBlob(base64: string): Promise<Blob> {
+  const res = await fetch(`data:audio/mpeg;base64,${base64}`);
+  return res.blob();
+}
+
+/** Download a line. `wantUrl: false` (prewarming) never creates an object URL,
+ *  so background caching costs no memory at all. */
+async function fetchAndStore(
+  text: string,
+  lang: string,
+  wantUrl = true,
+): Promise<string | null> {
   try {
     const { audio } = await speakText({ data: { text, lang } });
-    const bytes = Uint8Array.from(atob(audio), (c) => c.charCodeAt(0));
-    const blob = new Blob([bytes], { type: "audio/mpeg" });
+    const blob = await toBlob(audio);
     const key = keyFor(text, lang);
     if (typeof caches !== "undefined") {
       try {
@@ -137,8 +173,9 @@ async function fetchAndStore(text: string, lang: string): Promise<string | null>
         /* storage full or unavailable — still play this once */
       }
     }
+    if (!wantUrl) return null;
     const url = URL.createObjectURL(blob);
-    memory.set(key, url);
+    remember(key, url);
     return url;
   } catch {
     return null;

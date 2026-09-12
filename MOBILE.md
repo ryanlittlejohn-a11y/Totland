@@ -58,6 +58,14 @@ Both open the Totland app and land on the parent subscription screen.
 - Google Play: complete the Families policy and Data safety forms the same way.
 - The parental gate already protects everything involving money.
 
+## Export compliance
+
+The app only uses HTTPS/TLS through iOS/WebKit (encryption built into Apple's
+operating system). `ITSAppUsesNonExemptEncryption` is set to `NO` in
+`ios/App/App/Info.plist`, so no annual export-compliance documentation is
+required. In App Store Connect, answer the encryption questionnaire with
+**"None of the algorithms mentioned above."**
+
 ## Cloud builds
 
 `codemagic.yaml` builds and uploads both apps, so no Mac is needed. Connect the

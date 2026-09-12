@@ -10,7 +10,7 @@ const MAX_REPORTS = 12;
 type Report = {
   kind: "error" | "rejection" | "freeze";
   message: string;
-  stack?: string;
+  stack?: string | undefined;
   path: string;
   platform: string;
 };

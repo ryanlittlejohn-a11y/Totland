@@ -23,6 +23,9 @@ workflows:
       - name: Set up signing
         script: |
           keychain initialize
+          app-store-connect bundle-ids create app.totland.kids || true
+          app-store-connect certificates list --type IOS_DISTRIBUTION | grep -q IOS_DISTRIBUTION \
+            || app-store-connect certificates create --type IOS_DISTRIBUTION
           app-store-connect fetch-signing-files app.totland.kids --type IOS_APP_STORE --create
           keychain add-certificates
           xcode-project use-profiles

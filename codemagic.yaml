@@ -21,17 +21,6 @@ workflows:
         script: |
           set -euo pipefail
           keychain initialize
-
-          if ! bundle_id_result="$(app-store-connect bundle-ids create App.totland.kids 2>&1)"; then
-            printf '%s\n' "$bundle_id_result"
-            if printf '%s' "$bundle_id_result" | grep -Eqi 'already exists|already in use'; then
-              echo "Bundle identifier App.totland.kids is already registered."
-            else
-              echo "Unable to register App.totland.kids with the configured Apple team."
-              exit 1
-            fi
-          fi
-
           app-store-connect certificates list --type IOS_DISTRIBUTION | grep -q IOS_DISTRIBUTION \
             || app-store-connect certificates create --type IOS_DISTRIBUTION
           app-store-connect fetch-signing-files App.totland.kids --type IOS_APP_STORE --create

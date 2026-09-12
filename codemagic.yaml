@@ -5,7 +5,6 @@ workflows:
     max_build_duration: 60
     environment:
       groups:
-        - totland # VITE_NATIVE_API_ORIGIN, VITE_REVENUECAT_IOS_KEY, VITE_REVENUECAT_ANDROID_KEY
         - appstore # APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY, CERTIFICATE_PRIVATE_KEY
       node: 20
       xcode: latest
@@ -52,7 +51,6 @@ workflows:
     max_build_duration: 60
     environment:
       groups:
-        - totland
         - google_play # GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
       node: 20
       java: 21

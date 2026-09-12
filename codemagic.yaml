@@ -53,13 +53,15 @@ workflows:
         script: |
           set -euo pipefail
 
-          if ! printf '%s' "${CM_BUILD_NUMBER:-}" | grep -Eq '^[1-9][0-9]*$'; then
-            echo "CM_BUILD_NUMBER must be a positive integer."
-            exit 1
+          if printf '%s' "${BUILD_NUMBER:-}" | grep -Eq '^[1-9][0-9]*$'; then
+            IOS_BUILD_NUMBER="$BUILD_NUMBER"
+          else
+            IOS_BUILD_NUMBER="$(date -u +%s)"
+            echo "BUILD_NUMBER was unavailable; using UTC timestamp $IOS_BUILD_NUMBER."
           fi
 
           PROJECT_FILE="ios/App/App.xcodeproj/project.pbxproj"
-          python3 - "$PROJECT_FILE" "$CM_BUILD_NUMBER" <<'PY'
+          python3 - "$PROJECT_FILE" "$IOS_BUILD_NUMBER" <<'PY'
           import re
           import sys
           from pathlib import Path
@@ -80,7 +82,7 @@ workflows:
           print(f"Set iOS build number to {build_number} in {count} build configurations.")
           PY
 
-          test "$(grep -c "CURRENT_PROJECT_VERSION = $CM_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 2
+          test "$(grep -c "CURRENT_PROJECT_VERSION = $IOS_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 2
       - name: Build ipa
         script: |
           cd ios/App

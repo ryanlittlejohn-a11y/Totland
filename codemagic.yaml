@@ -5,7 +5,7 @@ workflows:
     max_build_duration: 60
     environment:
       groups:
-        - appstore # APP_STORE_CONNECT_ISSUER_ID, APP_STORE_CONNECT_KEY_IDENTIFIER, APP_STORE_CONNECT_PRIVATE_KEY, CERTIFICATE_PRIVATE_KEY
+        - appstore # APP_STORE_CONNECT credentials plus CERTIFICATE_PRIVATE_KEY_BASE64
       node: 20
       xcode: latest
       cocoapods: default
@@ -20,31 +20,27 @@ workflows:
         script: |
           set -euo pipefail
 
-          if [ -z "${CERTIFICATE_PRIVATE_KEY:-}" ]; then
-            echo "Missing CERTIFICATE_PRIVATE_KEY in the Codemagic appstore group."
-            echo "Add a secure PEM private key to that group, then rerun Totland iOS."
+          if [ -z "${CERTIFICATE_PRIVATE_KEY_BASE64:-}" ]; then
+            echo "Missing CERTIFICATE_PRIVATE_KEY_BASE64 in the Codemagic appstore group."
+            echo "Add the Base64-encoded private key to that group, then rerun Totland iOS."
             exit 1
           fi
 
           KEY_FILE="$CM_BUILD_DIR/.ios_signing_key.pem"
-          printf '%s\n' "$CERTIFICATE_PRIVATE_KEY" > "$KEY_FILE"
-
-          if grep -q -- "BEGIN OPENSSH PRIVATE KEY" "$KEY_FILE"; then
-            echo "Converting OpenSSH-format key to PEM."
-            ssh-keygen -p -P "" -N "" -m PEM -f "$KEY_FILE" -q
+          trap 'rm -f "$KEY_FILE"' EXIT
+          if ! printf '%s' "$CERTIFICATE_PRIVATE_KEY_BASE64" | tr -d '[:space:]' | openssl base64 -d -A -out "$KEY_FILE"; then
+            echo "CERTIFICATE_PRIVATE_KEY_BASE64 could not be decoded."
+            echo "Recreate it with: base64 -w 0 totland_ios_signing_key"
+            exit 1
           fi
 
           if ! openssl rsa -in "$KEY_FILE" -check -noout >/dev/null 2>&1; then
-            rm -f "$KEY_FILE"
-            echo "CERTIFICATE_PRIVATE_KEY is not a valid RSA private key."
-            echo "Re-paste the FULL private key into the Codemagic appstore group:"
-            echo "every line including -----BEGIN RSA PRIVATE KEY----- and -----END RSA PRIVATE KEY-----."
-            echo "Do not paste the .pub file."
+            echo "CERTIFICATE_PRIVATE_KEY_BASE64 does not decode to a valid RSA private key."
+            echo "Encode totland_ios_signing_key, not totland_ios_signing_key.pub."
             exit 1
           fi
 
           export CERTIFICATE_PRIVATE_KEY="$(cat "$KEY_FILE")"
-          rm -f "$KEY_FILE"
           echo "Certificate private key validated."
 
           keychain initialize

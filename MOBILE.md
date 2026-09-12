@@ -68,8 +68,8 @@ App Store Connect API key and Google Play service account, then run the
 ### One-time iOS signing key setup
 
 The `appstore` environment group must contain a secure variable named exactly
-`CERTIFICATE_PRIVATE_KEY`. This is separate from the App Store Connect API
-private key and is used to create the Apple Distribution certificate.
+`CERTIFICATE_PRIVATE_KEY_BASE64`. This is separate from the App Store Connect
+API private key and is used to create the Apple Distribution certificate.
 
 On a trusted Mac or Linux computer, generate a dedicated unencrypted PEM key:
 
@@ -77,23 +77,27 @@ On a trusted Mac or Linux computer, generate a dedicated unencrypted PEM key:
 ssh-keygen -t rsa -b 2048 -m PEM -f totland_ios_signing_key -q -N ""
 ```
 
-In Codemagic, open **Teams → Team settings → Global variables and secrets**,
-edit the `appstore` group, and add the full contents of
-`totland_ios_signing_key` as a secure `CERTIFICATE_PRIVATE_KEY` variable. Do
-not use the `.pub` file. Keep both generated files out of GitHub and Lovable;
-store the private key in a password manager as a recovery copy, then delete the
-local files when setup is complete.
+In GitHub Codespaces, encode the private key as one line:
 
-### Troubleshooting: "Provided value is not valid" for the certificate key
+```sh
+base64 -w 0 totland_ios_signing_key
+```
 
-This means the pasted value is not a complete PEM private key. Fix it by
-re-pasting the **full** `cat totland_ios_signing_key` output — every line,
-including the `-----BEGIN RSA PRIVATE KEY-----` and
-`-----END RSA PRIVATE KEY-----` markers — into the secure
-`CERTIFICATE_PRIVATE_KEY` variable. Codemagic secure variables preserve line
-breaks, so paste the raw output exactly as printed. Never paste the `.pub`
-file. If you generated the key without `-m PEM`, the workflow converts it
-automatically, but regenerating with the command above is the cleaner fix.
+Copy the complete output. In Codemagic, open **Teams → Team settings → Global
+variables and secrets**, edit the `appstore` group, and add the copied value as
+a secure `CERTIFICATE_PRIVATE_KEY_BASE64` variable. Do not encode the `.pub`
+file. Remove the old `CERTIFICATE_PRIVATE_KEY` variable after saving the new
+one. Keep both generated files out of GitHub and Lovable; store the private key
+in a password manager as a recovery copy, then delete the local files when
+setup is complete.
+
+### Troubleshooting the certificate key
+
+If decoding fails, rerun the Base64 command and replace the secure value with
+the complete one-line output. If validation fails, confirm that you encoded
+`totland_ios_signing_key`, not `totland_ios_signing_key.pub`. Do not add quotes
+around the value. The workflow decodes and validates the key before requesting
+Apple signing files.
 
 After saving the variable, rerun **Totland iOS**. The workflow fetches or
 creates the distribution certificate and App Store provisioning profile for

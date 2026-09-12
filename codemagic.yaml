@@ -12,7 +12,7 @@ workflows:
       cocoapods: default
       ios_signing:
         distribution_type: app_store
-        bundle_identifier: app.totland.kids
+        bundle_identifier: App.totland.kids
     scripts:
       - name: Install dependencies
         script: npm install -g bun && bun install
@@ -23,10 +23,10 @@ workflows:
       - name: Set up signing
         script: |
           keychain initialize
-          app-store-connect bundle-ids create app.totland.kids || true
+          app-store-connect bundle-ids create App.totland.kids || true
           app-store-connect certificates list --type IOS_DISTRIBUTION | grep -q IOS_DISTRIBUTION \
             || app-store-connect certificates create --type IOS_DISTRIBUTION
-          app-store-connect fetch-signing-files app.totland.kids --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files App.totland.kids --type IOS_APP_STORE --create
           keychain add-certificates
           xcode-project use-profiles
       - name: Install pods

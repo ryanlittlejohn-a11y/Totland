@@ -29,7 +29,7 @@ workflows:
       - name: Install pods
         script: cd ios/App && pod install
     integrations:
-      app_store_connect: Totland App Store Connect
+      app_store_connect: Totland
       - name: Build ipa
         script: |
           cd ios/App

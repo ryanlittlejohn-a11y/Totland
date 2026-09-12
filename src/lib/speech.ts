@@ -253,25 +253,39 @@ export function say(text: string, opts: { rate?: number; pitch?: number } = {}) 
   })();
 }
 
-/** Quietly download common lines so offline play still sounds like Hannah. */
+/** Wait for a quiet moment before doing more background work. */
+function idle(ms: number): Promise<void> {
+  return new Promise((resolve) => {
+    const go = () => resolve();
+    const ric = (window as unknown as {
+      requestIdleCallback?: (cb: () => void, o?: { timeout: number }) => number;
+    }).requestIdleCallback;
+    window.setTimeout(() => (ric ? ric(go, { timeout: 2000 }) : go()), ms);
+  });
+}
+
+/** Quietly download common lines so offline play still sounds like Hannah.
+ *  Deliberately slow: one line at a time, pausing between small batches, so a
+ *  phone never has to juggle a hundred downloads while a child is playing. */
 export async function prewarmVoice(lines: string[], lang = getLang()) {
   if (typeof window === "undefined" || typeof caches === "undefined") return;
   if (typeof navigator !== "undefined" && navigator.onLine === false) return;
   const queue = [...new Set(lines.map((l) => l.trim()).filter(Boolean))];
-  const worker = async () => {
-    while (queue.length) {
-      const line = queue.shift()!;
-      const key = keyFor(line, lang);
-      try {
-        const cache = await caches.open(VOICE_CACHE);
-        if (await cache.match(key)) continue;
-      } catch {
-        return;
-      }
-      await fetchAndStore(line, lang);
+  let done = 0;
+  while (queue.length) {
+    if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+    const line = queue.shift()!;
+    const key = keyFor(line, lang);
+    try {
+      const cache = await caches.open(VOICE_CACHE);
+      if (await cache.match(key)) continue;
+    } catch {
+      return;
     }
-  };
-  await Promise.all([worker(), worker()]);
+    await fetchAndStore(line, lang, false);
+    done += 1;
+    await idle(done % 5 === 0 ? 4000 : 600);
+  }
 }
 
 /* ------------------------------------------------------------------ *

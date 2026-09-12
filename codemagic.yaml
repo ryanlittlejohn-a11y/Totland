@@ -50,7 +50,37 @@ workflows:
       - name: Install pods
         script: cd ios/App && pod install
       - name: Set unique build number
-        script: cd ios/App && xcode-project build-version --build-version $CM_BUILD_NUMBER
+        script: |
+          set -euo pipefail
+
+          if ! printf '%s' "${CM_BUILD_NUMBER:-}" | grep -Eq '^[1-9][0-9]*$'; then
+            echo "CM_BUILD_NUMBER must be a positive integer."
+            exit 1
+          fi
+
+          PROJECT_FILE="ios/App/App.xcodeproj/project.pbxproj"
+          python3 - "$PROJECT_FILE" "$CM_BUILD_NUMBER" <<'PY'
+          import re
+          import sys
+          from pathlib import Path
+
+          project_path = Path(sys.argv[1])
+          build_number = sys.argv[2]
+          project = project_path.read_text()
+          updated, count = re.subn(
+              r"CURRENT_PROJECT_VERSION = [^;]+;",
+              f"CURRENT_PROJECT_VERSION = {build_number};",
+              project,
+          )
+          if count != 2:
+              raise SystemExit(
+                  f"Expected to update 2 CURRENT_PROJECT_VERSION entries, updated {count}."
+              )
+          project_path.write_text(updated)
+          print(f"Set iOS build number to {build_number} in {count} build configurations.")
+          PY
+
+          test "$(grep -c "CURRENT_PROJECT_VERSION = $CM_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 2
       - name: Build ipa
         script: |
           cd ios/App

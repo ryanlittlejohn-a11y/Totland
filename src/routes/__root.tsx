@@ -19,6 +19,7 @@ import { registerPWA } from "../lib/pwa-register";
 import { installNativeApiBridge } from "../lib/native-bridge";
 import { initNativeShell } from "../lib/native-shell";
 import { prewarmCommonNarration } from "../lib/voice-prewarm";
+import { installCrashReporting } from "../lib/crash-report";
 
 import { OfflineGate } from "../components/OfflineGate";
 import { MusicPlayer } from "../components/MusicPlayer";
@@ -145,6 +146,7 @@ function RootComponent() {
 
 
   useEffect(() => {
+    installCrashReporting();
     installNativeApiBridge();
     initNativeShell(router);
     registerPWA();

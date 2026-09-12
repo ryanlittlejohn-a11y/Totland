@@ -3,6 +3,7 @@
 import { COLORS, LETTERS, NUMBER_WORDS, PRAISE, SHAPES, WORDS } from "./content";
 import { getLang, noun, PRAISE_ES } from "./i18n";
 import { prewarmVoice } from "./speech";
+import { isNativeApp } from "./native";
 
 function commonLines(lang: "en" | "es"): string[] {
   const es = lang === "es";
@@ -32,12 +33,16 @@ function commonLines(lang: "en" | "es"): string[] {
 
 let started = false;
 
-/** Fire-and-forget: caches the common lines in the background, once per load. */
+/** Fire-and-forget: caches the common lines in the background, once per load.
+ *  Skipped entirely inside the packaged iPhone/iPad/Android app — downloading a
+ *  hundred clips right after launch made the app unresponsive on real devices.
+ *  Lines are still saved as they are heard, so offline play builds up anyway. */
 export function prewarmCommonNarration() {
   if (started || typeof window === "undefined") return;
   started = true;
+  if (isNativeApp()) return;
   const lang = getLang();
   window.setTimeout(() => {
     void prewarmVoice(commonLines(lang), lang);
-  }, 4000);
+  }, 15000);
 }

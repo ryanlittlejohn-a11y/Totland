@@ -1,0 +1,1 @@
+CREATE POLICY "No client access to voice clips" ON storage.objects FOR ALL TO anon, authenticated USING (bucket_id <> 'voice-clips') WITH CHECK (bucket_id <> 'voice-clips');

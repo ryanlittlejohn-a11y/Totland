@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { PlayFrame } from "@/components/PlayFrame";
 import { useProfile } from "@/lib/profile";
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";
@@ -29,6 +30,7 @@ export const Route = createFileRoute("/wordfinds")({
 function WordFindsPage() {
   const { profile } = useProfile();
   const done = profile.wordFinds ?? [];
+  const [visible, setVisible] = useState(20);
 
   return (
     <PlayFrame title={L("Word Finds", "Sopa de letras")}>
@@ -39,7 +41,7 @@ function WordFindsPage() {
         )}
       </p>
       <div className="mt-4 grid grid-cols-2 gap-3">
-        {WORD_FIND_THEMES.map((th, i) => {
+        {WORD_FIND_THEMES.slice(0, visible).map((th, i) => {
           const locked = i >= FREE_WORD_FINDS && !profile.premium;
           const finished = done.includes(th.id);
           return (
@@ -63,6 +65,15 @@ function WordFindsPage() {
           );
         })}
       </div>
+      {visible < WORD_FIND_THEMES.length ? (
+        <button
+          type="button"
+          onClick={() => setVisible((v) => v + 20)}
+          className="mt-4 w-full rounded-2xl bg-card px-5 py-3 font-ui font-bold text-ink wood-block active:translate-y-1"
+        >
+          {L("Show more puzzles", "Ver más juegos")}
+        </button>
+      ) : null}
     </PlayFrame>
   );
 }

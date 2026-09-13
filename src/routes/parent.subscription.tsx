@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -109,11 +109,11 @@ function Subscription() {
   const native = isNativeApp();
   const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
 
-  const navigate = useNavigate();
   const removeAccount = useServerFn(deleteMyAccount);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [confirmText, setConfirmText] = useState("");
   const [deleting, setDeleting] = useState(false);
+  const [deleted, setDeleted] = useState(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
 
   const doDelete = async () => {
@@ -128,7 +128,8 @@ function Subscription() {
         /* ignore */
       }
       update((p) => ({ ...p, premium: false }));
-      void navigate({ to: "/", search: { deleted: "1" } as never });
+      setDeleted(true);
+      setDeleting(false);
     } catch (e) {
       console.error(e);
       setDeleteError("We couldn't delete your account just now. Please check your connection and try again.");

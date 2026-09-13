@@ -1,5 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { createFileRoute } from "@tanstack/react-start";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { LegalPage } from "../components/LegalPage";
 import { Button } from "@/components/ui/button";

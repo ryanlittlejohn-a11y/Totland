@@ -283,7 +283,7 @@ function Home() {
       <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
         Offline-first · No ads · Data stays on device
       </p>
-      <footer className="mt-3 flex justify-center gap-4 font-ui text-[11px] text-inksoft">
+      <footer className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-[11px] text-inksoft">
         <Link to="/terms" className="underline">
           Terms
         </Link>
@@ -292,6 +292,9 @@ function Home() {
         </Link>
         <Link to="/refund" className="underline">
           Refunds
+        </Link>
+        <Link to="/contact" className="underline">
+          Contact
         </Link>
       </footer>
       <InstallPrompt />

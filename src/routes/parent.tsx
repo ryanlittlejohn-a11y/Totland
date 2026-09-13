@@ -9,13 +9,15 @@ const GATE_KEY = "totland.gate";
 
 function ParentLayout() {
   const [open, setOpen] = useState(false);
-  const [a] = useState(() => 3 + Math.floor(Math.random() * 6));
-  const [b] = useState(() => 2 + Math.floor(Math.random() * 6));
+  const [a, setA] = useState(3);
+  const [b, setB] = useState(2);
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
 
   useEffect(() => {
     setOpen(sessionStorage.getItem(GATE_KEY) === "1");
+    setA(3 + Math.floor(Math.random() * 6));
+    setB(2 + Math.floor(Math.random() * 6));
   }, []);
 
   if (!open) {
@@ -74,9 +76,9 @@ function ParentLayout() {
           { to: "/parent", label: "Dashboard", exact: true },
           { to: "/parent/children", label: "Children" },
           { to: "/parent/subscription", label: "Subscription" },
-
           { to: "/parent/rights", label: "Content rights" },
           { to: "/parent/cms", label: "Content studio" },
+          { to: "/contact", label: "Contact" },
         ].map((t) => (
           <Link
             key={t.to}

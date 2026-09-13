@@ -18,6 +18,7 @@ import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WelcomeRouteImport } from './routes/welcome'
+import { Route as WordfindsRouteImport } from './routes/wordfinds'
 import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
@@ -26,6 +27,7 @@ import { Route as ParentCmsRouteImport } from './routes/parent.cms'
 import { Route as ParentRightsRouteImport } from './routes/parent.rights'
 import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscription'
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
+import { Route as WordfindThemeIdRouteImport } from './routes/wordfind.$themeId'
 import { Route as WorldWorldIdRouteImport } from './routes/world.$worldId'
 import { Route as ApiPublicDiagRouteImport } from './routes/api/public/diag'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
@@ -79,6 +81,11 @@ const WelcomeRoute = WelcomeRouteImport.update({
   path: '/welcome',
   getParentRoute: () => rootRouteImport,
 } as any)
+const WordfindsRoute = WordfindsRouteImport.update({
+  id: '/wordfinds',
+  path: '/wordfinds',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const WorldsRoute = WorldsRouteImport.update({
   id: '/worlds',
   path: '/worlds',
@@ -117,6 +124,11 @@ const ParentSubscriptionRoute = ParentSubscriptionRouteImport.update({
 const PlayAreaRoute = PlayAreaRouteImport.update({
   id: '/play/$area',
   path: '/play/$area',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const WordfindThemeIdRoute = WordfindThemeIdRouteImport.update({
+  id: '/wordfind/$themeId',
+  path: '/wordfind/$themeId',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WorldWorldIdRoute = WorldWorldIdRouteImport.update({
@@ -167,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/rewards': typeof RewardsRoute
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
+  '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -174,6 +187,7 @@ export interface FileRoutesByFullPath {
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
+  '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
@@ -192,6 +206,7 @@ export interface FileRoutesByTo {
   '/rewards': typeof RewardsRoute
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
+  '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -199,6 +214,7 @@ export interface FileRoutesByTo {
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
+  '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
@@ -219,6 +235,7 @@ export interface FileRoutesById {
   '/rewards': typeof RewardsRoute
   '/terms': typeof TermsRoute
   '/welcome': typeof WelcomeRoute
+  '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -226,6 +243,7 @@ export interface FileRoutesById {
   '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
+  '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
@@ -247,6 +265,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/terms'
     | '/welcome'
+    | '/wordfinds'
     | '/worlds'
     | '/game/$gameId'
     | '/parent/children'
@@ -254,6 +273,7 @@ export interface FileRouteTypes {
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
+    | '/wordfind/$themeId'
     | '/world/$worldId'
     | '/parent/'
     | '/api/public/diag'
@@ -272,6 +292,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/terms'
     | '/welcome'
+    | '/wordfinds'
     | '/worlds'
     | '/game/$gameId'
     | '/parent/children'
@@ -279,6 +300,7 @@ export interface FileRouteTypes {
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
+    | '/wordfind/$themeId'
     | '/world/$worldId'
     | '/parent'
     | '/api/public/diag'
@@ -298,6 +320,7 @@ export interface FileRouteTypes {
     | '/rewards'
     | '/terms'
     | '/welcome'
+    | '/wordfinds'
     | '/worlds'
     | '/game/$gameId'
     | '/parent/children'
@@ -305,6 +328,7 @@ export interface FileRouteTypes {
     | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
+    | '/wordfind/$themeId'
     | '/world/$worldId'
     | '/parent/'
     | '/api/public/diag'
@@ -325,9 +349,11 @@ export interface RootRouteChildren {
   RewardsRoute: typeof RewardsRoute
   TermsRoute: typeof TermsRoute
   WelcomeRoute: typeof WelcomeRoute
+  WordfindsRoute: typeof WordfindsRoute
   WorldsRoute: typeof WorldsRoute
   GameGameIdRoute: typeof GameGameIdRoute
   PlayAreaRoute: typeof PlayAreaRoute
+  WordfindThemeIdRoute: typeof WordfindThemeIdRoute
   WorldWorldIdRoute: typeof WorldWorldIdRoute
   ApiPublicDiagRoute: typeof ApiPublicDiagRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
@@ -402,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof WelcomeRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/wordfinds': {
+      id: '/wordfinds'
+      path: '/wordfinds'
+      fullPath: '/wordfinds'
+      preLoaderRoute: typeof WordfindsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/worlds': {
       id: '/worlds'
       path: '/worlds'
@@ -456,6 +489,13 @@ declare module '@tanstack/react-router' {
       path: '/play/$area'
       fullPath: '/play/$area'
       preLoaderRoute: typeof PlayAreaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/wordfind/$themeId': {
+      id: '/wordfind/$themeId'
+      path: '/wordfind/$themeId'
+      fullPath: '/wordfind/$themeId'
+      preLoaderRoute: typeof WordfindThemeIdRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/world/$worldId': {
@@ -539,9 +579,11 @@ const rootRouteChildren: RootRouteChildren = {
   RewardsRoute: RewardsRoute,
   TermsRoute: TermsRoute,
   WelcomeRoute: WelcomeRoute,
+  WordfindsRoute: WordfindsRoute,
   WorldsRoute: WorldsRoute,
   GameGameIdRoute: GameGameIdRoute,
   PlayAreaRoute: PlayAreaRoute,
+  WordfindThemeIdRoute: WordfindThemeIdRoute,
   WorldWorldIdRoute: WorldWorldIdRoute,
   ApiPublicDiagRoute: ApiPublicDiagRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,

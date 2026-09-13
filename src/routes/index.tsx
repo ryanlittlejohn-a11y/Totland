@@ -232,6 +232,20 @@ function Home() {
             );
           })}
         </div>
+
+        <Link
+          to="/wordfinds"
+          className="mt-3 flex items-center gap-4 rounded-3xl bg-card p-4 wood-block active:translate-y-1"
+        >
+          <span className="grid size-16 shrink-0 place-items-center rounded-2xl bg-plum/25 text-3xl">🔎</span>
+          <div className="min-w-0 flex-1">
+            <p className="font-ui text-lg font-bold leading-tight text-ink">{L("Word Finds", "Sopa de letras")}</p>
+            <p className="truncate font-ui text-sm text-inksoft">
+              {L("100 puzzles — first 30 free", "100 juegos — los primeros 30 gratis")}
+            </p>
+          </div>
+          <span className="font-ui text-xl text-inksoft">›</span>
+        </Link>
       </section>
 
       <section className="mt-7 rounded-[2rem] felt-panel p-4">

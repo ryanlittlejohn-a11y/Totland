@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -9,6 +9,7 @@ import { useParentAuth } from "@/hooks/useParentAuth";
 import { ParentAuthCard } from "@/components/ParentAuthCard";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription, type SubscriptionState } from "@/lib/subscription.functions";
+import { deleteMyAccount } from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { isNativeApp, nativePlatform } from "@/lib/native";
 import { StorePurchasePanel } from "@/components/StorePurchasePanel";

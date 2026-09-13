@@ -98,12 +98,32 @@
     border-color: var(--color-border);
   }
 
+  html {
+    background-color: var(--cream);
+  }
+
   body {
-    background: var(--playmat);
-    background-attachment: fixed;
+    /* The soft gradient lives on a single fixed layer behind the page.
+       `background-attachment: fixed` on <body> makes iOS repaint the whole
+       backdrop on every scroll frame, which left parts of long pages blank. */
+    background-color: var(--cream);
     color: var(--color-foreground);
     font-family: var(--font-body);
     -webkit-tap-highlight-color: transparent;
+    min-height: 100svh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--playmat);
   }
 
   h1,
@@ -113,6 +133,7 @@
     font-family: var(--font-ui);
   }
 }
+
 
 @utility felt-panel {
   background-color: oklch(0.99 0.014 82 / 0.72);

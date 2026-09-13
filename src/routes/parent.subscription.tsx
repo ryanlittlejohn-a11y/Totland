@@ -262,7 +262,18 @@ function Subscription() {
         </ul>
       </section>
 
-      {ready && !user ? (
+      {deleted ? (
+        <section className="rounded-3xl bg-card p-5 wood-block">
+          <h2 className="font-ui text-lg font-bold text-ink">Your account has been deleted</h2>
+          <p className="mt-2 text-sm text-inksoft">
+            Your grown-up account, child profiles and subscription record have been permanently removed. Totland still
+            works on this device with the free activities.
+          </p>
+          <Link to="/" className="mt-3 inline-block rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream">
+            Back to play
+          </Link>
+        </section>
+      ) : ready && !user ? (
         <ParentAuthCard />
       ) : (
         user && (

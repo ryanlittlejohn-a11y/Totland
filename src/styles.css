@@ -108,7 +108,7 @@
     /* One painted layer only. A separate pinned backdrop layer made iPhones
        re-tile the whole screen and leave bands of the page unpainted. */
     background-color: var(--cream);
-    background-image: var(--playmat);
+    background-image: var(--playmat-image);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center top;
@@ -139,11 +139,6 @@
   background-color: oklch(0.99 0.014 82 / 0.92);
   border: 1px solid oklch(1 0 0 / 0.7);
   box-shadow: var(--shadow-tile);
-
-  @media (hover: hover) and (pointer: fine) {
-    background-color: oklch(0.99 0.014 82 / 0.72);
-    backdrop-filter: blur(10px);
-  }
 }
 
 @utility wood-block {

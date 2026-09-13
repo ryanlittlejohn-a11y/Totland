@@ -18,7 +18,7 @@ const EMAIL_TEMPLATES: Record<string, React.ComponentType<any>> = {
 }
 
 // Configuration
-const SITE_NAME = "Bright Start Academy"
+const SITE_NAME = "Totland"
 const ROOT_DOMAIN = "totland.app"
 
 // Sample data for preview mode ONLY (not used in actual email sending).

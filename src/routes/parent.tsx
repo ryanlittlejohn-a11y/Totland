@@ -74,9 +74,9 @@ function ParentLayout() {
           { to: "/parent", label: "Dashboard", exact: true },
           { to: "/parent/children", label: "Children" },
           { to: "/parent/subscription", label: "Subscription" },
-
           { to: "/parent/rights", label: "Content rights" },
           { to: "/parent/cms", label: "Content studio" },
+          { to: "/contact", label: "Contact" },
         ].map((t) => (
           <Link
             key={t.to}

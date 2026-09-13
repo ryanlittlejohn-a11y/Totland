@@ -116,18 +116,26 @@ export function WordFindGame({
   };
 
   const onDown = (e: React.PointerEvent) => {
-    const i = cellAt(e.clientX, e.clientY);
+    const el = gridRef.current;
+    if (!el) return;
+    // The inner letter area, minus the panel padding.
+    const rect = el.getBoundingClientRect();
+    const pad = 8;
+    box.current = new DOMRect(rect.left + pad, rect.top + pad, rect.width - pad * 2, rect.height - pad * 2);
+    const i = cellAt(e.clientX, e.clientY, puzzle.size);
     if (i === null) return;
     dragging.current = true;
     startCell.current = i;
+    lastCell.current = i;
     setTrail([i]);
-    gridRef.current?.setPointerCapture(e.pointerId);
+    el.setPointerCapture(e.pointerId);
   };
 
   const onMove = (e: React.PointerEvent) => {
     if (!dragging.current || startCell.current === null) return;
-    const i = cellAt(e.clientX, e.clientY);
-    if (i === null) return;
+    const i = cellAt(e.clientX, e.clientY, puzzle.size);
+    if (i === null || i === lastCell.current) return;
+    lastCell.current = i;
     setTrail(pathBetween(startCell.current, i, puzzle.size));
   };
 

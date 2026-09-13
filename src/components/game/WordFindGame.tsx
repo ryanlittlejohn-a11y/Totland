@@ -51,10 +51,17 @@ export function WordFindGame({
     return () => window.clearTimeout(t);
   }, [found, puzzle, tries, update, onFinish, profile.sfx, theme.id]);
 
-  const cellAt = (x: number, y: number): number | null => {
-    const el = document.elementFromPoint(x, y) as HTMLElement | null;
-    const raw = el?.closest<HTMLElement>("[data-cell]")?.dataset["cell"];
-    return raw === undefined ? null : Number(raw);
+  // Measured once when the drag starts, so a swipe never forces the phone to
+  // re-measure the page on every tiny movement.
+  const box = useRef<DOMRect | null>(null);
+
+  const cellAt = (x: number, y: number, size: number): number | null => {
+    const r = box.current;
+    if (!r || r.width === 0 || r.height === 0) return null;
+    const col = Math.floor(((x - r.left) / r.width) * size);
+    const row = Math.floor(((y - r.top) / r.height) * size);
+    if (col < 0 || row < 0 || col >= size || row >= size) return null;
+    return row * size + col;
   };
 
   const pathBetween = (a: number, b: number, size: number): number[] => {

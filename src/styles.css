@@ -98,12 +98,32 @@
     border-color: var(--color-border);
   }
 
+  html {
+    background-color: var(--cream);
+  }
+
   body {
-    background: var(--playmat);
-    background-attachment: fixed;
+    /* The soft gradient lives on a single fixed layer behind the page.
+       `background-attachment: fixed` on <body> makes iOS repaint the whole
+       backdrop on every scroll frame, which left parts of long pages blank. */
+    background-color: var(--cream);
     color: var(--color-foreground);
     font-family: var(--font-body);
     -webkit-tap-highlight-color: transparent;
+    min-height: 100svh;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: var(--playmat);
   }
 
   h1,
@@ -114,11 +134,19 @@
   }
 }
 
+
 @utility felt-panel {
-  background-color: oklch(0.99 0.014 82 / 0.72);
+  /* Opaque by default: live blur behind many panels is what exhausts the
+     graphics memory on phones and leaves parts of the screen unpainted.
+     Pointer-capable (desktop) devices still get the frosted look. */
+  background-color: oklch(0.99 0.014 82 / 0.92);
   border: 1px solid oklch(1 0 0 / 0.7);
   box-shadow: var(--shadow-tile);
-  backdrop-filter: blur(10px);
+
+  @media (hover: hover) and (pointer: fine) {
+    background-color: oklch(0.99 0.014 82 / 0.72);
+    backdrop-filter: blur(10px);
+  }
 }
 
 @utility wood-block {

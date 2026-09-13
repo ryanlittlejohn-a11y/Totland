@@ -28,6 +28,7 @@ export function WordFindGame({
   const [tries, setTries] = useState(0);
   const dragging = useRef(false);
   const startCell = useRef<number | null>(null);
+  const lastCell = useRef<number | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const done = useRef(false);
 

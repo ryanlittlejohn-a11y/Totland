@@ -175,7 +175,7 @@ export const WORD_FIND_THEMES: WordFindTheme[] = [
   t("birthday", "Birthday", "🎂", ["cake", "gift", "song", "hat", "candle", "wish", "party", "card", "smile", "friend"]),
   t("good-manners", "Good Manners", "🙏", ["please", "thanks", "share", "wait", "kind", "help", "sorry", "listen", "tidy", "smile"]),
   t("safety-first", "Safety First", "🦺", ["stop", "look", "hold", "belt", "safe", "help", "walk", "wait", "calm", "ask"]),
-  t("busy-bugs", "Busy Bugs Again", "🐞", ["bug", "wing", "leaf", "hive", "honey", "buzz", "hop", "web", "crawl", "tiny"]),
+  
   t("things-that-fly", "Things That Fly", "🪁", ["bird", "kite", "plane", "bee", "bat", "wing", "sky", "fly", "cloud", "high"]),
   t("things-that-float", "Things That Float", "🛟", ["boat", "duck", "raft", "leaf", "cork", "ship", "foam", "sail", "swim", "wave"]),
   t("shiny-things", "Shiny Things", "✨", ["star", "gold", "lamp", "coin", "glow", "shine", "moon", "glass", "light", "ring"]),

@@ -19,7 +19,8 @@
 
 ## Remaining
 - [ ] Go live: verify identity in the Payments tab, publish (products + webhook sync to live)
-- [ ] Kids-app policy pages required by the provider review (terms, refund policy, privacy notice)
+- [x] Kids-app policy pages required by the provider review (terms, refund policy, privacy notice)
+- [x] Contact page with form at `/contact` (submissions saved to `contact_inquiries`; email forwarding pending email provider setup)
 
 ## Codemagic store builds (approved plan)
 - [ ] User: RevenueCat project + App Store app, `premium` entitlement, 2 products, webhook (blocked on RevenueCat account)

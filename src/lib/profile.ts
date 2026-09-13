@@ -59,6 +59,8 @@ export interface Profile {
   days: DayStat[];
   favorites: Record<string, number>;
   recent: string[];
+  /** ids of Word Find puzzles the child has completed */
+  wordFinds?: string[];
   lastAdventure?: string;
 }
 

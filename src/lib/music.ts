@@ -55,12 +55,20 @@ function fadeTo(value: number) {
   }, 40);
 }
 
+/** When a track address fails, the hosted copy is remembered here and used
+ *  from then on. */
+const hosted = new Map<string, string>();
+
+function sourceFor(url: string): string {
+  return hosted.get(url) ?? url;
+}
+
 function ensureAudio(): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
   const url = trackFor(route);
   if (!url) return null;
   if (!audio) {
-    audio = new Audio(url);
+    audio = new Audio(sourceFor(url));
     audio.loop = true;
     audio.preload = "auto";
     currentUrl = url;
@@ -72,7 +80,7 @@ function ensureAudio(): HTMLAudioElement | null {
     // Keep the same element (it already has permission to make sound) and
     // simply swap the tune.
     audio.pause();
-    audio.src = url;
+    audio.src = sourceFor(url);
     currentUrl = url;
     audio.load();
   }
@@ -82,20 +90,15 @@ function ensureAudio(): HTMLAudioElement | null {
 
 /** A soundtrack that cannot load used to fail in total silence. Log it, and
  *  try the hosted copy once in case the bundled address was wrong. */
-const retried = new Set<string>();
-
 function handleLoadError() {
   const url = currentUrl;
   if (!audio || !url) return;
-  reportIssue(`soundtrack failed to load: ${url}`);
-  if (url.startsWith("/") && !retried.has(url)) {
-    retried.add(url);
-    const fallback = `${apiOrigin()}${url}`;
-    audio.src = fallback;
-    currentUrl = fallback;
-    audio.load();
-    if (wanted) void tryPlay();
-  }
+  reportIssue(`soundtrack failed to load: ${sourceFor(url)}`);
+  if (!url.startsWith("/") || hosted.has(url)) return;
+  hosted.set(url, `${apiOrigin()}${url}`);
+  audio.src = sourceFor(url);
+  audio.load();
+  if (wanted) void tryPlay();
 }
 
 function hookGesture() {

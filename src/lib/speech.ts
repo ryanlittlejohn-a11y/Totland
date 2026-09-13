@@ -93,6 +93,25 @@ function sayWithDeviceVoice(text: string, opts: { rate?: number; pitch?: number 
  * ------------------------------------------------------------------ */
 
 const VOICE_CACHE = "totland-voice-v1";
+const VOICE_BLOCKED_KEY = "totland.voice-unavailable";
+
+function voiceRequestsBlocked(): boolean {
+  if (typeof window === "undefined") return false;
+  try {
+    return window.sessionStorage.getItem(VOICE_BLOCKED_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function blockVoiceRequests() {
+  if (typeof window === "undefined") return;
+  try {
+    window.sessionStorage.setItem(VOICE_BLOCKED_KEY, "1");
+  } catch {
+    /* session storage can be unavailable in private browsing */
+  }
+}
 
 function keyFor(text: string, lang: string): string {
   let h = 2166136261;
@@ -161,9 +180,14 @@ async function fetchAndStore(
   lang: string,
   wantUrl = true,
 ): Promise<string | null> {
+  if (voiceRequestsBlocked()) return null;
   try {
-    const { audio } = await speakText({ data: { text, lang } });
-    const blob = await toBlob(audio);
+    const result = await speakText({ data: { text, lang } });
+    if (result.status !== "ok") {
+      blockVoiceRequests();
+      return null;
+    }
+    const blob = await toBlob(result.audio);
     const key = keyFor(text, lang);
     if (typeof caches !== "undefined") {
       try {

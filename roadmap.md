@@ -38,3 +38,7 @@
 ## Voice reliability (done)
 - [x] Fall back to the device voice when ElevenLabs is out of credits or unavailable
 - [x] Stop repeated voice requests for the rest of the session after the first provider denial
+
+## Word Finds (approved plan)
+- [x] 100 original themed word find puzzles with swipe-to-find
+- [x] First 30 free and replayable; puzzles 31–100 unlock with premium

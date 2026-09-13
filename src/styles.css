@@ -133,9 +133,8 @@
 
 
 @utility felt-panel {
-  /* Opaque by default: live blur behind many panels is what exhausts the
-     graphics memory on phones and leaves parts of the screen unpainted.
-     Pointer-capable (desktop) devices still get the frosted look. */
+  /* Always opaque. Live blur behind many panels exhausts the graphics memory
+     on phones and leaves parts of the screen unpainted. */
   background-color: oklch(0.99 0.014 82 / 0.92);
   border: 1px solid oklch(1 0 0 / 0.7);
   box-shadow: var(--shadow-tile);
@@ -214,6 +213,14 @@
 }
 .anim-wiggle {
   animation: wiggle 0.5s ease-in-out 2;
+}
+
+/* While the app is in the background, nothing should keep the graphics layer
+   busy. `data-away` is set on <html> when the screen is hidden. */
+html[data-away="1"] *,
+html[data-away="1"] *::before,
+html[data-away="1"] *::after {
+  animation-play-state: paused !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

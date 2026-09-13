@@ -64,6 +64,7 @@ function ensureAudio(): HTMLAudioElement | null {
     audio.loop = true;
     audio.preload = "auto";
     currentUrl = url;
+    audio.addEventListener("error", handleLoadError);
     // The soundtrack starts itself on the first tap (see hookGesture), so it
     // must not be muted-primed like the narration element.
 

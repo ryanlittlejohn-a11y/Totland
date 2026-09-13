@@ -53,6 +53,7 @@ function WordFindPage() {
           </p>
           <Link
             to="/parent/subscription"
+            search={{ checkout: undefined }}
             className="mt-4 inline-block rounded-2xl bg-clay px-5 py-3 font-ui font-bold text-card wood-block"
           >
             {L("Grown-ups: unlock", "Adultos: desbloquear")}

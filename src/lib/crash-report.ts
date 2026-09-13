@@ -75,4 +75,33 @@ export function installCrashReporting() {
   } catch {
     /* long-task reporting is unavailable on some devices */
   }
+
+  installWatchdog();
+}
+
+/** A steady heartbeat. If it misses many beats the screen was stuck, so we
+ *  report the gap and — in the packaged app — quietly reload once so a child
+ *  is not left tapping a frozen picture. */
+function installWatchdog() {
+  const BEAT = 2000;
+  const STUCK = 15000;
+  let last = Date.now();
+  let recovered = false;
+
+  window.setInterval(() => {
+    const now = Date.now();
+    const gap = now - last;
+    last = now;
+    if (document.visibilityState !== "visible") return;
+    if (gap < STUCK) return;
+    post(base("freeze", `screen stuck for ${Math.round(gap)}ms`));
+    if (isNativeApp() && !recovered) {
+      recovered = true;
+      window.setTimeout(() => window.location.reload(), 500);
+    }
+  }, BEAT);
+
+  document.addEventListener("visibilitychange", () => {
+    last = Date.now();
+  });
 }

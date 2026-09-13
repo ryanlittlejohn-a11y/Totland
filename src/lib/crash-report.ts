@@ -43,6 +43,12 @@ function base(kind: Report["kind"], message: string, stack?: string): Report {
   };
 }
 
+/** Log a non-fatal problem (a soundtrack that would not load, say) so silent
+ *  failures on a real device still show up in the server logs. */
+export function reportIssue(message: string) {
+  post(base("error", message));
+}
+
 export function installCrashReporting() {
   if (installed || typeof window === "undefined") return;
   installed = true;

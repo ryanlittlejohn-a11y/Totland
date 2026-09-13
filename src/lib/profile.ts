@@ -2,7 +2,7 @@
  * Local-first child learning profile + adaptive difficulty engine.
  * Nothing here ever leaves the device: it is stored in localStorage only.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SkillId } from "./content";
 import { setLang, type Lang } from "./i18n";
 

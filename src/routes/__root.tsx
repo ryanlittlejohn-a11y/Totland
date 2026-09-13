@@ -153,6 +153,18 @@ function RootComponent() {
     prewarmCommonNarration();
   }, [router]);
 
+  // Stop every looping animation while the app is in the background.
+  useEffect(() => {
+    const sync = () => {
+      const away = document.visibilityState === "hidden";
+      if (away) document.documentElement.setAttribute("data-away", "1");
+      else document.documentElement.removeAttribute("data-away");
+    };
+    sync();
+    document.addEventListener("visibilitychange", sync);
+    return () => document.removeEventListener("visibilitychange", sync);
+  }, []);
+
 
   return (
     <QueryClientProvider client={queryClient}>

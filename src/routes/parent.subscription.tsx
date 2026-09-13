@@ -305,6 +305,66 @@ function Subscription() {
                 Premium is saved on this device too, so games keep working with no internet.
               </p>
             )}
+
+            <div className="mt-5 border-t border-border pt-4">
+              <h3 className="font-ui text-sm font-bold text-clay">Delete account</h3>
+              <p className="mt-2 text-xs text-inksoft">
+                This permanently removes your grown-up account, every child profile saved to it, and your subscription
+                record. It cannot be undone.
+              </p>
+              {active && (
+                <p className="mt-2 text-xs text-clay">
+                  You have an active subscription. Deleting your account does not cancel billing — cancel first
+                  {native ? ` in ${storeName} from your device settings` : " at paddle.net with your checkout email"}.
+                </p>
+              )}
+
+              {!confirmOpen ? (
+                <button
+                  type="button"
+                  onClick={() => setConfirmOpen(true)}
+                  className="mt-3 rounded-xl bg-clay/15 px-4 py-2 font-ui text-sm font-bold text-clay"
+                >
+                  Delete my account
+                </button>
+              ) : (
+                <div className="mt-3">
+                  <label htmlFor="confirm-delete" className="block text-xs font-semibold text-ink">
+                    Type DELETE to confirm
+                  </label>
+                  <input
+                    id="confirm-delete"
+                    value={confirmText}
+                    onChange={(e) => setConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                    className="mt-1 w-full rounded-xl bg-felt px-4 py-3 text-ink outline-none ring-1 ring-black/5 focus:ring-clay"
+                  />
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      disabled={confirmText.trim().toUpperCase() !== "DELETE" || deleting}
+                      onClick={() => void doDelete()}
+                      className="rounded-xl bg-clay px-4 py-2 font-ui text-sm font-bold text-primary-foreground disabled:opacity-50"
+                    >
+                      {deleting ? "Deleting…" : "Permanently delete"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={deleting}
+                      onClick={() => {
+                        setConfirmOpen(false);
+                        setConfirmText("");
+                        setDeleteError(null);
+                      }}
+                      className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {deleteError && <p className="mt-2 text-xs text-clay">{deleteError}</p>}
+                </div>
+              )}
+            </div>
           </section>
         )
       )}

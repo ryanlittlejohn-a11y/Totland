@@ -2,7 +2,7 @@
  * Local-first child learning profile + adaptive difficulty engine.
  * Nothing here ever leaves the device: it is stored in localStorage only.
  */
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import type { SkillId } from "./content";
 import { setLang, type Lang } from "./i18n";
 
@@ -339,10 +339,21 @@ export function useProfile() {
     return () => window.removeEventListener("totland:profile", sync);
   }, []);
 
+  // Saving broadcasts to every other screen, so it must happen after the render
+  // that produced the new profile — never inside the state updater.
+  const pending = useRef<Profile | null>(null);
+
+  useEffect(() => {
+    if (!pending.current) return;
+    const next = pending.current;
+    pending.current = null;
+    saveProfile(next);
+  });
+
   const update = useCallback((fn: (p: Profile) => Profile) => {
     setProfile((prev) => {
       const next = fn(prev);
-      saveProfile(next);
+      pending.current = next;
       return next;
     });
   }, []);

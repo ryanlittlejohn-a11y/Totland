@@ -28,6 +28,7 @@ export function WordFindGame({
   const [tries, setTries] = useState(0);
   const dragging = useRef(false);
   const startCell = useRef<number | null>(null);
+  const lastCell = useRef<number | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const done = useRef(false);
 
@@ -51,10 +52,17 @@ export function WordFindGame({
     return () => window.clearTimeout(t);
   }, [found, puzzle, tries, update, onFinish, profile.sfx, theme.id]);
 
-  const cellAt = (x: number, y: number): number | null => {
-    const el = document.elementFromPoint(x, y) as HTMLElement | null;
-    const raw = el?.closest<HTMLElement>("[data-cell]")?.dataset["cell"];
-    return raw === undefined ? null : Number(raw);
+  // Measured once when the drag starts, so a swipe never forces the phone to
+  // re-measure the page on every tiny movement.
+  const box = useRef<DOMRect | null>(null);
+
+  const cellAt = (x: number, y: number, size: number): number | null => {
+    const r = box.current;
+    if (!r || r.width === 0 || r.height === 0) return null;
+    const col = Math.floor(((x - r.left) / r.width) * size);
+    const row = Math.floor(((y - r.top) / r.height) * size);
+    if (col < 0 || row < 0 || col >= size || row >= size) return null;
+    return row * size + col;
   };
 
   const pathBetween = (a: number, b: number, size: number): number[] => {
@@ -109,18 +117,26 @@ export function WordFindGame({
   };
 
   const onDown = (e: React.PointerEvent) => {
-    const i = cellAt(e.clientX, e.clientY);
+    const el = gridRef.current;
+    if (!el) return;
+    // The inner letter area, minus the panel padding.
+    const rect = el.getBoundingClientRect();
+    const pad = 8;
+    box.current = new DOMRect(rect.left + pad, rect.top + pad, rect.width - pad * 2, rect.height - pad * 2);
+    const i = cellAt(e.clientX, e.clientY, puzzle.size);
     if (i === null) return;
     dragging.current = true;
     startCell.current = i;
+    lastCell.current = i;
     setTrail([i]);
-    gridRef.current?.setPointerCapture(e.pointerId);
+    el.setPointerCapture(e.pointerId);
   };
 
   const onMove = (e: React.PointerEvent) => {
     if (!dragging.current || startCell.current === null) return;
-    const i = cellAt(e.clientX, e.clientY);
-    if (i === null) return;
+    const i = cellAt(e.clientX, e.clientY, puzzle.size);
+    if (i === null || i === lastCell.current) return;
+    lastCell.current = i;
     setTrail(pathBetween(startCell.current, i, puzzle.size));
   };
 

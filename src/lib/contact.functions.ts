@@ -48,11 +48,15 @@ export const submitContactInquiry = createServerFn({ method: "POST" })
       },
     });
 
-    const { error } = await supabase.from("contact_inquiries").insert({
-      name: data.name,
-      email: data.email,
-      message: data.message,
-    });
+    const { data: inserted, error } = await supabase
+      .from("contact_inquiries")
+      .insert({
+        name: data.name,
+        email: data.email,
+        message: data.message,
+      })
+      .select("id")
+      .maybeSingle();
 
     if (error) {
       console.error("[contact] failed to save inquiry:", error);
@@ -60,6 +64,26 @@ export const submitContactInquiry = createServerFn({ method: "POST" })
         ok: false,
         error: "We couldn't send your message right now. Please check your connection and try again.",
       };
+    }
+
+    const inquiryId = inserted?.id ?? crypto.randomUUID();
+
+    try {
+      const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+
+      await sendTemplateEmail("contact-notification", "", {
+        templateData: { name: data.name, email: data.email, message: data.message },
+        idempotencyKey: `contact-notification-${inquiryId}`,
+        replyTo: data.email,
+      });
+
+      await sendTemplateEmail("contact-confirmation", data.email, {
+        templateData: { name: data.name, message: data.message },
+        idempotencyKey: `contact-confirmation-${inquiryId}`,
+      });
+    } catch (emailError) {
+      // The inquiry is safely stored; a delivery problem must not fail the form.
+      console.error("[contact] failed to send notification email:", emailError);
     }
 
     return { ok: true };

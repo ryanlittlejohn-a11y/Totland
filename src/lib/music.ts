@@ -4,6 +4,8 @@
  *  Autoplay blocks are handled by retrying on first tap. */
 import { ACTIVITY_TRACK_URL, MENU_TRACK_URL, STORY_TRACK_URL } from "./music-track";
 import { onGesture, onUnlock } from "./audio-unlock";
+import { reportIssue } from "./crash-report";
+import { apiOrigin } from "./native";
 
 /** Slider 0–1 maps to 0–0.25 playback volume; default 0.5 ≈ 7% (very soft). */
 const MAX_VOLUME = 0.25;

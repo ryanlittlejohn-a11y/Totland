@@ -3,7 +3,17 @@ import { createStart, createCsrfMiddleware, createMiddleware } from "@tanstack/r
 import { renderErrorPage } from "./lib/error-page";
 import { attachSupabaseAuth } from "@/integrations/supabase/auth-attacher";
 
-const errorMiddleware = createMiddleware().server(async ({ next }) => {
+function isLovableRoute(request: Request | undefined): boolean {
+  if (!request) return false;
+  try {
+    return new URL(request.url).pathname.startsWith("/lovable/");
+  } catch {
+    return false;
+  }
+}
+
+const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
+  if (isLovableRoute(request)) return next();
   try {
     return await next();
   } catch (error) {

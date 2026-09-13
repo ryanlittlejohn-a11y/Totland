@@ -42,6 +42,7 @@ function isNativeOrigin(origin: string | null | undefined): boolean {
 }
 
 const nativeCorsMiddleware = createMiddleware().server(async ({ next, request }) => {
+  if (isLovableRoute(request)) return next();
   const origin = request?.headers.get("origin");
   if (!isNativeOrigin(origin)) return next();
 

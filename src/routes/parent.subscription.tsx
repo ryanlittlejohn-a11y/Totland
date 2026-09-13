@@ -109,6 +109,33 @@ function Subscription() {
   const native = isNativeApp();
   const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
 
+  const navigate = useNavigate();
+  const removeAccount = useServerFn(deleteMyAccount);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const doDelete = async () => {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await removeAccount({ data: undefined });
+      await supabase.auth.signOut();
+      try {
+        window.localStorage.removeItem("totland.family.v1");
+      } catch {
+        /* ignore */
+      }
+      update((p) => ({ ...p, premium: false }));
+      void navigate({ to: "/", search: { deleted: "1" } as never });
+    } catch (e) {
+      console.error(e);
+      setDeleteError("We couldn't delete your account just now. Please check your connection and try again.");
+      setDeleting(false);
+    }
+  };
+
   return (
     <div className="space-y-4">
       <section className="rounded-3xl bg-card p-5 wood-block">

@@ -27,7 +27,7 @@ export const speakText = createServerFn({ method: "POST" })
       return { status: "unavailable", reason: "service" } satisfies SpeakResult;
     }
 
-    const voiceId = VOICES[data.lang] ?? VOICES.en;
+    const voiceId = VOICES[data.lang] ?? VOICES["en"];
     if (!voiceId) return { status: "unavailable", reason: "service" } satisfies SpeakResult;
     let res: Response;
     try {

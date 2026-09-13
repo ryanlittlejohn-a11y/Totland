@@ -9,6 +9,7 @@ import { useParentAuth } from "@/hooks/useParentAuth";
 import { ParentAuthCard } from "@/components/ParentAuthCard";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription, type SubscriptionState } from "@/lib/subscription.functions";
+import { deleteMyAccount } from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { isNativeApp, nativePlatform } from "@/lib/native";
 import { StorePurchasePanel } from "@/components/StorePurchasePanel";
@@ -107,6 +108,34 @@ function Subscription() {
   const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
   const native = isNativeApp();
   const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
+
+  const removeAccount = useServerFn(deleteMyAccount);
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
+  const [deleting, setDeleting] = useState(false);
+  const [deleted, setDeleted] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+
+  const doDelete = async () => {
+    setDeleting(true);
+    setDeleteError(null);
+    try {
+      await removeAccount({ data: undefined });
+      await supabase.auth.signOut();
+      try {
+        window.localStorage.removeItem("totland.family.v1");
+      } catch {
+        /* ignore */
+      }
+      update((p) => ({ ...p, premium: false }));
+      setDeleted(true);
+      setDeleting(false);
+    } catch (e) {
+      console.error(e);
+      setDeleteError("We couldn't delete your account just now. Please check your connection and try again.");
+      setDeleting(false);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -233,7 +262,18 @@ function Subscription() {
         </ul>
       </section>
 
-      {ready && !user ? (
+      {deleted ? (
+        <section className="rounded-3xl bg-card p-5 wood-block">
+          <h2 className="font-ui text-lg font-bold text-ink">Your account has been deleted</h2>
+          <p className="mt-2 text-sm text-inksoft">
+            Your grown-up account, child profiles and subscription record have been permanently removed. Totland still
+            works on this device with the free activities.
+          </p>
+          <Link to="/" className="mt-3 inline-block rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream">
+            Back to play
+          </Link>
+        </section>
+      ) : ready && !user ? (
         <ParentAuthCard />
       ) : (
         user && (
@@ -265,6 +305,66 @@ function Subscription() {
                 Premium is saved on this device too, so games keep working with no internet.
               </p>
             )}
+
+            <div className="mt-5 border-t border-border pt-4">
+              <h3 className="font-ui text-sm font-bold text-clay">Delete account</h3>
+              <p className="mt-2 text-xs text-inksoft">
+                This permanently removes your grown-up account, every child profile saved to it, and your subscription
+                record. It cannot be undone.
+              </p>
+              {active && (
+                <p className="mt-2 text-xs text-clay">
+                  You have an active subscription. Deleting your account does not cancel billing — cancel first
+                  {native ? ` in ${storeName} from your device settings` : " at paddle.net with your checkout email"}.
+                </p>
+              )}
+
+              {!confirmOpen ? (
+                <button
+                  type="button"
+                  onClick={() => setConfirmOpen(true)}
+                  className="mt-3 rounded-xl bg-clay/15 px-4 py-2 font-ui text-sm font-bold text-clay"
+                >
+                  Delete my account
+                </button>
+              ) : (
+                <div className="mt-3">
+                  <label htmlFor="confirm-delete" className="block text-xs font-semibold text-ink">
+                    Type DELETE to confirm
+                  </label>
+                  <input
+                    id="confirm-delete"
+                    value={confirmText}
+                    onChange={(e) => setConfirmText(e.target.value)}
+                    placeholder="DELETE"
+                    className="mt-1 w-full rounded-xl bg-felt px-4 py-3 text-ink outline-none ring-1 ring-black/5 focus:ring-clay"
+                  />
+                  <div className="mt-3 flex gap-2">
+                    <button
+                      type="button"
+                      disabled={confirmText.trim().toUpperCase() !== "DELETE" || deleting}
+                      onClick={() => void doDelete()}
+                      className="rounded-xl bg-clay px-4 py-2 font-ui text-sm font-bold text-primary-foreground disabled:opacity-50"
+                    >
+                      {deleting ? "Deleting…" : "Permanently delete"}
+                    </button>
+                    <button
+                      type="button"
+                      disabled={deleting}
+                      onClick={() => {
+                        setConfirmOpen(false);
+                        setConfirmText("");
+                        setDeleteError(null);
+                      }}
+                      className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                  {deleteError && <p className="mt-2 text-xs text-clay">{deleteError}</p>}
+                </div>
+              )}
+            </div>
           </section>
         )
       )}

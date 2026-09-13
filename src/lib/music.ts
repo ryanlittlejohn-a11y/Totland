@@ -80,6 +80,24 @@ function ensureAudio(): HTMLAudioElement | null {
   return audio;
 }
 
+/** A soundtrack that cannot load used to fail in total silence. Log it, and
+ *  try the hosted copy once in case the bundled address was wrong. */
+const retried = new Set<string>();
+
+function handleLoadError() {
+  const url = currentUrl;
+  if (!audio || !url) return;
+  reportIssue(`soundtrack failed to load: ${url}`);
+  if (url.startsWith("/") && !retried.has(url)) {
+    retried.add(url);
+    const fallback = `${apiOrigin()}${url}`;
+    audio.src = fallback;
+    currentUrl = fallback;
+    audio.load();
+    if (wanted) void tryPlay();
+  }
+}
+
 function hookGesture() {
   if (gestureHooked || typeof window === "undefined") return;
   gestureHooked = true;

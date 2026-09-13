@@ -9,7 +9,7 @@ import { EmailChangeEmail } from '@/lib/email-templates/email-change'
 import { ReauthenticationEmail } from '@/lib/email-templates/reauthentication'
 
 // Configuration
-const SITE_NAME = "Bright Start Academy"
+const SITE_NAME = "Totland"
 const SENDER_DOMAIN = "notify.totland.app"
 const ROOT_DOMAIN = "totland.app"
 const FROM_DOMAIN = "totland.app"

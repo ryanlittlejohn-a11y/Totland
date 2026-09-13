@@ -33,3 +33,7 @@
 ## Soundtracks (done)
 - [x] Menu screens: Little Steps, Big Dreams; activities: Curious Steps; storybooks: Forest of Wonder
 - [x] Audible volume slider with live preview in the parent dashboard; wider range, ducking kept
+
+## Voice reliability (done)
+- [x] Fall back to the device voice when ElevenLabs is out of credits or unavailable
+- [x] Stop repeated voice requests for the rest of the session after the first provider denial

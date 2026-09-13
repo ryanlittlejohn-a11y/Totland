@@ -8,6 +8,10 @@ const VOICES: Record<string, string> = {
 
 export type SpeakInput = { text: string; lang?: string };
 
+export type SpeakResult =
+  | { status: "ok"; audio: string }
+  | { status: "unavailable"; reason: "quota" | "rate_limit" | "service" };
+
 /** Generate narration audio with the ElevenLabs Hannah voice. Returns base64 MP3. */
 export const speakText = createServerFn({ method: "POST" })
   .inputValidator((input: SpeakInput) => {
@@ -42,10 +46,21 @@ export const speakText = createServerFn({ method: "POST" })
 
     if (!res.ok) {
       const body = await res.text();
-      console.error(`ElevenLabs TTS failed [${res.status}]: ${body}`);
-      throw new Error(`Voice request failed [${res.status}]: ${body}`);
+      // Authentication, quota, policy, and rate-limit responses are expected
+      // service-availability states. Returning a typed result keeps narration
+      // optional and prevents a provider denial from reaching the app boundary.
+      if ([401, 402, 403, 429].includes(res.status)) {
+        const reason = res.status === 429 ? "rate_limit" : "quota";
+        console.warn(`ElevenLabs narration unavailable [${res.status}]`);
+        return { status: "unavailable", reason } satisfies SpeakResult;
+      }
+      console.error(`ElevenLabs narration unavailable [${res.status}]`);
+      return { status: "unavailable", reason: "service" } satisfies SpeakResult;
     }
 
     const buf = await res.arrayBuffer();
-    return { audio: Buffer.from(buf).toString("base64") };
+    return {
+      status: "ok",
+      audio: Buffer.from(buf).toString("base64"),
+    } satisfies SpeakResult;
   });

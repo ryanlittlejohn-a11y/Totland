@@ -103,10 +103,13 @@
   }
 
   body {
-    /* The soft gradient lives on a single fixed layer behind the page.
-       `background-attachment: fixed` on <body> makes iOS repaint the whole
-       backdrop on every scroll frame, which left parts of long pages blank. */
+    /* One painted layer only. A separate pinned backdrop layer made iPhones
+       re-tile the whole screen and leave bands of the page unpainted. */
     background-color: var(--cream);
+    background-image: var(--playmat);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center top;
     color: var(--color-foreground);
     font-family: var(--font-body);
     -webkit-tap-highlight-color: transparent;
@@ -117,14 +120,6 @@
     padding-right: env(safe-area-inset-right);
   }
 
-  body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: -1;
-    pointer-events: none;
-    background: var(--playmat);
-  }
 
   h1,
   h2,

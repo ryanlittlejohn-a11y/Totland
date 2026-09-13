@@ -22,27 +22,37 @@ export const speakText = createServerFn({ method: "POST" })
   })
   .handler(async ({ data }) => {
     const apiKey = process.env["ELEVENLABS_API_KEY"];
-    if (!apiKey) throw new Error("ElevenLabs is not connected to this project");
+    if (!apiKey) {
+      console.warn("ElevenLabs narration is not configured");
+      return { status: "unavailable", reason: "service" } satisfies SpeakResult;
+    }
 
-    const voiceId = VOICES[data.lang] ?? VOICES["en"]!;
-    const res = await fetch(
-      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
-      {
-        method: "POST",
-        headers: { "xi-api-key": apiKey, "Content-Type": "application/json" },
-        body: JSON.stringify({
-          text: data.text,
-          model_id: "eleven_multilingual_v2",
-          voice_settings: {
-            stability: 0.5,
-            similarity_boost: 0.75,
-            style: 0.4,
-            use_speaker_boost: true,
-            speed: 0.95,
-          },
-        }),
-      },
-    );
+    const voiceId = VOICES[data.lang] ?? VOICES.en;
+    if (!voiceId) return { status: "unavailable", reason: "service" } satisfies SpeakResult;
+    let res: Response;
+    try {
+      res = await fetch(
+        `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+        {
+          method: "POST",
+          headers: { "xi-api-key": apiKey, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: data.text,
+            model_id: "eleven_multilingual_v2",
+            voice_settings: {
+              stability: 0.5,
+              similarity_boost: 0.75,
+              style: 0.4,
+              use_speaker_boost: true,
+              speed: 0.95,
+            },
+          }),
+        },
+      );
+    } catch {
+      console.warn("ElevenLabs narration request could not connect");
+      return { status: "unavailable", reason: "service" } satisfies SpeakResult;
+    }
 
     if (!res.ok) {
       const body = await res.text();

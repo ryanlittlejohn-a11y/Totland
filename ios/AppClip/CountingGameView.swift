@@ -1,5 +1,6 @@
 import StoreKit
 import SwiftUI
+import UIKit
 
 private struct CountingRound {
     let symbol: String
@@ -55,7 +56,6 @@ struct CountingGameView: View {
                 .font(.system(size: 20, weight: .bold, design: .rounded))
                 .multilineTextAlignment(.center)
                 .frame(minHeight: 48)
-                .accessibilityLiveRegion(.assertive)
 
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 78), spacing: 14)], spacing: 14) {
                 ForEach(0..<round.count, id: \.self) { item in

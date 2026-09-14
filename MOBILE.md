@@ -51,6 +51,7 @@ Both open the Totland app and land on the parent subscription screen.
 ## Store listings
 
 - Apple bundle ID: `App.totland.kids` (capital A, matching the existing Apple record)
+- Apple App Clip bundle ID: `App.totland.kids.Clip`
 - Android package: `app.totland.kids`
 - Apple: choose the Kids category (ages 5 and under / 6–8), declare no ads and
   no tracking, and point the privacy questionnaire at the existing
@@ -108,9 +109,26 @@ around the value. The workflow decodes and validates the key before requesting
 Apple signing files.
 
 After saving the variable, rerun **Totland iOS**. The workflow fetches or
-creates the distribution certificate and App Store provisioning profile for
-`App.totland.kids`, imports them into its temporary keychain, and builds the
-IPA for TestFlight.
+creates the distribution certificate and App Store provisioning profiles for
+`App.totland.kids` and `App.totland.kids.Clip`, imports them into its temporary
+keychain, and builds the IPA for TestFlight.
+
+### App Clip setup
+
+The iOS archive includes a small no-sign-in counting game as an App Clip. Its
+invocation URL is `https://totland.app/appclip`, and the website serves Apple's
+association response from `/.well-known/apple-app-site-association`.
+
+Before the first App Clip upload:
+
+1. Register `App.totland.kids.Clip` in Apple Developer as an App Clip belonging
+   to `App.totland.kids`, with Associated Domains enabled on both identifiers.
+2. Save the 10-character Apple Developer Team ID as `APPLE_DEVELOPER_TEAM_ID`
+   in Lovable so the association response can include the signed app IDs.
+3. In App Store Connect, add the default App Clip experience using
+   `https://totland.app/appclip`, the action **Play**, and a suitable header image.
+4. Publish the site, confirm the association URL returns HTTP 200, then run the
+   **Totland iOS** workflow and test the invocation on an iPhone or iPad.
 
 ### iOS build numbers
 

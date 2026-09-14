@@ -44,9 +44,42 @@ function isH3SwallowedErrorBody(body: string): boolean {
   }
 }
 
+function appSiteAssociation(): Response {
+  const teamId = process.env["APPLE_DEVELOPER_TEAM_ID"]?.trim();
+  if (!teamId) {
+    return Response.json(
+      { error: "App Clip association is awaiting the Apple Developer Team ID." },
+      { status: 503, headers: { "cache-control": "no-store" } },
+    );
+  }
+
+  const appId = `${teamId}.App.totland.kids`;
+  const clipId = `${teamId}.App.totland.kids.Clip`;
+  return Response.json(
+    {
+      appclips: { apps: [clipId] },
+      applinks: {
+        apps: [],
+        details: [{ appIDs: [appId, clipId], components: [{ "/": "/appclip*" }] }],
+      },
+    },
+    {
+      headers: {
+        "cache-control": "public, max-age=3600",
+        "content-type": "application/json",
+      },
+    },
+  );
+}
+
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
     try {
+      const url = new URL(request.url);
+      if (url.pathname === "/.well-known/apple-app-site-association") {
+        return appSiteAssociation();
+      }
+
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
       return await normalizeCatastrophicSsrResponse(response);

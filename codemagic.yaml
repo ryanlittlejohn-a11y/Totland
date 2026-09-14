@@ -45,6 +45,7 @@ workflows:
 
           keychain initialize
           app-store-connect fetch-signing-files App.totland.kids --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files App.totland.kids.Clip --type IOS_APP_STORE --create
           keychain add-certificates
           xcode-project use-profiles
       - name: Install pods
@@ -74,15 +75,15 @@ workflows:
               f"CURRENT_PROJECT_VERSION = {build_number};",
               project,
           )
-          if count != 2:
+          if count != 4:
               raise SystemExit(
-                  f"Expected to update 2 CURRENT_PROJECT_VERSION entries, updated {count}."
+                  f"Expected to update 4 CURRENT_PROJECT_VERSION entries, updated {count}."
               )
           project_path.write_text(updated)
           print(f"Set iOS build number to {build_number} in {count} build configurations.")
           PY
 
-          test "$(grep -c "CURRENT_PROJECT_VERSION = $IOS_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 2
+          test "$(grep -c "CURRENT_PROJECT_VERSION = $IOS_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 4
       - name: Build ipa
         script: |
           cd ios/App

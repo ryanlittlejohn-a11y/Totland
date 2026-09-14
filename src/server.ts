@@ -47,11 +47,14 @@ function isH3SwallowedErrorBody(body: string): boolean {
 function appSiteAssociation(): Response {
   const teamId = process.env["APPLE_DEVELOPER_TEAM_ID"]?.trim();
   if (!teamId) {
-    return Response.json(
-      { error: "App Clip association is awaiting the Apple Developer Team ID." },
-      { status: 503, headers: { "cache-control": "no-store" } },
-    );
+    // Not configured yet: behave like the file simply isn't published.
+    // A 5xx here is reported as an app error by tooling and by Apple's fetcher.
+    return new Response("Not Found", {
+      status: 404,
+      headers: { "cache-control": "no-store", "content-type": "text/plain" },
+    });
   }
+
 
   const appId = `${teamId}.App.totland.kids`;
   const clipId = `${teamId}.App.totland.kids.Clip`;

@@ -143,7 +143,7 @@ export function WordFindGame({
   return (
     <div>
       <p className="font-ui text-[22px] font-semibold text-ink">
-        {theme.emoji} {tTitle(theme.title)}
+        {theme.emoji} {L(`Find ${puzzle.placed.length} words`, `Encuentra ${puzzle.placed.length} palabras`)}
       </p>
       <p className="mt-1 font-ui text-sm text-inksoft">
         {L("Slide your finger across a word to find it", "Desliza el dedo sobre una palabra para encontrarla")}

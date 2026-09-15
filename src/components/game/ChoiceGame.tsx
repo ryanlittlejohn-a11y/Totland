@@ -28,6 +28,7 @@ export function ChoiceGame({
   const [misses, setMisses] = useState(0);
   const [stars, setStars] = useState(0);
   const [message, setMessage] = useState("");
+  const [wrongId, setWrongId] = useState<string | null>(null);
   const started = useRef(Date.now());
   const tally = useRef({ right: 0, total: 0 });
 
@@ -38,6 +39,8 @@ export function ChoiceGame({
     setRound(r);
     setState("asking");
     setMisses(0);
+    setMessage("");
+    setWrongId(null);
     started.current = Date.now();
     say(r.spoken);
   }, [skill, kind, level]);

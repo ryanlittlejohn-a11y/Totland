@@ -59,7 +59,12 @@ workflows:
           : > "$SIGNING_REPORT"
 
           echo "Available Apple Distribution identities:" | tee -a "$SIGNING_REPORT"
-          security find-identity -v -p codesigning | sed -E 's/([0-9A-F]{40})/[certificate fingerprint]/g' | tee -a "$SIGNING_REPORT"
+          IDENTITY_OUTPUT="$(security find-identity -v -p codesigning)"
+          printf '%s\n' "$IDENTITY_OUTPUT" | sed -E 's/([0-9A-F]{40})/[certificate fingerprint]/g' | tee -a "$SIGNING_REPORT"
+          if ! printf '%s\n' "$IDENTITY_OUTPUT" | grep -q 'Apple Distribution'; then
+            echo "No valid Apple Distribution identity is installed in the build keychain." | tee -a "$SIGNING_REPORT"
+            exit 1
+          fi
 
           PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
           if [ ! -d "$PROFILE_DIR" ]; then

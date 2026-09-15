@@ -168,6 +168,23 @@ function Dashboard() {
             );
           })}
         </div>
+        <div className="mt-4 border-t border-border pt-3">
+          <div className="flex items-center justify-between text-sm font-medium text-ink">
+            <span>🔍 Word Finds completed</span>
+            <span className="text-xs text-inksoft">
+              {wordFindsDone} / {WORD_FIND_THEMES.length}
+            </span>
+          </div>
+          <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-felt">
+            <div
+              className="h-full rounded-full bg-sky"
+              style={{ width: `${(wordFindsDone / WORD_FIND_THEMES.length) * 100}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-inksoft">
+            The first {FREE_WORD_FINDS} puzzles are free and can be replayed; the rest unlock with Premium.
+          </p>
+        </div>
       </section>
 
       <section className="rounded-3xl bg-card p-5 wood-block">

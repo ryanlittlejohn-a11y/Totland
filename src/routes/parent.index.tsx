@@ -13,6 +13,7 @@ import {
 import { setNarration } from "@/lib/speech";
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
+import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";
 
 
 export const Route = createFileRoute("/parent/")({

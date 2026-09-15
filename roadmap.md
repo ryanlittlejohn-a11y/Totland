@@ -25,6 +25,7 @@
 ## Codemagic store builds (approved plan)
 - [ ] User: RevenueCat project + App Store app, `premium` entitlement, 2 products, webhook (blocked on RevenueCat account)
 - [ ] User: add `CERTIFICATE_PRIVATE_KEY_BASE64` to Codemagic `appstore` group; run iOS workflow to TestFlight
+- [x] Validate both iOS signing profiles and retain focused/full Xcode archive diagnostics when code 65 occurs
 - [ ] User: Google Play account, `totland_keystore`, `google_play` group, RevenueCat Play app (blocked on Play dev account)
 - [x] Stored user's Paddle account API key as PADDLE_ACCOUNT_API_KEY (not needed by app — checkout uses managed integration)
 - [x] Registered custom URL scheme `app.totland.kids://` on iOS/Android and wired deep links to `/parent/subscription`

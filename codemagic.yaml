@@ -50,6 +50,95 @@ workflows:
           xcode-project use-profiles
       - name: Install pods
         script: cd ios/App && pod install
+      - name: Validate iOS signing assignments
+        script: |
+          set -euo pipefail
+
+          cd ios/App
+          SIGNING_REPORT="$CM_BUILD_DIR/ios-signing-report.txt"
+          : > "$SIGNING_REPORT"
+
+          echo "Available Apple Distribution identities:" | tee -a "$SIGNING_REPORT"
+          IDENTITY_OUTPUT="$(security find-identity -v -p codesigning)"
+          printf '%s\n' "$IDENTITY_OUTPUT" | sed -E 's/([0-9A-F]{40})/[certificate fingerprint]/g' | tee -a "$SIGNING_REPORT"
+          if ! printf '%s\n' "$IDENTITY_OUTPUT" | grep -q 'Apple Distribution'; then
+            echo "No valid Apple Distribution identity is installed in the build keychain." | tee -a "$SIGNING_REPORT"
+            exit 1
+          fi
+
+          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          if [ ! -d "$PROFILE_DIR" ]; then
+            echo "No provisioning profiles were installed by the signing step." | tee -a "$SIGNING_REPORT"
+            exit 1
+          fi
+
+          python3 - "$PROFILE_DIR" "$SIGNING_REPORT" <<'PY'
+          import plistlib
+          import subprocess
+          import sys
+          from pathlib import Path
+
+          profile_dir = Path(sys.argv[1])
+          report_path = Path(sys.argv[2])
+          required = {
+              "App.totland.kids": {
+                  "com.apple.developer.associated-domains",
+              },
+              "App.totland.kids.Clip": {
+                  "com.apple.developer.associated-domains",
+                  "com.apple.developer.on-demand-install-capable",
+                  "com.apple.developer.parent-application-identifiers",
+              },
+          }
+          matches = {bundle_id: [] for bundle_id in required}
+
+          for profile_path in profile_dir.glob("*.mobileprovision"):
+              decoded = subprocess.run(
+                  ["security", "cms", "-D", "-i", str(profile_path)],
+                  capture_output=True,
+                  check=False,
+              )
+              if decoded.returncode != 0:
+                  continue
+              try:
+                  profile = plistlib.loads(decoded.stdout)
+              except Exception:
+                  continue
+              entitlements = profile.get("Entitlements", {})
+              app_identifier = entitlements.get("application-identifier", "")
+              bundle_id = app_identifier.split(".", 1)[-1]
+              if bundle_id in matches:
+                  matches[bundle_id].append((profile_path, profile, entitlements))
+
+          lines = []
+          failed = False
+          for bundle_id, expected_entitlements in required.items():
+              candidates = matches[bundle_id]
+              if not candidates:
+                  lines.append(f"ERROR: No installed App Store provisioning profile matches {bundle_id}.")
+                  failed = True
+                  continue
+              profile_path, profile, entitlements = candidates[0]
+              profile_name = profile.get("Name", profile_path.stem)
+              missing = sorted(key for key in expected_entitlements if key not in entitlements)
+              lines.append(f"OK: {bundle_id} uses profile {profile_name!r}.")
+              if missing:
+                  lines.append(
+                      f"ERROR: {bundle_id} profile is missing entitlements: {', '.join(missing)}."
+                  )
+                  failed = True
+
+          with report_path.open("a") as report:
+              report.write("\n".join(lines) + "\n")
+          print("\n".join(lines))
+          if failed:
+              raise SystemExit(1)
+          PY
+
+          echo "Resolved release signing settings:" | tee -a "$SIGNING_REPORT"
+          xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -showBuildSettings 2>&1 \
+            | grep -E 'Build settings for action build and target|PRODUCT_BUNDLE_IDENTIFIER|PROVISIONING_PROFILE_SPECIFIER|DEVELOPMENT_TEAM|CODE_SIGN_IDENTITY|CODE_SIGN_STYLE' \
+            | tee -a "$SIGNING_REPORT"
       - name: Set unique build number
         script: |
           set -euo pipefail
@@ -86,12 +175,39 @@ workflows:
           test "$(grep -c "CURRENT_PROJECT_VERSION = $IOS_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 4
       - name: Build ipa
         script: |
+          set -euo pipefail
+
           cd ios/App
-          xcode-project build-ipa --workspace App.xcworkspace --scheme App
+          LOG_DIR="$CM_BUILD_DIR/ios-build-diagnostics"
+          ARCHIVE_LOG="$LOG_DIR/archive.log"
+          RESULT_BUNDLE="$LOG_DIR/AppArchive.xcresult"
+          mkdir -p "$LOG_DIR"
+          rm -rf "$RESULT_BUNDLE"
+
+          set +e
+          xcode-project build-ipa \
+            --workspace App.xcworkspace \
+            --scheme App \
+            --archive-flags="-resultBundlePath $RESULT_BUNDLE" \
+            2>&1 | tee "$ARCHIVE_LOG"
+          BUILD_STATUS=${PIPESTATUS[0]}
+          set -e
+
+          if [ "$BUILD_STATUS" -ne 0 ]; then
+            echo
+            echo "========== Relevant Xcode archive errors =========="
+            grep -E -i -C 3 '(^|[[:space:]])error:|provisioning profile|requires a provisioning profile|doesn.t include|entitlement|code signing|signing certificate|SwiftCompile|CompileSwift|ARCHIVE FAILED|The following build commands failed' "$ARCHIVE_LOG" \
+              | tail -n 250 || true
+            echo "==================================================="
+            echo "The complete archive output is available in the ios-build-diagnostics artifact."
+            exit "$BUILD_STATUS"
+          fi
     integrations:
       app_store_connect: Totland
     artifacts:
       - ios/App/build/ios/ipa/*.ipa
+      - ios-build-diagnostics/**/*
+      - ios-signing-report.txt
     publishing:
       app_store_connect:
         auth: integration

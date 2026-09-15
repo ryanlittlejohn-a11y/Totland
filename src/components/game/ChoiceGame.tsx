@@ -79,10 +79,14 @@ export function ChoiceGame({
       const praise = pick(getLang() === "es" ? PRAISE_ES.retry : PRAISE.retry);
       setMisses((m) => m + 1);
       setState("retry");
+      setWrongId(opt.id);
       setMessage(misses >= 1 ? `${praise} ${round.hint}` : praise);
       chime("retry", profile.sfx);
       say(stripEmoji(misses >= 1 ? `${praise} ${round.hint}` : praise));
-      window.setTimeout(() => setState("asking"), 1200);
+      window.setTimeout(() => {
+        setState("asking");
+        setWrongId(null);
+      }, 1200);
     }
   };
 

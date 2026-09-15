@@ -13,6 +13,7 @@ import {
 import { setNarration } from "@/lib/speech";
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
+import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";
 
 
 export const Route = createFileRoute("/parent/")({
@@ -39,6 +40,7 @@ function Dashboard() {
   const totalAttempts = Object.values(stats.skills).reduce((n, s) => n + s.attempts, 0);
   const totalCorrect = Object.values(stats.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+  const wordFindsDone = (stats.wordFinds ?? []).length;
 
 
   // Live music preview so the volume slider is audible while adjusting it.
@@ -168,6 +170,23 @@ function Dashboard() {
             );
           })}
         </div>
+        <div className="mt-4 border-t border-border pt-3">
+          <div className="flex items-center justify-between text-sm font-medium text-ink">
+            <span>🔍 Word Finds completed</span>
+            <span className="text-xs text-inksoft">
+              {wordFindsDone} / {WORD_FIND_THEMES.length}
+            </span>
+          </div>
+          <div className="mt-1.5 h-2 overflow-hidden rounded-full bg-felt">
+            <div
+              className="h-full rounded-full bg-sky"
+              style={{ width: `${(wordFindsDone / WORD_FIND_THEMES.length) * 100}%` }}
+            />
+          </div>
+          <p className="mt-1.5 text-xs text-inksoft">
+            The first {FREE_WORD_FINDS} puzzles are free and can be replayed; the rest unlock with Premium.
+          </p>
+        </div>
       </section>
 
       <section className="rounded-3xl bg-card p-5 wood-block">
@@ -270,9 +289,36 @@ function Dashboard() {
           </label>
         </div>
         <p className="mt-4 text-xs text-inksoft">
-          {LIBRARY_SIZE} activities are stored on this device. Progress never leaves it — there is no child account, no
-          ads and no tracking.
+          {LIBRARY_SIZE} activities are stored on this device. Progress stays on this device unless you sign in to sync
+          your family profiles — there is no child account, no ads and no tracking.
         </p>
+      </section>
+
+      <section className="rounded-3xl bg-card p-5 wood-block">
+        <h2 className="font-ui text-lg font-bold text-ink">Help &amp; legal</h2>
+        <p className="mt-1 text-sm text-inksoft">
+          Questions, billing help or feedback? Email{" "}
+          <a href="mailto:Support@totland.app" className="font-semibold text-clay underline">
+            Support@totland.app
+          </a>
+          .
+        </p>
+        <div className="mt-3 flex flex-wrap gap-2">
+          {[
+            { to: "/contact", label: "Contact us" },
+            { to: "/terms", label: "Terms" },
+            { to: "/privacy", label: "Privacy" },
+            { to: "/refund", label: "Refunds" },
+          ].map((l) => (
+            <Link
+              key={l.to}
+              to={l.to}
+              className="rounded-xl bg-felt px-3 py-2 font-ui text-sm font-semibold text-ink ring-1 ring-border"
+            >
+              {l.label}
+            </Link>
+          ))}
+        </div>
       </section>
     </div>
   );

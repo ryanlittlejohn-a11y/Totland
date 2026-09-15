@@ -40,6 +40,7 @@ function Dashboard() {
   const totalAttempts = Object.values(stats.skills).reduce((n, s) => n + s.attempts, 0);
   const totalCorrect = Object.values(stats.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
+  const wordFindsDone = (stats.wordFinds ?? []).length;
 
 
   // Live music preview so the volume slider is audible while adjusting it.

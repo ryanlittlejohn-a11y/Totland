@@ -175,10 +175,16 @@ workflows:
           cd ios/App
           LOG_DIR="$CM_BUILD_DIR/ios-build-diagnostics"
           ARCHIVE_LOG="$LOG_DIR/archive.log"
+          RESULT_BUNDLE="$LOG_DIR/AppArchive.xcresult"
           mkdir -p "$LOG_DIR"
+          rm -rf "$RESULT_BUNDLE"
 
           set +e
-          xcode-project build-ipa --workspace App.xcworkspace --scheme App 2>&1 | tee "$ARCHIVE_LOG"
+          xcode-project build-ipa \
+            --workspace App.xcworkspace \
+            --scheme App \
+            --archive-flags="-resultBundlePath $RESULT_BUNDLE" \
+            2>&1 | tee "$ARCHIVE_LOG"
           BUILD_STATUS=${PIPESTATUS[0]}
           set -e
 

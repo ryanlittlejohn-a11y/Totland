@@ -1,55 +1,23 @@
-# App Store Connect .com URLs for Totland
+# Kid-Screen Polish Sweep
 
-Apple is rejecting `.app` domains in the App Store Connect privacy, terms, support, and marketing URL fields. We will give Apple a `.com` while keeping `totland.app` as the user-facing home.
+## What the sweep found
 
-## Goals
-- Provide Apple with `.com` links it will accept.
-- Keep `totland.app` as the canonical, primary domain families see.
-- Add an App Store Connect note explaining the relationship so reviewers do not flag a mismatch.
+Walked every main kid screen (home, worlds, world detail, Today's Adventure, a game, Word Finds list, a word find puzzle, rewards, welcome) at phone size, tapping through correct and wrong answers. Screens are healthy overall: no console errors, correct/wrong answer flows, sounds, and progress all work. The empty-looking emoji squares in my test screenshots are a tooling artifact — iPhone renders them fine.
 
-## Plan
+Genuine rough edges to fix:
 
-### 1. Register a .com domain
-Choose one of the available options and buy it through Lovable (Settings → Domains → Buy new domain):
-- **Recommended:** `totlandapp.com` — short, clearly about the app, easy to say.
-- **Alternative:** `totlandkids.com` — emphasizes the audience.
-- Other available: `playtotland.com`, `totlandgame.com`, `totlandlearn.com`, `totlandworld.com`, `totlandedu.com`, `totlandplay.com`, `totlandkidsapp.com`.
+1. **Feedback line lingers and doesn't match the question.** After a correct answer, the praise stays on screen under the *next* question, and it can show the wrong example (answered "letter U", but the line under the next question read "Nice work! C is for cat!"). Fix in `src/components/game/ChoiceGame.tsx`: clear the message when the next round starts, and confirm the praise always pairs with the round just answered.
 
-Cost: ~$11.10/year (first year and renewal).
+2. **Whole answer grid wiggles on a wrong tap.** In `ChoiceGame.tsx` the `anim-wiggle` class is applied to every option while in the retry state, so all cards shake instead of just the one the child tapped. Wiggle only the tapped wrong card.
 
-### 2. Connect it to the project
-- Add the chosen `.com` in **Project Settings → Domains → Connect domain**.
-- Do **not** set it as Primary. Keep `totland.app` as the primary domain so users still land on `.app`.
-- The `.com` should redirect to `totland.app` (or serve the same site). Lovable's multi-domain hosting will serve the app on both domains; we will add canonical redirects so search engines and Apple see `.app` as the main site.
+3. **Speaker button crowds the question text.** The 🔊 button is absolutely positioned and touches the end of the prompt ("...letter U?🔊"). Give the prompt right padding and the button a bigger tap target (still one tap to re-hear the question) — also in `FlashCards.tsx` if it shares the pattern.
 
-### 3. Update canonical / redirect logic
-In the app, ensure:
-- All public pages (`/privacy`, `/terms`, `/refund`, `/contact`) render identically on both domains.
-- Canonical `<link rel="canonical" href="https://totland.app/...">` stays pointing to `.app` so SEO does not split.
-- If possible, add a server-side 301 from the `.com` paths to the `.app` paths for external link consistency. If Lovable's domain setup already serves both, we can rely on canonical tags instead.
+4. **Word Find puzzle page says the theme twice.** The top header reads "Farm Animals" and the section below repeats "🐔 Farm Animals". Change the section heading to something useful like "Find 3 words" (count adapts to level).
 
-### 4. Update App Store Connect metadata
-Replace the four rejected `.app` URLs with the corresponding `.com` URLs:
-- Privacy Policy: `https://<chosen-domain>/privacy`
-- Terms of Use: `https://<chosen-domain>/terms`
-- Support URL: `https://<chosen-domain>/contact`
-- Marketing URL: `https://<chosen-domain>/`
+5. **Home greeting says "Welcome back, Friend" before setup.** When no child profile exists yet, use "Welcome" (not "Welcome back") and hide the "Friend" placeholder name so the first-run screen reads naturally next to the "Set up your child" card. `src/routes/index.tsx`.
 
-### 5. Add an App Store Connect reviewer note
-In the submission notes field, add:
-> "The public-facing website for Totland is totland.app. We also operate totlandapp.com (or chosen domain) as a .com alias that redirects to totland.app and serves the same Privacy, Terms, Support, and Marketing pages. Both domains resolve to the same live site."
+## Verification
 
-This covers both options: Apple gets `.com` URLs it accepts, and the note explains that `.app` is the real primary domain.
-
-### 6. Verify before next submission
-- Open each `.com` URL in a browser and confirm it loads the same content as `.app`.
-- Confirm the canonical tag on each page still points to `totland.app`.
-- Re-submit to App Store Connect.
-
-## Out of scope
-- Changing the app's bundle ID or deep-link scheme.
-- Replacing `totland.app` as the primary user-facing domain.
-- Modifying the App Clip invocation URL (remains `https://totland.app/appclip`).
-
-## Next step
-Pick one of the available `.com` domains above and I will start the connection and URL updates.
+- Typecheck (`bunx tsgo --noEmit`) and build.
+- Playwright pass at phone size: answer a round correctly (feedback matches the letter and clears with the next question), tap a wrong card (only that card wiggles), open a word find puzzle (single title + "Find N words"), and check the first-run home greeting.
+- No changes to sounds, curriculum, progress saving, or premium logic.

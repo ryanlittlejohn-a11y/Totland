@@ -82,11 +82,12 @@ function ContactPage() {
   };
 
   return (
-    <LegalPage title="Contact Us" updated="September 13, 2026">
+    <LegalPage title="Contact Us" updated="September 15, 2026">
       <section>
         <p>
           Have a question about Totland, need help with your subscription, or want to share
-          feedback? Fill out the form below and we&rsquo;ll get back to you as soon as we can.
+          feedback? Fill out the form below and we&rsquo;ll get back to you as soon as we can &mdash;
+          usually within two business days.
         </p>
         <p className="mt-2">
           You can also email us directly at{" "}
@@ -95,6 +96,30 @@ function ContactPage() {
           </a>
           .
         </p>
+      </section>
+
+      <section className="rounded-2xl bg-muted/40 p-5">
+        <h2 className="text-lg font-semibold">Before you write</h2>
+        <ul>
+          <li>
+            <strong>Refunds and billing:</strong> see the{" "}
+            <a href="/refund">Refund Policy</a> &mdash; website purchases are refunded by
+            Paddle at paddle.net, and App Store purchases by Apple at
+            reportaproblem.apple.com.
+          </li>
+          <li>
+            <strong>Cancelling Premium:</strong> use Paddle&rsquo;s portal for website
+            subscriptions, or Settings &rarr; Subscriptions on your iPhone or iPad.
+          </li>
+          <li>
+            <strong>Premium not showing up:</strong> open Parents &rarr; Subscription and tap
+            Restore purchases while signed in with the email you bought with.
+          </li>
+          <li>
+            <strong>Deleting your account:</strong> Parents &rarr; Subscription &rarr; Your
+            account, or ask us here.
+          </li>
+        </ul>
       </section>
 
       {sent ? (

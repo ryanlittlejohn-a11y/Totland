@@ -28,6 +28,7 @@ export function ChoiceGame({
   const [misses, setMisses] = useState(0);
   const [stars, setStars] = useState(0);
   const [message, setMessage] = useState("");
+  const [wrongId, setWrongId] = useState<string | null>(null);
   const started = useRef(Date.now());
   const tally = useRef({ right: 0, total: 0 });
 
@@ -38,6 +39,8 @@ export function ChoiceGame({
     setRound(r);
     setState("asking");
     setMisses(0);
+    setMessage("");
+    setWrongId(null);
     started.current = Date.now();
     say(r.spoken);
   }, [skill, kind, level]);
@@ -76,10 +79,14 @@ export function ChoiceGame({
       const praise = pick(getLang() === "es" ? PRAISE_ES.retry : PRAISE.retry);
       setMisses((m) => m + 1);
       setState("retry");
+      setWrongId(opt.id);
       setMessage(misses >= 1 ? `${praise} ${round.hint}` : praise);
       chime("retry", profile.sfx);
       say(stripEmoji(misses >= 1 ? `${praise} ${round.hint}` : praise));
-      window.setTimeout(() => setState("asking"), 1200);
+      window.setTimeout(() => {
+        setState("asking");
+        setWrongId(null);
+      }, 1200);
     }
   };
 
@@ -102,8 +109,8 @@ export function ChoiceGame({
           onClick={() => say(round.spoken)}
           className="relative flex-1 rounded-3xl rounded-tl-md felt-panel px-4 py-3 text-left"
         >
-          <p className="whitespace-pre-line font-ui text-[22px] font-semibold leading-tight text-ink">{round.prompt}</p>
-          <span className="absolute bottom-2 right-3 text-lg text-sky" aria-hidden>
+          <p className="whitespace-pre-line pr-9 font-ui text-[22px] font-semibold leading-tight text-ink">{round.prompt}</p>
+          <span className="absolute bottom-2 right-2 grid size-9 place-items-center rounded-full text-xl text-sky" aria-hidden>
             🔊
           </span>
         </button>
@@ -132,7 +139,7 @@ export function ChoiceGame({
               aria-label={opt.label ?? opt.id}
               className={`aspect-square rounded-3xl bg-card grid place-items-center wood-block transition-transform active:translate-y-1 ${
                 highlight ? "scale-[1.04] bg-amber" : ""
-              } ${state === "retry" ? "anim-wiggle" : ""}`}
+              } ${state === "retry" && wrongId === opt.id ? "anim-wiggle" : ""}`}
             >
               {opt.swatch ? (
                 <span className="size-16 rounded-full" style={{ background: opt.swatch }} />

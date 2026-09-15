@@ -99,8 +99,12 @@ function Home() {
 
       <section className="mt-5 rounded-[2rem] felt-panel p-4">
         <div className="flex items-center justify-between">
-          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Welcome back", "Hola de nuevo")}</p>
-          <span className="font-ui text-xs text-inksoft">{profile.childName}</span>
+          <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+            {profile.childName && profile.childName !== "Friend" ? L("Welcome back", "Hola de nuevo") : L("Welcome", "¡Hola!")}
+          </p>
+          {profile.childName && profile.childName !== "Friend" && (
+            <span className="font-ui text-xs text-inksoft">{profile.childName}</span>
+          )}
         </div>
 
         <Link

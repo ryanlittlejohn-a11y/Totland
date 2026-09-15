@@ -8,7 +8,7 @@ export const Route = createFileRoute("/terms")({
       {
         name: "description",
         content:
-          "Terms and conditions for using Totland, the toddler learning adventure app by Ryan Littlejohn.",
+          "Terms and conditions for using Totland, the toddler learning adventure app by Ryan Littlejohn, including subscriptions, Apple purchases and account deletion.",
       },
       { property: "og:title", content: "Terms & Conditions | Totland" },
       {
@@ -19,13 +19,14 @@ export const Route = createFileRoute("/terms")({
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://totland.app/terms" }],
   }),
   component: TermsPage,
 });
 
 function TermsPage() {
   return (
-    <LegalPage title="Terms &amp; Conditions" updated="September 5, 2026">
+    <LegalPage title="Terms &amp; Conditions" updated="September 15, 2026">
       <section>
         <h2>1. Who we are</h2>
         <p>
@@ -39,8 +40,8 @@ function TermsPage() {
         <p>
           Totland is a play-based educational app for toddlers and
           preschoolers (approximately ages 2&ndash;6), offering mini-games,
-          puzzles, flash cards, tracing, and storybooks that teach letters,
-          numbers, colors, shapes, and early reading. Accounts and
+          puzzles, word finds, flash cards, tracing, and storybooks that teach
+          letters, numbers, colors, shapes, and early reading. Accounts and
           subscriptions are purchased and managed by a parent or legal
           guardian; children use the app under adult supervision and never
           create accounts themselves.
@@ -58,18 +59,51 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>3. Your account</h2>
+        <h2>3. Your account and child profiles</h2>
         <p>
           You are responsible for maintaining the confidentiality of your
           account credentials and for all activity that occurs under your
           account. You agree to provide accurate information when registering
-          and to keep it up to date. Children&rsquo;s play profiles are stored
-          locally on the device and are not accounts.
+          and to keep it up to date. You can sign in with an email address,
+          Google, or Apple, and we require your email address to be verified
+          before subscription features are enabled.
+        </p>
+        <p>
+          Children&rsquo;s play profiles are not accounts. They are stored on
+          the device, and if you are signed in they can optionally be synced
+          to your parent account so several devices in the family stay in
+          step. You are responsible for the nicknames and ages you enter for
+          your children and should avoid entering unnecessary personal
+          details.
         </p>
       </section>
 
       <section>
-        <h2>4. License and acceptable use</h2>
+        <h2>4. Free and Premium features</h2>
+        <p>
+          Totland can be used free of charge with a set of free activities,
+          including the first 30 Word Find puzzles, which can be replayed as
+          often as you like. The free version requires an internet connection
+          to play.
+        </p>
+        <p>Totland Premium unlocks:</p>
+        <ul>
+          <li>all 100 Word Find puzzles;</li>
+          <li>the premium learning worlds and their activities;</li>
+          <li>
+            offline play, so activities continue to work without an internet
+            connection.
+          </li>
+        </ul>
+        <p>
+          We may add, change, or retire individual activities over time; the
+          overall nature of the Service will remain a learning app for young
+          children.
+        </p>
+      </section>
+
+      <section>
+        <h2>5. License and acceptable use</h2>
         <p>
           We grant you a limited, non-exclusive, non-transferable,
           non-sublicensable license to access and use the Service for
@@ -93,52 +127,85 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>5. Intellectual property</h2>
+        <h2>6. Intellectual property and content you add</h2>
         <p>
           We retain all ownership of the Service and its intellectual
-          property, including the software, games, characters, artwork, audio,
-          documentation, and branding. Nothing in these terms transfers any
-          ownership to you.
+          property, including the software, games, puzzles, characters,
+          artwork, audio, documentation, and branding. Nothing in these terms
+          transfers any ownership to you.
+        </p>
+        <p>
+          Where the Service lets you add your own material &mdash; for example
+          in the Content Studio in the parent area &mdash; you keep ownership
+          of what you add, and you confirm that you have the right to use it
+          and that it is appropriate for young children. You grant us
+          permission to store and display that material inside your own copy
+          of the app so the Service can function. We may remove material that
+          breaches these terms.
         </p>
       </section>
 
       <section>
-        <h2>6. Payments and subscriptions</h2>
+        <h2>7. Payments and subscriptions</h2>
         <p>
-          Totland Premium is offered as a monthly or yearly subscription. Our
-          order process is conducted by our online reseller Paddle.com.
-          Paddle.com is the Merchant of Record for all our orders. Paddle
-          provides all customer service inquiries and handles returns.
+          Totland Premium is offered as a monthly or yearly subscription.
+          Where you buy it determines who sells it to you:
         </p>
+        <ul>
+          <li>
+            <strong>On the website:</strong> our order process is conducted by
+            our online reseller Paddle.com. Paddle.com is the Merchant of
+            Record for those orders and handles billing, tax, invoicing and
+            returns. Payment, billing, taxes, renewal, and cancellation
+            mechanics are governed by{" "}
+            <a
+              href="https://www.paddle.com/legal/checkout-buyer-terms"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Paddle&rsquo;s Buyer Terms
+            </a>
+            . You can manage or cancel through Paddle&rsquo;s customer portal
+            at paddle.net.
+          </li>
+          <li>
+            <strong>In the iPhone or iPad app:</strong> the purchase is made
+            through Apple&rsquo;s in-app purchase system. Apple is the seller
+            for those purchases, the charge appears on your Apple account, and
+            billing, renewal, cancellation and refunds are handled by Apple
+            through your device&rsquo;s subscription settings.
+          </li>
+        </ul>
         <p>
-          Payment, billing, taxes, subscription renewal, and cancellation
-          mechanics are governed by{" "}
-          <a
-            href="https://www.paddle.com/legal/checkout-buyer-terms"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Paddle&rsquo;s Buyer Terms
-          </a>
-          . Subscriptions renew automatically at the selected billing
-          frequency until cancelled. You can manage or cancel your
-          subscription through Paddle&rsquo;s customer portal at paddle.net;
-          cancellation takes effect at the end of the current paid billing
-          period, and you keep Premium access until that period ends.
+          Subscriptions renew automatically at the selected billing frequency
+          until cancelled. Cancellation takes effect at the end of the current
+          paid billing period, and you keep Premium access until that period
+          ends.
         </p>
       </section>
 
       <section>
-        <h2>7. Refunds</h2>
+        <h2>8. Refunds</h2>
         <p>
           Refunds are handled according to our{" "}
-          <a href="/refund">Refund Policy</a>, which offers a 30-day
-          money-back guarantee processed by Paddle.
+          <a href="/refund">Refund Policy</a>: a 30-day money-back guarantee
+          processed by Paddle for website purchases, and Apple&rsquo;s refund
+          process for purchases made in the iPhone or iPad app.
         </p>
       </section>
 
       <section>
-        <h2>8. Service level</h2>
+        <h2>9. App Clip</h2>
+        <p>
+          On supported Apple devices, a small App Clip may open a short free
+          sample activity without installing the full app and without signing
+          in. The App Clip collects no account information and is provided for
+          demonstration only; these terms apply to it in the same way.
+        </p>
+      </section>
+
+      <section>
+        <h2>10. Service level</h2>
         <p>
           The Service is provided &ldquo;as is&rdquo; and &ldquo;as
           available.&rdquo; We do not guarantee that the Service will be
@@ -148,7 +215,7 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>9. Disclaimers and limitation of liability</h2>
+        <h2>11. Disclaimers and limitation of liability</h2>
         <p>
           To the fullest extent permitted by law, we disclaim all implied
           warranties, including merchantability and fitness for a particular
@@ -168,7 +235,20 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>10. Suspension and termination</h2>
+        <h2>12. Deleting your account</h2>
+        <p>
+          You can delete your account at any time from Parents &rarr;
+          Subscription &rarr; Your account inside the app. Deletion is
+          permanent and removes your account, any synced child profiles, and
+          your subscription record from our systems. If a subscription is
+          still billing, cancel it first with Paddle (website purchases) or
+          Apple (in-app purchases), because deleting your account here does
+          not cancel billing held by them.
+        </p>
+      </section>
+
+      <section>
+        <h2>13. Suspension and termination</h2>
         <p>
           We may suspend or terminate your access to the Service if you
           materially breach these terms, fail to pay amounts due, present a
@@ -181,7 +261,7 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>11. General</h2>
+        <h2>14. General</h2>
         <p>
           You may not assign these terms without our consent; we may assign
           them in connection with a merger, acquisition, or sale of assets.
@@ -193,9 +273,11 @@ function TermsPage() {
           provides otherwise.
         </p>
         <p>
-          Questions about these terms can be sent to us through the contact
-          options provided in the app&rsquo;s parent section, or to Paddle
-          for billing-related inquiries via paddle.net.
+          Questions about these terms can be sent through our{" "}
+          <a href="/contact">contact page</a> or by email to{" "}
+          <a href="mailto:Support@totland.app">Support@totland.app</a>. Billing
+          questions go to Paddle via paddle.net (website purchases) or to Apple
+          (in-app purchases).
         </p>
       </section>
     </LegalPage>

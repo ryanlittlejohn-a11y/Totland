@@ -7,5 +7,9 @@
 		<string>appclips:totland.app</string>
 		<string>appclips:www.totland.app</string>
 	</array>
+	<key>com.apple.developer.associated-appclip-app-identifiers</key>
+	<array>
+		<string>$(AppIdentifierPrefix)App.totland.kids.Clip</string>
+	</array>
 </dict>
 </plist>

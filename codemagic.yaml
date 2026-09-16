@@ -125,14 +125,20 @@ workflows:
               Path(os.path.expanduser("~/Library/Developer/Xcode/UserData/Provisioning Profiles")),
               Path(os.environ.get("CM_BUILD_DIR", ".")) / "provisioning_profiles",
           ]
+          team_id = "ZGHUXQGJJ9"
           required = {
               "App.totland.kids": {
-                  "com.apple.developer.associated-domains",
+                  "com.apple.developer.associated-domains": None,
+                  "com.apple.developer.associated-appclip-app-identifiers": [
+                      f"{team_id}.App.totland.kids.Clip"
+                  ],
               },
               "App.totland.kids.Clip": {
-                  "com.apple.developer.associated-domains",
-                  "com.apple.developer.on-demand-install-capable",
-                  "com.apple.developer.parent-application-identifiers",
+                  "com.apple.developer.associated-domains": None,
+                  "com.apple.developer.on-demand-install-capable": True,
+                  "com.apple.developer.parent-application-identifiers": [
+                      f"{team_id}.App.totland.kids"
+                  ],
               },
           }
           matches = {bundle_id: [] for bundle_id in required}
@@ -217,6 +223,28 @@ workflows:
                   lines.append(
                       "  Enable the matching capabilities on the identifier in Apple Developer, "
                       "then rerun so a refreshed profile is downloaded."
+                  )
+                  failed = True
+                  continue
+
+              wrong_values = []
+              for key, expected_value in expected_entitlements.items():
+                  if expected_value is None:
+                      continue
+                  actual_value = entitlements.get(key)
+                  if actual_value != expected_value:
+                      wrong_values.append(
+                          f"{key} expected {expected_value!r}, received {actual_value!r}"
+                      )
+              if wrong_values:
+                  lines.append(
+                      f"ERROR: {bundle_id} profile has an incorrect App Clip relationship: "
+                      + "; ".join(wrong_values)
+                      + "."
+                  )
+                  lines.append(
+                      "  Confirm the clip is registered as an App Clip identifier belonging to "
+                      "App.totland.kids, save both identifiers, and rerun to download refreshed profiles."
                   )
                   failed = True
 

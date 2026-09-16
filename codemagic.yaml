@@ -44,10 +44,34 @@ workflows:
           echo "Certificate private key validated."
 
           keychain initialize
-          app-store-connect fetch-signing-files App.totland.kids --type IOS_APP_STORE --create
-          app-store-connect fetch-signing-files App.totland.kids.Clip --type IOS_APP_STORE --create
+
+          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$PROFILE_DIR"
+
+          fetch_profile() {
+            BUNDLE_ID="$1"
+            echo "Fetching App Store signing files for $BUNDLE_ID ..."
+            BEFORE="$(ls -1 "$PROFILE_DIR" 2>/dev/null | wc -l | tr -d ' ')"
+            app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+            AFTER="$(ls -1 "$PROFILE_DIR" 2>/dev/null | wc -l | tr -d ' ')"
+            echo "Provisioning profiles in keychain store: $BEFORE -> $AFTER"
+            if [ "$AFTER" -eq 0 ]; then
+              echo "ERROR: fetch-signing-files produced no provisioning profile for $BUNDLE_ID."
+              echo "Register the identifier in Apple Developer > Identifiers and make sure the"
+              echo "App Store Connect API key used by the Totland integration has App Manager or Admin role."
+              exit 1
+            fi
+          }
+
+          fetch_profile App.totland.kids
+          fetch_profile App.totland.kids.Clip
+
+          echo "Downloaded provisioning profiles:"
+          ls -la "$PROFILE_DIR" || true
+
           keychain add-certificates
           xcode-project use-profiles
+
       - name: Install pods
         script: cd ios/App && pod install
       - name: Validate iOS signing assignments

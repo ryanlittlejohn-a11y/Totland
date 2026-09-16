@@ -45,16 +45,30 @@ workflows:
 
           keychain initialize
 
-          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-          mkdir -p "$PROFILE_DIR"
+          PROFILE_DIRS=(
+            "$HOME/Library/MobileDevice/Provisioning Profiles"
+            "$HOME/Library/Developer/Xcode/UserData/Provisioning Profiles"
+          )
+          for dir in "${PROFILE_DIRS[@]}"; do
+            mkdir -p "$dir"
+          done
+
+          count_profiles() {
+            TOTAL=0
+            for dir in "${PROFILE_DIRS[@]}"; do
+              N="$(ls -1 "$dir" 2>/dev/null | grep -Ec '\.(mobileprovision|provisionprofile)$' || true)"
+              TOTAL=$((TOTAL + N))
+            done
+            echo "$TOTAL"
+          }
 
           fetch_profile() {
             BUNDLE_ID="$1"
             echo "Fetching App Store signing files for $BUNDLE_ID ..."
-            BEFORE="$(ls -1 "$PROFILE_DIR" 2>/dev/null | wc -l | tr -d ' ')"
+            BEFORE="$(count_profiles)"
             app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
-            AFTER="$(ls -1 "$PROFILE_DIR" 2>/dev/null | wc -l | tr -d ' ')"
-            echo "Provisioning profiles in keychain store: $BEFORE -> $AFTER"
+            AFTER="$(count_profiles)"
+            echo "Provisioning profiles on disk: $BEFORE -> $AFTER"
             if [ "$AFTER" -eq 0 ]; then
               echo "ERROR: fetch-signing-files produced no provisioning profile for $BUNDLE_ID."
               echo "Register the identifier in Apple Developer > Identifiers and make sure the"
@@ -67,7 +81,11 @@ workflows:
           fetch_profile App.totland.kids.Clip
 
           echo "Downloaded provisioning profiles:"
-          ls -la "$PROFILE_DIR" || true
+          for dir in "${PROFILE_DIRS[@]}"; do
+            echo "--- $dir"
+            ls -la "$dir" || true
+          done
+
 
           keychain add-certificates
           xcode-project use-profiles

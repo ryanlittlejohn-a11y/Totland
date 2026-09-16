@@ -90,9 +90,9 @@ workflows:
             exit 1
           fi
 
-          PROFILE_DIRS="$HOME/Library/MobileDevice/Provisioning Profiles
-          $HOME/Library/Developer/Xcode/UserData/Provisioning Profiles
-          $CM_BUILD_DIR/provisioning_profiles"
+          echo "Searching for installed provisioning profiles ..." | tee -a "$SIGNING_REPORT"
+
+
 
           python3 - "$SIGNING_REPORT" <<'PY'
           import os

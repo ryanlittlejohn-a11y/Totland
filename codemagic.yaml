@@ -212,9 +212,28 @@ workflows:
                   )
                   failed = True
                   continue
-              profile_path, profile, entitlements = candidates[0]
+              def profile_issues(candidate):
+                  _, _, candidate_entitlements = candidate
+                  missing_keys = sorted(
+                      key for key in expected_entitlements if key not in candidate_entitlements
+                  )
+                  wrong = []
+                  for key, expected_value in expected_entitlements.items():
+                      if expected_value is None or key not in candidate_entitlements:
+                          continue
+                      actual_value = candidate_entitlements.get(key)
+                      if actual_value != expected_value:
+                          wrong.append(
+                              f"{key} expected {expected_value!r}, received {actual_value!r}"
+                          )
+                  return missing_keys, wrong
+
+              profile_path, profile, entitlements = min(
+                  candidates,
+                  key=lambda candidate: sum(len(items) for items in profile_issues(candidate)),
+              )
               profile_name = profile.get("Name", profile_path.stem)
-              missing = sorted(key for key in expected_entitlements if key not in entitlements)
+              missing, wrong_values = profile_issues((profile_path, profile, entitlements))
               lines.append(f"OK: {bundle_id} uses profile {profile_name!r}.")
               if missing:
                   lines.append(
@@ -227,15 +246,6 @@ workflows:
                   failed = True
                   continue
 
-              wrong_values = []
-              for key, expected_value in expected_entitlements.items():
-                  if expected_value is None:
-                      continue
-                  actual_value = entitlements.get(key)
-                  if actual_value != expected_value:
-                      wrong_values.append(
-                          f"{key} expected {expected_value!r}, received {actual_value!r}"
-                      )
               if wrong_values:
                   lines.append(
                       f"ERROR: {bundle_id} profile has an incorrect App Clip relationship: "

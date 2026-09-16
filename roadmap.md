@@ -32,7 +32,7 @@
 - [x] Matched iOS and Codemagic signing to Apple's existing `App.totland.kids` bundle ID
 - [x] Made iOS App Store build numbers automatic with a timestamp fallback
 - [x] Added the Totland App Clip target, counting game, app icons, and paired Codemagic signing
-- [ ] User: register the App Clip in Apple, add `APPLE_DEVELOPER_TEAM_ID`, and configure its App Store experience
+- [ ] User: correct the Apple App Clip identifier relationship/capabilities, then configure its App Store experience
 
 ## Soundtracks (done)
 - [x] Menu screens: Little Steps, Big Dreams; activities: Curious Steps; storybooks: Forest of Wonder

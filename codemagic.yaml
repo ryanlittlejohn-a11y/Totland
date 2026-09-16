@@ -90,20 +90,23 @@ workflows:
             exit 1
           fi
 
-          PROFILE_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-          if [ ! -d "$PROFILE_DIR" ]; then
-            echo "No provisioning profiles were installed by the signing step." | tee -a "$SIGNING_REPORT"
-            exit 1
-          fi
+          PROFILE_DIRS="$HOME/Library/MobileDevice/Provisioning Profiles
+          $HOME/Library/Developer/Xcode/UserData/Provisioning Profiles
+          $CM_BUILD_DIR/provisioning_profiles"
 
-          python3 - "$PROFILE_DIR" "$SIGNING_REPORT" <<'PY'
+          python3 - "$SIGNING_REPORT" <<'PY'
+          import os
           import plistlib
           import subprocess
           import sys
           from pathlib import Path
 
-          profile_dir = Path(sys.argv[1])
-          report_path = Path(sys.argv[2])
+          report_path = Path(sys.argv[1])
+          search_dirs = [
+              Path(os.path.expanduser("~/Library/MobileDevice/Provisioning Profiles")),
+              Path(os.path.expanduser("~/Library/Developer/Xcode/UserData/Provisioning Profiles")),
+              Path(os.environ.get("CM_BUILD_DIR", ".")) / "provisioning_profiles",
+          ]
           required = {
               "App.totland.kids": {
                   "com.apple.developer.associated-domains",
@@ -115,31 +118,74 @@ workflows:
               },
           }
           matches = {bundle_id: [] for bundle_id in required}
-
-          for profile_path in profile_dir.glob("*.mobileprovision"):
-              decoded = subprocess.run(
-                  ["security", "cms", "-D", "-i", str(profile_path)],
-                  capture_output=True,
-                  check=False,
-              )
-              if decoded.returncode != 0:
-                  continue
-              try:
-                  profile = plistlib.loads(decoded.stdout)
-              except Exception:
-                  continue
-              entitlements = profile.get("Entitlements", {})
-              app_identifier = entitlements.get("application-identifier", "")
-              bundle_id = app_identifier.split(".", 1)[-1]
-              if bundle_id in matches:
-                  matches[bundle_id].append((profile_path, profile, entitlements))
-
           lines = []
-          failed = False
+
+          def decode(path):
+              """Return the profile plist, trying security first then openssl."""
+              attempts = (
+                  ["security", "cms", "-D", "-i", str(path)],
+                  ["openssl", "smime", "-verify", "-noverify", "-inform", "DER", "-in", str(path)],
+              )
+              errors = []
+              for command in attempts:
+                  result = subprocess.run(command, capture_output=True, check=False)
+                  if result.returncode == 0 and result.stdout:
+                      try:
+                          return plistlib.loads(result.stdout), None
+                      except Exception as exc:  # noqa: BLE001
+                          errors.append(f"{command[0]}: unreadable plist ({exc})")
+                          continue
+                  errors.append(
+                      f"{command[0]}: exit {result.returncode} {result.stderr.decode(errors='replace').strip()[:160]}"
+                  )
+              return None, "; ".join(errors)
+
+          found_any = False
+          for directory in search_dirs:
+              if not directory.is_dir():
+                  lines.append(f"Searched {directory} - directory not present.")
+                  continue
+              profiles = sorted(directory.glob("*.mobileprovision")) + sorted(
+                  directory.glob("*.provisionprofile")
+              )
+              lines.append(f"Searched {directory} - {len(profiles)} profile file(s).")
+              for profile_path in profiles:
+                  found_any = True
+                  profile, error = decode(profile_path)
+                  if profile is None:
+                      lines.append(f"  WARNING: could not decode {profile_path.name}: {error}")
+                      continue
+                  entitlements = profile.get("Entitlements", {})
+                  app_identifier = entitlements.get("application-identifier", "")
+                  prefix = (profile.get("ApplicationIdentifierPrefix") or [""])[0]
+                  bundle_id = app_identifier
+                  if prefix and bundle_id.startswith(prefix + "."):
+                      bundle_id = bundle_id[len(prefix) + 1 :]
+                  else:
+                      bundle_id = bundle_id.split(".", 1)[-1]
+                  lines.append(
+                      f"  {profile_path.name}: name={profile.get('Name')!r} bundle_id={bundle_id!r}"
+                  )
+                  if bundle_id in matches:
+                      matches[bundle_id].append((profile_path, profile, entitlements))
+
+          if not found_any:
+              lines.append(
+                  "ERROR: No provisioning profile files were installed by the signing step."
+              )
+
+          failed = not found_any
           for bundle_id, expected_entitlements in required.items():
               candidates = matches[bundle_id]
               if not candidates:
-                  lines.append(f"ERROR: No installed App Store provisioning profile matches {bundle_id}.")
+                  lines.append(
+                      f"ERROR: No installed App Store provisioning profile matches {bundle_id}."
+                  )
+                  lines.append(
+                      "  Next step on Apple's side: register this identifier in Apple Developer > "
+                      "Identifiers, and confirm the App Store Connect API key behind the Totland "
+                      "integration has the App Manager or Admin role so it can create profiles."
+                  )
                   failed = True
                   continue
               profile_path, profile, entitlements = candidates[0]
@@ -150,6 +196,10 @@ workflows:
                   lines.append(
                       f"ERROR: {bundle_id} profile is missing entitlements: {', '.join(missing)}."
                   )
+                  lines.append(
+                      "  Enable the matching capabilities on the identifier in Apple Developer, "
+                      "then rerun so a refreshed profile is downloaded."
+                  )
                   failed = True
 
           with report_path.open("a") as report:
@@ -158,6 +208,7 @@ workflows:
           if failed:
               raise SystemExit(1)
           PY
+
 
           echo "Resolved release signing settings:" | tee -a "$SIGNING_REPORT"
           xcodebuild -workspace App.xcworkspace -scheme App -configuration Release -showBuildSettings 2>&1 \

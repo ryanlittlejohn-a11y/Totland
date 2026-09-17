@@ -78,7 +78,7 @@ function Home() {
           <div>
             <h1 className="font-ui text-[15px] font-bold leading-none text-ink">
               Totland
-              <span className="sr-only"> — ad-free learning games for toddlers and preschoolers ages 2–6</span>
+              <span className="sr-only"> — ad-free toddler learning games for ages 2–6, including phonics games and letter tracing games</span>
             </h1>
             <p className="font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>
           </div>

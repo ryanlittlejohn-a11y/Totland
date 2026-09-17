@@ -21,6 +21,7 @@ import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WordfindsRouteImport } from './routes/wordfinds'
 import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
+import { Route as GuidesToddlerLearningGamesRouteImport } from './routes/guides.toddler-learning-games'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
 import { Route as ParentChildrenRouteImport } from './routes/parent.children'
 import { Route as ParentCmsRouteImport } from './routes/parent.cms'
@@ -96,6 +97,12 @@ const GameGameIdRoute = GameGameIdRouteImport.update({
   path: '/game/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesToddlerLearningGamesRoute =
+  GuidesToddlerLearningGamesRouteImport.update({
+    id: '/guides/toddler-learning-games',
+    path: '/guides/toddler-learning-games',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const ParentIndexRoute = ParentIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -182,6 +189,7 @@ export interface FileRoutesByFullPath {
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
@@ -209,6 +217,7 @@ export interface FileRoutesByTo {
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
@@ -238,6 +247,7 @@ export interface FileRoutesById {
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
   '/parent/cms': typeof ParentCmsRoute
   '/parent/rights': typeof ParentRightsRoute
@@ -268,6 +278,7 @@ export interface FileRouteTypes {
     | '/wordfinds'
     | '/worlds'
     | '/game/$gameId'
+    | '/guides/toddler-learning-games'
     | '/parent/children'
     | '/parent/cms'
     | '/parent/rights'
@@ -295,6 +306,7 @@ export interface FileRouteTypes {
     | '/wordfinds'
     | '/worlds'
     | '/game/$gameId'
+    | '/guides/toddler-learning-games'
     | '/parent/children'
     | '/parent/cms'
     | '/parent/rights'
@@ -323,6 +335,7 @@ export interface FileRouteTypes {
     | '/wordfinds'
     | '/worlds'
     | '/game/$gameId'
+    | '/guides/toddler-learning-games'
     | '/parent/children'
     | '/parent/cms'
     | '/parent/rights'
@@ -352,6 +365,7 @@ export interface RootRouteChildren {
   WordfindsRoute: typeof WordfindsRoute
   WorldsRoute: typeof WorldsRoute
   GameGameIdRoute: typeof GameGameIdRoute
+  GuidesToddlerLearningGamesRoute: typeof GuidesToddlerLearningGamesRoute
   PlayAreaRoute: typeof PlayAreaRoute
   WordfindThemeIdRoute: typeof WordfindThemeIdRoute
   WorldWorldIdRoute: typeof WorldWorldIdRoute
@@ -447,6 +461,13 @@ declare module '@tanstack/react-router' {
       path: '/game/$gameId'
       fullPath: '/game/$gameId'
       preLoaderRoute: typeof GameGameIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/toddler-learning-games': {
+      id: '/guides/toddler-learning-games'
+      path: '/guides/toddler-learning-games'
+      fullPath: '/guides/toddler-learning-games'
+      preLoaderRoute: typeof GuidesToddlerLearningGamesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/parent/': {
@@ -582,6 +603,7 @@ const rootRouteChildren: RootRouteChildren = {
   WordfindsRoute: WordfindsRoute,
   WorldsRoute: WorldsRoute,
   GameGameIdRoute: GameGameIdRoute,
+  GuidesToddlerLearningGamesRoute: GuidesToddlerLearningGamesRoute,
   PlayAreaRoute: PlayAreaRoute,
   WordfindThemeIdRoute: WordfindThemeIdRoute,
   WorldWorldIdRoute: WorldWorldIdRoute,

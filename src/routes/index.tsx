@@ -9,16 +9,17 @@ import { L, title as tTitle } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Totland — Ad-Free Learning Games for Ages 2–6" },
+      { title: "Totland — Ad-Free Toddler Learning Games for Ages 2–6" },
       {
         name: "description",
         content:
-          "A gentle, offline-first learning world for ages 2–6: ABCs, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+          "Toddler learning games for ages 2–6: ABCs, phonics games, letter tracing games, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
       },
-      { property: "og:title", content: "Totland — Ad-Free Learning Games for Ages 2–6" },
+      { property: "og:title", content: "Totland — Ad-Free Toddler Learning Games for Ages 2–6" },
       {
         property: "og:description",
-        content: "Hundreds of bite-sized learning games for toddlers and preschoolers. Offline, ad-free, privacy-first.",
+        content:
+          "Hundreds of bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Offline, ad-free, privacy-first.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://totland.app/" },

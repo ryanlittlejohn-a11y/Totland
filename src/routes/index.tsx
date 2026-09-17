@@ -302,7 +302,24 @@ function Home() {
       <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
         Offline-first · No ads · Data stays on device
       </p>
+      <section className="mt-4 rounded-3xl bg-card p-4 wood-block">
+        <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+          {L("For grown-ups", "Para adultos")}
+        </h2>
+        <p className="mt-2 font-ui text-sm text-inksoft">
+          {L(
+            "Totland is a collection of ad-free toddler learning games for ages 2–6 — ABCs and phonics games, letter tracing games, numbers, colors, shapes, first words, word finds and read-along storybooks.",
+            "Totland es una colección de juegos educativos sin anuncios para niños de 2 a 6 años: abecedario y sonidos, trazos de letras, números, colores, formas, primeras palabras, sopas de letras y cuentos.",
+          )}
+        </p>
+        <Link to="/guides/toddler-learning-games" className="mt-2 inline-block font-ui text-sm font-bold text-ink underline">
+          {L("Parent's guide to toddler learning games ›", "Guía para elegir juegos educativos ›")}
+        </Link>
+      </section>
       <footer className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-[11px] text-inksoft">
+        <Link to="/guides/toddler-learning-games" className="underline">
+          Guide
+        </Link>
         <Link to="/terms" className="underline">
           Terms
         </Link>

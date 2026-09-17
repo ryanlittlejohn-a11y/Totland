@@ -51,6 +51,7 @@ function Dashboard() {
 
   return (
     <div className="space-y-4">
+      <h1 className="px-1 font-ui text-2xl font-bold text-ink">Parent Dashboard</h1>
       {children.length > 1 && (
         <div className="flex gap-2 overflow-x-auto pb-1">
           {children.map((c) => (

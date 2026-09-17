@@ -139,6 +139,7 @@ function Subscription() {
 
   return (
     <div className="space-y-4">
+      <h1 className="px-1 font-ui text-2xl font-bold text-ink">Manage Subscription</h1>
       <section className="rounded-3xl bg-card p-5 wood-block">
         <div className="flex items-center justify-between">
           <h2 className="font-ui text-xl font-bold text-ink">Totland Premium</h2>

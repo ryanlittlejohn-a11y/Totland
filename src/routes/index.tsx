@@ -40,7 +40,7 @@ export const Route = createFileRoute("/")({
           applicationSubCategory: "Early learning games",
           operatingSystem: "Web, iOS, Android",
           description:
-            "A gentle, offline-first learning world for ages 2–6: ABCs, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+            "Toddler learning games for ages 2–6: ABCs, phonics games, letter tracing games, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
           isFamilyFriendly: true,
           inLanguage: ["en", "es"],
           audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },

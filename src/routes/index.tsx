@@ -9,16 +9,17 @@ import { L, title as tTitle } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Totland — Ad-Free Learning Games for Ages 2–6" },
+      { title: "Totland — Ad-Free Toddler Learning Games for Ages 2–6" },
       {
         name: "description",
         content:
-          "A gentle, offline-first learning world for ages 2–6: ABCs, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+          "Toddler learning games for ages 2–6: ABCs, phonics games, letter tracing games, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
       },
-      { property: "og:title", content: "Totland — Ad-Free Learning Games for Ages 2–6" },
+      { property: "og:title", content: "Totland — Ad-Free Toddler Learning Games for Ages 2–6" },
       {
         property: "og:description",
-        content: "Hundreds of bite-sized learning games for toddlers and preschoolers. Offline, ad-free, privacy-first.",
+        content:
+          "Hundreds of bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Offline, ad-free, privacy-first.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://totland.app/" },
@@ -39,7 +40,7 @@ export const Route = createFileRoute("/")({
           applicationSubCategory: "Early learning games",
           operatingSystem: "Web, iOS, Android",
           description:
-            "A gentle, offline-first learning world for ages 2–6: ABCs, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+            "Toddler learning games for ages 2–6: ABCs, phonics games, letter tracing games, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
           isFamilyFriendly: true,
           inLanguage: ["en", "es"],
           audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },
@@ -77,7 +78,7 @@ function Home() {
           <div>
             <h1 className="font-ui text-[15px] font-bold leading-none text-ink">
               Totland
-              <span className="sr-only"> — ad-free learning games for toddlers and preschoolers ages 2–6</span>
+              <span className="sr-only"> — ad-free toddler learning games for ages 2–6, including phonics games and letter tracing games</span>
             </h1>
             <p className="font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>
           </div>
@@ -301,7 +302,24 @@ function Home() {
       <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
         Offline-first · No ads · Data stays on device
       </p>
+      <section className="mt-4 rounded-3xl bg-card p-4 wood-block">
+        <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
+          {L("For grown-ups", "Para adultos")}
+        </h2>
+        <p className="mt-2 font-ui text-sm text-inksoft">
+          {L(
+            "Totland is a collection of ad-free toddler learning games for ages 2–6 — ABCs and phonics games, letter tracing games, numbers, colors, shapes, first words, word finds and read-along storybooks.",
+            "Totland es una colección de juegos educativos sin anuncios para niños de 2 a 6 años: abecedario y sonidos, trazos de letras, números, colores, formas, primeras palabras, sopas de letras y cuentos.",
+          )}
+        </p>
+        <Link to="/guides/toddler-learning-games" className="mt-2 inline-block font-ui text-sm font-bold text-ink underline">
+          {L("Parent's guide to toddler learning games ›", "Guía para elegir juegos educativos ›")}
+        </Link>
+      </section>
       <footer className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-[11px] text-inksoft">
+        <Link to="/guides/toddler-learning-games" className="underline">
+          Guide
+        </Link>
         <Link to="/terms" className="underline">
           Terms
         </Link>

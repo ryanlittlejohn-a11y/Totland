@@ -1,10 +1,13 @@
 /**
  * Local-first child learning profile + adaptive difficulty engine.
- * Nothing here ever leaves the device: it is stored in localStorage only.
+ * Nothing here ever leaves the device: it is stored on the device only
+ * (localStorage on the web, native storage in the packaged app).
  */
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { SkillId } from "./content";
 import { setLang, type Lang } from "./i18n";
+import { storageGet, storageSet } from "./storage";
+
 
 const KEY = "totland.profile.v1";
 

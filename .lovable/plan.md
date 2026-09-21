@@ -1,61 +1,112 @@
-# Three pre-launch fixes for the native build
+# Two App Store readiness fixes: privacy manifest + bundled audio
 
-Website behaviour stays byte-for-byte the same: every change is either a removal of unfinished admin pages, or is wrapped in a native-only branch that falls through to today's code path in a browser.
+Plan only. No code changes, no audio generated, no credits spent until you approve.
 
 ---
 
-## Part A — Remove the unfinished admin pages
+## Part D — Apple privacy manifest
 
-What exists today: the parent tab bar links to "Content rights" and "Content studio". Nothing else in the app references them.
+### D1. What Totland actually collects (audit)
 
-Dependency check (already done):
-- `src/routes/parent.cms.tsx` imports only `AREAS` from `src/lib/content.ts` and the `RightsStatus` type from `src/lib/rights.ts`.
-- `src/routes/parent.rights.tsx` is the only consumer of `src/lib/rights.ts`.
-- `src/lib/rights.ts` is imported by nothing else.
-- No other page, dashboard card, footer, or sitemap entry points at these two routes.
+| Area | Data | Leaves the device? | Linked to identity? |
+|---|---|---|---|
+| Grown-up account (optional) | Email address, user ID | Yes, to our backend | Yes |
+| Child profile | Nickname, age band, progress, stickers | Only if the parent signs in to sync | Yes (to the parent account) |
+| Purchases | Store transaction + entitlement via RevenueCat | Yes | Anonymous until sign-in |
+| Contact form | Name, email, message | Yes (email delivery) | Yes |
+| Crash/diag reports | Anonymous error text, freeze notices, a connectivity ping | Yes | No |
+| Narration | The short line of text to be spoken (e.g. "apple") | Yes, to the speech provider | No |
+| Play progress | All game progress | No (device only unless syncing) | No |
 
-Changes:
-- Delete `src/routes/parent.cms.tsx` and `src/routes/parent.rights.tsx`.
-- Remove the two tab entries from the nav array in `src/routes/parent.tsx` (leaving Dashboard, Children, Subscription, Contact).
-- Move `src/lib/rights.ts` to `docs/content-rights-register.md` (the records preserved as a readable table) so the licence register is kept but no longer bundled.
-- Let `src/routeTree.gen.ts` regenerate; confirm it no longer lists the two routes and that the build is clean.
+No advertising, no tracking, no analytics SDKs. Nothing about the child is sent unless the grown-up signs in, and no audio of the child is ever recorded.
 
-Risk: a stale `Link to="/parent/cms"` anywhere would become a typecheck error — that is the safety net, and the search above shows there are none.
+Third-party code in the iOS build: Capacitor core, App, Splash Screen, Status Bar, Preferences, Network, and RevenueCat Purchases. Capacitor already ships its own privacy manifests (confirmed in the installed package); RevenueCat ships one in its SDK. I will re-verify each pod's manifest during implementation.
 
-## Part C — Premium without an account in the native app
+### D2. Required-reason APIs
 
-Native-only. Web keeps sign-in + Paddle exactly as today.
+- **UserDefaults** — used by Capacitor Preferences (our new device storage). Reason `CA92.1` (access limited to the app itself).
+- **File timestamp / disk space / boot time / keyboard** — not used by our code. I will grep the pods before finalising; if a pod uses one, its own manifest declares it and ours does not need to repeat it.
 
-1. `src/lib/purchases.ts`: allow `configurePurchases()` with no user id — RevenueCat then generates its own anonymous app user ID. Add `logInPurchases(userId)` and `logOutPurchases()` wrappers.
-2. New `src/hooks/useStoreEntitlement.ts` (native only): configures RevenueCat at launch, reads `storeEntitlementActive()` from cached customer info (works offline), and refreshes on app resume and after purchase/restore.
-3. `src/hooks/useEntitlementSync.ts`: premium becomes `serverVerified || storeEntitlement` on native. The current "no session ⇒ premium false" rule stays exactly as-is on web; on native it can only be cleared when the store also reports no entitlement.
-4. `src/components/StorePurchasePanel.tsx`: `userId` becomes optional so the purchase and restore buttons work signed out. The panel still lives behind the parental gate on `/parent/subscription`; nothing about the gate changes.
-5. `src/routes/parent.subscription.tsx`: on native, show the store panel without requiring a session; keep the sign-in card as an optional "sync across devices" section.
-6. On sign-in (`useParentAuth` / auth state change) call `Purchases.logIn(userId)`; on sign-out call `logOut()`.
+I will verify the key names and reason codes against Apple's current "Describing use of required reason API" and "Privacy manifest files" documentation at implementation time and cite the exact pages in my summary, rather than relying on memory.
 
-RevenueCat ID transfer (answer to your question 3): when you call `logIn` with a real id, RevenueCat has to decide what happens to purchases attached to the anonymous id. Set **"Transfer to new App User ID"** in the RevenueCat dashboard (Project settings → Restore behaviour). With that setting, the anonymous purchase moves onto the parent's account the moment they sign in, so they keep premium and the account owns it going forward. The alternative ("keep with original") would strand the purchase on the anonymous id.
+### D3. Proposed manifest content
 
-Webhook (question 6): `src/routes/api/public/rc/webhook.ts` rejects non-UUID `app_user_id`, and anonymous ids look like `$RCAnonymousID:...`. That is **correct and should stay** — the `subscriptions` table is keyed to a real account, and anonymous premium is proven on-device by RevenueCat's own cached entitlement, not by our database. I will only soften the log line so an anonymous event is recorded as expected-and-ignored rather than as an error. Once the parent signs in and RevenueCat transfers the purchase, RevenueCat re-sends events with the real user id and the row is written then.
+`ios/App/App/PrivacyInfo.xcprivacy`:
+- `NSPrivacyTracking` = false
+- `NSPrivacyTrackingDomains` = empty
+- `NSPrivacyAccessedAPITypes` = UserDefaults with reason `CA92.1`
+- `NSPrivacyCollectedDataTypes`:
+  - Email address — app functionality + customer support, linked, not used for tracking
+  - Name (contact form / child nickname) — app functionality, linked, not tracking
+  - Purchase history — app functionality, linked, not tracking
+  - Crash data and performance data — app functionality, **not** linked, not tracking
+  - Other user content (the short line of text sent for narration) — app functionality, not linked, not tracking
 
-## Part B — Native storage and real offline detection
+### D4. Getting the file into the app
 
-1. Add `@capacitor/preferences` and `@capacitor/network` to `package.json`.
-2. New `src/lib/storage.ts`: a small key/value layer with a synchronous in-memory cache. On web it reads and writes `window.localStorage` exactly as today. On native it serves reads from memory and writes through to Preferences asynchronously.
-3. `src/lib/profile.ts` keeps its current synchronous API — `loadFamily`, `saveFamily`, `loadProfile`, `saveProfile`, `useProfile`, `useFamily` are unchanged in shape; only the two `window.localStorage` calls are swapped for the new layer.
-4. First native launch migrates `totland.family.v1` and `totland.profile.v1` from localStorage into Preferences if Preferences is empty, then marks migration done. Nothing is deleted from localStorage, so a failed migration cannot lose progress.
-5. New `src/components/StorageBoot.tsx` in `src/routes/__root.tsx`: on native it awaits the hydration of the two keys before rendering children (splash screen stays up), so the first screen already sees the real profile. On web it renders children immediately with no extra render pass.
-6. `src/components/OfflineGate.tsx`: on native, use `@capacitor/network`'s `getStatus()` and `networkStatusChange` listener; web keeps `navigator.onLine`. Add an explicit guard so a premium profile never sees the offline screen, and only treat the device as offline when the network plugin reports disconnected.
-7. `src/routes/parent.subscription.tsx` account-deletion cleanup clears the new storage as well as localStorage.
+Editing `project.pbxproj` by hand is the risky part — it is the same file that carries the App Clip target and signing settings, and a bad edit breaks the Codemagic archive. Two options:
 
-## Confirming the web app is unaffected
+- **Preferred (low risk):** add the manifest as a Capacitor-copied resource, so `cap sync` places it without touching the project file. If Capacitor cannot place an app-level manifest, fall back to the option below.
+- **Fallback (manual, one time):** you open Xcode once, drag `PrivacyInfo.xcprivacy` into the App target, tick "Copy Bundle Resources", and commit the resulting project change. I will give you the exact clicks.
 
-- Every native path is behind `isNativeApp()`; the browser keeps `localStorage` and `navigator.onLine`.
-- Typecheck and build after each part.
-- Playwright pass in the sandbox browser: home, worlds, word finds, a puzzle, rewards, `/parent` (gate answered), `/parent/children`, `/parent/subscription` — checking the two admin tabs are gone, premium/free gating is unchanged, and the console is clean.
-- Confirm progress written before the change is still read after it (same keys, same JSON).
+I will only edit `project.pbxproj` myself if you explicitly prefer that, and if so I will add a check to the Codemagic validator that the file is in the bundle.
+
+### D5. App Store Connect answers
+
+A plain-language table for the App Privacy section and the Kids Category questions (data types, purposes, linked/not-linked, tracking = No everywhere), with anything uncertain clearly marked "verify before submitting" — delivered in my summary, not as code.
+
+### Website impact
+None. Everything in Part D lives under `ios/`.
+
+---
+
+## Part E — Bundled audio
+
+### E1. Inventory (measured today)
+
+Per language: 26 letters, 21 number words, 93 picture words, 8 colours, 6 shapes, 15 first-reading words, 10 rhymes, 5 story titles + 25 story pages, 10 praise lines, and roughly 40 fixed activity prompts.
+
+**≈ 260 lines per language, ≈ 520 lines total (English + Spanish).**
+Most lines are one or two words; story pages are the longest.
+**≈ 4,000 characters per language, ≈ 8,000–9,000 characters in total.**
+
+### E2. Cost estimate — approve before anything is generated
+
+- ElevenLabs charges roughly one credit per character with the current voice and model, so **≈ 9,000 credits** for the full set, one time. Lines already in the shared library cost nothing, so the real spend will be lower.
+- Audio size: mono, 32 kbps MP3, most clips under two seconds → **≈ 4–6 MB** for all 520 clips.
+
+**I will stop here and report the exact figure before generating a single clip.**
+
+### E3. Lookup order (native only)
+
+bundled file → device cache → live speech service → device voice.
+Web keeps exactly today's order (cache → live → device voice). The change is one extra first step, behind the native check.
+
+### E4. How the files are produced and packaged
+
+A build-time script reads the same string lists the app uses, generates one MP3 per line with a stable hash-based name (same hashing scheme the cache already uses), and writes them into the static bundle that `cap sync` copies into the iOS and Android apps. The script never runs during a normal website build, so the website bundle is unchanged.
+
+### E5. Music
+
+The three soundtracks (≈ 1.4 MB each, **≈ 4.3 MB**) get bundled the same way, with the hosted address kept as a fallback. The existing on/off switch, volume slider, narration ducking, and reduced-motion behaviour are untouched.
+
+**Total app-size increase: roughly 9–11 MB.**
+
+### E6. What is not touched
+
+OfflineGate, premium gating, and the parental gate are unchanged. This only makes offline audio complete for people who already have offline access.
+
+### Confirming the website is unaffected
+Typecheck and build after each part; every new path behind the existing native check; a browser pass over home, worlds, word finds, a puzzle, rewards, and the grown-up pages confirming narration, music, and the offline screen behave exactly as today.
+
+---
+
+## Files expected to change
+
+Part D: `ios/App/App/PrivacyInfo.xcprivacy` (new), possibly `ios/App/App.xcodeproj/project.pbxproj` (only with your go-ahead), `roadmap.md`.
+Part E: `scripts/generate-voice-bundle.mjs` (new), `scripts/prepare-native-bundle.mjs`, `src/lib/speech.ts`, `src/lib/music-track.ts`, a new bundled-audio index module, `package.json` scripts, `roadmap.md`.
 
 ## Outside Lovable (you)
-
-- **RevenueCat:** set restore behaviour to *Transfer to new App User ID*; confirm the `premium` entitlement is attached to both products.
-- **App Store Connect / Play:** no new settings; the "account not required to purchase" answer in the review notes becomes accurate.
-- **Codemagic:** rerun `cap sync` happens in the existing `build:app` step — no workflow edit needed, but the first build after this must run a clean pod install so the two new Capacitor plugins are linked.
+- Xcode: one-time drag of the privacy manifest into the App target, if we take the fallback route.
+- App Store Connect: fill the App Privacy and Kids Category answers from my table.
+- Codemagic: no workflow change expected; first build after Part E will be larger.

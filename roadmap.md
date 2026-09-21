@@ -53,5 +53,5 @@
 - [ ] User: confirm RevenueCat restore behavior stays on "Transfer to new App User ID"
 
 ## App Store readiness (approved plan)
-- [ ] Part D: PrivacyInfo.xcprivacy for the app and the App Clip (safe route, no project.pbxproj edits)
+- [x] Part D: PrivacyInfo.xcprivacy for the app and the App Clip (user adds both to the Xcode targets once)
 - [ ] Part E: spoken-line inventory + credit estimate only (no audio generated yet)

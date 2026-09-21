@@ -51,3 +51,7 @@
 - [x] Part C: native premium without sign-in (RevenueCat anonymous ID, logIn on sign-in)
 - [x] Part B: @capacitor/preferences storage + @capacitor/network offline detection on native
 - [ ] User: confirm RevenueCat restore behavior stays on "Transfer to new App User ID"
+
+## App Store readiness (approved plan)
+- [x] Part D: PrivacyInfo.xcprivacy for the app and the App Clip (user adds both to the Xcode targets once)
+- [ ] Part E: spoken-line inventory + credit estimate only (no audio generated yet)

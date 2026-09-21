@@ -142,3 +142,25 @@ does not require a custom build-number variable.
 Background music files stream from our media host, so in the packaged app the
 music needs a connection the first time it plays. Games, narration cached
 earlier, and progress all keep working offline for premium families.
+
+## Privacy manifests (Apple)
+
+Two manifests are in the repo:
+
+- `ios/App/App/PrivacyInfo.xcprivacy` — the main app
+- `ios/AppClip/PrivacyInfo.xcprivacy` — the App Clip (declares no data and no required-reason APIs)
+
+They are **not** referenced from `project.pbxproj` on purpose — that file also carries the
+App Clip target and signing settings, and a hand edit risks the Codemagic archive. Add each
+file to its target once in Xcode:
+
+1. `bunx cap open ios`
+2. Drag `PrivacyInfo.xcprivacy` from Finder into the **App** group in the project navigator.
+3. In the dialog: tick *Copy items if needed* is **off** (the file already lives there),
+   choose *Create groups*, and tick only the **App** target.
+4. Repeat for `ios/AppClip/PrivacyInfo.xcprivacy`, ticking only the **TotlandClip** target.
+5. Select each target → Build Phases → Copy Bundle Resources and confirm the manifest is listed.
+6. Commit the resulting `project.pbxproj` change.
+
+Reason code used: `NSPrivacyAccessedAPICategoryUserDefaults` / `CA92.1` (Capacitor Preferences
+stores only this app's own data). Capacitor and RevenueCat ship their own manifests.

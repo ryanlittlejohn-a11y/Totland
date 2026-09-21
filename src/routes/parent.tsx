@@ -78,7 +78,6 @@ function ParentLayout() {
           { to: "/parent/subscription", label: "Subscription" },
           { to: "/contact", label: "Contact" },
 
-          { to: "/contact", label: "Contact" },
         ].map((t) => (
           <Link
             key={t.to}

@@ -45,3 +45,8 @@
 ## Word Finds (approved plan)
 - [x] 100 original themed word find puzzles with swipe-to-find
 - [x] First 30 free and replayable; puzzles 31–100 unlock with premium
+
+## Pre-launch native fixes (approved plan)
+- [ ] Part A: remove /parent/cms and /parent/rights; move rights register to docs/
+- [ ] Part C: native premium without sign-in (RevenueCat anonymous ID, logIn on sign-in)
+- [ ] Part B: @capacitor/preferences storage + @capacitor/network offline detection on native

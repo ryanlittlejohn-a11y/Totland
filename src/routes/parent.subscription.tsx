@@ -13,6 +13,8 @@ import { deleteMyAccount } from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { isNativeApp, nativePlatform } from "@/lib/native";
 import { StorePurchasePanel } from "@/components/StorePurchasePanel";
+import { useStoreEntitlement } from "@/hooks/useStoreEntitlement";
+
 
 export const Route = createFileRoute("/parent/subscription")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -104,10 +106,12 @@ function Subscription() {
     setResendState(err ? "error" : "sent");
   };
 
-  const active = emailVerified && (sub?.active ?? false);
-  const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
   const native = isNativeApp();
+  const { storeActive, refresh: refreshStore } = useStoreEntitlement(user?.id ?? null);
+  const active = (emailVerified && (sub?.active ?? false)) || storeActive;
+  const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
   const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
+
 
   const removeAccount = useServerFn(deleteMyAccount);
   const [confirmOpen, setConfirmOpen] = useState(false);

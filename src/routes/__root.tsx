@@ -22,6 +22,8 @@ import { prewarmCommonNarration } from "../lib/voice-prewarm";
 import { installCrashReporting } from "../lib/crash-report";
 
 import { OfflineGate } from "../components/OfflineGate";
+import { StorageBoot } from "../components/StorageBoot";
+
 import { MusicPlayer } from "../components/MusicPlayer";
 
 
@@ -168,12 +170,15 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <PaymentTestModeBanner />
-      <MusicPlayer />
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <OfflineGate>
-        <Outlet />
-      </OfflineGate>
+      <StorageBoot>
+        <PaymentTestModeBanner />
+        <MusicPlayer />
+        {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+        <OfflineGate>
+          <Outlet />
+        </OfflineGate>
+      </StorageBoot>
     </QueryClientProvider>
   );
 }
+

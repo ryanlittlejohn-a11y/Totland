@@ -13,6 +13,10 @@ import { deleteMyAccount } from "@/lib/account.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { isNativeApp, nativePlatform } from "@/lib/native";
 import { StorePurchasePanel } from "@/components/StorePurchasePanel";
+import { useStoreEntitlement } from "@/hooks/useStoreEntitlement";
+import { storageRemove } from "@/lib/storage";
+
+
 
 export const Route = createFileRoute("/parent/subscription")({
   validateSearch: (search: Record<string, unknown>) => ({
@@ -104,10 +108,12 @@ function Subscription() {
     setResendState(err ? "error" : "sent");
   };
 
-  const active = emailVerified && (sub?.active ?? false);
-  const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
   const native = isNativeApp();
+  const { storeActive, refresh: refreshStore } = useStoreEntitlement(user?.id ?? null);
+  const active = (emailVerified && (sub?.active ?? false)) || storeActive;
+  const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
   const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
+
 
   const removeAccount = useServerFn(deleteMyAccount);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -123,10 +129,11 @@ function Subscription() {
       await removeAccount({ data: undefined });
       await supabase.auth.signOut();
       try {
-        window.localStorage.removeItem("totland.family.v1");
+        storageRemove("totland.family.v1");
       } catch {
         /* ignore */
       }
+
       update((p) => ({ ...p, premium: false }));
       setDeleted(true);
       setDeleting(false);
@@ -164,11 +171,49 @@ function Subscription() {
 
         {!ready ? (
           <p className="mt-4 text-sm text-inksoft">Loading…</p>
+        ) : active ? (
+          <div className="mt-4 rounded-2xl bg-moss/15 p-4 text-sm text-ink">
+            <p className="font-semibold">🎉 Premium is active — the whole library is unlocked.</p>
+            {renewalDate && !storeActive && (
+              <p className="mt-2 text-inksoft">
+                {sub?.cancelAtPeriodEnd || sub?.status === "canceled"
+                  ? `Access ends ${renewalDate}.`
+                  : `Renews ${renewalDate}.`}
+              </p>
+            )}
+            {sub?.status === "past_due" && !storeActive && (
+              <p className="mt-2 text-clay">
+                Your last payment didn't go through. Please update your payment details to keep premium.
+              </p>
+            )}
+            {native ? (
+              <p className="mt-2 text-inksoft">
+                To switch plans or cancel, open your device settings and manage subscriptions in {storeName}.
+                Canceling keeps premium until the end of your paid period.
+              </p>
+            ) : (
+              <p className="mt-2 text-inksoft">
+                To switch plans, update your card, or cancel, visit{" "}
+                <a href="https://paddle.net" target="_blank" rel="noopener noreferrer" className="underline">
+                  paddle.net
+                </a>{" "}
+                with the email you used at checkout. Canceling keeps premium until the end of your paid period.
+              </p>
+            )}
+          </div>
+        ) : native ? (
+          <StorePurchasePanel
+            userId={user?.id ?? null}
+            onEntitlementChanged={() => {
+              void refreshStore();
+              if (user?.email_confirmed_at) void waitForActivation();
+            }}
+          />
         ) : !user ? (
           <p className="mt-4 rounded-2xl bg-felt p-4 text-sm text-inksoft">
             Sign in below to subscribe or to restore a subscription you already bought.
           </p>
-         ) : !emailVerified ? (
+        ) : !emailVerified ? (
           <div className="mt-4 rounded-2xl bg-amber/20 p-4 text-sm text-ink">
             <p className="font-semibold">Please verify your email address.</p>
             <p className="mt-2 text-inksoft">
@@ -191,39 +236,8 @@ function Subscription() {
               <p className="mt-2 text-clay">Couldn't send the email right now. Please try again in a minute.</p>
             )}
           </div>
-        ) : active ? (
-          <div className="mt-4 rounded-2xl bg-moss/15 p-4 text-sm text-ink">
-            <p className="font-semibold">🎉 Premium is active — the whole library is unlocked.</p>
-            {renewalDate && (
-              <p className="mt-2 text-inksoft">
-                {sub?.cancelAtPeriodEnd || sub?.status === "canceled"
-                  ? `Access ends ${renewalDate}.`
-                  : `Renews ${renewalDate}.`}
-              </p>
-            )}
-            {sub?.status === "past_due" && (
-              <p className="mt-2 text-clay">
-                Your last payment didn't go through. Please update your payment details to keep premium.
-              </p>
-            )}
-            {native ? (
-              <p className="mt-2 text-inksoft">
-                To switch plans or cancel, open your device settings and manage subscriptions in {storeName}.
-                Canceling keeps premium until the end of your paid period.
-              </p>
-            ) : (
-              <p className="mt-2 text-inksoft">
-                To switch plans, update your card, or cancel, visit{" "}
-                <a href="https://paddle.net" target="_blank" rel="noopener noreferrer" className="underline">
-                  paddle.net
-                </a>{" "}
-                with the email you used at checkout. Canceling keeps premium until the end of your paid period.
-              </p>
-            )}
-          </div>
-        ) : native ? (
-          <StorePurchasePanel userId={user.id} onEntitlementChanged={() => void waitForActivation()} />
         ) : (
+
           <>
             <div className="mt-4 grid grid-cols-2 gap-3">
               {PLANS.map((plan) => (
@@ -275,7 +289,20 @@ function Subscription() {
           </Link>
         </section>
       ) : ready && !user ? (
-        <ParentAuthCard />
+        <>
+          {native && (
+            <section className="rounded-3xl bg-card p-5 wood-block">
+              <h2 className="font-ui text-lg font-bold text-ink">An account is optional</h2>
+              <p className="mt-2 text-sm text-inksoft">
+                You don't need an account to subscribe or to play. Signing in only keeps your children's profiles and
+                progress in step across your family's devices — and it links a subscription you've already bought to
+                your account.
+              </p>
+            </section>
+          )}
+          <ParentAuthCard />
+        </>
+
       ) : (
         user && (
           <section className="rounded-3xl bg-card p-5 wood-block">

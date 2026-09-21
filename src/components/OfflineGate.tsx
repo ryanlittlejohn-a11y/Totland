@@ -1,25 +1,93 @@
-import { useEffect, useState, type ReactNode } from "react";
+import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 
 import { useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
+import { apiOrigin, isNativeApp } from "@/lib/native";
 
 /** Routes a grown-up must still reach without internet (if cached). */
 const ALWAYS_ALLOWED = ["/terms", "/privacy", "/refund", "/parent"];
 
-function useOnlineStatus() {
+/**
+ * Is the backend actually reachable? A device can be joined to Wi-Fi with no
+ * internet behind it, and both `navigator.onLine` and the native network
+ * plugin happily call that "connected". A short, cheap ping settles it.
+ */
+async function backendReachable(): Promise<boolean> {
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 4000);
+    const res = await fetch(`${apiOrigin()}/api/public/diag`, {
+      method: "GET",
+      cache: "no-store",
+      signal: controller.signal,
+    });
+    clearTimeout(timer);
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
+function useOnlineStatus(active: boolean) {
   const [online, setOnline] = useState(true);
+  const checking = useRef(false);
+
+  const evaluate = useCallback(async () => {
+    if (!active || checking.current) return;
+    checking.current = true;
+    try {
+      if (isNativeApp()) {
+        let connected = true;
+        try {
+          const { Network } = await import("@capacitor/network");
+          connected = (await Network.getStatus()).connected;
+        } catch {
+          connected = navigator.onLine !== false;
+        }
+        // Connected to a network is not the same as having internet.
+        setOnline(connected ? await backendReachable() : false);
+        return;
+      }
+      setOnline(navigator.onLine !== false);
+    } finally {
+      checking.current = false;
+    }
+  }, [active]);
 
   useEffect(() => {
-    const update = () => setOnline(navigator.onLine !== false);
-    update();
-    window.addEventListener("online", update);
-    window.addEventListener("offline", update);
-    return () => {
-      window.removeEventListener("online", update);
-      window.removeEventListener("offline", update);
+    if (!active) return;
+    let cancelled = false;
+    let remove: (() => void) | undefined;
+
+    const run = () => {
+      if (!cancelled) void evaluate();
     };
-  }, []);
+
+    run();
+    window.addEventListener("online", run);
+    window.addEventListener("offline", run);
+
+    if (isNativeApp()) {
+      void (async () => {
+        try {
+          const { Network } = await import("@capacitor/network");
+          const handle = await Network.addListener("networkStatusChange", run);
+          if (cancelled) void handle.remove();
+          else remove = () => void handle.remove();
+        } catch {
+          /* fall back to the window events above */
+        }
+      })();
+    }
+
+    return () => {
+      cancelled = true;
+      window.removeEventListener("online", run);
+      window.removeEventListener("offline", run);
+      remove?.();
+    };
+  }, [active, evaluate]);
 
   return online;
 }
@@ -29,17 +97,18 @@ function useOnlineStatus() {
  * "needs internet" screen instead of a broken page.
  */
 export function OfflineGate({ children }: { children: ReactNode }) {
-  const online = useOnlineStatus();
   const { profile, hydrated } = useProfile();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
-  const allowed =
-    online ||
+  // Premium families never need this check at all, so never run it for them.
+  const exempt =
     !hydrated ||
     profile.premium ||
     ALWAYS_ALLOWED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 
-  if (allowed) return <>{children}</>;
+  const online = useOnlineStatus(!exempt);
+
+  if (exempt || online) return <>{children}</>;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-background px-5">

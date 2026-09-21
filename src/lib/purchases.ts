@@ -33,6 +33,7 @@ export function storePurchasesAvailable(): boolean {
   return isNativeApp() && Boolean(apiKey());
 }
 
+let configured = false;
 let configuredFor: string | null = null;
 
 async function plugin() {
@@ -40,14 +41,49 @@ async function plugin() {
   return mod.Purchases;
 }
 
-/** Configure RevenueCat with the signed-in parent's account id. */
-export async function configurePurchases(userId: string): Promise<void> {
+/**
+ * Configure RevenueCat once at launch.
+ *
+ * With no user id RevenueCat generates its own anonymous app user id, so a
+ * grown-up can buy and restore Premium without ever making an account. When
+ * they later sign in we call `logInPurchases`, which RevenueCat treats as an
+ * alias: the anonymous purchase moves onto their account.
+ */
+export async function configurePurchases(userId?: string | null): Promise<void> {
   if (!storePurchasesAvailable()) return;
+  const Purchases = await plugin();
+  if (!configured) {
+    await Purchases.configure(userId ? { apiKey: apiKey()!, appUserID: userId } : { apiKey: apiKey()! });
+    configured = true;
+    configuredFor = userId ?? null;
+    return;
+  }
+  if (userId && configuredFor !== userId) await logInPurchases(userId);
+}
+
+/** Link the store purchase to a signed-in parent's account. */
+export async function logInPurchases(userId: string): Promise<void> {
+  if (!storePurchasesAvailable()) return;
+  await configurePurchases();
   if (configuredFor === userId) return;
   const Purchases = await plugin();
-  await Purchases.configure({ apiKey: apiKey()!, appUserID: userId });
+  await Purchases.logIn({ appUserID: userId });
   configuredFor = userId;
 }
+
+/** Back to an anonymous id when the parent signs out. */
+export async function logOutPurchases(): Promise<void> {
+  if (!storePurchasesAvailable() || !configured) return;
+  if (configuredFor === null) return;
+  const Purchases = await plugin();
+  try {
+    await Purchases.logOut();
+  } catch {
+    // Already anonymous — nothing to do.
+  }
+  configuredFor = null;
+}
+
 
 /** The monthly / yearly packages as offered by the store. */
 export async function listStoreOffers(): Promise<StoreOffer[]> {

@@ -24,8 +24,6 @@ import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as GuidesToddlerLearningGamesRouteImport } from './routes/guides.toddler-learning-games'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
 import { Route as ParentChildrenRouteImport } from './routes/parent.children'
-import { Route as ParentCmsRouteImport } from './routes/parent.cms'
-import { Route as ParentRightsRouteImport } from './routes/parent.rights'
 import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscription'
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
 import { Route as WordfindThemeIdRouteImport } from './routes/wordfind.$themeId'
@@ -113,16 +111,6 @@ const ParentChildrenRoute = ParentChildrenRouteImport.update({
   path: '/children',
   getParentRoute: () => ParentRoute,
 } as any)
-const ParentCmsRoute = ParentCmsRouteImport.update({
-  id: '/cms',
-  path: '/cms',
-  getParentRoute: () => ParentRoute,
-} as any)
-const ParentRightsRoute = ParentRightsRouteImport.update({
-  id: '/rights',
-  path: '/rights',
-  getParentRoute: () => ParentRoute,
-} as any)
 const ParentSubscriptionRoute = ParentSubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
@@ -191,8 +179,6 @@ export interface FileRoutesByFullPath {
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
-  '/parent/cms': typeof ParentCmsRoute
-  '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
@@ -219,8 +205,6 @@ export interface FileRoutesByTo {
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
-  '/parent/cms': typeof ParentCmsRoute
-  '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
@@ -249,8 +233,6 @@ export interface FileRoutesById {
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
-  '/parent/cms': typeof ParentCmsRoute
-  '/parent/rights': typeof ParentRightsRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRoute
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
@@ -280,8 +262,6 @@ export interface FileRouteTypes {
     | '/game/$gameId'
     | '/guides/toddler-learning-games'
     | '/parent/children'
-    | '/parent/cms'
-    | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
     | '/wordfind/$themeId'
@@ -308,8 +288,6 @@ export interface FileRouteTypes {
     | '/game/$gameId'
     | '/guides/toddler-learning-games'
     | '/parent/children'
-    | '/parent/cms'
-    | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
     | '/wordfind/$themeId'
@@ -337,8 +315,6 @@ export interface FileRouteTypes {
     | '/game/$gameId'
     | '/guides/toddler-learning-games'
     | '/parent/children'
-    | '/parent/cms'
-    | '/parent/rights'
     | '/parent/subscription'
     | '/play/$area'
     | '/wordfind/$themeId'
@@ -484,20 +460,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentChildrenRouteImport
       parentRoute: typeof ParentRoute
     }
-    '/parent/cms': {
-      id: '/parent/cms'
-      path: '/cms'
-      fullPath: '/parent/cms'
-      preLoaderRoute: typeof ParentCmsRouteImport
-      parentRoute: typeof ParentRoute
-    }
-    '/parent/rights': {
-      id: '/parent/rights'
-      path: '/rights'
-      fullPath: '/parent/rights'
-      preLoaderRoute: typeof ParentRightsRouteImport
-      parentRoute: typeof ParentRoute
-    }
     '/parent/subscription': {
       id: '/parent/subscription'
       path: '/subscription'
@@ -573,16 +535,12 @@ declare module '@tanstack/react-router' {
 
 interface ParentRouteChildren {
   ParentChildrenRoute: typeof ParentChildrenRoute
-  ParentCmsRoute: typeof ParentCmsRoute
-  ParentRightsRoute: typeof ParentRightsRoute
   ParentSubscriptionRoute: typeof ParentSubscriptionRoute
   ParentIndexRoute: typeof ParentIndexRoute
 }
 
 const ParentRouteChildren: ParentRouteChildren = {
   ParentChildrenRoute: ParentChildrenRoute,
-  ParentCmsRoute: ParentCmsRoute,
-  ParentRightsRoute: ParentRightsRoute,
   ParentSubscriptionRoute: ParentSubscriptionRoute,
   ParentIndexRoute: ParentIndexRoute,
 }

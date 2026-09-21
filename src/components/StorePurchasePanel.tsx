@@ -12,7 +12,11 @@ import {
 import { nativePlatform } from "@/lib/native";
 
 interface Props {
-  userId: string;
+  /**
+   * The signed-in parent, when there is one. An account is optional: with no
+   * id RevenueCat uses an anonymous one so buying and restoring still work.
+   */
+  userId?: string | null;
   /** Called after a successful purchase or restore so entitlement can refresh. */
   onEntitlementChanged: () => void;
 }
@@ -33,7 +37,7 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
     let cancelled = false;
     void (async () => {
       try {
-        await configurePurchases(userId);
+        await configurePurchases(userId ?? undefined);
         const list = await listStoreOffers();
         if (!cancelled) setOffers(list);
       } catch (e) {
@@ -45,6 +49,7 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
       cancelled = true;
     };
   }, [userId]);
+
 
   const buy = useCallback(
     async (offer: StoreOffer) => {
@@ -130,9 +135,11 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
 
       {error && <p className="mt-3 text-sm text-clay">{error}</p>}
       <p className="mt-3 text-xs text-inksoft">
-        Payment is charged to your {storeName} account. Subscriptions renew automatically unless you cancel at least 24
-        hours before the period ends; you can manage or cancel them in your device settings.
+        No account needed — you can subscribe and restore with your {storeName} account alone. Payment is charged to
+        your {storeName} account. Subscriptions renew automatically unless you cancel at least 24 hours before the
+        period ends; you can manage or cancel them in your device settings.
       </p>
     </>
   );
 }
+

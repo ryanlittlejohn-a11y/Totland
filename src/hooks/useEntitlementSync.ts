@@ -5,21 +5,32 @@ import { supabase } from "@/integrations/supabase/client";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription } from "@/lib/subscription.functions";
 import { loadProfile, saveProfile } from "@/lib/profile";
+import { isNativeApp } from "@/lib/native";
+import {
+  configurePurchases,
+  logInPurchases,
+  logOutPurchases,
+  storeEntitlementActive,
+  storePurchasesAvailable,
+} from "@/lib/purchases";
 
 /**
- * Whenever the device is online, the locally cached `premium` flag is replaced
- * with the server-verified answer. Editing localStorage therefore only ever
- * "works" until the next time the app can reach the backend, and a signed-out
- * device is never treated as premium.
+ * Keeps the locally cached `premium` flag honest.
  *
- * Offline play keeps working from the last verified answer, which is the
- * point of the cache.
+ * On the web, premium is whatever the backend says for the signed-in parent,
+ * so editing localStorage only "works" until the next time the app can reach
+ * the backend, and a signed-out browser is never premium.
+ *
+ * In the packaged app an account is optional: premium is true when either the
+ * store (via RevenueCat's cached customer info, which works offline and while
+ * signed out) or the server-verified subscription says so.
  */
 export function useEntitlementSync() {
   const fetchSubscription = useServerFn(getMySubscription);
 
   useEffect(() => {
     let cancelled = false;
+    const native = isNativeApp();
 
     const setPremium = (value: boolean) => {
       if (cancelled) return;
@@ -28,8 +39,27 @@ export function useEntitlementSync() {
       saveProfile({ ...profile, premium: value });
     };
 
+    /** Store entitlement, cached on the device — safe offline. */
+    const storePremium = async () => {
+      if (!native || !storePurchasesAvailable()) return false;
+      try {
+        await configurePurchases();
+        return await storeEntitlementActive();
+      } catch {
+        return false;
+      }
+    };
+
     const verify = async () => {
-      if (typeof navigator !== "undefined" && navigator.onLine === false) return;
+      const offline = typeof navigator !== "undefined" && navigator.onLine === false;
+      const fromStore = await storePremium();
+      if (fromStore) {
+        setPremium(true);
+        return;
+      }
+      // Offline: keep the last verified answer rather than revoking access.
+      if (offline) return;
+
       try {
         const { data } = await supabase.auth.getSession();
         const user = data.session?.user;
@@ -46,8 +76,16 @@ export function useEntitlementSync() {
 
     void verify();
     window.addEventListener("online", verify);
-    const { data: sub } = supabase.auth.onAuthStateChange((event) => {
-      if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "USER_UPDATED") void verify();
+    const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_IN" || event === "USER_UPDATED") {
+        // Link any anonymous store purchase to the account that just signed in.
+        const id = session?.user?.id;
+        if (native && id) void logInPurchases(id).finally(() => void verify());
+        else void verify();
+      } else if (event === "SIGNED_OUT") {
+        if (native) void logOutPurchases().finally(() => void verify());
+        else void verify();
+      }
     });
 
     return () => {

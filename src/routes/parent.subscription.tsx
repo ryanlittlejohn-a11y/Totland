@@ -168,11 +168,49 @@ function Subscription() {
 
         {!ready ? (
           <p className="mt-4 text-sm text-inksoft">Loading…</p>
+        ) : active ? (
+          <div className="mt-4 rounded-2xl bg-moss/15 p-4 text-sm text-ink">
+            <p className="font-semibold">🎉 Premium is active — the whole library is unlocked.</p>
+            {renewalDate && !storeActive && (
+              <p className="mt-2 text-inksoft">
+                {sub?.cancelAtPeriodEnd || sub?.status === "canceled"
+                  ? `Access ends ${renewalDate}.`
+                  : `Renews ${renewalDate}.`}
+              </p>
+            )}
+            {sub?.status === "past_due" && !storeActive && (
+              <p className="mt-2 text-clay">
+                Your last payment didn't go through. Please update your payment details to keep premium.
+              </p>
+            )}
+            {native ? (
+              <p className="mt-2 text-inksoft">
+                To switch plans or cancel, open your device settings and manage subscriptions in {storeName}.
+                Canceling keeps premium until the end of your paid period.
+              </p>
+            ) : (
+              <p className="mt-2 text-inksoft">
+                To switch plans, update your card, or cancel, visit{" "}
+                <a href="https://paddle.net" target="_blank" rel="noopener noreferrer" className="underline">
+                  paddle.net
+                </a>{" "}
+                with the email you used at checkout. Canceling keeps premium until the end of your paid period.
+              </p>
+            )}
+          </div>
+        ) : native ? (
+          <StorePurchasePanel
+            userId={user?.id ?? null}
+            onEntitlementChanged={() => {
+              void refreshStore();
+              if (user?.email_confirmed_at) void waitForActivation();
+            }}
+          />
         ) : !user ? (
           <p className="mt-4 rounded-2xl bg-felt p-4 text-sm text-inksoft">
             Sign in below to subscribe or to restore a subscription you already bought.
           </p>
-         ) : !emailVerified ? (
+        ) : !emailVerified ? (
           <div className="mt-4 rounded-2xl bg-amber/20 p-4 text-sm text-ink">
             <p className="font-semibold">Please verify your email address.</p>
             <p className="mt-2 text-inksoft">
@@ -195,39 +233,8 @@ function Subscription() {
               <p className="mt-2 text-clay">Couldn't send the email right now. Please try again in a minute.</p>
             )}
           </div>
-        ) : active ? (
-          <div className="mt-4 rounded-2xl bg-moss/15 p-4 text-sm text-ink">
-            <p className="font-semibold">🎉 Premium is active — the whole library is unlocked.</p>
-            {renewalDate && (
-              <p className="mt-2 text-inksoft">
-                {sub?.cancelAtPeriodEnd || sub?.status === "canceled"
-                  ? `Access ends ${renewalDate}.`
-                  : `Renews ${renewalDate}.`}
-              </p>
-            )}
-            {sub?.status === "past_due" && (
-              <p className="mt-2 text-clay">
-                Your last payment didn't go through. Please update your payment details to keep premium.
-              </p>
-            )}
-            {native ? (
-              <p className="mt-2 text-inksoft">
-                To switch plans or cancel, open your device settings and manage subscriptions in {storeName}.
-                Canceling keeps premium until the end of your paid period.
-              </p>
-            ) : (
-              <p className="mt-2 text-inksoft">
-                To switch plans, update your card, or cancel, visit{" "}
-                <a href="https://paddle.net" target="_blank" rel="noopener noreferrer" className="underline">
-                  paddle.net
-                </a>{" "}
-                with the email you used at checkout. Canceling keeps premium until the end of your paid period.
-              </p>
-            )}
-          </div>
-        ) : native ? (
-          <StorePurchasePanel userId={user.id} onEntitlementChanged={() => void waitForActivation()} />
         ) : (
+
           <>
             <div className="mt-4 grid grid-cols-2 gap-3">
               {PLANS.map((plan) => (

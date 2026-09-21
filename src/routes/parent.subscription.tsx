@@ -286,7 +286,20 @@ function Subscription() {
           </Link>
         </section>
       ) : ready && !user ? (
-        <ParentAuthCard />
+        <>
+          {native && (
+            <section className="rounded-3xl bg-card p-5 wood-block">
+              <h2 className="font-ui text-lg font-bold text-ink">An account is optional</h2>
+              <p className="mt-2 text-sm text-inksoft">
+                You don't need an account to subscribe or to play. Signing in only keeps your children's profiles and
+                progress in step across your family's devices — and it links a subscription you've already bought to
+                your account.
+              </p>
+            </section>
+          )}
+          <ParentAuthCard />
+        </>
+
       ) : (
         user && (
           <section className="rounded-3xl bg-card p-5 wood-block">

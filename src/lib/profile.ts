@@ -168,7 +168,7 @@ function emptyFamily(): Family {
 export function loadFamily(): Family {
   if (typeof window === "undefined") return emptyFamily();
   try {
-    const raw = window.localStorage.getItem(FAMILY_KEY);
+    const raw = storageGet(FAMILY_KEY);
     if (raw) {
       const f = JSON.parse(raw) as Family;
       if (f && Array.isArray(f.children) && f.children.length) {
@@ -178,7 +178,7 @@ export function loadFamily(): Family {
       }
     }
     // One-time migration from the older single-child store.
-    const legacy = window.localStorage.getItem(KEY);
+    const legacy = storageGet(KEY);
     if (legacy) {
       const p = { ...defaultProfile(), ...JSON.parse(legacy) } as Profile;
       const child: ChildRecord = { id: newId(), profile: p, updatedAt: new Date().toISOString(), dirty: true };
@@ -195,9 +195,10 @@ export function loadFamily(): Family {
 export function saveFamily(f: Family) {
   if (typeof window === "undefined") return;
   setLang(f.settings.language);
-  window.localStorage.setItem(FAMILY_KEY, JSON.stringify(f));
+  storageSet(FAMILY_KEY, JSON.stringify(f));
   window.dispatchEvent(new CustomEvent("totland:profile"));
 }
+
 
 export function activeChild(f: Family): ChildRecord {
   const visible = f.children.filter((c) => !c.deleted);

@@ -47,6 +47,7 @@
 - [x] First 30 free and replayable; puzzles 31–100 unlock with premium
 
 ## Pre-launch native fixes (approved plan)
-- [ ] Part A: remove /parent/cms and /parent/rights; move rights register to docs/
-- [ ] Part C: native premium without sign-in (RevenueCat anonymous ID, logIn on sign-in)
-- [ ] Part B: @capacitor/preferences storage + @capacitor/network offline detection on native
+- [x] Part A: remove /parent/cms and /parent/rights; move rights register to docs/
+- [x] Part C: native premium without sign-in (RevenueCat anonymous ID, logIn on sign-in)
+- [x] Part B: @capacitor/preferences storage + @capacitor/network offline detection on native
+- [ ] User: confirm RevenueCat restore behavior stays on "Transfer to new App User ID"

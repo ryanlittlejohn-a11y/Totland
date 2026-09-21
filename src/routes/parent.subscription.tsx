@@ -14,6 +14,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { isNativeApp, nativePlatform } from "@/lib/native";
 import { StorePurchasePanel } from "@/components/StorePurchasePanel";
 import { useStoreEntitlement } from "@/hooks/useStoreEntitlement";
+import { storageRemove } from "@/lib/storage";
+
 
 
 export const Route = createFileRoute("/parent/subscription")({
@@ -127,10 +129,11 @@ function Subscription() {
       await removeAccount({ data: undefined });
       await supabase.auth.signOut();
       try {
-        window.localStorage.removeItem("totland.family.v1");
+        storageRemove("totland.family.v1");
       } catch {
         /* ignore */
       }
+
       update((p) => ({ ...p, premium: false }));
       setDeleted(true);
       setDeleting(false);

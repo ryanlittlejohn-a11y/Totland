@@ -111,7 +111,13 @@ export const speakText = createServerFn({ method: "POST" })
       console.warn("Voice library lookup failed", e);
     }
 
-    // 2. Library miss — generate with ElevenLabs, then save for everyone.
+    // 2. Library miss — this is the only path that spends provider credits, so
+    // cap how many a single caller may trigger per hour.
+    if (await overGenerationLimit(supabaseAdmin)) {
+      console.warn("Voice generation limit reached for caller");
+      return { status: "unavailable", reason: "rate_limit" } satisfies SpeakResult;
+    }
+
     const apiKey = process.env["ELEVENLABS_API_KEY"];
     if (!apiKey) {
       console.warn("ElevenLabs narration is not configured");

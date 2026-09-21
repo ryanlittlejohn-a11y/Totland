@@ -29,6 +29,13 @@ export const Route = createFileRoute("/api/public/diag")({
     handlers: {
       OPTIONS: ({ request }) =>
         new Response(null, { status: 204, headers: cors(request.headers.get("origin")) }),
+      /** Tiny reachability ping used by the packaged app to tell "connected to
+       *  Wi-Fi" apart from "actually has internet". */
+      GET: ({ request }) =>
+        new Response("ok", {
+          headers: { ...cors(request.headers.get("origin")), "cache-control": "no-store" },
+        }),
+
       POST: async ({ request }) => {
         const headers = cors(request.headers.get("origin"));
         try {

@@ -131,6 +131,24 @@ export type Database = {
         }
         Relationships: []
       }
+      voice_generation_events: {
+        Row: {
+          caller_hash: string
+          created_at: string
+          id: string
+        }
+        Insert: {
+          caller_hash: string
+          created_at?: string
+          id?: string
+        }
+        Update: {
+          caller_hash?: string
+          created_at?: string
+          id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

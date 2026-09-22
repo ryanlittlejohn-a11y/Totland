@@ -92,7 +92,7 @@ function sayWithDeviceVoice(text: string, opts: { rate?: number; pitch?: number 
  * Hannah voice: fetch once, cache forever on the device
  * ------------------------------------------------------------------ */
 
-const VOICE_CACHE = "totland-voice-v1";
+const VOICE_CACHE = "totland-voice-v2";
 const VOICE_BLOCKED_KEY = "totland.voice-unavailable";
 
 function voiceRequestsBlocked(): boolean {

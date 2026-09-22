@@ -17,6 +17,7 @@ import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RewardsRouteImport } from './routes/rewards'
 import { Route as TermsRouteImport } from './routes/terms'
+import { Route as VoiceTestRouteImport } from './routes/voice-test'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WordfindsRouteImport } from './routes/wordfinds'
 import { Route as WorldsRouteImport } from './routes/worlds'
@@ -73,6 +74,11 @@ const RewardsRoute = RewardsRouteImport.update({
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
   path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const VoiceTestRoute = VoiceTestRouteImport.update({
+  id: '/voice-test',
+  path: '/voice-test',
   getParentRoute: () => rootRouteImport,
 } as any)
 const WelcomeRoute = WelcomeRouteImport.update({
@@ -173,6 +179,7 @@ export interface FileRoutesByFullPath {
   '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
   '/terms': typeof TermsRoute
+  '/voice-test': typeof VoiceTestRoute
   '/welcome': typeof WelcomeRoute
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
@@ -199,6 +206,7 @@ export interface FileRoutesByTo {
   '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
   '/terms': typeof TermsRoute
+  '/voice-test': typeof VoiceTestRoute
   '/welcome': typeof WelcomeRoute
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
@@ -227,6 +235,7 @@ export interface FileRoutesById {
   '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
   '/terms': typeof TermsRoute
+  '/voice-test': typeof VoiceTestRoute
   '/welcome': typeof WelcomeRoute
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
@@ -256,6 +265,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/rewards'
     | '/terms'
+    | '/voice-test'
     | '/welcome'
     | '/wordfinds'
     | '/worlds'
@@ -282,6 +292,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/rewards'
     | '/terms'
+    | '/voice-test'
     | '/welcome'
     | '/wordfinds'
     | '/worlds'
@@ -309,6 +320,7 @@ export interface FileRouteTypes {
     | '/refund'
     | '/rewards'
     | '/terms'
+    | '/voice-test'
     | '/welcome'
     | '/wordfinds'
     | '/worlds'
@@ -337,6 +349,7 @@ export interface RootRouteChildren {
   RefundRoute: typeof RefundRoute
   RewardsRoute: typeof RewardsRoute
   TermsRoute: typeof TermsRoute
+  VoiceTestRoute: typeof VoiceTestRoute
   WelcomeRoute: typeof WelcomeRoute
   WordfindsRoute: typeof WordfindsRoute
   WorldsRoute: typeof WorldsRoute
@@ -409,6 +422,13 @@ declare module '@tanstack/react-router' {
       path: '/terms'
       fullPath: '/terms'
       preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/voice-test': {
+      id: '/voice-test'
+      path: '/voice-test'
+      fullPath: '/voice-test'
+      preLoaderRoute: typeof VoiceTestRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/welcome': {
@@ -557,6 +577,7 @@ const rootRouteChildren: RootRouteChildren = {
   RefundRoute: RefundRoute,
   RewardsRoute: RewardsRoute,
   TermsRoute: TermsRoute,
+  VoiceTestRoute: VoiceTestRoute,
   WelcomeRoute: WelcomeRoute,
   WordfindsRoute: WordfindsRoute,
   WorldsRoute: WorldsRoute,

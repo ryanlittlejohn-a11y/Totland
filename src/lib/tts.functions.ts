@@ -5,7 +5,7 @@ import { createHash } from "crypto";
 /** Hannah (English). Spanish falls back to Hannah until a Spanish voice is chosen. */
 const VOICES: Record<string, string> = {
   en: "ZSNL4hPqCnqoMPaI4jGX",
-  es: "ZSNL4hPqCnqoMPaI4jGX",
+  es: "Bh4tkGuEEIADxUACafG5",
 };
 
 const BUCKET = "voice-clips";

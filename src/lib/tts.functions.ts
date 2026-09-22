@@ -2,7 +2,7 @@ import { createServerFn } from "@tanstack/react-start";
 import { getRequest } from "@tanstack/react-start/server";
 import { createHash } from "crypto";
 
-/** Hannah (English). Spanish falls back to Hannah until a Spanish voice is chosen. */
+/** Narration voices: Hannah for English, Lucy for Spanish. */
 const VOICES: Record<string, string> = {
   en: "ZSNL4hPqCnqoMPaI4jGX",
   es: "Bh4tkGuEEIADxUACafG5",

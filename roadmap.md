@@ -55,4 +55,5 @@
 ## App Store readiness (approved plan)
 - [x] Part D: PrivacyInfo.xcprivacy for the app and the App Clip (user adds both to the Xcode targets once)
 - [ ] Part E: spoken-line inventory + credit estimate only (no audio generated yet)
-- [x] Lucy Spanish voice: es -> Bh4tkGuEEIADxUACafG5 in tts.functions.ts; 10-clip test batch at /voice-test (temporary), line 2 = "¿Cuál imagen muestra un gato?"
+- [x] Lucy Spanish voice: es -> Bh4tkGuEEIADxUACafG5 in tts.functions.ts; test batch approved, test page removed, device voice cache bumped to v2
+- [ ] Spanish library refresh in Lucy's voice: essentials tier (~3,100 credits) — awaiting credit-spend approval, then generate

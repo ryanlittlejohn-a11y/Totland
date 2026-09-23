@@ -2,7 +2,7 @@
  *  One track for the main screens, another inside activities. Both sit well
  *  under narration: volume is low and ducks further while Hannah is speaking.
  *  Autoplay blocks are handled by retrying on first tap. */
-import { ACTIVITY_TRACK_URL, MENU_TRACK_URL, STORY_TRACK_URL } from "./music-track";
+import { ACTIVITY_TRACK, MENU_TRACK, STORY_TRACK, type Track } from "./music-track";
 import { onGesture, onUnlock } from "./audio-unlock";
 import { reportIssue } from "./crash-report";
 import { apiOrigin } from "./native";

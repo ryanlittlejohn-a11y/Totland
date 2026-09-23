@@ -28,5 +28,22 @@ await access(path.join(target, "index.html")).catch(() => {
   process.exit(1);
 });
 
+// The background soundtracks ship inside the app so premium families keep
+// music when they are offline. The website still streams the hosted copies.
+const musicSource = "native-assets/music";
+const musicTracks = [
+  "little-steps-big-dreams.mp3",
+  "curious-steps.mp3",
+  "forest-of-wonder.mp3",
+];
+const missing = musicTracks.filter((f) => !existsSync(path.join(musicSource, f)));
+if (missing.length) {
+  console.error(`[totland] Missing bundled soundtrack(s) in ${musicSource}/: ${missing.join(", ")}`);
+  process.exit(1);
+}
+await cp(musicSource, path.join(target, "music"), { recursive: true });
+
 const files = await readdir(target);
-console.log(`[totland] Native bundle ready in ${target}/ (${files.length} top-level entries)`);
+console.log(
+  `[totland] Native bundle ready in ${target}/ (${files.length} top-level entries, ${musicTracks.length} soundtracks)`,
+);

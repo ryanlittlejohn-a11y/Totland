@@ -2,7 +2,7 @@
  *  One track for the main screens, another inside activities. Both sit well
  *  under narration: volume is low and ducks further while Hannah is speaking.
  *  Autoplay blocks are handled by retrying on first tap. */
-import { ACTIVITY_TRACK_URL, MENU_TRACK_URL, STORY_TRACK_URL } from "./music-track";
+import { ACTIVITY_TRACK, MENU_TRACK, STORY_TRACK, type Track } from "./music-track";
 import { onGesture, onUnlock } from "./audio-unlock";
 import { reportIssue } from "./crash-report";
 import { apiOrigin } from "./native";
@@ -20,13 +20,13 @@ export function isActivityRoute(pathname: string): boolean {
 
 let storyOverride = 0; // >0 while a storybook is open
 
-function trackFor(pathname: string): string | null {
-  if (storyOverride > 0 && STORY_TRACK_URL) return STORY_TRACK_URL;
-  return isActivityRoute(pathname) ? ACTIVITY_TRACK_URL : MENU_TRACK_URL;
+function trackFor(pathname: string): Track | null {
+  if (storyOverride > 0) return STORY_TRACK;
+  return isActivityRoute(pathname) ? ACTIVITY_TRACK : MENU_TRACK;
 }
 
 let audio: HTMLAudioElement | null = null;
-let currentUrl: string | null = null;
+let currentTrack: Track | null = null;
 let wanted = false;
 let ducked = false;
 let level = DEFAULT_LEVEL; // parent-set loudness, 0–1
@@ -55,48 +55,55 @@ function fadeTo(value: number) {
   }, 40);
 }
 
-/** When a track address fails, the hosted copy is remembered here and used
- *  from then on. */
-const hosted = new Map<string, string>();
+/** Addresses that failed once, so the next attempt moves on to the next
+ *  option instead of retrying something that is not there. */
+const failed = new Set<string>();
 
-function sourceFor(url: string): string {
-  return hosted.get(url) ?? url;
+/** Where to load a tune from: the copy packaged inside the app first (so it
+ *  works with no internet), then the hosted copy, then the hosted copy with a
+ *  full address. */
+function sourceFor(t: Track): string {
+  if (t.local && !failed.has(t.local)) return t.local;
+  if (!failed.has(t.remote)) return t.remote;
+  return t.remote.startsWith("/") ? `${apiOrigin()}${t.remote}` : t.remote;
 }
 
 function ensureAudio(): HTMLAudioElement | null {
   if (typeof window === "undefined") return null;
-  const url = trackFor(route);
-  if (!url) return null;
+  const t = trackFor(route);
+  if (!t) return null;
   if (!audio) {
-    audio = new Audio(sourceFor(url));
+    audio = new Audio(sourceFor(t));
     audio.loop = true;
     audio.preload = "auto";
-    currentUrl = url;
+    currentTrack = t;
     audio.addEventListener("error", handleLoadError);
     // The soundtrack starts itself on the first tap (see hookGesture), so it
     // must not be muted-primed like the narration element.
-
-  } else if (currentUrl !== url) {
+  } else if (currentTrack !== t) {
     // Keep the same element (it already has permission to make sound) and
     // simply swap the tune.
     audio.pause();
-    audio.src = sourceFor(url);
-    currentUrl = url;
+    audio.src = sourceFor(t);
+    currentTrack = t;
     audio.load();
   }
   audio.volume = target();
   return audio;
 }
 
-/** A soundtrack that cannot load used to fail in total silence. Log it, and
- *  try the hosted copy once in case the bundled address was wrong. */
+/** A soundtrack that cannot load used to fail in total silence. Log it and
+ *  fall back to the next place the tune can come from. */
 function handleLoadError() {
-  const url = currentUrl;
-  if (!audio || !url) return;
-  reportIssue(`soundtrack failed to load: ${sourceFor(url)}`);
-  if (!url.startsWith("/") || hosted.has(url)) return;
-  hosted.set(url, `${apiOrigin()}${url}`);
-  audio.src = sourceFor(url);
+  const t = currentTrack;
+  if (!audio || !t) return;
+  const tried = sourceFor(t);
+  reportIssue(`soundtrack failed to load: ${tried}`);
+  if (failed.has(tried)) return;
+  failed.add(tried);
+  const next = sourceFor(t);
+  if (next === tried) return;
+  audio.src = next;
   audio.load();
   if (wanted) void tryPlay();
 }
@@ -128,13 +135,13 @@ async function tryPlay() {
 export function setMusicRoute(pathname: string) {
   if (route === pathname) return;
   route = pathname;
-  if (wanted && audio && trackFor(route) !== currentUrl) void tryPlay();
+  if (wanted && audio && trackFor(route) !== currentTrack) void tryPlay();
 }
 
 /** Storybooks swap in their own soundtrack while open. */
 export function setStoryMusic(on: boolean) {
   storyOverride = Math.max(0, storyOverride + (on ? 1 : -1));
-  if (wanted && audio && trackFor(route) !== currentUrl) void tryPlay();
+  if (wanted && audio && trackFor(route) !== currentTrack) void tryPlay();
 }
 
 /** Begin (or resume) the soundtrack. */

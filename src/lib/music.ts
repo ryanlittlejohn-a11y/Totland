@@ -135,13 +135,13 @@ async function tryPlay() {
 export function setMusicRoute(pathname: string) {
   if (route === pathname) return;
   route = pathname;
-  if (wanted && audio && trackFor(route) !== currentUrl) void tryPlay();
+  if (wanted && audio && trackFor(route) !== currentTrack) void tryPlay();
 }
 
 /** Storybooks swap in their own soundtrack while open. */
 export function setStoryMusic(on: boolean) {
   storyOverride = Math.max(0, storyOverride + (on ? 1 : -1));
-  if (wanted && audio && trackFor(route) !== currentUrl) void tryPlay();
+  if (wanted && audio && trackFor(route) !== currentTrack) void tryPlay();
 }
 
 /** Begin (or resume) the soundtrack. */

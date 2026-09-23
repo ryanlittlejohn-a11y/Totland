@@ -20,9 +20,9 @@ export function isActivityRoute(pathname: string): boolean {
 
 let storyOverride = 0; // >0 while a storybook is open
 
-function trackFor(pathname: string): string | null {
-  if (storyOverride > 0 && STORY_TRACK_URL) return STORY_TRACK_URL;
-  return isActivityRoute(pathname) ? ACTIVITY_TRACK_URL : MENU_TRACK_URL;
+function trackFor(pathname: string): Track | null {
+  if (storyOverride > 0) return STORY_TRACK;
+  return isActivityRoute(pathname) ? ACTIVITY_TRACK : MENU_TRACK;
 }
 
 let audio: HTMLAudioElement | null = null;

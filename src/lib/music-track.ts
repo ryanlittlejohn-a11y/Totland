@@ -25,7 +25,7 @@ export type Track = {
 
 /** Packaged copies live next to the bundled screens (see scripts/prepare-native-bundle.mjs). */
 function bundled(filename: string): string | null {
-  return isNativeApp() ? `music/${filename}` : null;
+  return isNativeApp() ? `/music/${filename}` : null;
 }
 
 function track(url: string, filename: string): Track {

@@ -1,59 +1,50 @@
-# Lucy for Spanish: clean up the test, then plan the library refresh
+# Bundle the three music tracks into the app
 
-## 1. Remove the test page and clips
+Premium families are promised full offline play. Narration is already covered; the three soundtracks still stream. This puts the music inside the iPhone/iPad and Android app so it plays with no internet. The website keeps streaming exactly as today.
 
-- Delete `src/routes/voice-test.tsx` (the route list regenerates itself).
-- Delete `public/voice-test/01.mp3` … `10.mp3` and the now-empty folder.
-- Remove the Word Find/voice-test line from `roadmap.md`.
+## 1. The three tracks today
 
-Nothing else links to that page, so removing it changes nothing a child or parent sees.
+| Track | Length | Quality | Size |
+|---|---|---|---|
+| Little Steps, Big Dreams (main screens) | 2:00 | 193 kbps stereo, 44.1 kHz | 2.9 MB |
+| Curious Steps (activities) | 1:00 | 194 kbps stereo | 1.5 MB |
+| Forest of Wonder (storybooks) | 2:30 | 193 kbps stereo | 3.6 MB |
+| **Total** | 5:30 | | **8.0 MB** |
 
-## 2. Spanish voice routing — confirmed
+Recommendation: re-encode the bundled copies at 96 kbps stereo, 44.1 kHz. For quiet looping background music played under narration at roughly 7% volume, this is not audibly different, and it halves the size to about **3.9 MB**. The hosted originals stay untouched at full quality for the website.
 
-`src/lib/tts.functions.ts` holds a small voice table: English uses Hannah, Spanish uses Lucy (`Bh4tkGuEEIADxUACafG5`). Every Spanish line the app speaks goes through that table, so all future Spanish recordings are Lucy's. Nothing resets or overrides it — it is a plain constant in the code, not a setting. I will only update the stale comment above it that still says Spanish "falls back to Hannah".
+## 2. How the app picks a track
 
-## 3. Regenerating the Spanish library in Lucy's voice
+Native app: play the bundled file first. If a bundled file is ever missing (for example a new track added later), fall back to the hosted address automatically — the player already has an error handler for exactly this, so the fallback is a one-line extension, not new machinery.
 
-### What exists today
+Website: unchanged — hosted address only.
 
-The shared clip library holds **186 recordings** (recorded 13–20 September), stored under scrambled names that mix the language and the text together. That means I can't read the list and tell you "these 40 are Spanish" — the names don't reveal it. It doesn't matter in practice: I can recompute the exact name for any Spanish line, so the refresh targets precise lines rather than guessing from the list.
+## 3. Packaging
 
-Any Spanish clip in there was recorded in Hannah's voice and would still play in Hannah until it is replaced.
+- Compressed copies committed at `native-assets/music/*.mp3` (outside `public/`, so the website build output stays byte-identical).
+- `scripts/prepare-native-bundle.mjs` copies that folder into `dist-app/music/` after the build, so `cap sync` carries it into `ios/` and `android/`.
+- A build-time check fails loudly if a file the native build expects is missing.
 
-### Scope: the essentials tier
+## 4. Settings respected
 
-Same set we agreed earlier — the lines a child hears constantly:
+Nothing about playback control changes. The on/off switch, the volume slider, the dip while Hannah speaks, silence on grown-up and legal pages, and pausing when the app is backgrounded all run in the same place as today — only where the audio file comes from changes. There is no reduced-motion rule tied to music today, and none is added.
 
-- letter names (A–Z)
-- numbers 1–20
-- colours
-- shapes
-- core vocabulary words
-- praise and encouragement phrases
-- storybook page text
+## 5. Untouched
 
-**Roughly 400 Spanish lines, ~3,100 characters ≈ 3,100 ElevenLabs credits, about 3 MB of audio.** I will re-count the exact lines from the app's Spanish text before generating and report the precise number for your approval.
+The offline gate, premium checks, parental gate, purchases and narration logic are not edited.
 
-Not included in this tier: the long tail of generated prompt variations and hints. Those keep working — they are simply spoken live in Lucy's voice the first time they come up, and recorded from then on.
+## 6. Size impact
 
-### How nothing breaks
+App download grows by about **3.9 MB** (8.0 MB if you prefer to bundle the originals uncompressed). Everything else is unchanged.
 
-- The name of a clip is derived from the language plus the exact words, so a re-recorded Spanish line **lands on the same name** and everything that already points at it keeps working. No paths change, no code changes, no references to update.
-- Each file is overwritten in place, one at a time. If the run stops halfway, the remaining lines are still the old Hannah recordings — nothing is ever missing or broken, just not yet refreshed.
-- English recordings are never touched: different language, different name.
-- Devices that already cached a Spanish line locally will keep hearing Hannah until that cache is cleared. To make the switch immediate everywhere, I would bump the on-device cache name once (a one-word change), which quietly re-downloads Spanish lines in Lucy's voice. I recommend doing that in the same step.
-- Offline play, Premium, music, the parental gate and all English narration are untouched.
+## Technical notes
 
-### Order of work
+- `src/lib/music-track.ts`: each track becomes `{ local, remote }`; `local` is `/music/<name>.mp3` on native only, `remote` stays the hosted CDN address (still passed through `assetUrl`).
+- `src/lib/music.ts`: `sourceFor()` returns the local path on native and records the remote as the fallback used by the existing `handleLoadError` retry.
+- `scripts/prepare-native-bundle.mjs`: copy `native-assets/music` -> `dist-app/music`, verify the three files exist.
+- Re-encode with `ffmpeg -i in.mp3 -c:a libmp3lame -b:a 96k -ar 44100 out.mp3` in the sandbox; only the compressed copies are committed.
+- Verify: `bunx tsgo --noEmit`, `bun run build`, `bun run build:app`, and a browser check that the web app still loads the hosted URLs.
 
-1. Clean up the test page and clips (step 1 above) — no credits.
-2. Count the exact essentials lines and report the precise credit figure.
-3. **Stop for your approval on the spend.**
-4. Run the refresh once approved, then report actual credits used.
+## Outside Lovable
 
-## Technical details
-
-- Delete: `src/routes/voice-test.tsx`, `public/voice-test/*.mp3`. Edit: `roadmap.md`, comment in `src/lib/tts.functions.ts`.
-- Storage key is `sha256("<lang>:<text>")` in bucket `voice-clips`, so regeneration is idempotent and key-stable; uploads use `upsert: true`.
-- Refresh runs as a one-off server-side script calling ElevenLabs directly with `eleven_multilingual_v2` and the existing voice settings (stability 0.5, similarity 0.75, style 0.4, speaker boost, speed 0.95), sequentially, skipping nothing and logging each key.
-- Optional cache bump: `VOICE_CACHE` in `src/lib/speech.ts` from `totland-voice-v1` to `v2`.
+After I finish, run `bun run sync:app` (or `bunx cap sync`) locally/in Codemagic before the next build so the new `music/` folder lands in the iOS and Android projects. No App Store Connect or RevenueCat changes.

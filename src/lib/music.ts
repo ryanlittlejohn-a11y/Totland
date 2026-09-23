@@ -26,7 +26,7 @@ function trackFor(pathname: string): Track | null {
 }
 
 let audio: HTMLAudioElement | null = null;
-let currentUrl: string | null = null;
+let currentTrack: Track | null = null;
 let wanted = false;
 let ducked = false;
 let level = DEFAULT_LEVEL; // parent-set loudness, 0–1

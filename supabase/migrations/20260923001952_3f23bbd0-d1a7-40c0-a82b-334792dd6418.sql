@@ -1,0 +1,1 @@
+DROP POLICY IF EXISTS "No client access to voice clips" ON storage.objects;

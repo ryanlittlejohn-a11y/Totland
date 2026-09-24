@@ -25,6 +25,7 @@ import { OfflineGate } from "../components/OfflineGate";
 import { StorageBoot } from "../components/StorageBoot";
 
 import { MusicPlayer } from "../components/MusicPlayer";
+import { useProfile } from "../lib/profile";
 
 
 
@@ -171,6 +172,7 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <StorageBoot>
+        <AccessibilityPreferences />
         <PaymentTestModeBanner />
         <MusicPlayer />
         {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
@@ -180,5 +182,16 @@ function RootComponent() {
       </StorageBoot>
     </QueryClientProvider>
   );
+}
+
+function AccessibilityPreferences() {
+  const { profile } = useProfile();
+
+  useEffect(() => {
+    if (profile.highContrast) document.documentElement.setAttribute("data-high-contrast", "1");
+    else document.documentElement.removeAttribute("data-high-contrast");
+  }, [profile.highContrast]);
+
+  return null;
 }
 

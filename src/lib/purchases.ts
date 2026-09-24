@@ -38,7 +38,7 @@ let configuredFor: string | null = null;
 
 async function plugin() {
   const mod = await import("@revenuecat/purchases-capacitor");
-  return mod.Purchases;
+  return { Purchases: mod.Purchases };
 }
 
 /**
@@ -51,7 +51,7 @@ async function plugin() {
  */
 export async function configurePurchases(userId?: string | null): Promise<void> {
   if (!storePurchasesAvailable()) return;
-  const Purchases = await plugin();
+  const { Purchases } = await plugin();
   if (!configured) {
     await Purchases.configure(userId ? { apiKey: apiKey()!, appUserID: userId } : { apiKey: apiKey()! });
     configured = true;
@@ -66,7 +66,7 @@ export async function logInPurchases(userId: string): Promise<void> {
   if (!storePurchasesAvailable()) return;
   await configurePurchases();
   if (configuredFor === userId) return;
-  const Purchases = await plugin();
+  const { Purchases } = await plugin();
   await Purchases.logIn({ appUserID: userId });
   configuredFor = userId;
 }
@@ -75,7 +75,7 @@ export async function logInPurchases(userId: string): Promise<void> {
 export async function logOutPurchases(): Promise<void> {
   if (!storePurchasesAvailable() || !configured) return;
   if (configuredFor === null) return;
-  const Purchases = await plugin();
+  const { Purchases } = await plugin();
   try {
     await Purchases.logOut();
   } catch {
@@ -88,7 +88,7 @@ export async function logOutPurchases(): Promise<void> {
 /** The monthly / yearly packages as offered by the store. */
 export async function listStoreOffers(): Promise<StoreOffer[]> {
   if (!storePurchasesAvailable()) return [];
-  const Purchases = await plugin();
+  const { Purchases } = await plugin();
   const { current } = await Purchases.getOfferings();
   if (!current) return [];
 
@@ -114,7 +114,7 @@ export async function listStoreOffers(): Promise<StoreOffer[]> {
 
 /** Buy a package. Resolves true when the premium entitlement is active. */
 export async function purchaseStorePackage(offer: StoreOffer): Promise<boolean> {
-  const Purchases = await plugin();
+  const { Purchases } = await plugin();
   const result = await Purchases.purchasePackage({
     aPackage: offer.packageRef as Parameters<typeof Purchases.purchasePackage>[0]["aPackage"],
   });
@@ -124,7 +124,7 @@ export async function purchaseStorePackage(offer: StoreOffer): Promise<boolean> 
 /** Apple requires an explicit restore control. */
 export async function restoreStorePurchases(): Promise<boolean> {
   if (!storePurchasesAvailable()) return false;
-  const Purchases = await plugin();
+  const { Purchases } = await plugin();
   const { customerInfo } = await Purchases.restorePurchases();
   return Boolean(customerInfo.entitlements.active[PREMIUM_ENTITLEMENT]);
 }
@@ -132,7 +132,7 @@ export async function restoreStorePurchases(): Promise<boolean> {
 /** Current entitlement straight from the store, used as a fast local check. */
 export async function storeEntitlementActive(): Promise<boolean> {
   if (!storePurchasesAvailable()) return false;
-  const Purchases = await plugin();
+  const { Purchases } = await plugin();
   const { customerInfo } = await Purchases.getCustomerInfo();
   return Boolean(customerInfo.entitlements.active[PREMIUM_ENTITLEMENT]);
 }

@@ -4,7 +4,7 @@
  * about the web app changes.
  */
 
-const DEFAULT_API_ORIGIN = "https://totland.lovable.app";
+const DEFAULT_API_ORIGIN = "https://totland.app";
 
 /** Origins the native webview runs on. Kept in sync with the server CORS list. */
 export const NATIVE_WEBVIEW_ORIGINS = [

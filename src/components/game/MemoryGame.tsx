@@ -1,15 +1,19 @@
 import { useEffect, useMemo, useState } from "react";
 import { memorySet } from "@/lib/rounds";
 import { shuffle } from "@/lib/content";
-import { chime, say } from "@/lib/speech";
+import { say, themeChime } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
+import { GameThemeScene } from "./GameThemeScene";
+import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 
 export function MemoryGame({
   kind = "animals",
+  theme = NEUTRAL_GAME_THEME,
   onFinish,
 }: {
   kind?: string;
+  theme?: GameTheme;
   onFinish: (stars: number, accuracy: number) => void;
 }) {
   const { profile, update, hydrated } = useProfile();
@@ -34,7 +38,7 @@ export function MemoryGame({
     const timer = window.setTimeout(() => {
       if (match) {
         setFound((f) => [...f, a.pairId]);
-        chime("correct", profile.sfx);
+        themeChime(theme.motif, profile.sfx);
         say(L(`${a.label}! Great job!`, `¡${a.label}! ¡Muy bien!`));
       }
       setFlipped([]);
@@ -53,7 +57,7 @@ export function MemoryGame({
   }, [found, deck.length, tries, onFinish, update]);
 
   return (
-    <div>
+    <GameThemeScene theme={theme}>
       <p className="font-ui text-[22px] font-semibold text-ink">{L("Find the matching pairs!", "¡Encuentra las parejas!")}</p>
       <div className="mt-4 grid grid-cols-3 gap-3">
         {deck.map((card) => {
@@ -67,7 +71,7 @@ export function MemoryGame({
                 if (open || flipped.length === 2) return;
                 setFlipped((f) => [...f, card.key]);
               }}
-              className={`aspect-square rounded-3xl grid place-items-center wood-block transition-transform active:translate-y-1 ${
+              className={`game-theme__option aspect-square grid place-items-center wood-block transition-transform active:translate-y-1 ${
                 open ? "bg-card" : "bg-wood"
               }`}
             >
@@ -78,6 +82,6 @@ export function MemoryGame({
           );
         })}
       </div>
-    </div>
+    </GameThemeScene>
   );
 }

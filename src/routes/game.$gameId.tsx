@@ -12,7 +12,7 @@ import { StoryReader } from "@/components/game/StoryReader";
 import { StoryBuilder } from "@/components/game/StoryBuilder";
 import { RewardScreen } from "@/components/game/RewardScreen";
 import { gameById } from "@/lib/catalog";
-import { CHARACTERS } from "@/lib/content";
+import { themeForGame } from "@/lib/game-themes";
 import { checkBadges, recordSession, useProfile } from "@/lib/profile";
 import { L, title as tTitle } from "@/lib/i18n";
 
@@ -75,7 +75,7 @@ function GameHost() {
   }
 
   const locked = game.premium && !profile.premium;
-  const mascot = CHARACTERS[game.number % CHARACTERS.length]!.emoji;
+  const theme = themeForGame(game.id);
 
   const finish = (earned: number, accuracy = 1) => {
     update((p) =>
@@ -110,11 +110,11 @@ function GameHost() {
       {stars !== null ? (
         <RewardScreen stars={stars} onAgain={restart} />
       ) : engine === "hunt" ? (
-        <HuntGame key={key} kind={game.kind} skill={game.skill} onFinish={finish} />
+        <HuntGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "order" ? (
-        <OrderGame key={key} kind={game.kind} skill={game.skill} onFinish={finish} />
+        <OrderGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "memory" ? (
-        <MemoryGame key={key} kind={game.kind} onFinish={finish} />
+        <MemoryGame key={key} kind={game.kind} theme={theme} onFinish={finish} />
       ) : engine === "wordsearch" ? (
         <WordSearchGame key={key} kind={game.kind} onFinish={finish} />
       ) : engine === "tracing" ? (
@@ -131,7 +131,7 @@ function GameHost() {
           skill={game.skill}
           kind={game.kind}
           rounds={game.rounds}
-          mascot={mascot}
+          theme={theme}
           onFinish={finish}
         />
       )}

@@ -6,6 +6,7 @@ import { getLang, speechLang } from "./i18n";
 import { speakText } from "./tts.functions";
 import { duckMusic } from "./music";
 import { onGesture, registerAudio } from "./audio-unlock";
+import type { ThemeMotif } from "./game-themes";
 
 /** Remove emoji/pictographs so the voice only speaks words. */
 export function stripEmoji(text: string): string {
@@ -344,6 +345,31 @@ export function chime(kind: "correct" | "retry" | "reward", on = true) {
     } else {
       tone(392, 0, 0.18, 0.05);
     }
+  } catch {
+    /* sound is optional */
+  }
+}
+
+const THEME_NOTES: Record<ThemeMotif, number[]> = {
+  pop: [740, 980],
+  munch: [330, 260],
+  bubble: [620, 840],
+  splash: [520, 390, 610],
+  launch: [440, 660, 880],
+  rain: [700, 560, 440],
+  tap: [520, 620],
+  fit: [590, 790],
+  bell: [660, 990],
+  discover: [520, 700, 840],
+};
+
+/** A tiny synthesized success motif; follows the existing SFX preference. */
+export function themeChime(motif: ThemeMotif, on = true) {
+  if (!on || typeof window === "undefined") return;
+  try {
+    ctx ??= new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
+    if (ctx.state === "suspended") void ctx.resume();
+    THEME_NOTES[motif].forEach((frequency, index) => tone(frequency, index * 0.075, 0.16, 0.055));
   } catch {
     /* sound is optional */
   }

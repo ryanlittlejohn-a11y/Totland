@@ -251,6 +251,74 @@ html[data-away="1"] *::after {
   animation-play-state: paused !important;
 }
 
+.game-theme {
+  --theme-color: var(--clay);
+  --theme-soft: color-mix(in oklch, var(--theme-color) 18%, var(--card));
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid color-mix(in oklch, var(--theme-color) 45%, var(--border));
+  border-radius: 1.75rem;
+  background: var(--theme-soft);
+  padding: 0.8rem;
+}
+.game-theme[data-palette="amber"] { --theme-color: var(--amber); }
+.game-theme[data-palette="moss"] { --theme-color: var(--moss); }
+.game-theme[data-palette="sky"] { --theme-color: var(--sky); }
+.game-theme[data-palette="plum"] { --theme-color: var(--plum); }
+.game-theme[data-palette="night"] { --theme-color: var(--night); }
+.game-theme__sky {
+  min-height: 2rem;
+  text-align: center;
+  color: var(--inksoft);
+  font-size: 1.25rem;
+  letter-spacing: 0.35rem;
+  white-space: pre;
+  animation: bob 3.2s ease-in-out infinite;
+}
+.game-theme__guide {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.8rem;
+}
+.game-theme__mascot {
+  display: grid;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex: none;
+  place-items: center;
+  border: 2px solid color-mix(in oklch, var(--theme-color) 60%, var(--border));
+  border-radius: 1rem;
+  background: var(--card);
+  box-shadow: var(--shadow-tile);
+  font-size: 1.8rem;
+}
+.game-theme__cue {
+  max-width: calc(100% - 4.2rem);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 1rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+.game-theme__content { position: relative; z-index: 1; }
+.game-theme__option { border: 2px solid color-mix(in oklch, var(--theme-color) 48%, var(--border)); }
+.game-theme[data-shape="round"] .game-theme__option,
+.game-theme[data-shape="bubble"] .game-theme__option { border-radius: 999px; }
+.game-theme[data-shape="bubble"] .game-theme__option { box-shadow: inset 0 0 0 5px color-mix(in oklch, var(--sky) 16%, transparent), var(--shadow-block); }
+.game-theme[data-shape="ticket"] .game-theme__option { border-radius: 1rem 2rem 1rem 2rem; }
+.game-theme[data-shape="block"] .game-theme__option { border-radius: 0.8rem; }
+.game-theme[data-shape="puzzle"] .game-theme__option { border-radius: 1.8rem 0.7rem 1.8rem 0.7rem; }
+.game-theme[data-shape="drop"] .game-theme__option { border-radius: 55% 45% 60% 40% / 65% 45% 55% 35%; }
+
+html[data-high-contrast="1"] .game-theme,
+html[data-high-contrast="1"] .game-theme__mascot,
+html[data-high-contrast="1"] .game-theme__option {
+  border-color: var(--ink);
+}
+html[data-high-contrast="1"] .game-theme { background: var(--card); }
+
 @media (prefers-reduced-motion: reduce) {
   .anim-floaty,
   .anim-bob,
@@ -259,4 +327,5 @@ html[data-away="1"] *::after {
   .anim-wiggle {
     animation: none !important;
   }
+  .game-theme__sky { animation: none !important; }
 }

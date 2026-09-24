@@ -64,6 +64,6 @@
 - [x] Add and visually wire the shared high-contrast setting
 
 ## Catalog game visual variety (approved plan)
-- [ ] Add presentation-only themes for all 63 games in the 22 repeated families
-- [ ] Apply themes across Choice, Order, Hunt, and Memory without changing gameplay
+- [x] Add presentation-only themes for all 63 games in the 22 repeated families
+- [x] Apply themes across Choice, Order, Hunt, and Memory without changing gameplay
 - [ ] Verify SFX, reduced-motion, high-contrast, premium gates, and representative game families

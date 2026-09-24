@@ -1,18 +1,22 @@
 import { useEffect, useMemo, useState } from "react";
 import { huntSet } from "@/lib/rounds";
 import type { SkillId } from "@/lib/content";
-import { chime, say } from "@/lib/speech";
+import { chime, say, themeChime } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
+import { GameThemeScene } from "./GameThemeScene";
+import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 
 /** "Find every…" engine — tap-many interaction with no timer and no penalty. */
 export function HuntGame({
   kind,
   skill,
+  theme = NEUTRAL_GAME_THEME,
   onFinish,
 }: {
   kind: string;
   skill: SkillId;
+  theme?: GameTheme;
   onFinish: (stars: number, accuracy: number) => void;
 }) {
   const { profile, update, hydrated } = useProfile();
@@ -43,7 +47,8 @@ export function HuntGame({
     const hit = set.targetIds.includes(id);
     setTaps((t) => t + 1);
     update((p) => recordAnswer(p, { skill, correct: hit, responseMs: 2500 }));
-    chime(hit ? "correct" : "retry", profile.sfx);
+    if (hit) themeChime(theme.motif, profile.sfx);
+    else chime("retry", profile.sfx);
     if (hit) {
       setFound((f) => [...f, id]);
       say(L("Found one!", "¡Encontraste uno!"));
@@ -53,7 +58,7 @@ export function HuntGame({
   };
 
   return (
-    <div>
+    <GameThemeScene theme={theme}>
       <p className="font-ui text-[22px] font-semibold text-ink">{L(`Find ${set.label}!`, `¡Busca ${set.label}!`)}</p>
       <p className="mt-1 font-ui text-sm text-inksoft">
         {L(`${found.length} of ${set.targetIds.length} found`, `${found.length} de ${set.targetIds.length} encontrados`)}
@@ -67,7 +72,7 @@ export function HuntGame({
               type="button"
               aria-label={cell.label ?? cell.id}
               onClick={() => tap(cell.id)}
-              className={`aspect-square grid place-items-center rounded-2xl wood-block transition-transform active:translate-y-1 ${
+              className={`game-theme__option relative aspect-square grid place-items-center wood-block transition-transform active:translate-y-1 ${
                 done ? "bg-moss/30 scale-95" : "bg-card"
               }`}
             >
@@ -85,6 +90,6 @@ export function HuntGame({
           );
         })}
       </div>
-    </div>
+    </GameThemeScene>
   );
 }

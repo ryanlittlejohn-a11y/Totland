@@ -4,20 +4,23 @@ import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { generateRound, type Option, type Round } from "@/lib/games";
 import { roundForKind } from "@/lib/rounds";
 import { chime, say, setNarration, stripEmoji } from "@/lib/speech";
+import { themeChime } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { GameThemeScene } from "./GameThemeScene";
+import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 
 export function ChoiceGame({
   skill,
   kind,
   rounds: ROUNDS = 5,
   onFinish,
-  mascot = "🦊",
+  theme = NEUTRAL_GAME_THEME,
 }: {
   skill: SkillId;
   kind?: string;
   rounds?: number;
   onFinish: (stars: number, accuracy: number) => void;
-  mascot?: string;
+  theme?: GameTheme;
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, skill).level;
@@ -63,7 +66,7 @@ export function ChoiceGame({
       setState("correct");
       setStars((s) => s + (misses === 0 ? 2 : 1));
       setMessage(`${praise} ${round.reveal ?? ""}`.trim());
-      chime("correct", profile.sfx);
+      themeChime(theme.motif, profile.sfx);
       say(stripEmoji(`${praise} ${round.reveal ?? ""}`));
       window.setTimeout(() => {
         if (index + 1 >= ROUNDS) {
@@ -99,11 +102,8 @@ export function ChoiceGame({
   if (!round) return <div className="h-64 rounded-3xl felt-panel" />;
 
   return (
-    <div>
+    <GameThemeScene theme={theme}>
       <div className="flex items-start gap-3">
-        <div className="grid size-16 shrink-0 place-items-center rounded-2xl bg-wood text-3xl anim-floaty wood-block">
-          {mascot}
-        </div>
         <button
           type="button"
           onClick={() => say(round.spoken)}
@@ -137,7 +137,7 @@ export function ChoiceGame({
               type="button"
               onClick={() => answer(opt)}
               aria-label={opt.label ?? opt.id}
-              className={`aspect-square rounded-3xl bg-card grid place-items-center wood-block transition-transform active:translate-y-1 ${
+              className={`game-theme__option aspect-square bg-card grid place-items-center wood-block transition-transform active:translate-y-1 ${
                 highlight ? "scale-[1.04] bg-amber" : ""
               } ${state === "retry" && wrongId === opt.id ? "anim-wiggle" : ""}`}
             >
@@ -168,6 +168,6 @@ export function ChoiceGame({
           {message || L("Tap your answer — take your time.", "Toca tu respuesta — tómate tu tiempo.")}
         </p>
       </div>
-    </div>
+    </GameThemeScene>
   );
 }

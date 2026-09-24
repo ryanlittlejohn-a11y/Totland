@@ -60,7 +60,8 @@ function handleDeepLink(url: string, router: Router<any, any>): void {
     if (host === "auth-callback" || path === "auth-callback") {
       void import("./native-oauth").then(({ completeNativeOAuth }) =>
         completeNativeOAuth(url).then(() => {
-          void router.navigate({ to: "/parent/subscription", replace: true });
+          const to: string = "/parent/subscription";
+          void router.navigate({ to, replace: true });
         }),
       );
       return;

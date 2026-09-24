@@ -83,3 +83,9 @@
 - [x] Time limits on RevenueCat / splash / network calls
 - [x] Verify (typecheck, build, build:app head script, stuck-Preferences Playwright)
 - [ ] Later: remove diagnostic overlay once diagnosed
+
+## iPhone plugin crash + false offline screen
+- [x] Stop returning plugin proxies from async helpers (Purchases, Preferences)
+- [x] Native backend default → https://totland.app (no redirect)
+- [x] OfflineGate: retry ping once, any HTTP response counts as online
+- [ ] Later: remove diagnostic overlay after next TestFlight check

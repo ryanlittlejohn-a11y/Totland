@@ -23,7 +23,7 @@ let queue: Promise<unknown> = Promise.resolve();
 
 async function preferences() {
   const mod = await import("@capacitor/preferences");
-  return mod.Preferences;
+  return { Preferences: mod.Preferences };
 }
 
 function useMemory() {
@@ -60,7 +60,7 @@ export function storageSet(key: string, value: string) {
     localSet(key, value);
     queue = queue.then(async () => {
       try {
-        const Preferences = await preferences();
+        const { Preferences } = await preferences();
         await Preferences.set({ key, value });
       } catch (e) {
         console.error("native storage write failed", e);
@@ -82,7 +82,7 @@ export function storageRemove(key: string) {
   if (!isNativeApp()) return;
   queue = queue.then(async () => {
     try {
-      const Preferences = await preferences();
+      const { Preferences } = await preferences();
       await Preferences.remove({ key });
     } catch {
       /* ignore */
@@ -121,7 +121,7 @@ async function step<T>(label: string, p: Promise<T>): Promise<T> {
 async function loadNative(): Promise<Map<string, string> | null> {
   const next = new Map<string, string>();
   try {
-    const Preferences = await step("import plugin", preferences());
+    const { Preferences } = await step("import plugin", preferences());
     const { value: migrated } = await step("get migrated", Preferences.get({ key: MIGRATED_KEY }));
 
     for (const key of STORAGE_KEYS) {

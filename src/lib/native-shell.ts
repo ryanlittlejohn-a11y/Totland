@@ -56,6 +56,17 @@ function handleDeepLink(url: string, router: Router<any, any>): void {
     const host = parsed.hostname;
     const path = parsed.pathname.replace(/^\//, "");
 
+    // Grown-up sign-in returning from the in-app browser sheet.
+    if (host === "auth-callback" || path === "auth-callback") {
+      void import("./native-oauth").then(({ completeNativeOAuth }) =>
+        completeNativeOAuth(url).then(() => {
+          void router.navigate({ to: "/parent/subscription", replace: true });
+        }),
+      );
+      return;
+    }
+
+
     // RevenueCat win-back / promotional links can use app.totland.kids://premium
     // or app.totland.kids://subscription. Anything else lands at home.
     const target = host === "premium" || host === "subscription" || path === "premium" || path === "subscription"

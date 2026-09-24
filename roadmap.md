@@ -89,3 +89,9 @@
 - [x] Native backend default → https://totland.app (no redirect)
 - [x] OfflineGate: retry ping once, any HTTP response counts as online
 - [ ] Later: remove diagnostic overlay after next TestFlight check
+
+## Phone-app Apple/Google sign-in 404
+- [x] Native-only in-app browser sign-in sheet (@capacitor/browser)
+- [x] Nonce-checked return via app.totland.kids://auth-callback + /auth/native-return page
+- [x] Verify native vs web and nonce match/mismatch
+- [ ] Confirm a real Apple sign-in end to end on TestFlight

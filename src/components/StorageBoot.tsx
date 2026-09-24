@@ -2,7 +2,7 @@ import { useEffect, useState, type ReactNode } from "react";
 
 import { hydrateStorage } from "@/lib/storage";
 import { isNativeApp } from "@/lib/native";
-import { diagStep } from "@/lib/diag-overlay";
+import { diagRendered, diagStep } from "@/lib/diag-overlay";
 
 const SAFETY_MS = 4500;
 
@@ -14,9 +14,9 @@ const SAFETY_MS = 4500;
  * On the web this renders its children with no waiting.
  */
 export function StorageBoot({ children }: { children: ReactNode }) {
-  // Same initial value on server and client so the prerendered shell is kept.
-  const [ready, setReady] = useState(true);
-  const [waiting, setWaiting] = useState(false);
+  // Native starts on a simple loading picture (never a blank page) until
+  // storage settles or the safety timer fires.
+  const [ready, setReady] = useState(() => !isNativeApp());
 
   useEffect(() => {
     if (!isNativeApp()) return;
@@ -24,11 +24,8 @@ export function StorageBoot({ children }: { children: ReactNode }) {
     const finish = () => {
       if (done) return;
       done = true;
-      setWaiting(false);
       setReady(true);
     };
-    setWaiting(true);
-    setReady(false);
     diagStep("storage boot start");
     const timer = window.setTimeout(() => {
       diagStep("storage boot safety timer fired");
@@ -44,12 +41,20 @@ export function StorageBoot({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  if (!ready && waiting) {
+  if (!ready) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-background" aria-busy="true">
         <span className="text-5xl" aria-hidden="true">🦊</span>
       </div>
     );
   }
-  return <>{children}</>;
+  return <>{children}<FirstRenderMark /></>;
+}
+
+/** TEMPORARY: tells the diagnostic watchdog a real screen is up. */
+function FirstRenderMark() {
+  useEffect(() => {
+    diagRendered();
+  }, []);
+  return null;
 }

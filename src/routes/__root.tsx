@@ -23,7 +23,7 @@ import { installCrashReporting } from "../lib/crash-report";
 
 import { OfflineGate } from "../components/OfflineGate";
 import { StorageBoot } from "../components/StorageBoot";
-import { DIAG_BOOT_SCRIPT, diagStep, diagRendered } from "../lib/diag-overlay";
+import { DIAG_BOOT_SCRIPT, diagStep } from "../lib/diag-overlay";
 
 import { MusicPlayer } from "../components/MusicPlayer";
 import { useProfile } from "../lib/profile";
@@ -183,7 +183,6 @@ function RootComponent() {
         <OfflineGate>
           <Outlet />
         </OfflineGate>
-        <FirstRenderMark />
       </StorageBoot>
     </QueryClientProvider>
   );
@@ -206,9 +205,3 @@ function AccessibilityPreferences() {
 }
 
 
-function FirstRenderMark() {
-  useEffect(() => {
-    diagRendered();
-  }, []);
-  return null;
-}

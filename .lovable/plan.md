@@ -1,101 +1,130 @@
-# Real visual variety for reskinned games
+# Option 1 investigation: bespoke game interactions
 
-## Confirmed scope
+## Recommendation
 
-- The catalog contains **22 repeated engine/kind families covering 63 of the 100 game records**.
-- The repeated families span the Choice, Order, Hunt, and Memory renderers, so fixing only the six `findUpper` entries inside `ChoiceGame` would leave most reskins unchanged.
-- Keep every round generator, answer check, retry, score, difficulty, completion threshold, reward, and premium flag unchanged.
+Build a first wave of **five** bespoke games, then decide whether to add the next three. This gives the catalog visibly different play patterns without replacing the stable shared engines or changing scoring, difficulty, access, or catalog metadata.
 
-## Approach
+The existing theme layer is effective for memory and hunt games, whose shared mechanics already match their titles. The biggest gap is where a title promises motion or object manipulation but the game still presents a static tap grid.
 
-### 1. Add one presentation-only theme registry
+## Ranking of all 22 repeated families
 
-Create a typed theme registry keyed by **game ID**, not catalog number. Every title in a repeated family gets its own entry containing only presentation choices:
+Ranked by likely improvement from bespoke interaction, balanced against how convincing the current theme treatment already is:
 
-- matching mascot or themed object;
-- scene treatment and semantic tint;
-- lightweight decorations around the play area;
-- option/card shape treatment;
-- a short bilingual theme cue where useful;
-- an optional synthesized sound motif that respects the existing sound-effects setting.
+| Rank | Shared family | Games | Bespoke value | Current themes | Recommendation |
+|---:|---|---:|---|---|---|
+| 1 | `choice/findUpper` | 6 | Very high | Weak mechanically | Bespoke the strongest title-led variants |
+| 2 | `order/buildWord` | 5 | Very high | Weak mechanically | Add one or two manipulation-based variants |
+| 3 | `order/numbers` | 4 | High | Moderate | Number Rain and Number Maze strongly promise motion |
+| 4 | `choice/countObjects` | 5 | High | Moderate | Turn selected titles into collecting/grouping play |
+| 5 | `choice/jigsawPiece` | 3 | High | Weak mechanically | A real piece-placement interaction would match the names |
+| 6 | `order/letters` | 4 | High | Moderate | Trains, bridges, gardens, and races suggest spatial sequencing |
+| 7 | `choice/findNumber` | 4 | High | Weak mechanically | Reuse proven bespoke patterns from letters after validation |
+| 8 | `choice/missingLetterWord` | 2 | High | Moderate | Word Fishing especially promises a different interaction |
+| 9 | `choice/letterPuzzle` | 2 | Medium-high | Moderate | Good future fit for piece assembly |
+| 10 | `choice/completePicture` | 2 | Medium-high | Moderate | A true picture assembly mechanic would add value |
+| 11 | `choice/shapeMissing` | 2 | Medium | Good | Dragging a missing shape into place could improve one title |
+| 12 | `choice/patternNext` | 2 | Medium | Good | Existing choose-the-next-piece interaction is already appropriate |
+| 13 | `choice/startsWith` | 2 | Medium | Good | Train loading could differentiate one title, but the learning task is already clear |
+| 14 | `choice/letterSound` | 2 | Medium | Good | Audio is already the main differentiator; avoid timing pressure |
+| 15 | `choice/numberPuzzle` | 2 | Medium | Good | Could share a later jigsaw framework |
+| 16 | `choice/shapeShadow` | 2 | Medium-low | Good | Matching a shape to a shadow naturally works as a choice game |
+| 17 | `choice/numberQuantity` | 2 | Medium-low | Good | Current number-to-quantity matching already fits the objective |
+| 18 | `hunt/letters` | 3 | Low | Strong | Safari, maze, and detective themes suit the existing find-many play |
+| 19 | `memory/letters` | 3 | Low | Strong | Card matching is an expected, complete mechanic |
+| 20 | `memory/wordPicture` | 2 | Low | Strong | The shared memory mechanic fits both titles |
+| 21 | `memory/numbers` | 2 | Low | Strong | The park theme is sufficient variation for a familiar memory game |
+| 22 | `memory/animals` | 2 | Low | Strong | Bespoke work would add little compared with its cost |
 
-Theme entries will use existing design tokens and CSS classes. They will not alter generated questions, answer IDs, option counts, timing, scoring, or progression. A neutral default will preserve untargeted games and area-based quick play.
+## Top eight candidates
 
-### 2. Pass the selected theme through the existing game host
+### First wave
 
-Replace `CHARACTERS[game.number % CHARACTERS.length]` on the catalog game route with `themeForGame(game.id)`. Pass that theme into the reusable Choice, Order, Hunt, and Memory renderers.
+1. **Letter Fishing — Medium**
+   - Drag a large hook along a short line and release over a floating target letter.
+   - Wrong letters bob away gently; the target remains available with another spoken clue.
+   - **Reuse:** existing letter rounds, narration, scoring, theme shell, and the proven pointer-capture approach from Word Find.
+   - **New work:** drag surface and target collision; light water/hook animation; no new educational content generator.
 
-Each renderer will use the same small set of theme fields, adapted to its layout:
+2. **Feed the Letter Monster — Medium**
+   - Drag the requested letter into a large friendly monster mouth.
+   - A mismatch is returned to its starting place with encouragement; the monster never reacts negatively.
+   - **Reuse:** the same letter round data as `findUpper` and much of Letter Fishing's drag controller.
+   - **New work:** drop zone, snap-back behavior, mouth animation, and accessible tap-to-select/tap-to-feed fallback.
 
-- **Choice:** themed prompt character, option frames, scene decoration, and optional correct-answer flourish.
-- **Order:** themed destination row and pieces, such as train cars, bridge stones, garden plots, or rocket fuel cells.
-- **Hunt:** themed search board and found marker.
-- **Memory:** themed card backs, board treatment, and match flourish.
+3. **Word Rocket — Medium**
+   - Drag letter tiles into large rocket fuel slots in reading order.
+   - Correct tiles lock into place; a misplaced tile floats back without penalty.
+   - **Reuse:** `buildWord` sequence data and completion/scoring behavior from Order Game.
+   - **New work:** reusable ordered-slot drag engine and launch completion animation; round generation remains substantially unchanged.
 
-The existing number-based mascot behavior will be removed from catalog games. The unrelated area quick-play and daily-adventure mascot behavior will remain unchanged because those screens do not represent a specifically titled catalog game.
+4. **Animal Jigsaw — Medium–Large**
+   - Move two to six large picture pieces into silhouette slots, with generous magnetic snapping.
+   - Pieces can be placed in any order; there is no timer or failed round.
+   - **Reuse:** existing jigsaw answers, theme shell, progress recording, and drag controller.
+   - **New work:** piece geometry, slot matching, completed-picture artwork, and placement-state logic. This has the largest art requirement in the first wave.
 
-## Representative treatment and mascot mapping
+5. **Number Maze — Medium**
+   - Trace a broad path through numbered stepping points in order, lifting and restarting anywhere without losing progress.
+   - Spoken prompts name the next number; an off-path movement simply pauses the trail.
+   - **Reuse:** number sequence data and the existing canvas/pointer foundation from Tracing.
+   - **New work:** path corridor, next-node detection, and per-round maze layouts.
 
-### Six `findUpper` games
+### Second wave, after device validation
 
-| Game | Mascot / guide | Visual treatment | Sound / phrase treatment |
-|---|---|---|---|
-| **Letter Pop** | Balloon `🎈` | Airy sky scene; round balloon answer tiles with strings; correct tile gives a small pop sparkle | Soft synthesized pop; “Pop the letter!” / “¡Revienta la letra!” cue |
-| **Feed the Letter Monster** | Monster `👾` | Plum monster-face frame; answers sit like snacks near a friendly mouth; correct answer gets a brief munch flourish | Two-note friendly munch sound; “Feed the monster!” / “¡Alimenta al monstruo!” |
-| **Letter Bubbles** | Bubbles `🫧` | Watery blue scene; translucent circular answer bubbles; tiny bubble decorations | Light rising bubble plink; “Find the letter bubble!” / “¡Busca la burbuja con la letra!” |
-| **Letter Fishing** | Fern Fox `🦊` | Pond scene; answer tiles become floating lily-pad/bobber shapes with reeds and ripples | Gentle splash/pluck; “Catch the letter!” / “¡Atrapa la letra!” |
-| **Letter Rocket** | Bolt `🤖` | Night launch scene; answer tiles sit on launch pads with stars; correct choice gets a brief rising trail | Short rising launch tone; “Launch the letter!” / “¡Lanza la letra!” |
-| **Letter Rain** | Umbrella friend `☂️` | Rain-cloud scene; rounded raindrop answer tiles and puddle accents | Soft descending raindrop notes; “Catch the rainy letter!” / “¡Atrapa la letra de lluvia!” |
+6. **Letter Rain — Large**
+   - Tap the requested letter as symbols drift downward; targets settle safely at the bottom rather than expiring.
+   - No countdown, missed-object penalty, or speed requirement; reduced motion replaces falling with gentle stationary reveals.
+   - **Reuse:** letter content, narration, and scoring only.
+   - **New work:** a motion loop, spawn/layout rules, pause/resume lifecycle, and a static accessibility mode.
 
-These cues will frame the unchanged “find the letter” prompt rather than describe a different interaction.
+7. **Alphabet Train — Medium**
+   - Drag letter cars onto a track in sequence; placed cars join the train.
+   - **Reuse:** ordered-letter data and the ordered-slot drag engine created for Word Rocket.
+   - **New work:** train-specific slots and completion animation; little new round logic.
 
-### Five `buildWord` games
+8. **Count the Fruit — Medium**
+   - Move fruit into a basket one at a time while the app counts each item aloud, then choose or place the matching numeral.
+   - **Reuse:** existing object-count data, narration, scoring, and drag controller.
+   - **New work:** collection state and count narration; a small extension to expose individual objects cleanly.
 
-| Game | Mascot / guide | Visual treatment | Sound / phrase treatment |
-|---|---|---|---|
-| **Word Builder** | Bolt `🤖` | Workshop scene; destination row is a building foundation and letters are chunky blocks | Gentle wooden tap; “Build the word!” / “¡Construye la palabra!” |
-| **Word Puzzle** | Ollie Owl `🦉` | Puzzle-table scene; destination cells resemble puzzle slots and letters use puzzle-piece edging | Soft click-fit motif; “Complete the word puzzle!” / “¡Completa el rompecabezas de palabras!” |
-| **Word Rocket** | Rocket pilot `🚀` | Starfield scene; destination cells form a rocket and letters look like fuel cells | Rising launch notes; “Fuel the word rocket!” / “¡Carga el cohete de palabras!” |
-| **Word Train** | Bramble Bear `🐻` | Rail scene; placed letters become connected train cars and unused letters sit at the station | Soft chug/bell motif; “Build the word train!” / “¡Arma el tren de palabras!” |
-| **First Word Builder** | Fern Fox `🦊` | Friendly classroom/playroom scene; large alphabet-block slots with the calmest decoration | Warm two-note block sound; “Make your first word!” / “¡Forma tu primera palabra!” |
+## Technical approach for a later build
 
-The sequence remains tap-the-next-letter for all five; only the scene, framing, guide, and feedback character change.
+- Keep each catalog row and its existing `engine`/`kind` unchanged.
+- In the game host, select a bespoke renderer by **game ID** before falling back to the shared Choice, Order, Hunt, or Memory renderer. This allows individual upgrades without creating false differences elsewhere.
+- Extract one reusable pointer-drag foundation for Fishing, Monster, Rocket, Train, Fruit, and Jigsaw. Use Pointer Events and pointer capture rather than browser HTML drag-and-drop, which is unsuitable for young children on touchscreens.
+- Reuse the current narration, gentle retry, answer recording, completion recording, adaptive level, theme, SFX, high-contrast, and reduced-motion systems.
+- Give every drag activity an equivalent large-target tap flow, so motor accessibility and VoiceOver do not depend on precise dragging.
+- Preserve existing rounds where possible. Only Number Maze and Letter Rain require meaningfully new round/layout generation; Jigsaw needs new piece geometry and picture assets.
 
-## Remaining repeated families
+## Capacitor and iOS risks
 
-Give every title in the other 20 repeated families a distinct theme entry using its title as the source of truth. Examples include animals/stars/monster/train/fruit for `countObjects`; pop/bubbles/fishing/rocket for `findNumber`; train/garden/bridge/race for ordered letters; train/maze/rain/path for ordered numbers; and safari/maze/detective for letter hunts.
+Validate these on a physical iPhone and iPad before expanding beyond the first two games:
 
-For titles without a natural character, use the catalog’s themed object as the guide rather than forcing one of the five recurring characters. This keeps mascots intentional and removes arbitrary rotation.
+- **Pointer capture and scrolling:** ensure dragging does not scroll the page, lose the dragged item at an edge, or trigger native text/image selection.
+- **Coordinate scaling:** test drop-zone hit detection after rotation, across phone/tablet sizes, and with safe-area insets.
+- **Multi-touch accidents:** ignore secondary fingers safely and recover from interrupted gestures, app backgrounding, or incoming system overlays.
+- **VoiceOver:** confirm the tap fallback exposes clear labels, order, selected state, and completion announcements.
+- **Performance:** Letter Rain needs early frame-rate, heat, battery, background/resume, and audio-concurrency testing. Avoid Canvas or a physics library unless DOM transforms fail profiling.
+- **Reduced motion:** use stationary alternatives, not merely slower animation. The current root setting already disables themed CSS animation; bespoke motion needs explicit state-level alternatives too.
+- **Audio timing:** counting and spoken cues should use the existing audio system, avoiding new raw audio paths that can fail iOS gesture-unlock rules.
 
-## Copy and metadata audit
+No device-motion, tilt, pinch, or rhythm mechanic is recommended in this phase. Each adds permissions, accessibility problems, timing sensitivity, or accidental-touch risk without enough learning benefit.
 
-No live copy needs changing for mechanical-uniqueness claims:
+## Suggested delivery order and scope
 
-- **“Browse all 100 games”** is generated from `GAMES.length` and accurately describes 100 catalog entries.
-- **“Game X of 100”** accurately identifies the current entry’s catalog position.
-- **“100 games to play”** on the worlds screen is also a catalog count, not a claim of 100 mechanics.
-- The home and per-game JSON-LD describe the product/categories or one individual game; neither claims 100 unique mechanics.
-- “Hundreds of bite-sized…” is supportable as activity/content variety, but it does not say there are hundreds of unique interactions, so it will remain unchanged.
+1. **Foundation + Letter Fishing** — establish drag, tap fallback, accessibility, lifecycle recovery, and device test harness.
+2. **Feed the Letter Monster** — prove the foundation supports a distinct drop-zone experience.
+3. **Word Rocket + Alphabet Train** — build and reuse ordered slots.
+4. **Number Maze** — extend the proven tracing canvas with path checkpoints.
+5. **Count the Fruit** — add collection/count narration using the drag foundation.
+6. **Animal Jigsaw** — proceed once final piece artwork and scope are agreed.
+7. **Letter Rain** — last, after explicit performance validation and reduced-motion design.
 
-The internal README contains older “100+ original mini-games” planning language, but it is not shipped user-facing copy. This presentation task will not rewrite internal product history. External store-console copy cannot be verified from the repository; no outside setting change is planned.
+**Rough scope:**
+- First two games plus reusable drag foundation: **2–3 focused build/verification sessions**.
+- Recommended five-game first wave: **5–7 sessions**, including one physical-device validation checkpoint.
+- All eight candidates: **8–12 sessions**, with additional art review for Jigsaw and a separate performance pass for Letter Rain.
 
-## Expected files
+## Scope boundaries
 
-- `src/lib/game-themes.ts` — typed per-game presentation registry and neutral fallback.
-- `src/routes/game.$gameId.tsx` — select the theme by game ID and pass it to the active renderer; remove number-based mascot rotation.
-- `src/components/game/ChoiceGame.tsx` — themed scene, option treatment, cue, and flourish without touching answer/scoring logic.
-- `src/components/game/OrderGame.tsx` — themed sequence presentation without touching order/scoring logic.
-- `src/components/game/HuntGame.tsx` — themed search presentation without touching hunt/scoring logic.
-- `src/components/game/MemoryGame.tsx` — themed card presentation without touching matching/scoring logic.
-- `src/lib/speech.ts` — only if needed for a small reusable synthesized theme motif; narration routing and voice selection remain unchanged.
-- `src/styles.css` — semantic theme utilities, responsive safeguards, reduced-motion handling, and high-contrast-compatible variants.
-
-No catalog rows, round generators, purchase paths, parental gate, subscription logic, premium flags, or metadata copy will change.
-
-## Verification
-
-- Run the TypeScript check and production build.
-- Use Playwright on phone and tablet/desktop sizes to compare every title in the `findUpper` and `buildWord` groups, plus samples from each remaining repeated family.
-- Confirm each sibling has a visibly relevant treatment and intended mascot, while prompts, option data, scoring, difficulty, and completion behavior remain unchanged.
-- Verify theme sounds obey the sound-effects toggle; decorations stop under reduced motion; high contrast remains readable; English and Spanish cues fit without overlap.
-- Confirm free/premium locks and routes are unchanged.
+This investigation changes no game code. A future implementation should not change shared scoring, difficulty, Premium access, free/Premium assignments, or catalog/metadata copy. Each bespoke game should retain the current themed look and fall back safely to its existing shared engine until its new interaction is verified.

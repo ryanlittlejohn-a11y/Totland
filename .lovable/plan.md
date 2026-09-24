@@ -1,55 +1,45 @@
-# Fix the iPhone "Purchases.then()" error and the false "needs internet" screen
+# Fix "Continue with Apple / Google" opening a 404 in the phone app
 
-## Findings
+## What's wrong
 
-### 1. "Purchases.then() is not implemented on ios" — root cause confirmed
-`configurePurchases()` is a real async function, so it always returns a real Promise. That part is fine. The bug is one level down, in the `plugin()` helper in `src/lib/purchases.ts`:
+- The Apple and Google buttons live in the grown-up sign-in card (`ParentAuthCard`, on the Subscription page behind the parental gate). Both call `lovable.auth.signInWithOAuth(...)`.
+- That sign-in helper was built for websites only. When the page isn't inside a frame, it just sends the current page to the *relative* address `/~oauth/initiate?...`.
+- On the website, `totland.app/~oauth/initiate` is handled by the hosting layer, so it works. In the iPhone app the page's address is `capacitor://localhost`, so that relative link becomes `capacitor://localhost/~oauth/initiate`. Nothing inside the app answers there, so you get the 404. The return address it sends (`capacitor://localhost/parent/subscription`) is also one the sign-in service would never accept.
+- So this flow was never set up for the phone app. It was web-only from the start, and Google sign-in in the app is broken the same way. The React #418 message is noise from that 404 page.
 
-```ts
-async function plugin() {
-  const mod = await import("@revenuecat/purchases-capacitor");
-  return mod.Purchases;   // <- returning the plugin proxy from an async function
-}
-```
+## The fix (phone app only)
 
-A Capacitor plugin object is a proxy that answers *any* property name with a native-method stub, including `then`. When an async function returns the proxy, JavaScript sees a `then` and treats it like a promise. It calls `Purchases.then(...)`, and the bridge rejects with "then() is not implemented". Every RevenueCat call in the app goes through `plugin()`, so none of them work on the device right now. `src/lib/storage.ts` has the same pattern (`preferences()` returns `mod.Preferences`). That explains why storage fell back to the web-storage safety path. The Network plugin code is safe: it destructures from the module and never returns the proxy.
+In the phone app, the Apple and Google buttons will stop moving the app's own screen. Instead:
 
-### 2. Why the rejections reached the overlay
-- The error at about 38ms comes from the same `then` probe. It fires before any `withTimeout` handler exists for that inner promise.
-- `withTimeout` itself works: it catches the outer failure and falls back to "not premium" / web storage. But the proxy's rejected `then` call creates extra promises inside Capacitor that nothing awaits. Those surface as the two unhandled rejections at about 50ms, one from Purchases and one from Preferences.
-- They go away once the proxy is no longer returned from an async function.
+1. The app creates a random one-time code and opens Apple's/Google's real sign-in page in a secure in-app browser sheet. On iOS that's the standard Safari sheet, which Apple accepts for this.
+2. The sheet opens `https://totland.app/~oauth/initiate?provider=apple&redirect_uri=https://totland.app/auth/native-return?n=<code>`. It's the same sign-in service the website already uses, and `totland.app` is already on the allowed list.
+3. When sign-in finishes, a small new page `/auth/native-return` on the website picks up the new session. It then hands it back to the app through the app's existing link scheme: `app.totland.kids://auth-callback?n=<code>#tokens`.
+4. The app's existing deep-link handler catches that link. It checks that the code matches the one it created (so another app can't slip in a fake login), saves the session, closes the sheet, and goes back to the Subscription page. Family sync and the RevenueCat log-in then happen the way they do on the website.
+5. If the grown-up closes the sheet or something fails, they see the same friendly "didn't work, try email" message. Email/password sign-in in the app keeps working as it does today.
 
-### 3. The "needs internet" screen is a false negative (confirmed)
-On native, OfflineGate checks two things: the Network plugin, then a ping to `https://totland.lovable.app/api/public/diag`. I tested that ping just now:
-- `totland.lovable.app` returns a **302 redirect to `https://totland.app`** because the custom domain is primary.
-- Browsers and WebViews reset the request's origin to `null` after a cross-site redirect. `totland.app` then answers without the permission header the app needs, so the WebView blocks the reply. The ping always "fails", even on good LTE or Wi-Fi.
-- Requested directly with the app's origin, `totland.app` answers 200 with the correct permission header.
+The website won't change. The website buttons go through the exact same code path as today, and the new return page only does anything when it has the app's one-time code.
 
-So the device was online. The check is wrong. The same redirect also breaks every other backend call from the app (sign-in sync, subscription check, voice clips), because they all use the same default address.
+## What this needs
 
-### 4. Should this device have been premium?
-Probably not. Unless the tester bought Premium in TestFlight, this is a free device. For a free device, "needs internet when offline" is the intended behaviour. But it was **not** offline. The screen appeared only because of the broken ping in finding 3. The Purchases crash had no effect here: even a premium purchase could not have been detected, because every RevenueCat call was failing. **Both are real bugs.** Neither one is expected free-tier behaviour.
+- **One new official Capacitor plugin: `@capacitor/browser`.** It's what opens the secure sign-in sheet. It's made by the Capacitor team and doesn't track anyone. Your rules say to name every Capacitor plugin, so I need your OK on this one.
+- **No new domains or associated-domain setup.** The app already registers the `app.totland.kids://` link in its settings, and that's what brings the grown-up back.
+- **No changes on your side for sign-in settings.** `totland.app` is already an allowed return address. There's nothing to set up in any dashboard.
+- **Outside Lovable:** run `bun run sync:app`, then start a new Codemagic build. This build includes a new native plugin, so a clean pod install is needed.
 
-## Proposed fix
+## To confirm first while building
 
-1. **`src/lib/purchases.ts`**: make `plugin()` return a wrapper (`return { Purchases: mod.Purchases }`) and update the call sites to destructure. The proxy is then never resolved through a promise. RevenueCat logic stays the same.
-2. **`src/lib/storage.ts`**: same wrapper change for `preferences()`, so the app really uses phone storage instead of the fallback.
-3. **`src/lib/native.ts`**: change the default backend address to `https://totland.app` (the primary domain, no redirect). This fixes the ping and all other app-to-backend calls. `VITE_NATIVE_API_ORIGIN` can still override it.
-4. **`src/components/OfflineGate.tsx`**: small hardening. If the Network plugin says "connected" but the ping fails, retry once before showing the screen. Also treat any HTTP response as "internet reachable", even an error status. The screen then only means real disconnection. Premium bypass is unchanged.
-5. Keep the diagnostic overlay for one more TestFlight build to confirm there are no errors left, then remove it in a follow-up.
+Before I finish the return page, I'll check exactly how the sign-in service hands the session back to `https://totland.app/auth/native-return` (in the address or as a normal saved session). The page is written to handle both, but I'll test it rather than assume.
 
-## Verification
-- Typecheck and build; check that `dist-app` contains the new default backend address.
-- A quick script with a fake plugin proxy (answers any property, rejects on `then`) confirms `configurePurchases`, `storeEntitlementActive` and storage hydration no longer hit `then`.
-- Confirm `https://totland.app/api/public/diag` returns 200 with the app-origin permission header (already true today).
-- Website unchanged: no web code path uses these helpers or the native address. Parental gate, Paddle, premium rules, and RevenueCat purchase logic are not touched.
+## Note on the Apple sign-in sheet
 
-## Changed files (planned)
-- `src/lib/purchases.ts`
-- `src/lib/storage.ts`
-- `src/lib/native.ts`
-- `src/components/OfflineGate.tsx`
-- `roadmap.md`
+This uses Apple's web sign-in in a Safari sheet, not the built-in iOS Face ID sheet. Apple allows this, and it meets the rule that apps offering Google sign-in must also offer Apple. The built-in sheet would need your own Apple Developer sign-in key set up in the backend, which is a bigger change. We can do it later if you want.
 
-## Outside steps
-- Run `bun run sync:app`, then start a new Codemagic build and test on the phone again.
+## Technical details
+
+- New `src/lib/native-oauth.ts`: `nativeSignInWithOAuth(provider)` generates a nonce and stores it in sessionStorage/Preferences. It then calls `Browser.open({ url: "https://totland.app/~oauth/initiate?..." })` using `DEFAULT_API_ORIGIN` from `native.ts`, and returns a promise settled by the deep-link handler or `browserFinished`.
+- `src/components/ParentAuthCard.tsx`: `if (isNativeApp()) nativeSignInWithOAuth(...) else lovable.auth.signInWithOAuth(...)` (the web branch stays exactly as it is). The file under `src/integrations/lovable` isn't touched.
+- New public route `src/routes/auth.native-return.tsx` (with SSR off and a head title). It reads tokens from the URL hash, or else from `supabase.auth.getSession()`, and only when an `n` param is present. It then sets `window.location` to `app.totland.kids://auth-callback?n=..#access_token=..&refresh_token=..`, with a fallback "Return to Totland" button.
+- `src/lib/native-shell.ts` `handleDeepLink`: handle host `auth-callback`. It checks the nonce, calls `supabase.auth.setSession`, runs `Browser.close()`, and navigates to `/parent/subscription`. The premium/subscription deep links stay unchanged.
+- `package.json`: add `@capacitor/browser@^7`. Update `roadmap.md`.
+- Verification: typecheck and build. Playwright with a fake native `window.Capacitor` to confirm the button calls Browser.open with the https URL and never navigates to `capacitor://localhost/~oauth`. A simulated `appUrlOpen` with a matching or mismatched nonce to confirm the session is set only on a match. A website check to confirm the website still goes to `/~oauth/initiate`.
+- The parental gate, Paddle, RevenueCat and premium logic won't be touched.

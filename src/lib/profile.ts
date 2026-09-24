@@ -33,6 +33,13 @@ export interface GameStat {
   lastPlayed: string;
 }
 
+export interface TracingProgress {
+  uppercase: string[];
+  lowercase: string[];
+  recentLetters: string[];
+  words: Partial<Record<"2" | "3" | "4" | "5", string[]>>;
+}
+
 export interface Profile {
   childName: string;
   age: number;
@@ -64,6 +71,8 @@ export interface Profile {
   recent: string[];
   /** ids of Word Find puzzles the child has completed */
   wordFinds?: string[];
+  /** Successful letter forms and words traced by this child. */
+  tracingProgress?: TracingProgress;
   lastAdventure?: string;
 }
 
@@ -76,6 +85,54 @@ export const emptySkill = (): SkillStat => ({
   mastered: [],
   avgResponseMs: 0,
 });
+
+export const emptyTracingProgress = (): TracingProgress => ({
+  uppercase: [],
+  lowercase: [],
+  recentLetters: [],
+  words: {},
+});
+
+export function tracingProgressOf(p: Profile): TracingProgress {
+  const progress = p.tracingProgress;
+  return {
+    uppercase: Array.isArray(progress?.uppercase) ? progress.uppercase : [],
+    lowercase: Array.isArray(progress?.lowercase) ? progress.lowercase : [],
+    recentLetters: Array.isArray(progress?.recentLetters) ? progress.recentLetters : [],
+    words: progress?.words ?? {},
+  };
+}
+
+export function recordTracedLetter(p: Profile, glyph: string): Profile {
+  const progress = tracingProgressOf(p);
+  const uppercase = glyph === glyph.toUpperCase();
+  const key = glyph.toUpperCase();
+  const covered = uppercase ? progress.uppercase : progress.lowercase;
+  return {
+    ...p,
+    tracingProgress: {
+      ...progress,
+      uppercase: uppercase && !covered.includes(key) ? [...covered, key] : progress.uppercase,
+      lowercase: !uppercase && !covered.includes(key) ? [...covered, key] : progress.lowercase,
+      recentLetters: [glyph, ...progress.recentLetters.filter((item) => item !== glyph)].slice(0, 12),
+    },
+  };
+}
+
+export function recordTracedWord(p: Profile, word: string): Profile {
+  const progress = tracingProgressOf(p);
+  const tier = String(Array.from(word).length) as "2" | "3" | "4" | "5";
+  const covered = progress.words[tier] ?? [];
+  if (covered.includes(word)) return p;
+  return { ...p, tracingProgress: { ...progress, words: { ...progress.words, [tier]: [...covered, word] } } };
+}
+
+export function wordTracingUnlocked(p: Profile, length: 2 | 3 | 4 | 5): boolean {
+  const progress = tracingProgressOf(p);
+  const covered = Math.min(progress.uppercase.length, progress.lowercase.length);
+  const threshold = { 2: 10, 3: 14, 4: 18, 5: 22 }[length];
+  return covered >= threshold;
+}
 
 export const defaultProfile = (): Profile => ({
   childName: "Friend",

@@ -54,6 +54,42 @@ export interface WordItem {
   letter: string;
 }
 
+export interface TracingWord {
+  word: string;
+  emoji: string;
+}
+
+const TRACING_EMOJI: Record<string, string> = {
+  am: "💬", an: "💬", at: "📍", go: "🚶", he: "👦", hi: "👋", in: "📥", it: "👉", me: "🙋", my: "🤲", no: "🙅", on: "🔛", to: "➡️", up: "⬆️", we: "🧑‍🤝‍🧑",
+  yo: "🙋", tú: "👉", sí: "👍", mi: "🤲", un: "1️⃣",
+  ball: "⚽", bear: "🐻", boat: "⛵", cake: "🍰", duck: "🦆", drum: "🥁", fish: "🐟", frog: "🐸", fire: "🔥", goat: "🐐", gift: "🎁", kite: "🪁", lion: "🦁", leaf: "🍃", moon: "🌙", milk: "🥛", nest: "🪹", nose: "👃", pear: "🍐", star: "⭐", tree: "🌳", yarn: "🧶",
+  apple: "🍎", cloud: "☁️", donut: "🍩", horse: "🐴", house: "🏠", honey: "🍯", igloo: "🧊", juice: "🧃", koala: "🐨", lemon: "🍋", mouse: "🐭", night: "🌌", panda: "🐼", pizza: "🍕", queen: "👑", quilt: "🧵", robot: "🤖", snake: "🐍", socks: "🧦", tiger: "🐯", train: "🚂", whale: "🐳", wagon: "🛻", zebra: "🦓",
+  gato: "🐱", vaca: "🐄", nube: "☁️", pato: "🦆", rana: "🐸", flor: "🌻", uvas: "🍇", casa: "🏠", miel: "🍯", tren: "🚂", luna: "🌙", mono: "🐵", nido: "🪹", búho: "🦉", pera: "🍐", cama: "🛏️", taza: "🍵", mano: "✋", pelo: "💇", rojo: "🍎", azul: "🫐", rosa: "🌸",
+  avión: "✈️", abeja: "🐝", barco: "⛵", coche: "🚗", perro: "🐶", huevo: "🥚", zorro: "🦊", fuego: "🔥", cabra: "🐐", llave: "🔑", limón: "🍋", ratón: "🐭", leche: "🥛", nariz: "👃", noche: "🌌", pulpo: "🐙", cerdo: "🐷", reina: "👑", fresa: "🍓", árbol: "🌳", tigre: "🐯", cebra: "🦓",
+};
+
+const tracingItems = (words: string[]): TracingWord[] => words.map((word) => ({ word, emoji: TRACING_EMOJI[word] ?? "💬" }));
+
+/** Curated by displayed grapheme length; Spanish tiers are independent translations. */
+export const TRACING_WORDS: Record<"en" | "es", Record<2 | 3 | 4 | 5, TracingWord[]>> = {
+  en: {
+    2: tracingItems(["am", "an", "at", "go", "he", "hi", "in", "it", "me", "my", "no", "on", "to", "up", "we"]),
+    3: ([
+      ["cat", "🐱"], ["dog", "🐶"], ["sun", "☀️"], ["hat", "🎩"], ["bus", "🚌"],
+      ["pig", "🐷"], ["cow", "🐄"], ["bee", "🐝"], ["fox", "🦊"], ["cup", "🍵"],
+      ["net", "🥅"], ["van", "🚐"], ["bed", "🛏️"], ["key", "🔑"], ["egg", "🥚"],
+    ] satisfies [string, string][]).map(([word, emoji]) => ({ word, emoji })),
+    4: tracingItems(["ball", "bear", "boat", "cake", "duck", "drum", "fish", "frog", "fire", "goat", "gift", "kite", "lion", "leaf", "moon", "milk", "nest", "nose", "pear", "star", "tree", "yarn"]),
+    5: tracingItems(["apple", "cloud", "donut", "horse", "house", "honey", "igloo", "juice", "koala", "lemon", "mouse", "night", "panda", "pizza", "queen", "quilt", "robot", "snake", "socks", "tiger", "train", "whale", "wagon", "zebra"]),
+  },
+  es: {
+    2: tracingItems(["yo", "tú", "sí", "no", "mi", "un"]),
+    3: ([ ["sol", "☀️"], ["oso", "🐻"], ["ojo", "👁️"], ["pez", "🐟"], ["pie", "🦶"], ["red", "🥅"], ["pan", "🍞"], ["luz", "💡"], ["mar", "🌊"] ] satisfies [string, string][]).map(([word, emoji]) => ({ word, emoji })),
+    4: tracingItems(["gato", "vaca", "nube", "pato", "rana", "flor", "uvas", "casa", "miel", "tren", "luna", "mono", "nido", "búho", "pera", "cama", "taza", "mano", "pelo", "rojo", "azul", "rosa"]),
+    5: tracingItems(["avión", "abeja", "barco", "coche", "perro", "huevo", "zorro", "fuego", "cabra", "llave", "koala", "limón", "ratón", "leche", "nariz", "noche", "pulpo", "cerdo", "panda", "pizza", "reina", "robot", "fresa", "árbol", "tigre", "cebra"]),
+  },
+};
+
 export const WORDS: WordItem[] = [
   ["apple", "🍎"], ["ant", "🐜"], ["avocado", "🥑"], ["airplane", "✈️"], ["acorn", "🌰"],
   ["ball", "⚽"], ["bear", "🐻"], ["banana", "🍌"], ["bus", "🚌"], ["bee", "🐝"], ["boat", "⛵"],

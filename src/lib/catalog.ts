@@ -195,6 +195,10 @@ const ROWS: Row[] = [
   [98, "Story Builder", "📝", "storybuilder", "build", S, "stories", "Make your own little story", "lr", 1],
   [99, "Read With Me", "📖", "story", "read", S, "stories", "Narrated beginner story", "elr"],
   [100, "Daily Adventure", "🗺️", "adventure", "daily", S, "words", "A personalised session", "elr"],
+  [101, "Word Tracing: 2 Letters", "✍️", "tracing", "words2", S, "tracing", "Trace two-letter words", "lr"],
+  [102, "Word Tracing: 3 Letters", "✍️", "tracing", "words3", S, "tracing", "Trace three-letter words", "lr"],
+  [103, "Word Tracing: 4 Letters", "✍️", "tracing", "words4", S, "tracing", "Trace four-letter words", "r", 1],
+  [104, "Word Tracing: 5 Letters", "✍️", "tracing", "words5", S, "tracing", "Trace five-letter words", "r", 1],
 ];
 
 const MODE_MAP: Record<string, AgeMode> = { e: "explorer", l: "learner", r: "reader" };

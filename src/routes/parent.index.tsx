@@ -10,6 +10,7 @@ import {
   updateChild,
   useFamily,
   useProfile,
+  tracingProgressOf,
 } from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
@@ -54,6 +55,7 @@ function Dashboard() {
   const totalCorrect = Object.values(stats.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
   const wordFindsDone = (stats.wordFinds ?? []).length;
+  const traced = tracingProgressOf(stats);
 
 
   // Live music preview so the volume slider is audible while adjusting it.
@@ -122,6 +124,25 @@ function Dashboard() {
                 {l}
               </span>
             ))}
+          </div>
+        </div>
+
+        <div className="mt-5">
+          <div className="flex items-center justify-between text-xs">
+            <span className="text-cream/70">Letters traced</span>
+            <span className="font-semibold">{traced.uppercase.length} / 26 uppercase · {traced.lowercase.length} / 26 lowercase</span>
+          </div>
+          <div className="mt-2 grid grid-cols-13 gap-1 max-sm:grid-cols-9">
+            {LETTERS.map((letter) => {
+              const upper = traced.uppercase.includes(letter);
+              const lower = traced.lowercase.includes(letter);
+              return (
+                <span key={letter} className="grid min-h-10 place-items-center rounded-md bg-cream/10 px-0.5 text-[10px] font-semibold" aria-label={`${letter}: uppercase ${upper ? "traced" : "not traced"}, lowercase ${lower ? "traced" : "not traced"}`}>
+                  <span className={upper ? "text-moss" : "text-cream/35"}>{letter}</span>
+                  <span className={lower ? "text-sky" : "text-cream/35"}>{letter.toLowerCase()}</span>
+                </span>
+              );
+            })}
           </div>
         </div>
 

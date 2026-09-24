@@ -59,6 +59,6 @@
 - [ ] Spanish library refresh in Lucy's voice: essentials tier (~3,100 credits) — awaiting credit-spend approval, then generate
 
 ## Parent dashboard fixes (approved plan)
-- [ ] Show honest trailing-seven-day time and game totals with clearly labeled all-time accuracy
-- [ ] Replace raw per-area levels and accuracy with mastery labels and mastery-based bars
-- [ ] Add and visually wire the shared high-contrast setting
+- [x] Show honest trailing-seven-day time and game totals with clearly labeled all-time accuracy
+- [x] Replace raw per-area levels and accuracy with mastery labels and mastery-based bars
+- [x] Add and visually wire the shared high-contrast setting

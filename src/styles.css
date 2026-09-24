@@ -95,6 +95,29 @@
   --shadow-tile: 0 4px 0 oklch(0.83 0.045 68), 0 10px 20px oklch(0.58 0.088 52 / 0.18);
 }
 
+html[data-high-contrast="1"] {
+  --cream: oklch(1 0 0);
+  --felt: oklch(0.9 0 0);
+  --wood: oklch(0.48 0.12 55);
+  --woodark: oklch(0.2 0 0);
+  --ink: oklch(0.12 0 0);
+  --inksoft: oklch(0.3 0 0);
+  --clay: oklch(0.48 0.2 30);
+  --amber: oklch(0.72 0.16 80);
+  --moss: oklch(0.48 0.14 145);
+  --sky: oklch(0.5 0.15 240);
+  --plum: oklch(0.46 0.16 330);
+  --night: oklch(0.12 0 0);
+  --card: oklch(1 0 0);
+  --popover: oklch(1 0 0);
+  --primary-foreground: oklch(1 0 0);
+  --border: oklch(0.25 0 0);
+  --input: oklch(0.25 0 0);
+  --playmat-image: none;
+  --shadow-block: 0 0 0 2px var(--ink);
+  --shadow-tile: 0 0 0 2px var(--ink);
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
@@ -138,6 +161,11 @@
   background-color: oklch(0.99 0.014 82 / 0.92);
   border: 1px solid oklch(1 0 0 / 0.7);
   box-shadow: var(--shadow-tile);
+}
+
+html[data-high-contrast="1"] .felt-panel {
+  background-color: var(--card);
+  border-color: var(--ink);
 }
 
 @utility wood-block {

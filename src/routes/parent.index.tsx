@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
 import {
-  accuracy,
+  masteryLabel,
+  masteryScore,
   recommendations,
   skillOf,
   strengths,
@@ -36,7 +37,19 @@ function Dashboard() {
   const stats = selected ? selected.profile : profile;
   const letters = skillOf(stats, "letters");
   const numbers = skillOf(stats, "numbers");
-  const today = stats.days.find((d) => d.date === new Date().toISOString().slice(0, 10));
+  const sevenDayDates = new Set(
+    Array.from({ length: 7 }, (_, offset) => {
+      const date = new Date();
+      date.setUTCDate(date.getUTCDate() - offset);
+      return date.toISOString().slice(0, 10);
+    }),
+  );
+  const thisWeek = stats.days
+    .filter((day) => sevenDayDates.has(day.date))
+    .reduce(
+      (totals, day) => ({ minutes: totals.minutes + day.minutes, games: totals.games + day.games }),
+      { minutes: 0, games: 0 },
+    );
   const totalAttempts = Object.values(stats.skills).reduce((n, s) => n + s.attempts, 0);
   const totalCorrect = Object.values(stats.skills).reduce((n, s) => n + s.correct, 0);
   const overall = totalAttempts ? Math.round((totalCorrect / totalAttempts) * 100) : 0;
@@ -79,9 +92,9 @@ function Dashboard() {
 
         <div className="mt-4 grid grid-cols-3 gap-2">
           {[
-            { label: "Time today", value: `${today?.minutes ?? 0}m` },
-            { label: "Games", value: stats.gamesCompleted },
-            { label: "Accuracy", value: `${overall}%` },
+            { label: "Time", value: `${thisWeek.minutes}m` },
+            { label: "Games", value: thisWeek.games },
+            { label: "All-time accuracy", value: `${overall}%` },
           ].map((s) => (
             <div key={s.label} className="rounded-xl bg-cream/5 p-3 ring-1 ring-cream/10">
               <p className="text-[11px] text-cream/50">{s.label}</p>
@@ -156,16 +169,17 @@ function Dashboard() {
         <div className="mt-3 space-y-2">
           {AREAS.map((a) => {
             const s = skillOf(stats, a.id);
+            const mastery = masteryScore(s);
             return (
               <div key={a.id} className="flex items-center gap-3">
                 <span className="w-40 shrink-0 text-sm font-medium text-ink">
                   {a.emoji} {a.title}
                 </span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-felt">
-                  <div className="h-full rounded-full bg-clay" style={{ width: `${accuracy(s)}%` }} />
+                  <div className="h-full rounded-full bg-clay" style={{ width: `${mastery}%` }} />
                 </div>
-                <span className="w-20 shrink-0 text-right text-xs text-inksoft">
-                  L{s.level} · {accuracy(s)}%
+                <span className="w-20 shrink-0 text-right text-xs font-semibold text-inksoft">
+                  {masteryLabel(mastery)}
                 </span>
               </div>
             );
@@ -252,6 +266,7 @@ function Dashboard() {
               ["sfx", "Sound effects"],
               ["music", "Background music"],
               ["reducedMotion", "Reduced motion"],
+              ["highContrast", "High contrast"],
             ] as const
           ).map(([key, label]) => (
             <label key={key} className="flex items-center justify-between text-sm font-medium text-ink">

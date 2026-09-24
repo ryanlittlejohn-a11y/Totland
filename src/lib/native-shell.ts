@@ -1,5 +1,6 @@
 import type { Router } from "@tanstack/react-router";
 import { isNativeApp, withTimeout } from "./native";
+import { storageSettled } from "./storage";
 
 /**
  * Small native-only touches: hide the splash screen once the app is up,
@@ -15,6 +16,8 @@ export function initNativeShell(router: Router<any, any>): void {
 
   void (async () => {
     try {
+      // Keep the splash up until saved progress has loaded (capped).
+      await withTimeout(storageSettled, 5000, undefined, "storage settle");
       const { SplashScreen } = await import("@capacitor/splash-screen");
       await withTimeout(SplashScreen.hide(), 5000, undefined, "splash hide");
     } catch (e) {

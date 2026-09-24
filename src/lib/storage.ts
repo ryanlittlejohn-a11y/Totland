@@ -1,5 +1,4 @@
 import { isNativeApp, pluginReady, withTimeout } from "./native";
-import { diagStep } from "./diag-overlay";
 
 /**
  * Where Totland keeps a child's progress.
@@ -99,19 +98,16 @@ export async function hydrateStorage(): Promise<void> {
   if (typeof window === "undefined" || !isNativeApp() || memory !== null) return;
   // If the bridge has not registered Preferences, stay on web storage.
   if (!pluginReady("Preferences")) {
-    diagStep("storage: Preferences plugin not available, using web storage");
     return;
   }
   const loaded = await withTimeout(loadNative(), 4000, null, "native storage load");
   memory = loaded;
-  diagStep(loaded ? "storage: native loaded" : "storage: fell back to web storage");
 }
 
 const STEP_MS = 3000;
 const HUNG = Symbol("hung");
 
 async function step<T>(label: string, p: Promise<T>): Promise<T> {
-  diagStep(`storage: ${label}`);
   const r = await withTimeout<T | typeof HUNG>(p, STEP_MS, HUNG, `storage ${label}`);
   if (r === HUNG) throw new Error(`storage ${label} timed out`);
   return r as T;
@@ -144,4 +140,14 @@ async function loadNative(): Promise<Map<string, string> | null> {
     console.error("native storage unavailable, using web storage", e);
     return null;
   }
+}
+
+let settleStorage: () => void = () => {};
+/** Resolves once native storage has loaded (or fallen back). Immediate on the web. */
+export const storageSettled: Promise<void> = new Promise((r) => (settleStorage = r));
+
+/** Called by StorageBoot once storage is ready; tells every screen to re-read. */
+export function markStorageSettled() {
+  settleStorage();
+  if (typeof window !== "undefined") window.dispatchEvent(new Event("totland:profile"));
 }

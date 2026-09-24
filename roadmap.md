@@ -82,13 +82,13 @@
 - [x] Time limits on storage load, bridge check, StorageBoot safety timer, mismatch fix
 - [x] Time limits on RevenueCat / splash / network calls
 - [x] Verify (typecheck, build, build:app head script, stuck-Preferences Playwright)
-- [ ] Later: remove diagnostic overlay once diagnosed
+- [x] Removed diagnostic overlay
 
 ## iPhone plugin crash + false offline screen
 - [x] Stop returning plugin proxies from async helpers (Purchases, Preferences)
 - [x] Native backend default → https://totland.app (no redirect)
 - [x] OfflineGate: retry ping once, any HTTP response counts as online
-- [ ] Later: remove diagnostic overlay after next TestFlight check
+- [x] Fixed launch hydration mismatch (#418); diagnostic overlay removed
 
 ## Phone-app Apple/Google sign-in 404
 - [x] Native-only in-app browser sign-in sheet (@capacitor/browser)

@@ -41,3 +41,35 @@ export function isServerPath(pathname: string): boolean {
     pathname.startsWith("/~oauth")
   );
 }
+
+/** Resolve with `fallback` if `promise` has not settled within `ms`. */
+export function withTimeout<T>(promise: Promise<T>, ms: number, fallback: T, label = "step"): Promise<T> {
+  return new Promise<T>((resolve) => {
+    const timer = setTimeout(() => {
+      console.error(`[totland] ${label} timed out after ${ms}ms`);
+      resolve(fallback);
+    }, ms);
+    promise.then(
+      (v) => {
+        clearTimeout(timer);
+        resolve(v);
+      },
+      (e) => {
+        clearTimeout(timer);
+        console.error(`[totland] ${label} failed`, e);
+        resolve(fallback);
+      },
+    );
+  });
+}
+
+/** True once the Capacitor bridge reports the named plugin as available. */
+export function pluginReady(name: string): boolean {
+  if (typeof window === "undefined") return false;
+  const cap = (window as unknown as { Capacitor?: { isPluginAvailable?: (n: string) => boolean } }).Capacitor;
+  try {
+    return cap?.isPluginAvailable ? Boolean(cap.isPluginAvailable(name)) : true;
+  } catch {
+    return false;
+  }
+}

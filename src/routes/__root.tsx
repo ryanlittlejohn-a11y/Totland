@@ -23,6 +23,7 @@ import { installCrashReporting } from "../lib/crash-report";
 
 import { OfflineGate } from "../components/OfflineGate";
 import { StorageBoot } from "../components/StorageBoot";
+import { DIAG_BOOT_SCRIPT, diagStep } from "../lib/diag-overlay";
 
 import { MusicPlayer } from "../components/MusicPlayer";
 import { useProfile } from "../lib/profile";
@@ -119,6 +120,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
+    // TEMPORARY native-only diagnostics (see src/lib/diag-overlay.ts).
+    scripts: DIAG_BOOT_SCRIPT ? [{ children: DIAG_BOOT_SCRIPT }] : [],
   }),
 
   shellComponent: RootShell,
@@ -149,6 +152,7 @@ function RootComponent() {
 
 
   useEffect(() => {
+    diagStep("root mounted");
     installCrashReporting();
     installNativeApiBridge();
     initNativeShell(router);
@@ -199,4 +203,5 @@ function AccessibilityPreferences() {
 
   return null;
 }
+
 

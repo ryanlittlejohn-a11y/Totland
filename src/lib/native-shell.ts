@@ -1,5 +1,5 @@
 import type { Router } from "@tanstack/react-router";
-import { isNativeApp } from "./native";
+import { isNativeApp, withTimeout } from "./native";
 
 /**
  * Small native-only touches: hide the splash screen once the app is up,
@@ -16,14 +16,14 @@ export function initNativeShell(router: Router<any, any>): void {
   void (async () => {
     try {
       const { SplashScreen } = await import("@capacitor/splash-screen");
-      await SplashScreen.hide();
+      await withTimeout(SplashScreen.hide(), 5000, undefined, "splash hide");
     } catch (e) {
       console.error(e);
     }
 
     try {
       const { StatusBar, Style } = await import("@capacitor/status-bar");
-      await StatusBar.setStyle({ style: Style.Light });
+      await withTimeout(StatusBar.setStyle({ style: Style.Light }), 5000, undefined, "status bar");
     } catch {
       // status bar styling is unavailable on some devices; ignore
     }

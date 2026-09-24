@@ -3,7 +3,7 @@ import { Link, useRouterState } from "@tanstack/react-router";
 
 import { useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
-import { apiOrigin, isNativeApp } from "@/lib/native";
+import { apiOrigin, isNativeApp, withTimeout } from "@/lib/native";
 
 /** Routes a grown-up must still reach without internet (if cached). */
 const ALWAYS_ALLOWED = ["/terms", "/privacy", "/refund", "/parent"];
@@ -41,7 +41,8 @@ function useOnlineStatus(active: boolean) {
         let connected = true;
         try {
           const { Network } = await import("@capacitor/network");
-          connected = (await Network.getStatus()).connected;
+          const status = await withTimeout(Network.getStatus(), 5000, null, "network status");
+          connected = status ? status.connected : navigator.onLine !== false;
         } catch {
           connected = navigator.onLine !== false;
         }

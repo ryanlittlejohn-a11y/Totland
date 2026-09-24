@@ -1,4 +1,5 @@
-import { isNativeApp } from "./native";
+import { isNativeApp, pluginReady, withTimeout } from "./native";
+import { diagStep } from "./diag-overlay";
 
 /**
  * Where Totland keeps a child's progress.
@@ -96,13 +97,35 @@ export function storageRemove(key: string) {
  */
 export async function hydrateStorage(): Promise<void> {
   if (typeof window === "undefined" || !isNativeApp() || memory !== null) return;
+  // If the bridge has not registered Preferences, stay on web storage.
+  if (!pluginReady("Preferences")) {
+    diagStep("storage: Preferences plugin not available, using web storage");
+    return;
+  }
+  const loaded = await withTimeout(loadNative(), 4000, null, "native storage load");
+  memory = loaded;
+  diagStep(loaded ? "storage: native loaded" : "storage: fell back to web storage");
+}
+
+const STEP_MS = 3000;
+const HUNG = Symbol("hung");
+
+async function step<T>(label: string, p: Promise<T>): Promise<T> {
+  diagStep(`storage: ${label}`);
+  const r = await withTimeout<T | typeof HUNG>(p, STEP_MS, HUNG, `storage ${label}`);
+  if (r === HUNG) throw new Error(`storage ${label} timed out`);
+  return r as T;
+}
+
+/** Returns the loaded map, or null to stay on localStorage. Never deletes anything. */
+async function loadNative(): Promise<Map<string, string> | null> {
   const next = new Map<string, string>();
   try {
-    const Preferences = await preferences();
-    const { value: migrated } = await Preferences.get({ key: MIGRATED_KEY });
+    const Preferences = await step("import plugin", preferences());
+    const { value: migrated } = await step("get migrated", Preferences.get({ key: MIGRATED_KEY }));
 
     for (const key of STORAGE_KEYS) {
-      const { value } = await Preferences.get({ key });
+      const { value } = await step(`get ${key}`, Preferences.get({ key }));
       if (value != null) {
         next.set(key, value);
         continue;
@@ -110,15 +133,15 @@ export async function hydrateStorage(): Promise<void> {
       const legacy = localGet(key);
       if (legacy != null) {
         next.set(key, legacy);
-        await Preferences.set({ key, value: legacy });
+        await step(`set ${key}`, Preferences.set({ key, value: legacy }));
       }
     }
 
-    if (!migrated) await Preferences.set({ key: MIGRATED_KEY, value: new Date().toISOString() });
-    memory = next;
+    if (!migrated) await step("set migrated", Preferences.set({ key: MIGRATED_KEY, value: new Date().toISOString() }));
+    return next;
   } catch (e) {
-    // Preferences unavailable: stay on localStorage rather than start empty.
+    // Preferences unavailable or hung: stay on localStorage rather than start empty.
     console.error("native storage unavailable, using web storage", e);
-    memory = null;
+    return null;
   }
 }

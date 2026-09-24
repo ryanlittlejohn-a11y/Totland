@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription } from "@/lib/subscription.functions";
 import { loadProfile, saveProfile } from "@/lib/profile";
-import { isNativeApp } from "@/lib/native";
+import { isNativeApp, withTimeout } from "@/lib/native";
 import {
   configurePurchases,
   logInPurchases,
@@ -43,8 +43,9 @@ export function useEntitlementSync() {
     const storePremium = async () => {
       if (!native || !storePurchasesAvailable()) return false;
       try {
-        await configurePurchases();
-        return await storeEntitlementActive();
+        const ok = await withTimeout(configurePurchases().then(() => true), 5000, false, "RevenueCat configure");
+        if (!ok) return false;
+        return await withTimeout(storeEntitlementActive(), 5000, false, "RevenueCat entitlement");
       } catch {
         return false;
       }

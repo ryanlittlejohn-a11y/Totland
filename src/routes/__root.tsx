@@ -23,6 +23,7 @@ import { installCrashReporting } from "../lib/crash-report";
 
 import { OfflineGate } from "../components/OfflineGate";
 import { StorageBoot } from "../components/StorageBoot";
+import { DIAG_BOOT_SCRIPT, diagStep, diagRendered } from "../lib/diag-overlay";
 
 import { MusicPlayer } from "../components/MusicPlayer";
 import { useProfile } from "../lib/profile";
@@ -121,6 +122,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
   }),
 
+  // TEMPORARY native-only diagnostics (see src/lib/diag-overlay.ts).
+  scripts: DIAG_BOOT_SCRIPT ? [{ children: DIAG_BOOT_SCRIPT }] : [],
+
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -149,6 +153,7 @@ function RootComponent() {
 
 
   useEffect(() => {
+    diagStep("root mounted");
     installCrashReporting();
     installNativeApiBridge();
     initNativeShell(router);
@@ -179,6 +184,7 @@ function RootComponent() {
         <OfflineGate>
           <Outlet />
         </OfflineGate>
+        <FirstRenderMark />
       </StorageBoot>
     </QueryClientProvider>
   );
@@ -200,3 +206,10 @@ function AccessibilityPreferences() {
   return null;
 }
 
+
+function FirstRenderMark() {
+  useEffect(() => {
+    diagRendered();
+  }, []);
+  return null;
+}

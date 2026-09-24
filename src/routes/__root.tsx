@@ -120,10 +120,9 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "apple-touch-icon", href: "/icons/apple-touch-icon.png" },
       { rel: "icon", type: "image/png", href: "/favicon.png" },
     ],
+    // TEMPORARY native-only diagnostics (see src/lib/diag-overlay.ts).
+    scripts: DIAG_BOOT_SCRIPT ? [{ children: DIAG_BOOT_SCRIPT }] : [],
   }),
-
-  // TEMPORARY native-only diagnostics (see src/lib/diag-overlay.ts).
-  scripts: DIAG_BOOT_SCRIPT ? [{ children: DIAG_BOOT_SCRIPT }] : [],
 
   shellComponent: RootShell,
   component: RootComponent,

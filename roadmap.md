@@ -62,3 +62,8 @@
 - [x] Show honest trailing-seven-day time and game totals with clearly labeled all-time accuracy
 - [x] Replace raw per-area levels and accuracy with mastery labels and mastery-based bars
 - [x] Add and visually wire the shared high-contrast setting
+
+## Catalog game visual variety (approved plan)
+- [x] Add presentation-only themes for all 63 games in the 22 repeated families
+- [x] Apply themes across Choice, Order, Hunt, and Memory without changing gameplay
+- [x] Verify SFX, reduced-motion, high-contrast, premium gates, and representative game families

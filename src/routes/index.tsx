@@ -218,8 +218,9 @@ function Home() {
             return (
               <Link
                 key={a.id}
-                to={locked ? "/parent/subscription" : "/play/$area"}
+                to={locked ? "/parent" : "/play/$area"}
                 params={locked ? {} : { area: a.id }}
+
                 className="flex items-center gap-4 rounded-3xl bg-card p-4 wood-block active:translate-y-1"
               >
                 <span className={`grid size-16 shrink-0 place-items-center rounded-2xl ${TINT[a.tint]} text-3xl`}>

@@ -5,6 +5,7 @@ import { isNativeApp } from "@/lib/native";
 import { diagRendered, diagStep } from "@/lib/diag-overlay";
 
 const SAFETY_MS = 4500;
+let settled = false;
 
 /**
  * In the packaged app, progress lives in native storage. Load it before the
@@ -24,6 +25,7 @@ export function StorageBoot({ children }: { children: ReactNode }) {
     const finish = () => {
       if (done) return;
       done = true;
+      settled = true;
       setReady(true);
     };
     diagStep("storage boot start");
@@ -54,6 +56,7 @@ export function StorageBoot({ children }: { children: ReactNode }) {
 /** TEMPORARY: tells the diagnostic watchdog a real screen is up. */
 function FirstRenderMark() {
   useEffect(() => {
+    if (isNativeApp() && !settled) return;
     diagRendered();
   }, []);
   return null;

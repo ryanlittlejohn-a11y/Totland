@@ -78,8 +78,8 @@
 - [x] Count exact new English and Spanish narration lines without generating audio (230 English, 207 Spanish)
 
 ## Blank screen in TestFlight app
-- [ ] Temporary on-device diagnostic overlay (native only, DIAG_OVERLAY flag)
-- [ ] Time limits on storage load, bridge check, StorageBoot safety timer, mismatch fix
-- [ ] Time limits on RevenueCat / splash / network calls
-- [ ] Verify (typecheck, build, build:app head script, stuck-Preferences Playwright)
+- [x] Temporary on-device diagnostic overlay (native only, DIAG_OVERLAY flag)
+- [x] Time limits on storage load, bridge check, StorageBoot safety timer, mismatch fix
+- [x] Time limits on RevenueCat / splash / network calls
+- [x] Verify (typecheck, build, build:app head script, stuck-Preferences Playwright)
 - [ ] Later: remove diagnostic overlay once diagnosed

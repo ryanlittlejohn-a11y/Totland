@@ -66,4 +66,4 @@
 ## Catalog game visual variety (approved plan)
 - [x] Add presentation-only themes for all 63 games in the 22 repeated families
 - [x] Apply themes across Choice, Order, Hunt, and Memory without changing gameplay
-- [ ] Verify SFX, reduced-motion, high-contrast, premium gates, and representative game families
+- [x] Verify SFX, reduced-motion, high-contrast, premium gates, and representative game families

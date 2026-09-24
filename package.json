@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@capacitor/app": "^7",
+    "@capacitor/browser": "^7",
     "@capacitor/core": "^7",
     "@capacitor/network": "^7",
     "@capacitor/preferences": "^7",

@@ -2,6 +2,8 @@ import { useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable";
+import { isNativeApp } from "@/lib/native";
+import { nativeSignInWithOAuth } from "@/lib/native-oauth";
 
 /**
  * Grown-up sign in. Lives behind the parental gate; the child experience
@@ -42,6 +44,11 @@ export function ParentAuthCard() {
 
   const google = async () => {
     setError(null);
+    if (isNativeApp()) {
+      const r = await nativeSignInWithOAuth("google");
+      if (r.error) setError("Google sign-in didn't work. Please try email instead.");
+      return;
+    }
     const result = await lovable.auth.signInWithOAuth("google", {
       redirect_uri: `${window.location.origin}/parent/subscription`,
     });
@@ -50,6 +57,11 @@ export function ParentAuthCard() {
 
   const apple = async () => {
     setError(null);
+    if (isNativeApp()) {
+      const r = await nativeSignInWithOAuth("apple");
+      if (r.error) setError("Apple sign-in didn't work. Please try email instead.");
+      return;
+    }
     const result = await lovable.auth.signInWithOAuth("apple", {
       redirect_uri: `${window.location.origin}/parent/subscription`,
     });

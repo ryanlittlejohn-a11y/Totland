@@ -20,6 +20,7 @@ import { Route as TermsRouteImport } from './routes/terms'
 import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WordfindsRouteImport } from './routes/wordfinds'
 import { Route as WorldsRouteImport } from './routes/worlds'
+import { Route as AuthNativeReturnRouteImport } from './routes/auth.native-return'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as GuidesToddlerLearningGamesRouteImport } from './routes/guides.toddler-learning-games'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
@@ -88,6 +89,11 @@ const WordfindsRoute = WordfindsRouteImport.update({
 const WorldsRoute = WorldsRouteImport.update({
   id: '/worlds',
   path: '/worlds',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthNativeReturnRoute = AuthNativeReturnRouteImport.update({
+  id: '/auth/native-return',
+  path: '/auth/native-return',
   getParentRoute: () => rootRouteImport,
 } as any)
 const GameGameIdRoute = GameGameIdRouteImport.update({
@@ -176,6 +182,7 @@ export interface FileRoutesByFullPath {
   '/welcome': typeof WelcomeRoute
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
+  '/auth/native-return': typeof AuthNativeReturnRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -202,6 +209,7 @@ export interface FileRoutesByTo {
   '/welcome': typeof WelcomeRoute
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
+  '/auth/native-return': typeof AuthNativeReturnRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -230,6 +238,7 @@ export interface FileRoutesById {
   '/welcome': typeof WelcomeRoute
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
+  '/auth/native-return': typeof AuthNativeReturnRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -259,6 +268,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wordfinds'
     | '/worlds'
+    | '/auth/native-return'
     | '/game/$gameId'
     | '/guides/toddler-learning-games'
     | '/parent/children'
@@ -285,6 +295,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wordfinds'
     | '/worlds'
+    | '/auth/native-return'
     | '/game/$gameId'
     | '/guides/toddler-learning-games'
     | '/parent/children'
@@ -312,6 +323,7 @@ export interface FileRouteTypes {
     | '/welcome'
     | '/wordfinds'
     | '/worlds'
+    | '/auth/native-return'
     | '/game/$gameId'
     | '/guides/toddler-learning-games'
     | '/parent/children'
@@ -340,6 +352,7 @@ export interface RootRouteChildren {
   WelcomeRoute: typeof WelcomeRoute
   WordfindsRoute: typeof WordfindsRoute
   WorldsRoute: typeof WorldsRoute
+  AuthNativeReturnRoute: typeof AuthNativeReturnRoute
   GameGameIdRoute: typeof GameGameIdRoute
   GuidesToddlerLearningGamesRoute: typeof GuidesToddlerLearningGamesRoute
   PlayAreaRoute: typeof PlayAreaRoute
@@ -430,6 +443,13 @@ declare module '@tanstack/react-router' {
       path: '/worlds'
       fullPath: '/worlds'
       preLoaderRoute: typeof WorldsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/native-return': {
+      id: '/auth/native-return'
+      path: '/auth/native-return'
+      fullPath: '/auth/native-return'
+      preLoaderRoute: typeof AuthNativeReturnRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/game/$gameId': {
@@ -560,6 +580,7 @@ const rootRouteChildren: RootRouteChildren = {
   WelcomeRoute: WelcomeRoute,
   WordfindsRoute: WordfindsRoute,
   WorldsRoute: WorldsRoute,
+  AuthNativeReturnRoute: AuthNativeReturnRoute,
   GameGameIdRoute: GameGameIdRoute,
   GuidesToddlerLearningGamesRoute: GuidesToddlerLearningGamesRoute,
   PlayAreaRoute: PlayAreaRoute,

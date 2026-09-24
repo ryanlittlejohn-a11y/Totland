@@ -1,130 +1,157 @@
-# Option 1 investigation: bespoke game interactions
+# Systematic letter and word tracing
 
-## Recommendation
+## Product decisions proposed
 
-Build a first wave of **five** bespoke games, then decide whether to add the next three. This gives the catalog visibly different play patterns without replacing the stable shared engines or changing scoring, difficulty, access, or catalog metadata.
+### What counts as covered
+A letter form becomes covered immediately after one successful trace at the existing 55% threshold. It will not depend on the general tracing streak, because a successful `A` should not accidentally unlock `B`, and uppercase and lowercase must count separately.
 
-The existing theme layer is effective for memory and hunt games, whose shared mechanics already match their titles. The biggest gap is where a title promises motion or object manipulation but the game still presents a static tap grid.
+Store two per-child sets:
+- uppercase: `A`–`Z`
+- lowercase: `a`–`z`
 
-## Ranking of all 22 repeated families
+This remains inside the existing family profile, so web and native persistence continue through the current local storage layer without a new storage key or backend change. The addition will be optional and normalized on read so existing profiles migrate without data loss.
 
-Ranked by likely improvement from bespoke interaction, balanced against how convincing the current theme treatment already is:
+### Word progression and age modes
 
-| Rank | Shared family | Games | Bespoke value | Current themes | Recommendation |
-|---:|---|---:|---|---|---|
-| 1 | `choice/findUpper` | 6 | Very high | Weak mechanically | Bespoke the strongest title-led variants |
-| 2 | `order/buildWord` | 5 | Very high | Weak mechanically | Add one or two manipulation-based variants |
-| 3 | `order/numbers` | 4 | High | Moderate | Number Rain and Number Maze strongly promise motion |
-| 4 | `choice/countObjects` | 5 | High | Moderate | Turn selected titles into collecting/grouping play |
-| 5 | `choice/jigsawPiece` | 3 | High | Weak mechanically | A real piece-placement interaction would match the names |
-| 6 | `order/letters` | 4 | High | Moderate | Trains, bridges, gardens, and races suggest spatial sequencing |
-| 7 | `choice/findNumber` | 4 | High | Weak mechanically | Reuse proven bespoke patterns from letters after validation |
-| 8 | `choice/missingLetterWord` | 2 | High | Moderate | Word Fishing especially promises a different interaction |
-| 9 | `choice/letterPuzzle` | 2 | Medium-high | Moderate | Good future fit for piece assembly |
-| 10 | `choice/completePicture` | 2 | Medium-high | Moderate | A true picture assembly mechanic would add value |
-| 11 | `choice/shapeMissing` | 2 | Medium | Good | Dragging a missing shape into place could improve one title |
-| 12 | `choice/patternNext` | 2 | Medium | Good | Existing choose-the-next-piece interaction is already appropriate |
-| 13 | `choice/startsWith` | 2 | Medium | Good | Train loading could differentiate one title, but the learning task is already clear |
-| 14 | `choice/letterSound` | 2 | Medium | Good | Audio is already the main differentiator; avoid timing pressure |
-| 15 | `choice/numberPuzzle` | 2 | Medium | Good | Could share a later jigsaw framework |
-| 16 | `choice/shapeShadow` | 2 | Medium-low | Good | Matching a shape to a shadow naturally works as a choice game |
-| 17 | `choice/numberQuantity` | 2 | Medium-low | Good | Current number-to-quantity matching already fits the objective |
-| 18 | `hunt/letters` | 3 | Low | Strong | Safari, maze, and detective themes suit the existing find-many play |
-| 19 | `memory/letters` | 3 | Low | Strong | Card matching is an expected, complete mechanic |
-| 20 | `memory/wordPicture` | 2 | Low | Strong | The shared memory mechanic fits both titles |
-| 21 | `memory/numbers` | 2 | Low | Strong | The park theme is sufficient variation for a familiar memory game |
-| 22 | `memory/animals` | 2 | Low | Strong | Bespoke work would add little compared with its cost |
+Word tiers unlock only after enough letter forms have been covered, while the selected age mode caps what is offered:
 
-## Top eight candidates
+| Tier | Coverage threshold | Explorer (2–3) | Learner (3–4) | Reader (4–6) |
+|---|---:|---|---|---|
+| Single letters | none | yes | yes | yes |
+| 2-letter words | 10 uppercase + 10 lowercase | not shown | yes | yes |
+| 3-letter words | 14 uppercase + 14 lowercase | not shown | yes | yes |
+| 4-letter words | 18 uppercase + 18 lowercase | not shown | not shown | yes |
+| 5-letter words | 22 uppercase + 22 lowercase | not shown | not shown | yes |
 
-### First wave
+This keeps Explorer focused on letter shapes, gives Learner short sight/CVC words, and reserves longer words for Reader. Unlocks are encouraging milestones, not a visible checklist or test on the child screen.
 
-1. **Letter Fishing — Medium**
-   - Drag a large hook along a short line and release over a floating target letter.
-   - Wrong letters bob away gently; the target remains available with another spoken clue.
-   - **Reuse:** existing letter rounds, narration, scoring, theme shell, and the proven pointer-capture approach from Word Find.
-   - **New work:** drag surface and target collision; light water/hook animation; no new educational content generator.
+### Free/Premium recommendation — approval required
 
-2. **Feed the Letter Monster — Medium**
-   - Drag the requested letter into a large friendly monster mouth.
-   - A mismatch is returned to its starting place with encouragement; the monster never reacts negatively.
-   - **Reuse:** the same letter round data as `findUpper` and much of Letter Fishing's drag controller.
-   - **New work:** drop zone, snap-back behavior, mouth animation, and accessible tap-to-select/tap-to-feed fallback.
+Recommended access:
+- Keep Letter Tracing free.
+- Make 2-letter Word Tracing free as a meaningful preview and bridge from letters.
+- Make 3-, 4-, and 5-letter Word Tracing Premium because they form the deeper progression.
 
-3. **Word Rocket — Medium**
-   - Drag letter tiles into large rocket fuel slots in reading order.
-   - Correct tiles lock into place; a misplaced tile floats back without penalty.
-   - **Reuse:** `buildWord` sequence data and completion/scoring behavior from Order Game.
-   - **New work:** reusable ordered-slot drag engine and launch completion animation; round generation remains substantially unchanged.
+Alternative: keep 2- and 3-letter tiers free, with only 4- and 5-letter tiers Premium. This is more generous and better supports early literacy before purchase, but gives Premium less differentiation.
 
-4. **Animal Jigsaw — Medium–Large**
-   - Move two to six large picture pieces into silhouette slots, with generous magnetic snapping.
-   - Pieces can be placed in any order; there is no timer or failed round.
-   - **Reuse:** existing jigsaw answers, theme shell, progress recording, and drag controller.
-   - **New work:** piece geometry, slot matching, completed-picture artwork, and placement-state logic. This has the largest art requirement in the first wave.
+**No catalog or access rule will be changed until the user selects one of these options.**
 
-5. **Number Maze — Medium**
-   - Trace a broad path through numbered stepping points in order, lifting and restarting anywhere without losing progress.
-   - Spoken prompts name the next number; an off-path movement simply pauses the trail.
-   - **Reuse:** number sequence data and the existing canvas/pointer foundation from Tracing.
-   - **New work:** path corridor, next-node detection, and per-round maze layouts.
+## Word banks
 
-### Second wave, after device validation
+Use separate, natural English and Spanish lists by displayed length; do not translate an English item at runtime when its Spanish translation belongs in another length tier.
 
-6. **Letter Rain — Large**
-   - Tap the requested letter as symbols drift downward; targets settle safely at the bottom rather than expiring.
-   - No countdown, missed-object penalty, or speed requirement; reduced motion replaces falling with gentle stationary reveals.
-   - **Reuse:** letter content, narration, and scoring only.
-   - **New work:** a motion loop, spawn/layout rules, pause/resume lifecycle, and a static accessibility mode.
+### 2 letters
+- English: `am, an, at, go, he, hi, in, it, me, my, no, on, to, up, we`
+- Spanish: `yo, tú, sí, no, mi, un`
 
-7. **Alphabet Train — Medium**
-   - Drag letter cars onto a track in sequence; placed cars join the train.
-   - **Reuse:** ordered-letter data and the ordered-slot drag engine created for Word Rocket.
-   - **New work:** train-specific slots and completion animation; little new round logic.
+These are new curated sight-word banks because the existing content has no 2-letter words.
 
-8. **Count the Fruit — Medium**
-   - Move fruit into a basket one at a time while the app counts each item aloud, then choose or place the matching numeral.
-   - **Reuse:** existing object-count data, narration, scoring, and drag controller.
-   - **New work:** collection state and count narration; a small extension to expose individual objects cleanly.
+### 3 letters
+- English: reuse the existing CVC bank: `cat, dog, sun, hat, bus, pig, cow, bee, fox, cup, net, van, bed, key, egg`
+- Spanish: reuse known translations where available and add only familiar words: `sol, oso, ojo, pez, pie, red, pan, luz, mar`
 
-## Technical approach for a later build
+### 4 letters
+- English, filtered from the existing picture-word bank: `ball, bear, boat, cake, duck, drum, fish, frog, fire, goat, gift, kite, lion, leaf, moon, milk, nest, nose, pear, star, tree, yarn`
+- Spanish, drawn mainly from existing translations: `gato, vaca, nube, pato, rana, flor, uvas, casa, miel, tren, luna, mono, nido, búho, pera, cama, taza, mano, pelo, rojo, azul, rosa`
 
-- Keep each catalog row and its existing `engine`/`kind` unchanged.
-- In the game host, select a bespoke renderer by **game ID** before falling back to the shared Choice, Order, Hunt, or Memory renderer. This allows individual upgrades without creating false differences elsewhere.
-- Extract one reusable pointer-drag foundation for Fishing, Monster, Rocket, Train, Fruit, and Jigsaw. Use Pointer Events and pointer capture rather than browser HTML drag-and-drop, which is unsuitable for young children on touchscreens.
-- Reuse the current narration, gentle retry, answer recording, completion recording, adaptive level, theme, SFX, high-contrast, and reduced-motion systems.
-- Give every drag activity an equivalent large-target tap flow, so motor accessibility and VoiceOver do not depend on precise dragging.
-- Preserve existing rounds where possible. Only Number Maze and Letter Rain require meaningfully new round/layout generation; Jigsaw needs new piece geometry and picture assets.
+### 5 letters
+- English, filtered from the existing picture-word bank: `apple, cloud, donut, horse, house, honey, igloo, juice, koala, lemon, mouse, night, panda, pizza, queen, quilt, robot, snake, socks, tiger, train, whale, wagon, zebra`
+- Spanish, drawn from existing translations: `avión, abeja, barco, coche, perro, huevo, zorro, fuego, cabra, llave, koala, limón, ratón, leche, nariz, noche, pulpo, cerdo, panda, pizza, reina, robot, fresa, árbol, tigre, cebra`
 
-## Capacitor and iOS risks
+Before implementation, validate each list programmatically by grapheme count, lowercase it consistently, remove duplicates, and confirm every accented Spanish word renders correctly in the tracing font.
 
-Validate these on a physical iPhone and iPad before expanding beyond the first two games:
+## Implementation plan
 
-- **Pointer capture and scrolling:** ensure dragging does not scroll the page, lose the dragged item at an edge, or trigger native text/image selection.
-- **Coordinate scaling:** test drop-zone hit detection after rotation, across phone/tablet sizes, and with safe-area insets.
-- **Multi-touch accidents:** ignore secondary fingers safely and recover from interrupted gestures, app backgrounding, or incoming system overlays.
-- **VoiceOver:** confirm the tap fallback exposes clear labels, order, selected state, and completion announcements.
-- **Performance:** Letter Rain needs early frame-rate, heat, battery, background/resume, and audio-concurrency testing. Avoid Canvas or a physics library unless DOM transforms fail profiling.
-- **Reduced motion:** use stationary alternatives, not merely slower animation. The current root setting already disables themed CSS animation; bespoke motion needs explicit state-level alternatives too.
-- **Audio timing:** counting and spoken cues should use the existing audio system, avoiding new raw audio paths that can fail iOS gesture-unlock rules.
+### 1. Add safe per-child coverage data
+- Add optional tracing progress to each profile, with separate uppercase, lowercase, and word-tier completion sets.
+- Add normalization/helper functions rather than changing the meaning of the shared `SkillStat.mastered` array.
+- Preserve existing `skills.tracing` attempts, accuracy, level, and mastery data; do not rewrite or delete it.
+- Keep number tracing behavior and stored history intact.
 
-No device-motion, tilt, pinch, or rhythm mechanic is recommended in this phase. Each adds permissions, accessibility problems, timing sensitivity, or accidental-touch risk without enough learning benefit.
+Why: tracing currently records uppercase IDs in one general tracing bucket, even when lowercase is displayed. Explicit namespaced sets are the safest way to distinguish 52 letter forms and future word tiers without colliding with number tracing.
 
-## Suggested delivery order and scope
+### 2. Replace random-with-replacement letter choice
+- Build a session queue from the selected child’s coverage.
+- Prioritize uncovered forms, shuffle within that priority, and prevent duplicate forms during a three-item session.
+- Mix uppercase and lowercase naturally rather than rigidly alternating when one set needs more practice.
+- After all 52 forms are covered, cycle through a shuffled review queue and persist a small recent-history list so recently traced forms are deprioritized across sessions.
+- Mark coverage only after the existing 55% success check; a retry keeps the same form.
 
-1. **Foundation + Letter Fishing** — establish drag, tap fallback, accessibility, lifecycle recovery, and device test harness.
-2. **Feed the Letter Monster** — prove the foundation supports a distinct drop-zone experience.
-3. **Word Rocket + Alphabet Train** — build and reuse ordered slots.
-4. **Number Maze** — extend the proven tracing canvas with path checkpoints.
-5. **Count the Fruit** — add collection/count narration using the drag foundation.
-6. **Animal Jigsaw** — proceed once final piece artwork and scope are agreed.
-7. **Letter Rain** — last, after explicit performance validation and reduced-motion design.
+### 3. Add parent-facing tracing coverage
+- Keep the existing “Letters mastered” recognition panel unchanged.
+- Add a separate “Letters traced” block using the same compact A–Z grid pattern.
+- Each letter cell shows two clear states, `A` and `a`, with totals such as `18 / 26 uppercase` and `14 / 26 lowercase`.
+- This avoids presenting letter recognition and handwriting coverage as the same achievement.
 
-**Rough scope:**
-- First two games plus reusable drag foundation: **2–3 focused build/verification sessions**.
-- Recommended five-game first wave: **5–7 sessions**, including one physical-device validation checkpoint.
-- All eight candidates: **8–12 sessions**, with additional art review for Jigsaw and a separate performance pass for Letter Rain.
+### 4. Build word tracing as a focused extension
+Create a `WordTracingGame` component that reuses extracted canvas drawing helpers from Letter Tracing but presents **one letter at a time within the word**:
 
-## Scope boundaries
+- Show the whole word and picture cue above the canvas.
+- Highlight the current letter in a simple progress row, such as `c  a  t`.
+- Trace one large letter using the same canvas size, brush, 55% threshold, Clear, Done, spoken instruction, and gentle retry.
+- A successful letter advances to the next character; completing the final character covers the word and completes that round.
+- Use three words per session, matching the current three-success tracing rhythm.
+- Never reset already completed letters because of a later retry.
 
-This investigation changes no game code. A future implementation should not change shared scoring, difficulty, Premium access, free/Premium assignments, or catalog/metadata copy. Each bespoke game should retain the current themed look and fall back safely to its existing shared engine until its new interaction is verified.
+This approach is preferable to squeezing five letters onto one canvas: each target stays large enough for ages 2–6, the existing forgiving coverage calculation remains meaningful, and accented Spanish glyphs remain legible.
+
+### 5. Keep responsibilities separated
+- `TracingGame.tsx`: retain the drawing mechanic, but use systematic letter-form selection and explicit coverage recording.
+- Shared tracing canvas/helper: extract the existing pointer painting, reset, and coverage behavior without changing its calculation.
+- New `WordTracingGame.tsx`: manage word selection, per-letter progression, picture cue, narration, and word completion.
+- Game host: route the four new word-tracing kinds to the new component.
+- Content/i18n: add typed bilingual banks and new display strings.
+- Catalog: after access approval, add four rows for 2-, 3-, 4-, and 5-letter Word Tracing with the agreed modes and Premium flags.
+- Parent dashboard: add the traced uppercase/lowercase coverage block.
+
+### 6. Catalog impact requiring explicit approval
+The implementation needs four new catalog rows, so `catalog.ts` must change after approval despite being protected during this planning task:
+- Word Tracing: 2 Letters — Learner, Reader
+- Word Tracing: 3 Letters — Learner, Reader
+- Word Tracing: 4 Letters — Reader
+- Word Tracing: 5 Letters — Reader
+
+Adding rows increases the catalog beyond 100. In the same implementation, derive any visible numeric catalog count from `GAMES.length` where it is not already dynamic. Do not alter pricing, checkout, the parental gate, or entitlement logic.
+
+## Narration impact
+
+Add approximately **six bilingual prompt templates**, covering:
+1. Trace uppercase letter `{}`.
+2. Trace lowercase letter `{}`.
+3. Trace the word `{}`.
+4. Trace the next letter, `{}`.
+5. You traced `{}`.
+6. The word `{}` is complete.
+
+Dynamic audio impact depends on the final banks:
+- 52 distinct single-letter form prompts per language.
+- Up to 76 proposed word prompts per language (15 + 15 + 22 + 24 English; 6 + 9 + 22 + 26 Spanish), plus per-letter-in-word prompts if those exact lines are pre-bundled.
+- Roughly **130–250 new distinct Spanish spoken lines**, depending on whether prompts are composed from reusable short clips or generated as full sentences.
+
+No audio should be generated as part of the feature without a separate exact inventory and credit approval. Runtime narration retains the existing bundled → cached → live → device-voice fallback.
+
+## Verification
+
+- Pure tests for profile migration, uppercase/lowercase separation, coverage thresholds, unlock thresholds, no duplicate session items, recent-history fallback, and bilingual word lengths.
+- Interaction tests for successful coverage, retry retaining the same target, one-letter-at-a-time word progression, and session completion.
+- Parent dashboard checks for empty, partial, and complete A–Z coverage.
+- English and Spanish checks for every tier, including accented glyphs.
+- Phone and tablet checks for canvas sizing, landscape/portrait rotation, touch interruption, reduced motion, and high contrast.
+- Confirm web local storage and packaged-app Preferences both preserve progress across restart and child-profile switching.
+- Confirm no timer, penalty, negative feedback, Premium logic change, or parental-gate change.
+
+## Expected changed files after approval
+
+- `src/components/game/TracingGame.tsx`
+- New shared tracing-canvas/helper file
+- New `src/components/game/WordTracingGame.tsx`
+- `src/lib/profile.ts`
+- `src/lib/content.ts`
+- `src/lib/i18n.ts`
+- `src/lib/catalog.ts` — only after access decision
+- `src/routes/game.$gameId.tsx`
+- `src/routes/parent.index.tsx`
+- Targeted new test files
+- `roadmap.md`
+
+No code, catalog data, Premium logic, or audio has been changed during this planning task.

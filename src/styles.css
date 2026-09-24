@@ -329,3 +329,12 @@ html[data-high-contrast="1"] .game-theme { background: var(--card); }
   }
   .game-theme__sky { animation: none !important; }
 }
+
+html[data-reduced-motion="1"] .anim-floaty,
+html[data-reduced-motion="1"] .anim-bob,
+html[data-reduced-motion="1"] .anim-twinkle,
+html[data-reduced-motion="1"] .anim-pop,
+html[data-reduced-motion="1"] .anim-wiggle,
+html[data-reduced-motion="1"] .game-theme__sky {
+  animation: none !important;
+}

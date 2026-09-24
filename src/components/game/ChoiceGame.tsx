@@ -15,12 +15,14 @@ export function ChoiceGame({
   rounds: ROUNDS = 5,
   onFinish,
   theme = NEUTRAL_GAME_THEME,
+  mascot,
 }: {
   skill: SkillId;
   kind?: string;
   rounds?: number;
   onFinish: (stars: number, accuracy: number) => void;
   theme?: GameTheme;
+  mascot?: string;
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, skill).level;
@@ -102,7 +104,7 @@ export function ChoiceGame({
   if (!round) return <div className="h-64 rounded-3xl felt-panel" />;
 
   return (
-    <GameThemeScene theme={theme}>
+    <GameThemeScene theme={mascot ? { ...theme, mascot } : theme}>
       <div className="flex items-start gap-3">
         <button
           type="button"

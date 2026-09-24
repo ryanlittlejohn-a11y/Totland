@@ -192,6 +192,11 @@ function AccessibilityPreferences() {
     else document.documentElement.removeAttribute("data-high-contrast");
   }, [profile.highContrast]);
 
+  useEffect(() => {
+    if (profile.reducedMotion) document.documentElement.setAttribute("data-reduced-motion", "1");
+    else document.documentElement.removeAttribute("data-reduced-motion");
+  }, [profile.reducedMotion]);
+
   return null;
 }
 

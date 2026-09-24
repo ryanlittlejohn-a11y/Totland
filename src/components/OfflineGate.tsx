@@ -13,20 +13,27 @@ const ALWAYS_ALLOWED = ["/terms", "/privacy", "/refund", "/parent"];
  * internet behind it, and both `navigator.onLine` and the native network
  * plugin happily call that "connected". A short, cheap ping settles it.
  */
-async function backendReachable(): Promise<boolean> {
+async function pingOnce(): Promise<boolean> {
   try {
     const controller = new AbortController();
     const timer = setTimeout(() => controller.abort(), 4000);
-    const res = await fetch(`${apiOrigin()}/api/public/diag`, {
+    await fetch(`${apiOrigin()}/api/public/diag`, {
       method: "GET",
       cache: "no-store",
       signal: controller.signal,
     });
     clearTimeout(timer);
-    return res.ok;
+    // Any HTTP answer at all means the internet is reachable.
+    return true;
   } catch {
     return false;
   }
+}
+
+async function backendReachable(): Promise<boolean> {
+  if (await pingOnce()) return true;
+  await new Promise((r) => setTimeout(r, 1500));
+  return pingOnce();
 }
 
 function useOnlineStatus(active: boolean) {

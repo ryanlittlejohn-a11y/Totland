@@ -57,3 +57,8 @@
 - [ ] Part E: spoken-line inventory + credit estimate only (no audio generated yet)
 - [x] Lucy Spanish voice: es -> Bh4tkGuEEIADxUACafG5 in tts.functions.ts; test batch approved, test page removed, device voice cache bumped to v2
 - [ ] Spanish library refresh in Lucy's voice: essentials tier (~3,100 credits) — awaiting credit-spend approval, then generate
+
+## Parent dashboard fixes (approved plan)
+- [ ] Show honest trailing-seven-day time and game totals with clearly labeled all-time accuracy
+- [ ] Replace raw per-area levels and accuracy with mastery labels and mastery-based bars
+- [ ] Add and visually wire the shared high-contrast setting

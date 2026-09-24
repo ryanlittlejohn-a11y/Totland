@@ -67,3 +67,12 @@
 - [x] Add presentation-only themes for all 63 games in the 22 repeated families
 - [x] Apply themes across Choice, Order, Hunt, and Memory without changing gameplay
 - [x] Verify SFX, reduced-motion, high-contrast, premium gates, and representative game families
+
+## Systematic letter and word tracing (approved plan)
+- [x] Track uppercase and lowercase tracing coverage per child without losing existing progress
+- [x] Prioritize uncovered letter forms and avoid repeats within each tracing session
+- [x] Add parent-facing uppercase/lowercase A–Z coverage
+- [x] Add one-letter-at-a-time tracing for 2-, 3-, 4-, and 5-letter words
+- [x] Keep 2- and 3-letter tracing free; make 4- and 5-letter tracing Premium
+- [x] Verify progression, migration, accessibility, bilingual content, layouts, and persistence
+- [x] Count exact new English and Spanish narration lines without generating audio (230 English, 207 Spanish)

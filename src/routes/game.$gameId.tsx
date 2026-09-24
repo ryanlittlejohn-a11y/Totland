@@ -7,11 +7,12 @@ import { OrderGame } from "@/components/game/OrderGame";
 import { MemoryGame } from "@/components/game/MemoryGame";
 import { WordSearchGame } from "@/components/game/WordSearchGame";
 import { TracingGame } from "@/components/game/TracingGame";
+import { WordTracingGame } from "@/components/game/WordTracingGame";
 import { FlashCards } from "@/components/game/FlashCards";
 import { StoryReader } from "@/components/game/StoryReader";
 import { StoryBuilder } from "@/components/game/StoryBuilder";
 import { RewardScreen } from "@/components/game/RewardScreen";
-import { gameById } from "@/lib/catalog";
+import { GAMES, gameById } from "@/lib/catalog";
 import { themeForGame } from "@/lib/game-themes";
 import { checkBadges, recordSession, useProfile } from "@/lib/profile";
 import { L, title as tTitle } from "@/lib/i18n";
@@ -117,6 +118,8 @@ function GameHost() {
         <MemoryGame key={key} kind={game.kind} theme={theme} onFinish={finish} />
       ) : engine === "wordsearch" ? (
         <WordSearchGame key={key} kind={game.kind} onFinish={finish} />
+      ) : engine === "tracing" && /^words[2-5]$/.test(game.kind) ? (
+        <WordTracingGame key={key} length={Number(game.kind.slice(-1)) as 2 | 3 | 4 | 5} onFinish={finish} />
       ) : engine === "tracing" ? (
         <TracingGame key={key} kind={game.kind} onFinish={finish} />
       ) : engine === "flashcards" ? (
@@ -136,7 +139,7 @@ function GameHost() {
         />
       )}
       <p className="mt-4 text-center font-ui text-xs text-inksoft">
-        {L(`Game ${game.number} of 100`, `Juego ${game.number} de 100`)} · {tTitle(game.objective)}
+        {L(`Game ${game.number} of ${GAMES.length}`, `Juego ${game.number} de ${GAMES.length}`)} · {tTitle(game.objective)}
       </p>
     </PlayFrame>
   );

@@ -9,10 +9,10 @@ export const Route = createFileRoute("/worlds")({
       { title: "Learning Worlds — Totland" },
       {
         name: "description",
-        content: "Five playful worlds — Alphabet Forest, Number Valley, Color Cove, Puzzle Park and Storybook Village — with 100 learning games.",
+        content: `Five playful worlds — Alphabet Forest, Number Valley, Color Cove, Puzzle Park and Storybook Village — with ${GAMES.length} learning games.`,
       },
       { property: "og:title", content: "Learning Worlds — Totland" },
-      { property: "og:description", content: "Choose a world and play 100 original toddler learning games." },
+      { property: "og:description", content: `Choose a world and play ${GAMES.length} original toddler learning games.` },
     ],
   }),
   component: WorldsPage,
@@ -24,7 +24,7 @@ function WorldsPage() {
   return (
     <main className="mx-auto w-full max-w-md px-4 py-6">
       <h1 className="font-ui text-3xl font-bold text-ink">{L("Pick a world", "Elige un mundo")}</h1>
-      <p className="mt-1 font-ui text-sm text-inksoft">{L("100 games to play — no timers, no rush.", "100 juegos para jugar — sin reloj y sin prisa.")}</p>
+      <p className="mt-1 font-ui text-sm text-inksoft">{L(`${GAMES.length} games to play — no timers, no rush.`, `${GAMES.length} juegos para jugar — sin reloj y sin prisa.`)}</p>
 
       <div className="mt-5 space-y-3">
         {WORLDS.map((w) => {

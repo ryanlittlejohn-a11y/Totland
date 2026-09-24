@@ -253,44 +253,16 @@ function Home() {
         </Link>
       </section>
 
-      <section className="mt-7 rounded-[2rem] felt-panel p-4">
-        <h2 className="px-1 font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">
-          {L("Totland Premium", "Totland Premium")}
-        </h2>
-        <p className="mt-2 px-1 font-ui text-sm text-inksoft">
-          {L("Unlock every world, puzzle, storybook and tracing game — with no ads and no tracking. Cancel anytime through Paddle.", "Desbloquea todos los mundos, rompecabezas, cuentos y trazos — sin anuncios ni rastreo. Cancela cuando quieras con Paddle.")}
-        </p>
-        <p className="mt-2 px-1 font-ui text-sm font-semibold text-ink">
-          {L(
-            "✈️ Play anywhere, even with no internet — offline play is part of Premium.",
-            "✈️ Juega donde sea, incluso sin internet — jugar sin conexión es parte de Premium.",
-          )}
-        </p>
-        <div className="mt-3 grid grid-cols-2 gap-2.5">
-          <div className="rounded-2xl bg-card p-3 text-center wood-block">
-            <p className="font-ui text-xl font-bold text-ink">$2.99</p>
-            <p className="font-ui text-xs text-inksoft">{L("per month", "al mes")}</p>
-          </div>
-          <div className="rounded-2xl bg-card p-3 text-center wood-block">
-            <p className="font-ui text-xl font-bold text-ink">$19.99</p>
-            <p className="font-ui text-xs text-inksoft">{L("per year · best value", "al año · mejor precio")}</p>
-          </div>
-        </div>
-        <p className="mt-2 px-1 font-ui text-xs text-inksoft">
-          30-day money-back guarantee. See our{" "}
-          <Link to="/refund" className="underline">
-            Refund Policy
-          </Link>
-          .
-        </p>
-        <Link
-          to="/parent/subscription"
-          search={{ checkout: undefined }}
-          className="mt-3 block rounded-2xl bg-clay py-3 text-center font-ui font-bold text-primary-foreground wood-block"
-        >
-          {L("Get Premium", "Obtener Premium")}
-        </Link>
-      </section>
+      <Link
+        to="/parent"
+        className="mt-7 flex items-center gap-3 rounded-3xl bg-card p-4 wood-block active:translate-y-1"
+      >
+        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-amber/30 text-xl">✨</span>
+        <span className="font-ui text-sm font-semibold text-inksoft">
+          {L("Ask a grown-up about Totland Premium", "Pregunta a un adulto por Totland Premium")}
+        </span>
+      </Link>
+
 
       <Link
         to="/parent"

@@ -75,4 +75,4 @@
 - [x] Add one-letter-at-a-time tracing for 2-, 3-, 4-, and 5-letter words
 - [x] Keep 2- and 3-letter tracing free; make 4- and 5-letter tracing Premium
 - [x] Verify progression, migration, accessibility, bilingual content, layouts, and persistence
-- [x] Count exact new English and Spanish narration lines without generating audio (230 English, 204 Spanish)
+- [x] Count exact new English and Spanish narration lines without generating audio (230 English, 207 Spanish)

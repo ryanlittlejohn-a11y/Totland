@@ -1,32 +1,44 @@
-# Move the Premium pitch off the child home screen
+# Parent dashboard accuracy and accessibility plan
 
-## What changes in `src/routes/index.tsx`
+## What will change
 
-1. **Remove the whole "Totland Premium" section** (lines 256–293): the description with the hardcoded "Cancel anytime through Paddle" copy, the offline-play line, the $2.99 / $19.99 price cards, the refund-policy link, and the "Get Premium" button.
+### 1. Make “This week” truthful
+Keep the heading **This week**, but calculate the first two values from the current calendar day plus the preceding six calendar days in `stats.days`:
 
-2. **Replace it with one small, non-transactional card** — a single compact row (gift/sparkle emoji + one friendly line like "Ask a grown-up about Totland Premium" / Spanish equivalent via `L()`), no prices, no payment-provider names, no purchase button. Tapping it links to `/parent`, which sits behind the existing parental gate — never directly to `/parent/subscription`.
+- **Time:** sum of `minutes` in that seven-day window.
+- **Games:** sum of `games` in that seven-day window.
+- **Accuracy:** keep the existing all-time calculation, but label it explicitly **All-time accuracy**.
 
-## Locked-world tiles — recommendation
+A weekly accuracy cannot be reconstructed honestly because each daily record stores only date, minutes, and games; skill attempts and correct answers are cumulative rather than dated. Using a clearly labeled all-time accuracy avoids changing how learning results are recorded.
 
-The locked learning-world rows further down currently link straight to `/parent/subscription`. `/parent/subscription` is a child of the `/parent` layout, so the gate still intercepts it — a child tapping a lock hits the multiplication question before any purchase UI. So it's technically safe today. **Recommendation: still reroute them to `/parent`** for consistency with the new hint card and to make the gate-first flow explicit and immune to future routing changes. This is a one-line change per tile (`to="/parent"`, drop the params); it does not touch `/parent/subscription.tsx` itself.
+### 2. Show parent-friendly mastery
+For each learning area:
 
-## What stays untouched
+- Calculate the existing `masteryScore()` and pass it to `masteryLabel()`.
+- Replace `L{level} · {accuracy}%` with the friendly label alone: **Beginning, Practicing, Progressing, Strong,** or **Mastered**.
+- Use the mastery score for the progress-bar fill so the visual bar and label describe the same measure.
 
-- `/parent/subscription.tsx` and everything under `/parent/` — already platform-aware (Paddle on web, StorePurchasePanel on native) and behind the gate.
-- The parental gate, RevenueCat/Paddle logic, OfflineGate, premium logic.
-- Web behavior otherwise unchanged.
+The raw level and percentage will no longer be shown in these rows; underlying skill data and scoring remain unchanged.
 
-## JSON-LD offers block
+### 3. Add a functional high-contrast setting
+- Add **High contrast** beside the existing narration, sound effects, music, and reduced-motion checkboxes, using the same shared-setting update pattern.
+- The preference currently has no visual wiring: it is stored and shared, but no class, attribute, or theme rule reads it.
+- Add a small app-level preference bridge, mounted after saved storage is ready, that applies/removes a high-contrast attribute on the document whenever the family setting changes.
+- Add high-contrast theme-token overrides for stronger foreground/background separation, clearer borders, and reduced decorative background/shadow interference. This makes the checkbox immediately functional on web and native without changing any platform logic.
 
-**Leave it as-is.** The `SoftwareApplication` structured data with prices is machine-readable metadata for search engines, not user-visible content — it never renders on the child screen and isn't "in-app purchase promotion" in Apple's sense. Standard practice; no change needed.
+## Files expected to change
+
+- `src/routes/parent.index.tsx` — weekly totals, mastery presentation, and checkbox.
+- `src/routes/__root.tsx` — synchronize the saved high-contrast preference to the document after storage hydration.
+- `src/styles.css` — high-contrast theme overrides.
+
+No subscription pages, parental gate, purchase provider, premium logic, or learning-recording logic will change.
 
 ## Verification
 
-- Typecheck + build clean.
-- Playwright at phone size: home screen shows no prices or "Get Premium"; the small hint card routes to `/parent` and hits the gate; a locked world tile also lands on the gate; premium users see no hint/locks as before.
-
-## Changed files
-
-- `src/routes/index.tsx` only.
-
-No steps needed outside Lovable.
+- Run the TypeScript check and production build.
+- Use Playwright at desktop and phone sizes to verify:
+  - weekly minutes/games and the explicit all-time accuracy label;
+  - mastery labels replace raw levels/percentages;
+  - the high-contrast checkbox visibly changes the theme and remains applied after reload;
+  - the parent dashboard layout remains readable without overlap.

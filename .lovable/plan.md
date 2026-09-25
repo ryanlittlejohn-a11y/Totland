@@ -1,37 +1,36 @@
-# Fix the launch hydration mismatch and remove the diagnostic box
+# Show the real reason the subscription options won't load (phone app only)
 
-## What is causing the #418 error
+## What I found
 
-The phone app's start page is pre-built on a computer where it is "not native", so it contains the real home screen. On the phone, `StorageBoot` starts with `useState(() => !isNativeApp())`, so its very first render is the loading fox instead. React compares the two, they differ, it throws #418, discards the pre-built page and redraws from scratch. That is the flash on every launch.
+- The message comes from the subscription panel inside the parent area. It only appears when the store setup or the "get subscription options" request **fails outright**. If the store answers but sends back no products, the panel doesn't show this message. It shows the two price cards greyed out instead.
+- So on your phone, RevenueCat is returning an **error**, not an empty list. The most common cause is RevenueCat error **23, "configuration error"**, with a message like "None of the products registered in the RevenueCat dashboard could be fetched from App Store Connect." That points to App Store Connect setup: the Paid Apps Agreement isn't active, the products are still "Missing Metadata" or not "Ready to Submit", or the product IDs don't match.
+- Warning: an older launch checklist used the IDs `premium_monthly` / `premium_yearly`. The app now expects different IDs (below). If RevenueCat or App Store Connect still uses the old names, nothing will match.
 
-## Fix (root cause, no warning suppression)
+## IDs the app expects (check these in your dashboards)
 
-1. **Same first render everywhere.** `StorageBoot` will start "ready" on both the pre-build and the phone, so the phone's first render matches the pre-built page exactly and React keeps it.
-2. **Wait for phone storage after that first render, not instead of it.** Right after mounting, on native only, it loads phone storage (same 4.5 s safety timer as today). While that runs, the native splash screen stays up, so the child never sees default data. Splash hiding moves from "app started" to "storage settled" (still capped at 5 s so it can never stick).
-3. **Refresh once storage lands.** When native storage finishes loading, screens that read the profile re-read it (a small "storage loaded" notification that the profile hook listens to; the profile hook already re-reads after mounting, so this is one extra re-read, not a new system).
-4. **Other render-time native checks.** Only the start page is pre-built for the phone, and no other first-render code on it branches on "native". The subscription page reads "native" during render but is never pre-built, so it can't mismatch; left unchanged.
+| What | Exact value |
+|---|---|
+| Monthly product ID (App Store Connect and RevenueCat) | `totland_premium_monthly` |
+| Yearly product ID (App Store Connect and RevenueCat) | `totland_premium_yearly` |
+| Entitlement ID (RevenueCat) | `premium` (lowercase) |
+| Offering | must be set as the **Current** offering in RevenueCat and contain both products as packages |
+| iOS app key | the `appl_...` key set in Codemagic as `VITE_REVENUECAT_IOS_KEY` |
+| Bundle ID | `app.totland.kids` |
 
-## Remove the diagnostic overlay
+## What I'll change (temporary, phone app only)
 
-- Delete `src/lib/diag-overlay.ts`.
-- Remove its inline head script and `diagStep` call from `src/routes/__root.tsx`.
-- Remove `diagStep`/`diagRendered` calls and the `FirstRenderMark` helper from `StorageBoot.tsx`, `storage.ts`, `OfflineGate.tsx`, `crash-report.ts`.
-- Keep the useful hardening from that work: storage timeouts, web-storage fallback, plugin-ready check, safety timer, and the existing crash reporter (`/api/public/diag` endpoint stays; it predates the overlay).
+1. Add a single on/off switch for store diagnostics, clearly labelled so it's easy to remove later.
+2. When loading fails, keep the friendly message and add a small, readable detail box under it that shows:
+   - which step failed (store setup or loading the options)
+   - RevenueCat's error code, its error name and message, and the underlying store error if there is one
+3. Even when loading works, the box shows what came back: the current offering's name, how many packages it has, each product ID found, and whether that ID matches the two IDs the app expects. This catches the "loaded but no matching products" case, which currently fails without any message.
+4. The box also shows whether the iOS key is present (only the `appl_` prefix, never the full key).
+5. The website never shows this box. The parental gate, Premium rules, purchase and restore logic, and Paddle checkout stay unchanged.
 
-## Untouched
+## Technical details
 
-Parental gate, Paddle, RevenueCat, Premium rules, OfflineGate rules, stored data format, website behaviour (on the web storage is ready immediately, so nothing changes).
-
-## Verification
-
-- Typecheck and build; `bun run build:app` confirms the boot script is gone from `dist-app/index.html`.
-- Playwright with a fake native `window.Capacitor` (slow and stuck Preferences): no #418 / hydration error in the console, the pre-built page is kept (no remount), saved profile data appears after storage loads, and the app still shows within the safety window when storage hangs.
-- Website check: home page loads with no console errors, identical to today.
-
-## Files
-
-`src/components/StorageBoot.tsx`, `src/lib/storage.ts`, `src/lib/profile.ts`, `src/lib/native-shell.ts`, `src/routes/__root.tsx`, `src/components/OfflineGate.tsx`, `src/lib/crash-report.ts`, `src/lib/diag-overlay.ts` (deleted), `roadmap.md`.
-
-## Outside steps
-
-Run `bun run sync:app`, then a new Codemagic build.
+- `src/components/StorePurchasePanel.tsx`: record the failing step plus a safe JSON summary of the error (`code`, `message`, `readableErrorCode`, `underlyingErrorMessage`), and render it only when `isNativeApp()` and the flag are both true.
+- `src/lib/purchases.ts`: add a read-only `describeOfferings()` helper that returns the current offering id, package ids and product ids, without changing `listStoreOffers()`.
+- `roadmap.md`: add the task plus a follow-up to remove the diagnostics.
+- Verify with typecheck and build, plus Playwright on the website to confirm the page looks exactly the same.
+- Outside Lovable: run `bun run sync:app`, start a new Codemagic build, then screenshot the subscription page.

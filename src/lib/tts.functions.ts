@@ -112,7 +112,23 @@ export const speakText = createServerFn({ method: "POST" })
     }
 
     // 2. Library miss — this is the only path that spends provider credits, so
-    // cap how many a single caller may trigger per hour.
+    // it requires a signed-in account (others fall back to the device voice)
+    // and is capped per caller per hour.
+    let signedIn = false;
+    try {
+      const auth = getRequest()?.headers.get("authorization") ?? "";
+      const token = auth.startsWith("Bearer ") ? auth.slice(7) : "";
+      if (token) {
+        const { data: u, error } = await supabaseAdmin.auth.getUser(token);
+        signedIn = !error && Boolean(u?.user);
+      }
+    } catch {
+      signedIn = false;
+    }
+    if (!signedIn) {
+      return { status: "unavailable", reason: "service" } satisfies SpeakResult;
+    }
+
     if (await overGenerationLimit(supabaseAdmin)) {
       console.warn("Voice generation limit reached for caller");
       return { status: "unavailable", reason: "rate_limit" } satisfies SpeakResult;

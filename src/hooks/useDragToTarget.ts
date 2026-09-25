@@ -78,6 +78,7 @@ export function useDragToTarget({ onDrop, onHover, disabled, hitSlop = 24, getTi
     try { e.currentTarget.releasePointerCapture(e.pointerId); } catch { /* already released */ }
     pointerId.current = null;
     setDragging(false);
+    setOffset({ x: 0, y: 0 });
     hoverRef.current = null;
     setHoverId(null);
     onDrop(hit);

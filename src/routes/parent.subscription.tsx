@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { AREAS } from "@/lib/content";
-import { useProfile } from "@/lib/profile";
+import { setVerifiedPremium, useProfile } from "@/lib/profile";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
 import { useParentAuth } from "@/hooks/useParentAuth";
 import { ParentAuthCard } from "@/components/ParentAuthCard";

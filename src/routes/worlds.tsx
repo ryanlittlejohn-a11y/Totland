@@ -13,7 +13,11 @@ export const Route = createFileRoute("/worlds")({
       },
       { property: "og:title", content: "Learning Worlds — Totland" },
       { property: "og:description", content: `Choose a world and play ${GAMES.length} original toddler learning games.` },
+      { property: "og:url", content: "https://totland.app/worlds" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://totland.app/worlds" }],
   }),
   component: WorldsPage,
 });

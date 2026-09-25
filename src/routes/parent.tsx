@@ -2,6 +2,16 @@ import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 export const Route = createFileRoute("/parent")({
+  head: () => ({
+    meta: [
+      { title: "Parent Area — Totland" },
+      { name: "description", content: "Grown-ups only: progress, settings and Premium for your child's Totland learning games, behind a parental gate." },
+      { property: "og:title", content: "Parent Area — Totland" },
+      { property: "og:description", content: "A gated space for parents to track progress and manage settings." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+    ],
+  }),
   component: ParentLayout,
 });
 

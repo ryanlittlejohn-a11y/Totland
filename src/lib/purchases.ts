@@ -137,39 +137,6 @@ export async function storeEntitlementActive(): Promise<boolean> {
   return Boolean(customerInfo.entitlements.active[PREMIUM_ENTITLEMENT]);
 }
 
-/**
- * TEMPORARY STORE DIAGNOSTICS — remove with STORE_DIAG in StorePurchasePanel.
- * Read-only summary of what RevenueCat returned; never includes the full key.
- */
-export function storeKeyHint(): string {
-  const k = apiKey();
-  return k ? `${k.slice(0, 5)}…${k.slice(-4)}` : "missing";
-}
-
-export async function describeOfferings(): Promise<string> {
-  if (!storePurchasesAvailable()) return "store not available";
-  const { Purchases } = await plugin();
-  const res = await Purchases.getOfferings();
-  const all = Object.keys(res.all ?? {});
-  const cur = res.current;
-  if (!cur) return `current offering: none · all offerings: [${all.join(", ") || "none"}]`;
-  const expected = Object.values(STORE_PRODUCTS) as string[];
-  const pkgs = cur.availablePackages.map(
-    (p) => `${p.identifier}→${p.product.identifier}${expected.includes(p.product.identifier) ? " ✓" : " ✗"}`,
-  );
-  return `current offering: ${cur.identifier} · packages: ${pkgs.length} [${pkgs.join(", ")}] · all: [${all.join(", ")}]`;
-}
-
-export function describeStoreError(error: unknown): string {
-  const e = (error ?? {}) as Record<string, unknown>;
-  const parts: string[] = [];
-  for (const k of ["code", "readableErrorCode", "message", "underlyingErrorMessage", "errorMessage"]) {
-    if (e[k] !== undefined && e[k] !== null && e[k] !== "") parts.push(`${k}: ${String(e[k])}`);
-  }
-  if (!parts.length) parts.push(String(error));
-  return parts.join(" · ");
-}
-
 /** True when a purchase was cancelled by the parent rather than failing. */
 export function isPurchaseCancelled(error: unknown): boolean {
   const e = error as { code?: string | number; message?: string } | null;

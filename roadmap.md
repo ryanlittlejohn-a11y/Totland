@@ -98,4 +98,4 @@
 
 ## Store diagnostics (temporary)
 - [x] Show RevenueCat error/offering details on the phone subscription panel
-- [ ] Remove STORE_DIAG box once the TestFlight screenshot identifies the cause
+- [x] Remove STORE_DIAG box once the TestFlight screenshot identifies the cause (options confirmed loading)

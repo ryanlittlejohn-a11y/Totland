@@ -171,6 +171,24 @@ export const defaultProfile = (): Profile => ({
 
 const FAMILY_KEY = "totland.family.v1";
 
+/**
+ * Premium is never trusted from device storage. It lives only in memory and is
+ * set each launch from a verified source: the App Store entitlement (RevenueCat,
+ * cached by the store so it works offline) or the backend subscription check.
+ * Any stored `premium` value is ignored on load.
+ */
+let verifiedPremium = false;
+
+export function setVerifiedPremium(value: boolean) {
+  if (verifiedPremium === value) return;
+  verifiedPremium = value;
+  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("totland:profile"));
+}
+
+export function isVerifiedPremium(): boolean {
+  return verifiedPremium;
+}
+
 const SHARED_KEYS = [
   "language",
   "narration",
@@ -222,7 +240,11 @@ export function makeChild(name = "Friend", age = 4): ChildRecord {
 
 function emptyFamily(): Family {
   const first = makeChild();
-  return { activeChildId: first.id, children: [first], settings: sharedOf(defaultProfile()) };
+  return {
+    activeChildId: first.id,
+    children: [first],
+    settings: { ...sharedOf(defaultProfile()), premium: verifiedPremium },
+  };
 }
 
 export function loadFamily(): Family {
@@ -232,7 +254,7 @@ export function loadFamily(): Family {
     if (raw) {
       const f = JSON.parse(raw) as Family;
       if (f && Array.isArray(f.children) && f.children.length) {
-        f.settings = { ...sharedOf(defaultProfile()), ...f.settings };
+        f.settings = { ...sharedOf(defaultProfile()), ...f.settings, premium: verifiedPremium };
         if (!f.children.some((c) => c.id === f.activeChildId)) f.activeChildId = f.children[0]!.id;
         return f;
       }
@@ -242,7 +264,11 @@ export function loadFamily(): Family {
     if (legacy) {
       const p = { ...defaultProfile(), ...JSON.parse(legacy) } as Profile;
       const child: ChildRecord = { id: newId(), profile: p, updatedAt: new Date().toISOString(), dirty: true };
-      const family: Family = { activeChildId: child.id, children: [child], settings: sharedOf(p) };
+      const family: Family = {
+        activeChildId: child.id,
+        children: [child],
+        settings: { ...sharedOf(p), premium: verifiedPremium },
+      };
       saveFamily(family);
       return family;
     }

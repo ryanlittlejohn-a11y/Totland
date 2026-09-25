@@ -372,3 +372,63 @@ html[data-high-contrast="1"] .fishing-letter,
 html[data-high-contrast="1"] .fishing-hook { outline: 4px solid var(--ink); box-shadow: none; }
 html[data-high-contrast="1"] .fishing-line { width: 5px; }
 html[data-high-contrast="1"] .fishing-pond { background: var(--card); outline: 3px solid var(--ink); }
+
+/* ------------------------------------------ feed the letter monster */
+.monster-feeding-scene {
+  min-height: 22rem;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  background: linear-gradient(to bottom, color-mix(in oklch, var(--plum) 16%, var(--card)), color-mix(in oklch, var(--moss) 24%, var(--card)));
+}
+.monster-letter-field { min-height: 9.5rem; }
+.monster-letter {
+  min-width: 72px;
+  min-height: 72px;
+  touch-action: none;
+  background: var(--card);
+  box-shadow: 0 4px 0 color-mix(in oklch, var(--ink) 20%, transparent);
+  animation: monster-float 2.8s ease-in-out infinite;
+  transition: transform 280ms ease-out, opacity 220ms ease-out;
+}
+.monster-letter.is-dragging { z-index: 30; cursor: grabbing; animation: none; transition: none; }
+.monster-letter.is-refused { animation: monster-refuse 550ms ease-in-out; }
+.monster-letter.is-eaten { animation: monster-eat 650ms ease-in forwards; }
+.monster-body { position: relative; display: grid; min-height: 12rem; place-items: end center; padding-bottom: 1rem; }
+.monster-face { font-size: 8.5rem; line-height: 1; filter: drop-shadow(0 5px 0 color-mix(in oklch, var(--ink) 20%, transparent)); }
+.monster-mouth {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 50%;
+  display: grid;
+  width: 5.5rem;
+  height: 3.2rem;
+  transform: translateX(-50%);
+  place-items: center;
+  border: 4px solid var(--ink);
+  border-radius: 50%;
+  background: var(--night);
+}
+.monster-mouth__inside { width: 3.5rem; height: 0.65rem; border-radius: 999px; background: var(--clay); }
+.monster-mouth.is-hover { outline: 5px solid var(--amber); outline-offset: 3px; }
+.monster-body.is-happy .monster-face { animation: monster-happy 500ms ease-in-out 2; }
+.monster-body.is-sniffing .monster-face { animation: monster-sniff 500ms ease-in-out; }
+@keyframes monster-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
+@keyframes monster-refuse { 0%,100% { transform: translateX(0); } 30% { transform: translateX(-14px) rotate(-5deg); } 65% { transform: translateX(12px) rotate(5deg); } }
+@keyframes monster-eat { 65% { transform: translateY(7rem) scale(0.72); opacity: 1; } 100% { transform: translateY(9rem) scale(0.2); opacity: 0; } }
+@keyframes monster-happy { 50% { transform: translateY(-7px) scale(1.06); } }
+@keyframes monster-sniff { 35% { transform: rotate(-4deg); } 70% { transform: rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .monster-letter, .monster-letter.is-refused, .monster-letter.is-eaten,
+  .monster-body.is-happy .monster-face, .monster-body.is-sniffing .monster-face { animation: none !important; }
+  .monster-letter { transition: none; }
+}
+html[data-reduced-motion="1"] .monster-letter,
+html[data-reduced-motion="1"] .monster-letter.is-refused,
+html[data-reduced-motion="1"] .monster-letter.is-eaten,
+html[data-reduced-motion="1"] .monster-body.is-happy .monster-face,
+html[data-reduced-motion="1"] .monster-body.is-sniffing .monster-face { animation: none !important; transition: none; }
+html[data-high-contrast="1"] .monster-feeding-scene { background: var(--card); outline: 3px solid var(--ink); }
+html[data-high-contrast="1"] .monster-letter,
+html[data-high-contrast="1"] .monster-mouth { outline: 4px solid var(--ink); box-shadow: none; }

@@ -10,6 +10,7 @@ import type { SkillId } from "./content";
 export type EngineId =
   | "choice"
   | "fishing"
+  | "monster"
   | "hunt"
   | "order"
   | "memory"
@@ -92,7 +93,7 @@ const S: WorldId = "storybook-village";
 const ROWS: Row[] = [
   [1, "Letter Pop", "🎈", "choice", "findUpper", A, "letters", "Recognise uppercase letters", "elr"],
   [2, "Alphabet Safari", "🦒", "hunt", "letters", A, "letters", "Spot letters in a busy scene", "elr"],
-  [3, "Feed the Letter Monster", "👾", "choice", "findUpper", A, "letters", "Match a spoken letter name", "elr"],
+  [3, "Feed the Letter Monster", "👾", "monster", "findUpper", A, "letters", "Match a spoken letter name", "elr"],
   [4, "Letter Bubbles", "🫧", "choice", "findUpper", A, "letters", "Letter recognition under choice", "elr"],
   [5, "Alphabet Train", "🚂", "order", "letters", A, "letters", "Alphabetical order", "lr"],
   [6, "Letter Fishing", "🎣", "fishing", "findUpper", A, "letters", "Letter recognition", "elr"],
@@ -226,14 +227,14 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
     difficultyMax: 5,
     interaction:
       engine === "hunt" ? "tap-many"
-      : engine === "fishing" ? "drag"
+      : engine === "fishing" || engine === "monster" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
       : engine === "tracing" ? "trace"
       : engine === "story" || engine === "storybuilder" ? "read"
       : "tap",
     minutes: engine === "adventure" ? 8 : 2,
-    rounds: engine === "choice" || engine === "fishing" ? 5 : 1,
+    rounds: engine === "choice" || engine === "fishing" || engine === "monster" ? 5 : 1,
     rewardStars: 3,
     premium: premium === 1,
     completionThreshold: 0.6,

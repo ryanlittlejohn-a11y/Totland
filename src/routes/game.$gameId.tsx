@@ -1,6 +1,7 @@
 import { createFileRoute, useParams } from "@tanstack/react-router";
 import { useState } from "react";
 import { PlayFrame } from "@/components/PlayFrame";
+import { LetterFishingGame } from "@/components/game/LetterFishingGame";
 import { ChoiceGame } from "@/components/game/ChoiceGame";
 import { HuntGame } from "@/components/game/HuntGame";
 import { OrderGame } from "@/components/game/OrderGame";
@@ -110,6 +111,8 @@ function GameHost() {
     <PlayFrame title={tTitle(game.title)}>
       {stars !== null ? (
         <RewardScreen stars={stars} onAgain={restart} />
+      ) : engine === "fishing" ? (
+        <LetterFishingGame key={key} kind={game.kind} skill={game.skill} rounds={game.rounds} theme={theme} onFinish={finish} />
       ) : engine === "hunt" ? (
         <HuntGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "order" ? (

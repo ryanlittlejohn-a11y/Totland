@@ -9,6 +9,7 @@ import type { SkillId } from "./content";
 
 export type EngineId =
   | "choice"
+  | "fishing"
   | "hunt"
   | "order"
   | "memory"
@@ -59,7 +60,7 @@ export interface GameRecord {
   ageModes: AgeMode[];
   difficultyMin: number;
   difficultyMax: number;
-  interaction: "tap" | "tap-many" | "sequence" | "flip" | "trace" | "read";
+  interaction: "tap" | "tap-many" | "drag" | "sequence" | "flip" | "trace" | "read";
   minutes: number;
   rounds: number;
   rewardStars: number;
@@ -94,7 +95,7 @@ const ROWS: Row[] = [
   [3, "Feed the Letter Monster", "👾", "choice", "findUpper", A, "letters", "Match a spoken letter name", "elr"],
   [4, "Letter Bubbles", "🫧", "choice", "findUpper", A, "letters", "Letter recognition under choice", "elr"],
   [5, "Alphabet Train", "🚂", "order", "letters", A, "letters", "Alphabetical order", "lr"],
-  [6, "Letter Fishing", "🎣", "choice", "findUpper", A, "letters", "Letter recognition", "elr"],
+  [6, "Letter Fishing", "🎣", "fishing", "findUpper", A, "letters", "Letter recognition", "elr"],
   [7, "Letter Rocket", "🚀", "choice", "findUpper", A, "letters", "Letter recognition", "elr"],
   [8, "Letter Garden", "🌷", "order", "letters", A, "letters", "Sequence letters A to Z", "lr"],
   [9, "Missing Letter", "❓", "choice", "missingLetter", A, "letters", "Complete an alphabet sequence", "lr"],
@@ -225,13 +226,14 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
     difficultyMax: 5,
     interaction:
       engine === "hunt" ? "tap-many"
+      : engine === "fishing" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
       : engine === "tracing" ? "trace"
       : engine === "story" || engine === "storybuilder" ? "read"
       : "tap",
     minutes: engine === "adventure" ? 8 : 2,
-    rounds: engine === "choice" ? 5 : 1,
+    rounds: engine === "choice" || engine === "fishing" ? 5 : 1,
     rewardStars: 3,
     premium: premium === 1,
     completionThreshold: 0.6,

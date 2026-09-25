@@ -30,6 +30,8 @@ import { Route as PlayAreaRouteImport } from './routes/play.$area'
 import { Route as WordfindThemeIdRouteImport } from './routes/wordfind.$themeId'
 import { Route as WorldWorldIdRouteImport } from './routes/world.$worldId'
 import { Route as ApiPublicDiagRouteImport } from './routes/api/public/diag'
+import { Route as PlayAreaIndexRouteImport } from './routes/play.$area.index'
+import { Route as PlayAreaQuickRouteImport } from './routes/play.$area.quick'
 import { Route as ApiPublicPaymentsWebhookRouteImport } from './routes/api/public/payments/webhook'
 import { Route as ApiPublicRcWebhookRouteImport } from './routes/api/public/rc/webhook'
 import { Route as LovableEmailAuthPreviewRouteImport } from './routes/lovable/email/auth/preview'
@@ -142,6 +144,16 @@ const ApiPublicDiagRoute = ApiPublicDiagRouteImport.update({
   path: '/api/public/diag',
   getParentRoute: () => rootRouteImport,
 } as any)
+const PlayAreaIndexRoute = PlayAreaIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => PlayAreaRoute,
+} as any)
+const PlayAreaQuickRoute = PlayAreaQuickRouteImport.update({
+  id: '/quick',
+  path: '/quick',
+  getParentRoute: () => PlayAreaRoute,
+} as any)
 const ApiPublicPaymentsWebhookRoute =
   ApiPublicPaymentsWebhookRouteImport.update({
     id: '/api/public/payments/webhook',
@@ -187,11 +199,13 @@ export interface FileRoutesByFullPath {
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
-  '/play/$area': typeof PlayAreaRoute
+  '/play/$area': typeof PlayAreaRouteWithChildren
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
+  '/play/$area/quick': typeof PlayAreaQuickRoute
+  '/play/$area/': typeof PlayAreaIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/rc/webhook': typeof ApiPublicRcWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -214,11 +228,12 @@ export interface FileRoutesByTo {
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
-  '/play/$area': typeof PlayAreaRoute
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
+  '/play/$area/quick': typeof PlayAreaQuickRoute
+  '/play/$area': typeof PlayAreaIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/rc/webhook': typeof ApiPublicRcWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -243,11 +258,13 @@ export interface FileRoutesById {
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
-  '/play/$area': typeof PlayAreaRoute
+  '/play/$area': typeof PlayAreaRouteWithChildren
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
+  '/play/$area/quick': typeof PlayAreaQuickRoute
+  '/play/$area/': typeof PlayAreaIndexRoute
   '/api/public/payments/webhook': typeof ApiPublicPaymentsWebhookRoute
   '/api/public/rc/webhook': typeof ApiPublicRcWebhookRoute
   '/lovable/email/auth/preview': typeof LovableEmailAuthPreviewRoute
@@ -278,6 +295,8 @@ export interface FileRouteTypes {
     | '/world/$worldId'
     | '/parent/'
     | '/api/public/diag'
+    | '/play/$area/quick'
+    | '/play/$area/'
     | '/api/public/payments/webhook'
     | '/api/public/rc/webhook'
     | '/lovable/email/auth/preview'
@@ -300,11 +319,12 @@ export interface FileRouteTypes {
     | '/guides/toddler-learning-games'
     | '/parent/children'
     | '/parent/subscription'
-    | '/play/$area'
     | '/wordfind/$themeId'
     | '/world/$worldId'
     | '/parent'
     | '/api/public/diag'
+    | '/play/$area/quick'
+    | '/play/$area'
     | '/api/public/payments/webhook'
     | '/api/public/rc/webhook'
     | '/lovable/email/auth/preview'
@@ -333,6 +353,8 @@ export interface FileRouteTypes {
     | '/world/$worldId'
     | '/parent/'
     | '/api/public/diag'
+    | '/play/$area/quick'
+    | '/play/$area/'
     | '/api/public/payments/webhook'
     | '/api/public/rc/webhook'
     | '/lovable/email/auth/preview'
@@ -355,7 +377,7 @@ export interface RootRouteChildren {
   AuthNativeReturnRoute: typeof AuthNativeReturnRoute
   GameGameIdRoute: typeof GameGameIdRoute
   GuidesToddlerLearningGamesRoute: typeof GuidesToddlerLearningGamesRoute
-  PlayAreaRoute: typeof PlayAreaRoute
+  PlayAreaRoute: typeof PlayAreaRouteWithChildren
   WordfindThemeIdRoute: typeof WordfindThemeIdRoute
   WorldWorldIdRoute: typeof WorldWorldIdRoute
   ApiPublicDiagRoute: typeof ApiPublicDiagRoute
@@ -515,6 +537,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicDiagRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/play/$area/': {
+      id: '/play/$area/'
+      path: '/'
+      fullPath: '/play/$area/'
+      preLoaderRoute: typeof PlayAreaIndexRouteImport
+      parentRoute: typeof PlayAreaRoute
+    }
+    '/play/$area/quick': {
+      id: '/play/$area/quick'
+      path: '/quick'
+      fullPath: '/play/$area/quick'
+      preLoaderRoute: typeof PlayAreaQuickRouteImport
+      parentRoute: typeof PlayAreaRoute
+    }
     '/api/public/payments/webhook': {
       id: '/api/public/payments/webhook'
       path: '/api/public/payments/webhook'
@@ -568,6 +604,20 @@ const ParentRouteChildren: ParentRouteChildren = {
 const ParentRouteWithChildren =
   ParentRoute._addFileChildren(ParentRouteChildren)
 
+interface PlayAreaRouteChildren {
+  PlayAreaQuickRoute: typeof PlayAreaQuickRoute
+  PlayAreaIndexRoute: typeof PlayAreaIndexRoute
+}
+
+const PlayAreaRouteChildren: PlayAreaRouteChildren = {
+  PlayAreaQuickRoute: PlayAreaQuickRoute,
+  PlayAreaIndexRoute: PlayAreaIndexRoute,
+}
+
+const PlayAreaRouteWithChildren = PlayAreaRoute._addFileChildren(
+  PlayAreaRouteChildren,
+)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdventureRoute: AdventureRoute,
@@ -583,7 +633,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuthNativeReturnRoute: AuthNativeReturnRoute,
   GameGameIdRoute: GameGameIdRoute,
   GuidesToddlerLearningGamesRoute: GuidesToddlerLearningGamesRoute,
-  PlayAreaRoute: PlayAreaRoute,
+  PlayAreaRoute: PlayAreaRouteWithChildren,
   WordfindThemeIdRoute: WordfindThemeIdRoute,
   WorldWorldIdRoute: WorldWorldIdRoute,
   ApiPublicDiagRoute: ApiPublicDiagRoute,

@@ -338,3 +338,37 @@ html[data-reduced-motion="1"] .anim-wiggle,
 html[data-reduced-motion="1"] .game-theme__sky {
   animation: none !important;
 }
+
+/* ------------------------------------------------- letter fishing */
+.fishing-pond {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  background: linear-gradient(to bottom, color-mix(in oklch, var(--sky) 25%, var(--card)) 0 35%, color-mix(in oklch, var(--sky) 70%, var(--card)) 35% 100%);
+}
+.fishing-line { width: 3px; background: var(--ink); border-radius: 2px; }
+.fishing-hook { background: var(--card); box-shadow: 0 4px 0 color-mix(in oklch, var(--ink) 25%, transparent); touch-action: none; }
+.fishing-hook.is-dragging { cursor: grabbing; transform: scale(1.08); }
+.fishing-letter {
+  min-width: 72px; min-height: 72px;
+  background: var(--card);
+  box-shadow: 0 4px 0 color-mix(in oklch, var(--ink) 20%, transparent);
+  animation: fish-bob 2.6s ease-in-out infinite;
+  transition: transform 300ms ease-out;
+}
+.fishing-letter.is-hover { outline: 4px solid var(--amber); }
+.fishing-letter.is-caught { animation: fish-caught 700ms ease-out forwards; background: var(--amber); }
+@keyframes fish-bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+@keyframes fish-caught { to { transform: translateY(-90px) scale(1.15); } }
+@media (prefers-reduced-motion: reduce) {
+  .fishing-letter, .fishing-letter.is-caught { animation: none !important; }
+  .fishing-hook-wrap { --fish-snap: 0ms; }
+}
+html[data-reduced-motion="1"] .fishing-letter,
+html[data-reduced-motion="1"] .fishing-letter.is-caught { animation: none !important; }
+html[data-reduced-motion="1"] .fishing-hook-wrap { --fish-snap: 0ms; }
+html[data-high-contrast="1"] .fishing-letter,
+html[data-high-contrast="1"] .fishing-hook { outline: 4px solid var(--ink); box-shadow: none; }
+html[data-high-contrast="1"] .fishing-line { width: 5px; }
+html[data-high-contrast="1"] .fishing-pond { background: var(--card); outline: 3px solid var(--ink); }

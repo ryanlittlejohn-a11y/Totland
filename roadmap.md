@@ -99,3 +99,7 @@
 ## Store diagnostics (temporary)
 - [x] Show RevenueCat error/offering details on the phone subscription panel
 - [x] Remove STORE_DIAG box once the TestFlight screenshot identifies the cause (options confirmed loading)
+
+## Bespoke game interactions
+- [x] Letter Fishing: drag-the-hook engine + generic useDragToTarget primitive (penalty-free wrong catches, tap fallback)
+- [ ] Feed the Letter Monster / Word Rocket / Animal Jigsaw on the drag primitive (later)

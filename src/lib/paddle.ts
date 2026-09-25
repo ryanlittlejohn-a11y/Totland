@@ -32,6 +32,8 @@ export async function initializePaddle(eventCallback?: (event: any) => void) {
   });
 }
 
-export async function getPaddlePriceId(priceId: string): Promise<string> {
+export async function getPaddlePriceId(
+  priceId: "premium_monthly" | "premium_yearly",
+): Promise<string> {
   return resolvePaddlePrice({ data: { priceId, environment: getPaddleEnvironment() } });
 }

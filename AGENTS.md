@@ -8,3 +8,4 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+- Drag-based games use the generic `useDragToTarget` hook (+ `DragTarget` buttons for tap/VoiceOver fallback); game visuals sit on top — keeps drag handling reusable across games.

@@ -31,8 +31,6 @@ export function FishingPond({
     },
   });
 
-  const lineLen = 56 + Math.max(0, drag.offset.y);
-
   return (
     <div className="fishing-pond relative mt-5 select-none overflow-hidden rounded-3xl" data-testid="fishing-pond">
       <span className="sr-only">{L("Tap a letter to catch it.", "Toca una letra para pescarla.")}</span>
@@ -55,7 +53,6 @@ export function FishingPond({
           </div>
         </div>
       </div>
-      <span className="sr-only">{lineLen}</span>
       {/* water */}
       <div className="fishing-water relative -mt-8 flex flex-wrap items-end justify-center gap-4 px-4 pb-8 pt-10">
         {letters.map((l, i) => {

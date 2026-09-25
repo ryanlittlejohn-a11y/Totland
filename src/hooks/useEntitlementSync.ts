@@ -4,7 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { supabase } from "@/integrations/supabase/client";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription } from "@/lib/subscription.functions";
-import { loadProfile, saveProfile } from "@/lib/profile";
+import { setVerifiedPremium } from "@/lib/profile";
 import { isNativeApp, withTimeout } from "@/lib/native";
 import {
   configurePurchases,
@@ -15,7 +15,7 @@ import {
 } from "@/lib/purchases";
 
 /**
- * Keeps the locally cached `premium` flag honest.
+ * Sets the in-memory, verified `premium` flag (never read from storage).
  *
  * On the web, premium is whatever the backend says for the signed-in parent,
  * so editing localStorage only "works" until the next time the app can reach
@@ -34,9 +34,7 @@ export function useEntitlementSync() {
 
     const setPremium = (value: boolean) => {
       if (cancelled) return;
-      const profile = loadProfile();
-      if (profile.premium === value) return;
-      saveProfile({ ...profile, premium: value });
+      setVerifiedPremium(value);
     };
 
     /** Store entitlement, cached on the device — safe offline. */

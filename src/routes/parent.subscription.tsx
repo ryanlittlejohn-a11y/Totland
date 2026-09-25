@@ -61,7 +61,7 @@ function Subscription() {
       const state = await fetchSubscription({ data: { environment: getPaddleEnvironment() } });
       setSub(state);
       // Cache the verified answer locally so the app keeps working offline.
-      update((p) => (p.premium === state.active ? p : { ...p, premium: state.active }));
+      setVerifiedPremium(state.active);
       return state;
     } catch (e) {
       console.error(e);
@@ -134,7 +134,7 @@ function Subscription() {
         /* ignore */
       }
 
-      update((p) => ({ ...p, premium: false }));
+      setVerifiedPremium(false);
       setDeleted(true);
       setDeleting(false);
     } catch (e) {
@@ -321,7 +321,7 @@ function Subscription() {
                 type="button"
                 onClick={async () => {
                   await supabase.auth.signOut();
-                  update((p) => ({ ...p, premium: false }));
+                  setVerifiedPremium(false);
                 }}
                 className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink"
               >

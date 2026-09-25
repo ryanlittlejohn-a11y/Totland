@@ -7,6 +7,19 @@ import { isNativeApp, nativePlatform } from "./native";
 
 export const PREMIUM_ENTITLEMENT = "premium";
 
+/**
+ * Entitlement ids that all mean "this family has Premium".
+ * RevenueCat projects can name the entitlement differently to the app, so we
+ * accept every known spelling rather than silently reporting no Premium.
+ */
+export const PREMIUM_ENTITLEMENT_IDS = [PREMIUM_ENTITLEMENT, "totland_pro", "pro"] as const;
+
+/** True when any of our known premium entitlements is active. */
+function hasPremium(customerInfo: { entitlements: { active: Record<string, unknown> } }): boolean {
+  const active = customerInfo?.entitlements?.active ?? {};
+  return PREMIUM_ENTITLEMENT_IDS.some((id) => Boolean(active[id]));
+}
+
 /** Store product identifiers, created in App Store Connect and Google Play. */
 export const STORE_PRODUCTS = {
   monthly: "totland_premium_monthly",
@@ -14,6 +27,7 @@ export const STORE_PRODUCTS = {
 } as const;
 
 export type StorePlan = keyof typeof STORE_PRODUCTS;
+
 
 export interface StoreOffer {
   plan: StorePlan;

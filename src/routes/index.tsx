@@ -207,7 +207,7 @@ function Home() {
 
       <section className="mt-6">
         <div className="flex items-center justify-between px-1">
-          <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Learning worlds", "Mundos de aprendizaje")}</h2>
+          <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Skills to practice", "Habilidades")}</h2>
           <span className="font-ui text-xs text-inksoft">{L(`${LIBRARY_SIZE} activities offline`, `${LIBRARY_SIZE} actividades sin conexión`)}</span>
         </div>
 

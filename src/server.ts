@@ -7,6 +7,17 @@ type ServerEntry = {
   fetch: (request: Request, env: unknown, ctx: unknown) => Promise<Response> | Response;
 };
 
+/** A client that disconnects mid-render aborts the request; that's not an app error. */
+function isClientAbort(error: unknown, request?: Request): boolean {
+  if (request?.signal?.aborted) return true;
+  let e: unknown = error;
+  for (let i = 0; i < 3 && e; i++) {
+    if (typeof e === "object" && (e as { name?: unknown }).name === "AbortError") return true;
+    e = (e as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
 let serverEntryPromise: Promise<ServerEntry> | undefined;
 
 async function getServerEntry(): Promise<ServerEntry> {
@@ -20,8 +31,9 @@ async function getServerEntry(): Promise<ServerEntry> {
 
 // h3 swallows in-handler throws into a normal 500 Response with body
 // {"unhandled":true,"message":"HTTPError"} — try/catch alone never fires for those.
-async function normalizeCatastrophicSsrResponse(response: Response): Promise<Response> {
+async function normalizeCatastrophicSsrResponse(response: Response, request?: Request): Promise<Response> {
   if (response.status < 500) return response;
+  if (request?.signal?.aborted) return new Response(null, { status: 499 });
   const contentType = response.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) return response;
 
@@ -85,8 +97,9 @@ export default {
 
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
-      return await normalizeCatastrophicSsrResponse(response);
+      return await normalizeCatastrophicSsrResponse(response, request);
     } catch (error) {
+      if (isClientAbort(error, request)) return new Response(null, { status: 499 });
       console.error(error);
       return new Response(renderErrorPage(), {
         status: 500,

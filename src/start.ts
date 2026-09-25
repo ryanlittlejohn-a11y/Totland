@@ -12,6 +12,17 @@ function isLovableRoute(request: Request | undefined): boolean {
   }
 }
 
+/** A client that disconnects mid-render aborts the request; that's not an app error. */
+function isClientAbort(error: unknown, request?: Request): boolean {
+  if (request?.signal?.aborted) return true;
+  let e: unknown = error;
+  for (let i = 0; i < 3 && e; i++) {
+    if (typeof e === "object" && (e as { name?: unknown }).name === "AbortError") return true;
+    e = (e as { cause?: unknown }).cause;
+  }
+  return false;
+}
+
 const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
   if (isLovableRoute(request)) return next();
   try {
@@ -20,6 +31,7 @@ const errorMiddleware = createMiddleware().server(async ({ next, request }) => {
     if (error != null && typeof error === "object" && "statusCode" in error) {
       throw error;
     }
+    if (isClientAbort(error, request)) return new Response(null, { status: 499 });
     console.error(error);
     return new Response(renderErrorPage(), {
       status: 500,

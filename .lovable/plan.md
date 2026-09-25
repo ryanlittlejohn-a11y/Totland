@@ -1,39 +1,55 @@
-# Named game lists for every skill area
-
-## Findings: every link into /play/$area
-
-| Caller | Link | Needs a direct jump? |
-|---|---|---|
-| Home: top 8-icon grid | `/play/$area` | No, a list works fine |
-| Home: "Learning worlds" list | `/play/$area`, or `/parent` when locked | No. The locked path stays the same |
-| Parent dashboard: "Recommended next" → Open | `/play/$area` | No. A list filtered to that skill is better |
-| Parent guide page (letters, phonics, tracing) | `/play/$area` | No. These are SEO landing links, and a list is better |
-| Today's Adventure | Does not link to /play. It embeds its own game steps | Not affected |
-
-Nothing needs /play/$area to launch a game immediately, so no caller has to be changed to use a direct `/game/$gameId` link.
-
-Games per skill in the catalog: letters 17, numbers 18, puzzles 18, memory 11, words 10, shapes 8, tracing 6, phonics 5, wordsearch 5, colors 4, stories 2, **flashcards 0**.
+# Feed the Letter Monster plan
 
 ## Approach
 
-Turn `/play/$area` into a list of named games that matches `/world/$worldId`:
-- Header: a back button (to Home), plus the area's emoji and title.
-- Games are filtered by `g.skill === area` and by the child's age mode (same rule as the world page). A small "Show all ages" link shows the ones hidden by age.
-- Cards are a 2-column grid. Each shows the game's emoji and name (a lock appears when it's Premium), plus play count, stars, or minutes. Tapping a card opens `/game/$gameId`, which already handles gating.
-- The route URL, SEO titles, descriptions and canonical links stay the same, so no public URLs change.
-- Flash Cards has no catalog games. Its page shows one card, "Flash Cards", that plays the existing flash-card activity. To support this, the current quick-play body moves to a `/play/$area/quick` child route (`play.$area.quick.tsx`), and `play.$area.tsx` becomes a layout with an index leaf. The empty-list fallback uses the same "quick play" card for any skill that has no games.
-- Locked areas on the home list still go to `/parent` as they do today.
+- Give **Feed the Letter Monster** its own `monster` engine. This is clearer than reusing `fishing`: both share drag infrastructure, while their scene direction, visuals, prompts, and feedback remain independent.
+- Keep the existing `findUpper` round generator, learning level, five-round flow, reveal text, rewards, profile recording, and completion behavior. Only this catalog row changes; Letter Pop, Letter Bubbles, Letter Rocket, and Letter Rain remain on `ChoiceGame`.
+- Build a dedicated monster scene with the monster and mouth centered toward the lower portion, plus 2–4 letters from the existing level-based round data arranged as large floating tiles around it.
 
-## Two category systems
+## Shared drag foundation
 
-WORLDS are themes and AREAS are skills. Every game has exactly one of each, so a game such as Letter Fishing appears once in its world and once in the "ABC & Phonics" area. That overlap is intentional, not a bug: they are two ways into the same game, and both lead to the same `/game/$gameId` page with shared stats. I don't propose merging them. The only label worth flagging is "Learning worlds" on the home screen, which lists skill areas, not worlds. I suggest renaming it to "Skills to practice" / "Habilidades" (text only).
+The current `useDragToTarget` hit testing already supports the required direction: a draggable element can be tested against one registered mouth target. It needs only a small backward-compatible generalization because it currently exposes one anonymous draggable handle.
 
-## Out of scope
+- Add keyed handle bindings, such as `getHandleProps(letterId)`, and expose the active handle ID and its offset.
+- Keep the existing `handleProps` API intact so Letter Fishing does not need to change behavior.
+- Keep one pointer lock inside each hook instance, preserving primary-pointer checks, pointer capture, forgiving hit slop, cancellation, and `touch-action: none`.
+- Register the monster mouth as the single `DragTarget`. Letter tiles remain accessible buttons: tapping or VoiceOver-activating one invokes the same feed action as a drop.
 
-This does not touch game logic, scoring, premium gating, `catalog.ts`, Today's Adventure, or payments.
+## Components and behavior
 
-## Technical details
+- Add `FeedTheLetterMonsterGame` for round generation, narration, scoring, praise, chime, completion, and penalty-free retries.
+- Add a focused monster scene component for the draggable letter tiles, mouth drop target, hover state, eat animation, and bounce-back/refusal state.
+- Correct feed: animate the selected tile into the mouth, play the existing `munch` theme chime, speak the same praise plus existing reveal line, award the full two stars, and record one correct answer.
+- Wrong feed: show a gentle sniff/refusal response, speak a friendly retry, bounce the tile to its original position, and record no answer, miss, accuracy change, or star reduction.
+- Use the exact bilingual round instruction: “Feed the monster the letter B!” / “¡Dale al monstruo la letra B!” with a replay button.
+- Add scene-specific semantic styles for large touch targets, target highlighting, stable positioning, and text selection/scroll prevention. Reduced motion removes floating/eating/bounce animation without changing interaction; high contrast adds strong outlines to letters and mouth.
 
-- Files: `src/routes/play.$area.tsx` (becomes a layout with `<Outlet/>` and keeps its head), new `src/routes/play.$area.index.tsx` (the list), new `src/routes/play.$area.quick.tsx` (the current PlayPage body, moved unchanged), and a one-line label change in `src/routes/index.tsx`.
-- The list uses `GAMES`, `AREAS` and `useProfile`, with EN/ES text through `L`/`title`.
-- Verification: build, then Playwright at phone size. Check that Home → ABC & Phonics shows Letter Fishing, that tapping it opens the fishing game, that Flash Cards quick play works, that the parent "Open" link shows the filtered list, and that locked areas still route to `/parent`.
+## Routing and catalog
+
+- Add `monster` to the engine type and map it to drag interaction and the existing five-round duration.
+- Change only the `feed-the-letter-monster` catalog row from `choice` to `monster`.
+- Route only the `monster` engine to the new game component; leave `ChoiceGame` and every sibling route unchanged.
+
+## Verification
+
+- Confirm the app builds cleanly and current diagnostics remain clear.
+- In a phone-sized browser, open Feed the Letter Monster and verify all five rounds complete through drag with the expected full reward.
+- Verify wrong drops and wrong tap feeds bounce/refuse, allow retry, and do not reduce stars or accuracy.
+- Verify tap and keyboard/VoiceOver-style activation feed letters without dragging.
+- Simulate a second pointer during an active drag and confirm it cannot move or submit another letter; confirm dragging does not scroll or select the page.
+- Verify reduced-motion and high-contrast settings visibly affect the monster scene while it remains playable.
+- Regression-test Letter Fishing by drag and tap through a round, including an ignored second pointer and a penalty-free wrong catch.
+- Open Letter Pop, Letter Bubbles, Letter Rocket, and Letter Rain and confirm they still use the existing tap-choice interaction.
+
+## Expected files
+
+- `src/hooks/useDragToTarget.ts`
+- `src/components/game/FeedTheLetterMonsterGame.tsx` (new)
+- `src/components/game/MonsterFeedingScene.tsx` (new)
+- `src/routes/game.$gameId.tsx`
+- `src/lib/catalog.ts`
+- `src/styles.css`
+- `AGENTS.md` only if the shared drag architecture rule needs clarification
+- `roadmap.md` to mark this approved bespoke game complete
+
+No audio will be generated, and game logic outside this dedicated engine, subscriptions, gates, payments, and other games will remain unchanged.

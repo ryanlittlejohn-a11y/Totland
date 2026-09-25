@@ -18,7 +18,7 @@ export function stripEmoji(text: string): string {
 
 // Keep the remote request aligned with the server's deliberately narrow
 // narration allowlist. Richer text still works through the device voice.
-const REMOTE_NARRATION_TEXT = /^[\p{L}\p{N} .,!?\'"¡¿:;()\-–—]+$/u;
+const REMOTE_NARRATION_TEXT = /^[\p{L}\p{N} .,!?'"¡¿:;()–—-]+$/u;
 
 function canUseRemoteNarration(text: string): boolean {
   return text.length <= 200 && REMOTE_NARRATION_TEXT.test(text);

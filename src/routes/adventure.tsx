@@ -19,7 +19,11 @@ export const Route = createFileRoute("/adventure")({
       },
       { property: "og:title", content: "Today's Adventure — Totland" },
       { property: "og:description", content: "A short daily learning session that adapts to your child automatically." },
+      { property: "og:url", content: "https://totland.app/adventure" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://totland.app/adventure" }],
   }),
   component: AdventurePage,
 });

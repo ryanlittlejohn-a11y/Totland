@@ -13,7 +13,11 @@ export const Route = createFileRoute("/welcome")({
       { name: "description", content: "A one-minute grown-up setup: your child's name, age mode and play buddy. Everything stays on this device." },
       { property: "og:title", content: "Set up Totland" },
       { property: "og:description", content: "Choose a name, an age mode and a play buddy to start learning through play." },
+      { property: "og:url", content: "https://totland.app/welcome" },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
     ],
+    links: [{ rel: "canonical", href: "https://totland.app/welcome" }],
   }),
   component: Welcome,
 });

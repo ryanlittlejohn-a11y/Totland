@@ -163,6 +163,11 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
       </button>
 
       {error && <p className="mt-3 text-sm text-clay">{error}</p>}
+      {showDiag && diag.length > 0 && (
+        <pre className="mt-3 whitespace-pre-wrap break-words rounded-xl border border-ink/30 bg-card p-3 font-mono text-[11px] leading-snug text-ink">
+          {"Store diagnostics (temporary)\n" + diag.join("\n")}
+        </pre>
+      )}
       <p className="mt-3 text-xs text-inksoft">
         No account needed — you can subscribe and restore with your {storeName} account alone. Payment is charged to
         your {storeName} account. Subscriptions renew automatically unless you cancel at least 24 hours before the

@@ -95,3 +95,7 @@
 - [x] Nonce-checked return via app.totland.kids://auth-callback + /auth/native-return page
 - [x] Verify native vs web and nonce match/mismatch
 - [ ] Confirm a real Apple sign-in end to end on TestFlight
+
+## Store diagnostics (temporary)
+- [x] Show RevenueCat error/offering details on the phone subscription panel
+- [ ] Remove STORE_DIAG box once the TestFlight screenshot identifies the cause

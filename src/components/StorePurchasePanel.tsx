@@ -2,14 +2,23 @@ import { useCallback, useEffect, useState } from "react";
 
 import {
   configurePurchases,
+  describeOfferings,
+  describeStoreError,
   isPurchaseCancelled,
   listStoreOffers,
   purchaseStorePackage,
   restoreStorePurchases,
+  storeKeyHint,
   storePurchasesAvailable,
   type StoreOffer,
 } from "@/lib/purchases";
-import { nativePlatform } from "@/lib/native";
+import { isNativeApp, nativePlatform } from "@/lib/native";
+
+/**
+ * TEMPORARY STORE DIAGNOSTICS — set to false (and delete the diag box plus
+ * describeOfferings/describeStoreError/storeKeyHint) once diagnosed.
+ */
+const STORE_DIAG = true;
 
 interface Props {
   /**
@@ -31,24 +40,44 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
   const [offers, setOffers] = useState<StoreOffer[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [diag, setDiag] = useState<string[]>([]);
   const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
+  const showDiag = STORE_DIAG && isNativeApp();
 
   useEffect(() => {
     let cancelled = false;
+    const lines: string[] = [];
+    const push = (s: string) => {
+      lines.push(s);
+      if (!cancelled && showDiag) setDiag([...lines]);
+    };
     void (async () => {
+      push(`platform: ${nativePlatform() ?? "?"} · key: ${storeKeyHint()} · signed in: ${userId ? "yes" : "no"}`);
+      let step = "configure";
       try {
         await configurePurchases(userId ?? undefined);
+        push("configure: ok");
+        step = "offerings";
+        if (showDiag) {
+          try {
+            push(await describeOfferings());
+          } catch (e) {
+            push(`offerings error → ${describeStoreError(e)}`);
+          }
+        }
         const list = await listStoreOffers();
+        push(`matched offers: ${list.length}`);
         if (!cancelled) setOffers(list);
       } catch (e) {
         console.error(e);
+        push(`failed at ${step} → ${describeStoreError(e)}`);
         if (!cancelled) setError("Couldn't load the subscription options. Please try again.");
       }
     })();
     return () => {
       cancelled = true;
     };
-  }, [userId]);
+  }, [userId, showDiag]);
 
 
   const buy = useCallback(

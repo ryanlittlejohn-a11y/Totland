@@ -76,11 +76,8 @@ export const submitContactInquiry = createServerFn({ method: "POST" })
         idempotencyKey: `contact-notification-${inquiryId}`,
         replyTo: data.email,
       });
-
-      await sendTemplateEmail("contact-confirmation", data.email, {
-        templateData: { name: data.name, message: data.message },
-        idempotencyKey: `contact-confirmation-${inquiryId}`,
-      });
+      // No automatic email goes to the submitted address: it is unverified, so
+      // sending there would let anyone mail chosen people in the app's name.
     } catch (emailError) {
       // The inquiry is safely stored; a delivery problem must not fail the form.
       console.error("[contact] failed to send notification email:", emailError);

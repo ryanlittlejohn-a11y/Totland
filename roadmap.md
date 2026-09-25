@@ -102,5 +102,6 @@
 
 ## Bespoke game interactions
 - [x] Letter Fishing: drag-the-hook engine + generic useDragToTarget primitive (penalty-free wrong catches, tap fallback)
-- [ ] Feed the Letter Monster / Word Rocket / Animal Jigsaw on the drag primitive (later)
+- [x] Feed the Letter Monster: keyed draggable letters into one mouth target, penalty-free retries, tap fallback
+- [ ] Word Rocket / Animal Jigsaw on the drag primitive (later)
 - [x] Named game list per skill area (/play/$area layout + index + quick)

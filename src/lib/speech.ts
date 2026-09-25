@@ -11,9 +11,17 @@ import type { ThemeMotif } from "./game-themes";
 /** Remove emoji/pictographs so the voice only speaks words. */
 export function stripEmoji(text: string): string {
   return text
-    .replace(/\p{Emoji_Presentation}|\p{Extended_Pictographic}/gu, "")
+    .replace(/\p{Emoji_Presentation}|\p{Extended_Pictographic}|[\uFE0E\uFE0F\u20E3]/gu, "")
     .replace(/\s+/g, " ")
     .trim();
+}
+
+// Keep the remote request aligned with the server's deliberately narrow
+// narration allowlist. Richer text still works through the device voice.
+const REMOTE_NARRATION_TEXT = /^[\p{L}\p{N} .,!?'"¡¿:;()–—-]+$/u;
+
+function canUseRemoteNarration(text: string): boolean {
+  return text.length <= 200 && REMOTE_NARRATION_TEXT.test(text);
 }
 
 let enabled = true;
@@ -269,6 +277,10 @@ export function say(text: string, opts: { rate?: number; pitch?: number } = {}) 
       return;
     }
     if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      if (token === playToken) sayWithDeviceVoice(clean, opts);
+      return;
+    }
+    if (!canUseRemoteNarration(clean)) {
       if (token === playToken) sayWithDeviceVoice(clean, opts);
       return;
     }

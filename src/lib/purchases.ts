@@ -108,22 +108,39 @@ export async function listStoreOffers(): Promise<StoreOffer[]> {
 
   const offers: StoreOffer[] = [];
   for (const pkg of current.availablePackages) {
-    const productId = pkg.product.identifier;
-    const plan: StorePlan | null =
-      productId === STORE_PRODUCTS.monthly
-        ? "monthly"
-        : productId === STORE_PRODUCTS.yearly
-          ? "yearly"
-          : null;
+    const plan = planForPackage(pkg);
     if (!plan) continue;
+    if (offers.some((o) => o.plan === plan)) continue;
     offers.push({
       plan,
-      identifier: productId,
+      identifier: pkg.product.identifier,
       priceString: pkg.product.priceString,
       packageRef: pkg,
     });
   }
   return offers.sort((a) => (a.plan === "monthly" ? -1 : 1));
+}
+
+/**
+ * Work out whether a store package is our monthly or yearly plan.
+ *
+ * Stores and RevenueCat can hand back the product id with a billing-plan
+ * suffix (e.g. `totland_premium_yearly:monthly`), so we match on the base id
+ * first and fall back to the package type RevenueCat reports.
+ */
+function planForPackage(pkg: {
+  identifier?: string;
+  packageType?: string;
+  product: { identifier: string };
+}): StorePlan | null {
+  const base = String(pkg.product.identifier ?? "").split(":")[0];
+  if (base === STORE_PRODUCTS.monthly) return "monthly";
+  if (base === STORE_PRODUCTS.yearly) return "yearly";
+
+  const tag = `${pkg.packageType ?? ""} ${pkg.identifier ?? ""} ${pkg.product.identifier ?? ""}`.toLowerCase();
+  if (/annual|yearly|\$rc_annual/.test(tag)) return "yearly";
+  if (/monthly|\$rc_monthly/.test(tag)) return "monthly";
+  return null;
 }
 
 /** Buy a package. Resolves true when the premium entitlement is active. */
@@ -132,7 +149,7 @@ export async function purchaseStorePackage(offer: StoreOffer): Promise<boolean> 
   const result = await Purchases.purchasePackage({
     aPackage: offer.packageRef as Parameters<typeof Purchases.purchasePackage>[0]["aPackage"],
   });
-  return Boolean(result.customerInfo.entitlements.active[PREMIUM_ENTITLEMENT]);
+  return hasPremium(result.customerInfo);
 }
 
 /** Apple requires an explicit restore control. */
@@ -140,7 +157,7 @@ export async function restoreStorePurchases(): Promise<boolean> {
   if (!storePurchasesAvailable()) return false;
   const { Purchases } = await plugin();
   const { customerInfo } = await Purchases.restorePurchases();
-  return Boolean(customerInfo.entitlements.active[PREMIUM_ENTITLEMENT]);
+  return hasPremium(customerInfo);
 }
 
 /** Current entitlement straight from the store, used as a fast local check. */
@@ -148,8 +165,9 @@ export async function storeEntitlementActive(): Promise<boolean> {
   if (!storePurchasesAvailable()) return false;
   const { Purchases } = await plugin();
   const { customerInfo } = await Purchases.getCustomerInfo();
-  return Boolean(customerInfo.entitlements.active[PREMIUM_ENTITLEMENT]);
+  return hasPremium(customerInfo);
 }
+
 
 /** True when a purchase was cancelled by the parent rather than failing. */
 export function isPurchaseCancelled(error: unknown): boolean {

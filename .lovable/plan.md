@@ -1,5 +1,12 @@
 # Show the real reason the subscription options won't load (phone app only)
 
+## Answers to your follow-up
+
+1. **Which key the app uses.** The app sets up RevenueCat in one place: `configurePurchases()` in `src/lib/purchases.ts`. On iPhone it reads `VITE_REVENUECAT_IOS_KEY`. The value comes from the repo's `.env` and `.env.production` files. Both hold the same key, `appl_…RrVvo`. The `appl_` prefix means it's the public Apple key, not a secret key. Codemagic doesn't set or override this key, so the phone build uses the value from the repo. Check that `appl_…RrVvo` is the Apple key shown in the **same RevenueCat project** where the preview link worked.
+2. **Which offering the app asks for.** The app doesn't ask for an offering by name. It asks RevenueCat for whichever offering is marked **Current**. It then keeps only packages whose product ID is exactly `totland_premium_monthly` or `totland_premium_yearly`. So whichever offering is marked Current in your dashboard must contain both products.
+3. **Test vs live store.** The app has no switch for this. RevenueCat detects TestFlight on its own and uses Apple's test (sandbox) purchases, which is correct. The only thing that could send the app to a different RevenueCat project is the key in point 1.
+4. **The detail box was never built.** The earlier plan wasn't approved before your new message arrived, so there's nothing hidden to tap. The current screen shows only the generic message. Building the box below is the quickest way to see Apple's and RevenueCat's exact error.
+
 ## What I found
 
 - The message comes from the subscription panel inside the parent area. It only appears when the store setup or the "get subscription options" request **fails outright**. If the store answers but sends back no products, the panel doesn't show this message. It shows the two price cards greyed out instead.

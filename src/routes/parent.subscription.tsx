@@ -1,3 +1,5 @@
+import { getLastServerStatus } from "@/lib/native-bridge";
+import { signOutLocal } from "@/lib/signout-log";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -140,9 +142,9 @@ function Subscription() {
         setDeleting(false);
         return;
       }
-      // Refresh the saved sign-in, then confirm it with the backend before
-      // attempting anything destructive.
-      await supabase.auth.refreshSession().catch(() => null);
+      // Confirm the saved sign-in with the backend before attempting anything
+      // destructive. The auth client refreshes on its own; a second forced
+      // refresh could race it and get the session revoked.
       if (!(await hasVerifiedSession())) {
         setDeleteError(signInAgain);
         setDeleting(false);
@@ -158,7 +160,7 @@ function Subscription() {
         return;
       }
 
-      await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+      await signOutLocal("deletion", "account deleted");
       try {
         storageRemove("totland.family.v1");
       } catch {
@@ -170,10 +172,16 @@ function Subscription() {
       setDeleting(false);
     } catch (e) {
       console.error("[deleteAccount]", e);
-      const status =
-        e instanceof Response ? e.status : (e as { status?: number; statusCode?: number })?.status ??
-          (e as { statusCode?: number })?.statusCode;
       const msg = e instanceof Error ? e.message : String(e);
+      const bridged = getLastServerStatus();
+      const status =
+        e instanceof Response
+          ? e.status
+          : ((e as { status?: number })?.status ??
+            (e as { statusCode?: number })?.statusCode ??
+            // The server replied with an error page: use the real status the
+            // app bridge saw, or 500 for the server's own error page.
+            (/^\s*</.test(msg) ? (bridged && bridged >= 400 ? bridged : 500) : undefined));
       if (status === 401 || /unauthori[sz]ed/i.test(msg)) {
         setDeleteError(signInAgain);
       } else if (e instanceof TypeError || /failed to fetch|network|load failed/i.test(msg)) {
@@ -360,6 +368,7 @@ function Subscription() {
               <button
                 type="button"
                 onClick={async () => {
+                  console.warn("[signout] source=user-button reason=tapped Sign out");
                   await supabase.auth.signOut();
                   setVerifiedPremium(false);
                 }}

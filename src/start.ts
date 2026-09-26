@@ -70,12 +70,39 @@ const nativeCorsMiddleware = createMiddleware().server(async ({ next, request })
     return new Response(null, { status: 204, headers: corsHeaders });
   }
 
-  const response = await next();
-  const res = response instanceof Response ? response : (response as { response?: Response })?.response;
-  if (res instanceof Response) {
-    for (const [key, value] of Object.entries(corsHeaders)) res.headers.set(key, value);
+  const withCors = (res: Response): Response => {
+    try {
+      for (const [key, value] of Object.entries(corsHeaders)) res.headers.set(key, value);
+      return res;
+    } catch {
+      // Immutable headers: copy into a new response.
+      const headers = new Headers(res.headers);
+      for (const [key, value] of Object.entries(corsHeaders)) headers.set(key, value);
+      return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
+    }
+  };
+
+  // Error replies need the permission header too, otherwise the webview hides
+  // the real status and the app can only report a network failure.
+  let response: unknown;
+  try {
+    response = await next();
+  } catch (error) {
+    if (error instanceof Response) return withCors(error);
+    if (error != null && typeof error === "object" && "statusCode" in error) throw error;
+    if (isClientAbort(error, request)) return new Response(null, { status: 499 });
+    console.error(error);
+    return withCors(
+      new Response(renderErrorPage(), {
+        status: 500,
+        headers: { "content-type": "text/html; charset=utf-8" },
+      }),
+    );
   }
-  return response;
+  if (response instanceof Response) return withCors(response);
+  const inner = (response as { response?: Response })?.response;
+  if (inner instanceof Response) withCors(inner);
+  return response as Response;
 });
 
 // Start installs this automatically when src/start.ts is absent; defining the
@@ -88,5 +115,7 @@ const csrfMiddleware = createCsrfMiddleware({
 
 export const startInstance = createStart(() => ({
   functionMiddleware: [attachSupabaseAuth],
-  requestMiddleware: [errorMiddleware, nativeCorsMiddleware, csrfMiddleware],
+  // nativeCors runs outermost so every reply to the app, including error pages
+  // built by errorMiddleware, carries the permission header.
+  requestMiddleware: [nativeCorsMiddleware, errorMiddleware, csrfMiddleware],
 }));

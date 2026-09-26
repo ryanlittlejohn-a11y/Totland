@@ -1,3 +1,4 @@
+import { signOutLocal } from "@/lib/signout-log";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
@@ -13,14 +14,14 @@ export async function hasVerifiedSession(): Promise<boolean> {
   const token = session.access_token ?? "";
   const expired = typeof session.expires_at === "number" && session.expires_at * 1000 <= Date.now();
   if (token.split(".").length !== 3 || expired) {
-    await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    await signOutLocal("sign-in-check", "token malformed or expired on device");
     return false;
   }
   const { data: u, error } = await supabase.auth.getUser(token);
   if (error) {
     const status = (error as { status?: number }).status;
     if (status === 401 || status === 403 || status === 400) {
-      await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+      await signOutLocal("sign-in-check", `backend rejected token (status ${status})`);
     }
     return false;
   }
@@ -31,7 +32,7 @@ export async function hasVerifiedSession(): Promise<boolean> {
   // can reach a protected call and crash the screen.
   const { data: c, error: claimsError } = await supabase.auth.getClaims(token);
   if (claimsError || !c?.claims?.sub) {
-    await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    await signOutLocal("sign-in-check", "token failed claims check");
     return false;
   }
   return true;

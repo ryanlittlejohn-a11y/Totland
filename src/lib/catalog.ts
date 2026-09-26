@@ -14,6 +14,7 @@ export type EngineId =
   | "rocket"
   | "jigsaw"
   | "maze"
+  | "rain"
   | "hunt"
   | "order"
   | "memory"
@@ -110,7 +111,7 @@ const ROWS: Row[] = [
   [14, "Letter Shadow", "🌑", "choice", "letterShadow", A, "letters", "Match a letter to its silhouette", "elr"],
   [15, "Letter Maze", "🌀", "hunt", "letters", A, "letters", "Follow one letter through a maze", "lr"],
   [16, "Letter Detective", "🔍", "hunt", "letters", A, "letters", "Find every copy of a letter", "elr"],
-  [17, "Letter Rain", "🌧️", "choice", "findUpper", A, "letters", "Quick letter recognition", "lr"],
+  [17, "Letter Rain", "🌧️", "rain", "findUpper", A, "letters", "Quick letter recognition", "lr"],
   [18, "Letter Memory", "🧠", "memory", "letters", A, "memory", "Remember letter pairs", "elr"],
   [19, "Letter Puzzle", "🧩", "choice", "letterPuzzle", P, "puzzles", "Assemble a letter", "lr"],
   [20, "Alphabet Race", "🏁", "order", "letters", A, "letters", "Race through the alphabet", "lr"],
@@ -237,7 +238,7 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
       : engine === "story" || engine === "storybuilder" ? "read"
       : "tap",
     minutes: engine === "adventure" ? 8 : 2,
-    rounds: engine === "choice" || engine === "fishing" || engine === "monster" ? 5 : 1,
+    rounds: engine === "choice" || engine === "fishing" || engine === "monster" || engine === "rain" ? 5 : 1,
     rewardStars: 3,
     premium: premium === 1,
     completionThreshold: 0.6,

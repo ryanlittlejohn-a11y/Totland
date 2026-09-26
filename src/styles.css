@@ -576,3 +576,151 @@ html[data-high-contrast="1"] .maze-stone { outline: 4px solid var(--ink); box-sh
 html[data-high-contrast="1"] .maze-stone.is-next { outline-width: 6px; outline-offset: 3px; }
 html[data-high-contrast="1"] .maze-trail, html[data-high-contrast="1"] .maze-live { stroke: var(--ink); stroke-opacity: 1; }
 html[data-high-contrast="1"] .maze-guide { stroke-opacity: 0.6; }
+
+/* ----------------------------------------------------- letter rain */
+.rain-board {
+  height: 27rem;
+  touch-action: manipulation;
+  background:
+    linear-gradient(to bottom, color-mix(in oklch, var(--sky) 22%, var(--card)), var(--card) 72%),
+    var(--card);
+}
+.rain-clouds {
+  position: absolute;
+  inset: 0.6rem 0 auto;
+  text-align: center;
+  font-size: 2.2rem;
+  opacity: 0.8;
+}
+.rain-streaks {
+  position: absolute;
+  inset: 4rem 0 auto;
+  color: var(--sky);
+  text-align: center;
+  font-size: 1.5rem;
+  opacity: 0.45;
+}
+.rain-drop {
+  --rain-duration: 12s;
+  --rain-delay: 0s;
+  --rain-lane: 50%;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: var(--rain-lane);
+  width: 4.5rem;
+  height: 4.5rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  animation: rain-fall var(--rain-duration) linear var(--rain-delay) infinite both;
+  will-change: transform, opacity;
+}
+.rain-drop__surface,
+.rain-static-letter {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  border: 3px solid color-mix(in oklch, var(--sky) 70%, var(--ink));
+  border-radius: 55% 45% 60% 40% / 65% 45% 55% 35%;
+  background: var(--card);
+  box-shadow: var(--shadow-block);
+  color: var(--ink);
+  font-family: var(--font-ui);
+  font-size: 2.5rem;
+  font-weight: 800;
+}
+.rain-drop__surface.is-splashed,
+.rain-static-letter.is-splashed { animation: rain-splash 550ms ease-in-out; }
+.rain-drop__surface.is-caught,
+.rain-static-letter.is-caught { background: var(--amber); animation: rain-caught 500ms ease-out; }
+.rain-puddle {
+  position: absolute;
+  right: 12%;
+  bottom: 1rem;
+  left: 12%;
+  height: 1.5rem;
+  border-radius: 50%;
+  background: color-mix(in oklch, var(--sky) 30%, transparent);
+}
+.rain-umbrella {
+  position: absolute;
+  z-index: 3;
+  bottom: 0.7rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 4rem;
+}
+.rain-board.is-paused .rain-drop { animation-play-state: paused; }
+
+.rain-accessible-list {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+.rain-accessible-list:focus-within {
+  position: relative;
+  width: auto;
+  height: auto;
+  margin-top: 0.75rem;
+  clip: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  white-space: normal;
+}
+.rain-static-letter {
+  min-width: 4rem;
+  min-height: 4rem;
+  aspect-ratio: 1;
+  justify-self: center;
+}
+
+@keyframes rain-fall {
+  0% { transform: translate3d(-50%, -5rem, 0); opacity: 0; }
+  7% { opacity: 1; }
+  88% { opacity: 1; }
+  100% { transform: translate3d(-50%, 29rem, 0); opacity: 0; }
+}
+@keyframes rain-splash {
+  25% { transform: translateX(-8px) rotate(-7deg); }
+  65% { transform: translateX(8px) rotate(7deg); }
+}
+@keyframes rain-caught {
+  50% { transform: scale(1.18); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rain-board { display: none; }
+  .rain-accessible-list {
+    position: relative;
+    width: auto;
+    height: auto;
+    clip: auto;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    white-space: normal;
+  }
+  .rain-static-letter { animation: none !important; transition: none; }
+}
+html[data-reduced-motion="1"] .rain-board { display: none; }
+html[data-reduced-motion="1"] .rain-accessible-list {
+  position: relative;
+  width: auto;
+  height: auto;
+  clip: auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  white-space: normal;
+}
+html[data-reduced-motion="1"] .rain-static-letter { animation: none !important; transition: none; }
+html[data-high-contrast="1"] .rain-board { background: var(--card); outline: 3px solid var(--ink); }
+html[data-high-contrast="1"] .rain-drop__surface,
+html[data-high-contrast="1"] .rain-static-letter { border-color: var(--ink); outline: 4px solid var(--ink); box-shadow: none; }
+html[data-high-contrast="1"] .rain-puddle { outline: 3px solid var(--ink); }

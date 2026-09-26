@@ -4,7 +4,7 @@ import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
 import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
-import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
 import { LetterRainScene } from "./LetterRainScene";
@@ -31,6 +31,7 @@ export function LetterRainGame({
   const [splashedId, setSplashedId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const stars = useRef(0);
+  const tally = useRef({ hits: 0, misses: 0 });
   const started = useRef(Date.now());
   const lastRetrySpeech = useRef(0);
 
@@ -59,6 +60,9 @@ export function LetterRainGame({
     if (!round || caughtId) return;
     if (id !== round.answerId) {
       setSplashedId(id);
+      // Parent stats only: invisible to the child, no effect on stars/level.
+      tally.current.misses += 1;
+      update((p) => recordParentMiss(p, skill));
       const retry = L(
         "Splash! Try another letter — take your time.",
         "¡Splash! Prueba otra letra — tómate tu tiempo.",
@@ -79,6 +83,7 @@ export function LetterRainGame({
     setCaughtId(id);
     setMessage(text);
     stars.current += 2;
+    tally.current.hits += 1;
     update((current) => recordAnswer(current, {
       skill,
       correct: true,
@@ -93,7 +98,7 @@ export function LetterRainGame({
         update((current) => recordGameComplete(current, skill, total, 1));
         // Let this component persist its completion before the host records the
         // session from its own profile subscriber, avoiding a stale overwrite.
-        window.setTimeout(() => onFinish(total, 1), 80);
+        window.setTimeout(() => onFinish(total, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses)), 80);
       } else {
         setIndex((current) => current + 1);
         nextRound();

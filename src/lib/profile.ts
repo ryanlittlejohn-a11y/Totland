@@ -399,6 +399,17 @@ export function recordAnswer(p: Profile, e: AnswerEvent): Profile {
   return { ...p, skills: { ...p.skills, [e.skill]: s } };
 }
 
+/**
+ * Parent-stats-only miss used by the penalty-free bespoke games: counts the
+ * attempt for honest accuracy/mastery, but never touches streak, level,
+ * mastered items or stars, so the child's experience is unchanged.
+ */
+export function recordParentMiss(p: Profile, skill: SkillId): Profile {
+  const s = { ...skillOf(p, skill) };
+  s.attempts += 1;
+  return { ...p, skills: { ...p.skills, [skill]: s } };
+}
+
 export function recordGameComplete(p: Profile, skill: SkillId, stars: number, minutes = 1): Profile {
   const d = today();
   const days = [...p.days];

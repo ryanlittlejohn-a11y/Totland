@@ -6,6 +6,7 @@
  * activities. Adding a new game means adding a row here.
  */
 import type { SkillId } from "./content";
+import { wordSearchIsPremium } from "./wordsearch-map";
 
 export type EngineId =
   | "choice"
@@ -240,7 +241,8 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
     minutes: engine === "adventure" ? 8 : 2,
     rounds: engine === "choice" || engine === "fishing" || engine === "monster" || engine === "rain" ? 5 : 1,
     rewardStars: 3,
-    premium: premium === 1,
+    // Word Search rows follow their Word Finds puzzle tier (single source of truth).
+    premium: engine === "wordsearch" ? wordSearchIsPremium(kind) : premium === 1,
     completionThreshold: 0.6,
     retry: "hint-after-two",
   } satisfies GameRecord;

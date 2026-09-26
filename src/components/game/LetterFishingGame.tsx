@@ -4,14 +4,14 @@ import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
 import { say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
-import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
 import { FishingPond } from "./FishingPond";
 
 /**
  * Letter Fishing: drag the hook onto the spoken letter. Wrong catches are
- * never penalised: no miss recorded, no effect on stars or accuracy.
+ * never penalised for the child; a hidden miss feeds parent stats only.
  */
 export function LetterFishingGame({
   kind,
@@ -34,6 +34,7 @@ export function LetterFishingGame({
   const [bouncedId, setBouncedId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const stars = useRef(0);
+  const tally = useRef({ hits: 0, misses: 0 });
   const started = useRef(Date.now());
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
@@ -58,6 +59,9 @@ export function LetterFishingGame({
     if (!round || caughtId) return;
     if (id !== round.answerId) {
       // no penalty: letter slips away, try again
+      // Parent stats only: invisible to the child, no effect on stars/level.
+      tally.current.misses += 1;
+      update((p) => recordParentMiss(p, skill));
       setBouncedId(id);
       const m = L("Oops, it slipped away! Try another one.", "¡Uy, se escapó! Prueba otra.");
       setMessage(m);
@@ -70,6 +74,7 @@ export function LetterFishingGame({
     setCaughtId(id);
     setMessage(text);
     stars.current += 2;
+    tally.current.hits += 1;
     update((p) => recordAnswer(p, { skill, correct: true, responseMs: Date.now() - started.current, itemId: round.answerId }));
     themeChime(theme.motif, profile.sfx);
     say(stripEmoji(text));
@@ -77,7 +82,7 @@ export function LetterFishingGame({
       if (index + 1 >= ROUNDS) {
         const total = stars.current;
         update((p) => recordGameComplete(p, skill, total, 1));
-        onFinish(total, 1);
+        onFinish(total, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses));
       } else {
         setIndex((i) => i + 1);
         nextRound();

@@ -47,8 +47,8 @@ function WordFindPage() {
           <p className="mt-3 font-ui text-lg font-bold text-ink">{L("Premium puzzle", "Juego premium")}</p>
           <p className="mt-1 font-ui text-sm text-inksoft">
             {L(
-              `The first ${FREE_WORD_FINDS} word finds are free. Unlock all 100 with Totland Premium.`,
-              `Los primeros ${FREE_WORD_FINDS} juegos son gratis. Desbloquea los 100 con Totland Premium.`,
+              `The first ${FREE_WORD_FINDS} word finds are free. Unlock all ${WORD_FIND_THEMES.length} with Totland Premium.`,
+              `Los primeros ${FREE_WORD_FINDS} juegos son gratis. Desbloquea los ${WORD_FIND_THEMES.length} con Totland Premium.`,
             )}
           </p>
           <Link

@@ -5,9 +5,9 @@ import { useProfile } from "@/lib/profile";
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";
 import { L, title as tTitle } from "@/lib/i18n";
 
-const TITLE = "Word Finds — 100 Swipe-to-Find Puzzles | Totland";
+const TITLE = `Word Finds — ${WORD_FIND_THEMES.length} Swipe-to-Find Puzzles | Totland`;
 const DESC =
-  "100 gentle word find puzzles for little kids: swipe a finger across each hidden word, with pictures beside every word and friendly voice praise.";
+  `${WORD_FIND_THEMES.length} gentle word find puzzles for little kids: swipe a finger across each hidden word, with pictures beside every word and friendly voice praise.`;
 
 export const Route = createFileRoute("/wordfinds")({
   head: () => ({
@@ -36,8 +36,8 @@ function WordFindsPage() {
     <PlayFrame title={L("Word Finds", "Sopa de letras")}>
       <p className="font-ui text-sm text-inksoft">
         {L(
-          `100 puzzles. The first ${FREE_WORD_FINDS} are free to play again and again.`,
-          `100 juegos. Los primeros ${FREE_WORD_FINDS} son gratis y se pueden repetir.`,
+          `${WORD_FIND_THEMES.length} puzzles. The first ${FREE_WORD_FINDS} are free to play again and again.`,
+          `${WORD_FIND_THEMES.length} juegos. Los primeros ${FREE_WORD_FINDS} son gratis y se pueden repetir.`,
         )}
       </p>
       <div className="mt-4 grid grid-cols-2 gap-3">

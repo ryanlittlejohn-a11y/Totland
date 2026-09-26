@@ -130,3 +130,12 @@
 - [x] Verify: no other backend logout on the native return, session survives, website sign-in unchanged
 - [ ] (User) Rename the Lovable project to "Totland" and check the consent screen
 - [ ] (User, later) Own Apple Services ID + Google OAuth client to replace Lovable branding on Apple/Google screens
+
+## Pre-resubmission number audit (approved)
+- [x] Home locks individual games (area lock only for Flash Cards, which has no catalog games)
+- [x] Catalog Word Search games follow their Word Finds puzzle tier
+- [x] Hidden parent-only miss tracking in the six bespoke games
+- [x] Live counts replace typed-in activity numbers, picture words, Word Finds copy
+- [x] Honest Premium benefit list; "New content every month" removed
+- [x] Flash Cards / Storybooks show sessions instead of mastery bars
+- [x] Verify numbers, free access, Word Search tiers, penalty-free feel

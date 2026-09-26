@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "../components/LegalPage";
+import { WORD_FIND_THEMES } from "@/lib/wordfinds";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -88,7 +89,7 @@ function TermsPage() {
         </p>
         <p>Totland Premium unlocks:</p>
         <ul>
-          <li>all 100 Word Find puzzles;</li>
+          <li>all {WORD_FIND_THEMES.length} Word Find puzzles;</li>
           <li>the premium learning worlds and their activities;</li>
           <li>
             offline play, so activities continue to work without an internet

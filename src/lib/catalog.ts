@@ -179,7 +179,7 @@ const ROWS: Row[] = [
   [80, "Long or Short", "📏", "choice", "longShort", P, "puzzles", "Compare length", "elr"],
 
   [81, "Simple Jigsaw", "🧩", "choice", "jigsawPiece", P, "puzzles", "Four-piece jigsaw", "elr"],
-  [82, "Animal Jigsaw", "🐨", "choice", "jigsawPiece", P, "puzzles", "Six-piece jigsaw", "lr", 1],
+  [82, "Animal Jigsaw", "🐨", "jigsaw", "jigsawPiece", P, "puzzles", "Six-piece jigsaw", "lr", 1],
   [83, "Alphabet Jigsaw", "🔠", "choice", "letterPuzzle", P, "puzzles", "Assemble letters", "lr"],
   [84, "Number Jigsaw", "🔢", "choice", "numberPuzzle", P, "puzzles", "Assemble numbers", "lr"],
   [85, "Picture Puzzle", "🖼️", "choice", "completePicture", P, "puzzles", "Complete an image", "lr", 1],

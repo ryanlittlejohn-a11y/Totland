@@ -119,6 +119,8 @@ function GameHost() {
         <FeedTheLetterMonsterGame key={key} kind={game.kind} skill={game.skill} rounds={game.rounds} theme={theme} onFinish={finish} />
       ) : engine === "rocket" ? (
         <WordRocketGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
+      ) : engine === "jigsaw" ? (
+        <AnimalJigsawGame key={key} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "hunt" ? (
         <HuntGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "order" ? (

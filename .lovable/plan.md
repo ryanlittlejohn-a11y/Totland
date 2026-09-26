@@ -1,43 +1,45 @@
-# TestFlight account deletion DEL-NET — confirmed findings
+# Blast radius: missing `x-tsr-serverfn` permission in the native app
 
-## Root cause
+## Short answer
+Every one of the app's 9 server calls sends the same `x-tsr-serverfn` header, so from the phone app **every one of them is blocked before it reaches the server**, reads (GET) and writes (POST) alike. The allowed-header list in `src/start.ts` only includes `authorization, content-type, x-tsr-redirect, accept`. Capacitor plugin calls (RevenueCat, the in-app browser, sign-in itself, and direct backend calls made through the normal backend client) don't go through this and are unaffected.
 
-`DEL-NET` is caused by the native app's cross-origin permission check, not by Wi-Fi and not by the deletion logic.
+## Call-by-call
 
-The strong hypothesis was partly right:
+| # | Call | What it does | Used in the phone app? | What happens today when it fails |
+|---|------|--------------|------------------------|----------------------------------|
+| 1 | `deleteMyAccount` | Deletes the account | Yes | Visible failure: "DEL-NET" (the confirmed bug) |
+| 2 | `getMySubscription` (useEntitlementSync) | Asks the server whether this account has Premium | Yes, runs on every launch, on sign-in/out, and when the phone comes back online | **Silent.** The error is swallowed as a "network hiccup" |
+| 3 | `getMySubscription` (subscription screen) | Shows plan status, renewal date, "canceling" / "past due" notices | Yes | Silent. Logged to the console; the screen shows no server plan details |
+| 4 | `listChildren` / `upsertChild` / `deleteChild` (useChildSync) | Keeps child profiles and progress in sync with the family account | Yes, every 60s while signed in | **Silent.** Errors are swallowed and play continues from the phone's own copy |
+| 5 | `speakText` | Fetches a narration line that isn't already stored | Rarely. Normal narration plays from the bundled approved clips | Silent. Returns nothing, and further voice requests are turned off for the session |
+| 6 | `submitContactInquiry` | Contact form | Yes, if a parent opens Contact inside the app | Visible: "We couldn't send your message right now" |
+| 7 | `resolvePaddlePrice` | Web checkout price check | No. Paddle only runs on the website | None on the phone |
 
-1. TanStack constructs `deleteMyAccount` as a relative `/_serverFn/...` request.
-2. Totland's native request bridge is installed early and recognizes `/_serverFn` paths. In the packaged app it correctly rewrites that request from `capacitor://localhost/_serverFn/...` to `https://totland.app/_serverFn/...`.
-3. The rewritten request carries TanStack's required custom `x-tsr-serverFn: true` header, plus the sign-in authorization header.
-4. That makes it a cross-origin request requiring browser permission before the deletion request can be sent.
-5. Totland's live backend currently allows `authorization, content-type, x-tsr-redirect, accept`, but **does not allow `x-tsr-serverFn`**.
-6. A direct check against the live backend reproduced the mismatch: the phone asks permission for `authorization,content-type,x-tsr-serverfn,accept`, while the response omits `x-tsr-serverfn`.
-7. The webview therefore blocks the real POST before `deleteMyAccount` runs and reports a fetch `TypeError`. The client classifies that as `DEL-NET`, even with working Wi-Fi.
+## getMySubscription: failing the whole time, and it does matter
+Yes. It has almost certainly failed on every native launch since the allowed-header list was added. For App Store buyers the failure is **hidden**, because RevenueCat is checked first and returns early. The real gaps are elsewhere:
 
-## What this rules out
+1. **Premium bought on the website doesn't carry over to the phone.** A parent who subscribed through Paddle on totland.app and signs in on the phone never gets Premium there. RevenueCat knows nothing about that purchase, and the server check that would grant it is the one being blocked. This is a real, unnoticed bug.
+2. **A lapsed store subscription isn't cleared by the server.** This does no harm today, because Premium is kept only in memory (never trusted from storage) and starts as "not Premium" on each launch.
+3. **Subscription screen is incomplete on the phone.** Status, renewal date and cancel/past-due notices from the server never show. App Store buyers still see "active" through RevenueCat (`storeActive`), so this has gone unnoticed.
+4. **Sign-out safety net never runs.** The "session was rejected, so sign out locally" branch never runs on the phone, because the error is a blocked request, not "unauthorized". Minor.
 
-- The request is **not** being left at `capacitor://localhost`; the native bridge already redirects it to Totland's real backend.
-- This failure occurs before the protected server function and before its sign-in middleware, so an expired session is not the cause of this specific `DEL-NET` result.
-- No child profiles, subscription rows, or account login can be partially deleted by this failure because the destructive POST never starts.
-- The existing deletion order and retry behavior are not implicated in this particular failure.
+## useChildSync: a second hidden bug
+Child profile sync has never worked from the phone. Progress made in the app never reaches the account, and children added on the website or another device never appear. Nothing shows an error. This also explains a result from the deletion testing: the child profiles that came back during deletion were re-created by the **website** sync in the test browser, not by the phone. On the phone, sync can't interfere with deletion today. Once the fix goes in it can, and the server-side final sweep we already added covers that.
 
-## Actual fix
+## What the header fix will change on the phone (all expected, but worth knowing)
+- Account deletion works.
+- Website-bought Premium starts working on the phone after sign-in.
+- Child progress starts syncing for signed-in parents. On first sync, the phone's local children are pushed up and the account's children are merged in. Existing phone-only progress is kept, because local changes are marked "unsynced" and uploaded rather than overwritten.
+- The subscription screen shows full plan details.
+- Contact form works in the app.
 
-Add `x-tsr-serverfn` to the native backend's allowed request-header list in the existing native cross-origin middleware. Header names are case-insensitive; using lowercase keeps the declaration aligned with the browser's preflight request.
+None of this touches payments, RevenueCat, Paddle, pricing, sign-in, or the parental gate. It is a one-line server permission change.
 
-Then verify:
+## Proposed fix (awaiting approval)
+- `src/start.ts`: add `x-tsr-serverfn` to `access-control-allow-headers` for the native origins only.
+- Verify with a throwaway account by sending native-origin (`capacitor://localhost`) preflight + real requests for: account deletion, subscription check, child list/save/delete, and the contact form. Confirm website requests are unchanged.
+- Then a new Codemagic build + TestFlight: deletion, a website-Premium account signing in on the phone, and child sync across phone and website.
 
-1. A native-origin preflight explicitly permits every header TanStack sends.
-2. A throwaway signed-in account reaches `deleteMyAccount` and is deleted successfully through the same native-origin request path.
-3. Web account deletion still works.
-4. Invalid sign-ins still show the sign-in-again message rather than `DEL-NET`.
-5. No changes are made to purchase handling, RevenueCat, Paddle, pricing, or the parental gate.
-
-## Evidence locations
-
-- `src/lib/native-bridge.ts:20–33` — rewrites local server-function paths to `apiOrigin()`.
-- `src/lib/native.ts:31–42` — `apiOrigin()` defaults to `https://totland.app`; `/_serverFn` is explicitly recognized.
-- `src/routes/__root.tsx:19,151–157` — installs the bridge at app startup; the bridge module also installs itself on import.
-- TanStack client request code — constructs the relative server-function URL and adds `x-tsr-serverFn` to every request.
-- `src/start.ts:61–67` — native allowed headers omit `x-tsr-serverfn`.
-- `src/routes/parent.subscription.tsx:171–183` — a blocked fetch is classified as `DEL-NET`.
+## Technical notes
+- Any request header outside the CORS safelist (here `x-tsr-serverfn`) triggers a preflight, whether the request is a GET or a POST. So the GET server functions are blocked too, not only POSTs.
+- useEntitlementSync and useChildSync only treat `/unauthorized|invalid token/` as special. A blocked request surfaces as a `TypeError` and falls into the "keep last answer / keep local copy" branch.

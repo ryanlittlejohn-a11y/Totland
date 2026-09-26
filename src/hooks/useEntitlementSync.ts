@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
+import { setVerifiedPremiumSettled } from "@/lib/profile";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription } from "@/lib/subscription.functions";
 import { setVerifiedPremium } from "@/lib/profile";

@@ -179,14 +179,45 @@ const FAMILY_KEY = "totland.family.v1";
  */
 let verifiedPremium = false;
 
+/**
+ * True once the first launch-time Premium check has finished, whatever the
+ * answer was. Until then the OfflineGate must not decide "offline": a Premium
+ * family launching with no internet still has their store answer loading.
+ */
+let verifiedPremiumSettled = false;
+
 export function setVerifiedPremium(value: boolean) {
   if (verifiedPremium === value) return;
   verifiedPremium = value;
   if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("totland:profile"));
 }
 
+export function setVerifiedPremiumSettled() {
+  if (verifiedPremiumSettled) return;
+  verifiedPremiumSettled = true;
+  if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("totland:profile"));
+}
+
 export function isVerifiedPremium(): boolean {
   return verifiedPremium;
+}
+
+export function isVerifiedPremiumSettled(): boolean {
+  return verifiedPremiumSettled;
+}
+
+/** Reactive pair for components that gate on Premium being known. */
+export function useVerifiedPremiumState() {
+  const [state, setState] = useState(() => ({
+    premium: verifiedPremium,
+    settled: verifiedPremiumSettled,
+  }));
+  useEffect(() => {
+    const sync = () => setState({ premium: verifiedPremium, settled: verifiedPremiumSettled });
+    window.addEventListener("totland:profile", sync);
+    return () => window.removeEventListener("totland:profile", sync);
+  }, []);
+  return state;
 }
 
 const SHARED_KEYS = [

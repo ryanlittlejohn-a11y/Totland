@@ -290,7 +290,54 @@ export function say(text: string, opts: { rate?: number; pitch?: number } = {}) 
   })();
 }
 
+/** Resolve one line to a playable clip URL (device cache, then shared library). */
+async function resolveClip(text: string, lang: string): Promise<string | null> {
+  const cached = await cachedBlobUrl(text, lang);
+  if (cached) return cached;
+  if (typeof navigator !== "undefined" && navigator.onLine === false) return null;
+  if (!canUseRemoteNarration(text)) return null;
+  return fetchAndStore(text, lang);
+}
+
+/** Speak short lines back to back as separate clips — e.g. praise, then the
+ *  teaching line — so each piece is recorded once and reused everywhere.
+ *  Any piece without a clip falls back to the device voice for the remainder. */
+export function sayParts(parts: string[], opts: { rate?: number; pitch?: number } = {}) {
+  const pieces = parts.map((p) => stripEmoji(p)).filter(Boolean);
+  if (pieces.length <= 1) {
+    say(pieces[0] ?? "", opts);
+    return;
+  }
+  if (!enabled || typeof window === "undefined") return;
+  const lang = getLang();
+  const token = ++playToken;
+  stopAudio();
+  if ("speechSynthesis" in window) window.speechSynthesis.cancel();
+
+  void (async () => {
+    const urls = await Promise.all(pieces.map((p) => resolveClip(p, lang)));
+    if (token !== playToken || !enabled) return;
+    const playFrom = (i: number) => {
+      if (token !== playToken || !enabled || i >= pieces.length) return;
+      const url = urls[i];
+      if (!url || !player) {
+        sayWithDeviceVoice(pieces.slice(i).join(" "), opts);
+        return;
+      }
+      playUrl(url, token);
+      if (i + 1 < pieces.length) {
+        player.onended = () => {
+          duckMusic(false);
+          window.setTimeout(() => playFrom(i + 1), 120);
+        };
+      }
+    };
+    playFrom(0);
+  })();
+}
+
 /** Wait for a quiet moment before doing more background work. */
+
 function idle(ms: number): Promise<void> {
   return new Promise((resolve) => {
     const go = () => resolve();

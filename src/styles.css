@@ -560,6 +560,7 @@ html[data-high-contrast="1"] .jigsaw-slot { outline: 4px solid var(--ink); box-s
 .maze-stone.is-hint { animation: maze-pulse 600ms ease-in-out 2; }
 .maze-stone.is-wrong { animation: maze-wiggle 500ms ease-in-out; }
 .maze-reveal { animation: maze-pop 700ms cubic-bezier(.3,1.6,.5,1); }
+.maze-stone.is-done { opacity: 0; transform: translate(-50%, -50%) scale(0.4); transition: opacity 400ms ease, transform 400ms ease; pointer-events: none; }
 @keyframes maze-pulse { 50% { transform: translate(-50%, -50%) scale(1.15); } }
 @keyframes maze-wiggle { 25% { transform: translate(-58%, -50%) rotate(-8deg); } 75% { transform: translate(-42%, -50%) rotate(8deg); } }
 @keyframes maze-pop { 0% { transform: scale(0.2); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }

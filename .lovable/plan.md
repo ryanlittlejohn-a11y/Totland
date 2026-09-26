@@ -19,10 +19,29 @@ Recommendation: **A**. B and C make the pieces too alike to be a fair puzzle for
 
 Silhouette: no extra image. The target outline is the same picture shown as a faint dark shape with dashed piece borders, so it always lines up exactly with the pieces.
 
-## Piece count
-- Six pieces in a 3x2 grid with rounded jigsaw tabs, which matches the catalog description. Pieces are about 110–140 px on a phone, well above the usual minimum touch size.
-- The game already has age modes and levels, so easier play could start at 4 pieces (2x2) and step up to 6. **Your call:** always 6 (matches the description), or 4 then 6 as the child progresses.
-- One animal per round, 3 animals per game (6 pieces x 5 rounds is too long for toddlers). I can make it 5 if you prefer.
+## Difficulty tiers tied to the existing level scale
+The app's adaptive engine levels a skill 1–5 (three correct in a row level up, two misses level down). Because this game never records misses (wrong drops are penalty-free), a child's puzzles level rises steadily with play — which is exactly what a jigsaw ramp wants.
+
+| Level | Pieces | Grid | Cut style |
+|---|---|---|---|
+| 1–2 | 2 | 2x1 (left/right halves) | One straight cut down the middle |
+| 3 | 4 | 2x2 | Straight-edged grid cuts |
+| 4 | 6 | 3x2 (matches the "Six-piece jigsaw" description) | Rounded jigsaw tabs |
+| 5 | 9 | 3x3 | Straight-edged grid cuts |
+
+Reasoning: levels 1–2 share 2 pieces because two halves already teach the "pieces make a picture" idea and the jump to 4 is the big one; 9 pieces is kept for level 5 only, since by then the child has earned it through steady play.
+
+**Tabs vs straight cuts at 9 pieces:** at 3x3 on a phone, each piece is about 100–110 px — big enough to touch, but adding interlocking tabs makes each piece's grab area uneven (the tab dips shrink it) and makes slot edges visually busy for ages 2–6. Straight-edged grid cuts keep all nine pieces evenly sized and easy to grab, and the difficulty already comes from having more pieces. Tabs appear only at 6 pieces, where pieces are ~120–140 px and tabs add charm without hurting touch targets.
+
+## Rounds per session scale with piece count
+Each round is one animal. Sessions stay short either way:
+- 2 pieces → 4 animals (each is quick)
+- 4 pieces → 3 animals
+- 6 pieces → 3 animals
+- 9 pieces → 2 animals
+
+## One image per animal, all tiers
+The same six AI-drawn illustrations are used at every level — only the cut pattern changes. No extra art per difficulty. Each image stays square so 2x1, 2x2, 3x2 and 3x3 cuts all crop cleanly.
 
 ## Interaction (same rules as the other three)
 - Pieces sit scattered in a tray below the silhouette and can be dragged. Each has one correct slot.

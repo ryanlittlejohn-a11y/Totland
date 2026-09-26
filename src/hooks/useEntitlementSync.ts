@@ -61,14 +61,24 @@ export function useEntitlementSync() {
 
       try {
         const { data } = await supabase.auth.getSession();
-        const user = data.session?.user;
-        if (!user || !user.email_confirmed_at) {
+        const session = data.session;
+        const user = session?.user;
+        const token = session?.access_token ?? "";
+        const expired = typeof session?.expires_at === "number" && session.expires_at * 1000 <= Date.now();
+        if (!user || !user.email_confirmed_at || token.split(".").length !== 3 || expired) {
+          if (user && (token.split(".").length !== 3 || expired)) {
+            await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+          }
           setPremium(false);
           return;
         }
         const state = await fetchSubscription({ data: { environment: getPaddleEnvironment() } });
         setPremium(state.active);
-      } catch {
+      } catch (err) {
+        if (err instanceof Error && /unauthorized|invalid token/i.test(err.message)) {
+          await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+          setPremium(false);
+        }
         // Network or backend hiccup: keep the last verified answer.
       }
     };

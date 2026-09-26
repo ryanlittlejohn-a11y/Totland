@@ -3,7 +3,7 @@ import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { generateRound, type Option, type Round } from "@/lib/games";
 import { roundForKind } from "@/lib/rounds";
-import { chime, say, setNarration, stripEmoji } from "@/lib/speech";
+import { chime, say, sayParts, setNarration } from "@/lib/speech";
 import { themeChime } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { GameThemeScene } from "./GameThemeScene";

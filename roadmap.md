@@ -111,4 +111,4 @@
 ## Honest skill-area exploration (approved plan)
 - [x] Replace Home difficulty-level bars with named games explored / total games per skill
 - [x] Give Flash Cards a neutral ready state and relabel parent area bars as mastery
-- [ ] Verify empty, partial, full, replayed, locked, bilingual, world, and parent states
+- [x] Verify empty, partial, full, replayed, locked, bilingual, world, and parent states

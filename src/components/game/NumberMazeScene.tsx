@@ -78,7 +78,7 @@ export function NumberMazeScene({
             onClick={() => onTap(i)}
             className={`maze-stone absolute grid place-items-center rounded-full font-ui text-3xl font-bold ${
               isConnected ? "is-connected" : ""
-            } ${isNext ? "is-next" : ""} ${isNext && hintNext ? "is-hint" : ""} ${wrongIndex === i ? "is-wrong" : ""}`}
+            } ${isNext ? "is-next" : ""} ${isNext && hintNext ? "is-hint" : ""} ${wrongIndex === i ? "is-wrong" : ""} ${done ? "is-done" : ""}`}
             style={{ left: `${p.x}%`, top: `${p.y}%` }}
           >
             {n}

@@ -11,7 +11,7 @@ import { FishingPond } from "./FishingPond";
 
 /**
  * Letter Fishing: drag the hook onto the spoken letter. Wrong catches are
- * never penalised: no miss recorded, no effect on stars or accuracy.
+ * never penalised for the child; a hidden miss feeds parent stats only.
  */
 export function LetterFishingGame({
   kind,

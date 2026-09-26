@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { Link } from "@tanstack/react-router";
 
 import {
   configurePurchases,
@@ -31,7 +32,7 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
   const [offers, setOffers] = useState<StoreOffer[]>([]);
   const [busy, setBusy] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
+  const storeName = nativePlatform() === "android" ? "Google Play" : "App Store";
 
   useEffect(() => {
     let cancelled = false;
@@ -138,6 +139,17 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
         No account needed — you can subscribe and restore with your {storeName} account alone. Payment is charged to
         your {storeName} account. Subscriptions renew automatically unless you cancel at least 24 hours before the
         period ends; you can manage or cancel them in your device settings.
+      </p>
+      <p className="mt-2 text-xs text-inksoft">
+        By subscribing you agree to our{" "}
+        <Link to="/terms" className="underline">
+          Terms of Use
+        </Link>{" "}
+        and{" "}
+        <Link to="/privacy" className="underline">
+          Privacy Policy
+        </Link>
+        .
       </p>
     </>
   );

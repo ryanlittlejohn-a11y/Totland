@@ -117,3 +117,9 @@
 - [x] Add the self-contained rain engine and accessible animated/static scene
 - [x] Keep wrong catches and waiting penalty-free across all five skill levels
 - [x] Verify accessibility, motion/contrast modes, performance proxy, layouts, and game regressions
+
+## TestFlight subscription fixes (approved)
+- [x] OfflineGate waits for the first Premium check (settled signal) before showing the offline screen
+- [x] Fix "your the App Store account" copy in StorePurchasePanel
+- [x] Add Terms/Privacy links inside the native purchase box
+- [x] Verify offline cold launch (Premium vs free), panel copy, link targets

@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
+import { setVerifiedPremiumSettled } from "@/lib/profile";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription } from "@/lib/subscription.functions";
 import { setVerifiedPremium } from "@/lib/profile";
@@ -53,6 +54,8 @@ export function useEntitlementSync() {
     const verify = async () => {
       const offline = typeof navigator !== "undefined" && navigator.onLine === false;
       const fromStore = await storePremium();
+      // First answer is in: the offline gate may now decide.
+      setVerifiedPremiumSettled();
       if (fromStore) {
         setPremium(true);
         return;

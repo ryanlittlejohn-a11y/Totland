@@ -35,5 +35,10 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
       return { ok: false, step: "account" };
     }
 
+    // Final sweep: a background family sync that was already in flight could
+    // have re-saved a child profile between the first step and the login
+    // removal. Remove anything that slipped in so nothing is left behind.
+    await supabaseAdmin.from("child_profiles").delete().eq("user_id", userId);
+
     return { ok: true };
   });

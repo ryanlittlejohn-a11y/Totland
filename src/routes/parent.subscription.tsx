@@ -119,7 +119,7 @@ function Subscription() {
   const { storeActive, refresh: refreshStore } = useStoreEntitlement(user?.id ?? null);
   const active = (emailVerified && (sub?.active ?? false)) || storeActive;
   const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
-  const storeName = nativePlatform() === "android" ? "Google Play" : "the App Store";
+  const storeName = nativePlatform() === "android" ? "Google Play" : "App Store";
 
 
   const removeAccount = useServerFn(deleteMyAccount);

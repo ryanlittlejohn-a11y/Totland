@@ -159,4 +159,5 @@
 - [x] Permission header on error replies to the app
 - [x] Remove forced refreshSession() from deletion
 - [x] Log the source of every sign-out
-- [ ] Verify: real server error shows its code; simultaneous refresh doesn't sign out; deletion end to end
+- [x] Verify: real server error shows its code; simultaneous refresh doesn't sign out; deletion end to end
+- [ ] (User) Publish, new Codemagic build, TestFlight retest of deletion; send the [signout] line if a sign-out happens

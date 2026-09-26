@@ -3,7 +3,7 @@ import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
-import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
+import { chime, say, sayParts, setNarration, themeChime } from "@/lib/speech";
 import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
@@ -91,7 +91,7 @@ export function LetterRainGame({
       itemId: round.answerId,
     }));
     themeChime(theme.motif, profile.sfx);
-    say(stripEmoji(text));
+    sayParts([praise, round.reveal ?? ""]);
     window.setTimeout(() => {
       if (index + 1 >= ROUNDS) {
         const total = stars.current;

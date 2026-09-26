@@ -176,3 +176,9 @@
 ## Future game interaction backlog
 - [x] Letter/Number Pop games (findUpper/findNumber choice-engine games): make the selected tile visually pop and disappear on a correct answer, instead of showing a green checkmark overlay on top of the still-present tile.
 - [x] Hunt-type games (Alphabet Safari, Letter Detective, and other hunt-engine games): once all copies of the target letter/item are found (e.g. “4 of 4 found”), the game does not automatically advance to the next round or the reward screen — investigate and fix.
+
+## English narration Tier 1 (approved 2026-09-26)
+- [x] Praise and reveal/hint play as back-to-back clips (component approach)
+- [x] Rhyme hints use a comma instead of "…" so Hannah can say them
+- [ ] Record Tier 1 English lines + rhyme hints: 91 of 763 recorded (1,699 credits); blocked — the ElevenLabs API key "Lovable" hit its own credit cap (account still has credit)
+- [ ] Later decision: Tier 2 (prompts, Word Finds) and Tier 3 (reveals/hints); Spanish out of scope

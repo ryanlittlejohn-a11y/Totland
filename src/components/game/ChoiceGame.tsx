@@ -3,7 +3,7 @@ import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { generateRound, type Option, type Round } from "@/lib/games";
 import { roundForKind } from "@/lib/rounds";
-import { chime, say, setNarration, stripEmoji } from "@/lib/speech";
+import { chime, say, sayParts, setNarration } from "@/lib/speech";
 import { themeChime } from "@/lib/speech";
 import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { GameThemeScene } from "./GameThemeScene";
@@ -70,7 +70,7 @@ export function ChoiceGame({
       setStars((s) => s + (misses === 0 ? 2 : 1));
       setMessage(`${praise} ${round.reveal ?? ""}`.trim());
       themeChime(theme.motif, profile.sfx);
-      say(stripEmoji(`${praise} ${round.reveal ?? ""}`));
+      sayParts([praise, round.reveal ?? ""]);
       window.setTimeout(() => {
         if (index + 1 >= ROUNDS) {
           const total = stars + (misses === 0 ? 2 : 1);
@@ -88,7 +88,7 @@ export function ChoiceGame({
       setWrongId(opt.id);
       setMessage(misses >= 1 ? `${praise} ${round.hint}` : praise);
       chime("retry", profile.sfx);
-      say(stripEmoji(misses >= 1 ? `${praise} ${round.hint}` : praise));
+      sayParts(misses >= 1 ? [praise, round.hint] : [praise]);
       window.setTimeout(() => {
         setState("asking");
         setWrongId(null);

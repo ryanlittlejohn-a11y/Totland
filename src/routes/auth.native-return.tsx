@@ -50,8 +50,10 @@ function NativeReturn() {
       done = true;
       const frag = new URLSearchParams(t).toString();
       const url = `app.totland.kids://auth-callback?n=${n}#${frag}`;
-      // Don't keep a web session on this browser sheet.
-      void supabase.auth.signOut({ scope: "local" });
+      // Don't keep a web session on this browser sheet — but clear it on this
+      // device only. signOut() would also end the session on the backend,
+      // which is the very session the app is about to use.
+      clearSheetSession();
       setLink(url);
       window.location.href = url;
     };

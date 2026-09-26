@@ -34,6 +34,18 @@ function tokensFromUrl(): { access_token: string; refresh_token: string } | null
   return null;
 }
 
+/** Removes the saved sign-in from this browser's storage without contacting the backend. */
+function clearSheetSession(): void {
+  try {
+    const key = (supabase.auth as unknown as { storageKey?: string }).storageKey;
+    if (key) {
+      for (const k of [key, `${key}-code-verifier`, `${key}-user`]) localStorage.removeItem(k);
+    }
+  } catch {
+    /* storage unavailable — nothing to clear */
+  }
+}
+
 function NativeReturn() {
   const [link, setLink] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);

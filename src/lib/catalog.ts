@@ -12,6 +12,7 @@ export type EngineId =
   | "fishing"
   | "monster"
   | "rocket"
+  | "jigsaw"
   | "hunt"
   | "order"
   | "memory"
@@ -228,7 +229,7 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
     difficultyMax: 5,
     interaction:
       engine === "hunt" ? "tap-many"
-      : engine === "fishing" || engine === "monster" || engine === "rocket" ? "drag"
+      : engine === "fishing" || engine === "monster" || engine === "rocket" || engine === "jigsaw" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
       : engine === "tracing" ? "trace"

@@ -91,7 +91,9 @@ export function LetterRainGame({
       if (index + 1 >= ROUNDS) {
         const total = stars.current;
         update((current) => recordGameComplete(current, skill, total, 1));
-        onFinish(total, 1);
+        // Let this component persist its completion before the host records the
+        // session from its own profile subscriber, avoiding a stale overwrite.
+        window.setTimeout(() => onFinish(total, 1), 80);
       } else {
         setIndex((current) => current + 1);
         nextRound();

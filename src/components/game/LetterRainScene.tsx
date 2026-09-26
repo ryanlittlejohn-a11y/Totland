@@ -45,7 +45,9 @@ export function LetterRainScene({
       ...letter,
       lane: `${((index + 0.5) / letters.length) * 100}%`,
       duration: `${9 + ((index * 2 + letters.length) % 6)}s`,
-      delay: `${index * 0.8}s`,
+      // Negative offsets distribute the drops through their lanes immediately,
+      // instead of presenting an empty board during the first fall cycle.
+      delay: `-${index * 2.1 + 0.6}s`,
     })),
     [letters],
   );

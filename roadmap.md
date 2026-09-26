@@ -104,5 +104,5 @@
 - [x] Letter Fishing: drag-the-hook engine + generic useDragToTarget primitive (penalty-free wrong catches, tap fallback)
 - [x] Feed the Letter Monster: keyed draggable letters into one mouth target, penalty-free retries, tap fallback
 - [x] Word Rocket: drag letters into per-letter fuel slots (flexible order, penalty-free wrong drops, tap fallback)
-- [ ] Animal Jigsaw on the drag primitive (later)
+- [ ] Animal Jigsaw: 4-tier levels (2/4/6/9 pieces), 6 AI animal images, drag puzzle; verify all tiers + Fishing/Monster/Rocket regressions
 - [x] Named game list per skill area (/play/$area layout + index + quick)

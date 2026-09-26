@@ -139,3 +139,9 @@
 - [x] Honest Premium benefit list; "New content every month" removed
 - [x] Flash Cards / Storybooks show sessions instead of mastery bars
 - [x] Verify numbers, free access, Word Search tiers, penalty-free feel
+
+## Account deletion fix (approved)
+- [x] Client explains the real reason (offline / sign-in expired / server code)
+- [x] Refresh + confirm sign-in before deleting
+- [x] Server deletes children, subscriptions, then login; safe to retry
+- [x] Verify with a throwaway test account

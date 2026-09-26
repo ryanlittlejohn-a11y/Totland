@@ -1,3 +1,4 @@
+import { signOutLocal } from "@/lib/signout-log";
 import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
@@ -72,7 +73,7 @@ export function useEntitlementSync() {
         setPremium(state.active);
       } catch (err) {
         if (err instanceof Error && /unauthorized|invalid token/i.test(err.message)) {
-          await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+          await signOutLocal("premium-check", err.message);
           setPremium(false);
         }
         // Network or backend hiccup: keep the last verified answer.

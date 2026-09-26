@@ -1,3 +1,4 @@
+import { signOutLocal } from "@/lib/signout-log";
 import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
@@ -92,7 +93,7 @@ export function useChildSync() {
       } catch (err) {
         // A rejected session on the backend: clear it so the error stops repeating.
         if (err instanceof Error && /unauthorized|invalid token/i.test(err.message)) {
-          await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+          await signOutLocal("child-sync", err.message);
         }
         // Offline or a backend hiccup: keep playing from the device copy.
       } finally {

@@ -1,3 +1,4 @@
+import { signOutLocal } from "@/lib/signout-log";
 import { supabase } from "@/integrations/supabase/client";
 import { apiOrigin } from "./native";
 
@@ -82,7 +83,7 @@ export async function completeNativeOAuth(url: string): Promise<boolean> {
         const { data: u, error: userError } = await supabase.auth.getUser();
         if (userError || !u.user) {
           ok = false;
-          await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+          await signOutLocal("native-sign-in", userError?.message ?? "no user after handover");
         }
       }
     }

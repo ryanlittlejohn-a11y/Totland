@@ -154,3 +154,9 @@
 - [x] Refresh + confirm sign-in before deleting
 - [x] Server deletes children, subscriptions, then login; safe to retry
 - [x] Verify with a throwaway test account
+
+## Deletion DEL-NET + sign-out fix (approved 2026-09-26)
+- [x] Permission header on error replies to the app
+- [x] Remove forced refreshSession() from deletion
+- [x] Log the source of every sign-out
+- [ ] Verify: real server error shows its code; simultaneous refresh doesn't sign out; deletion end to end

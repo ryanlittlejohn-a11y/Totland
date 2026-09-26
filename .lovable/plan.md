@@ -1,36 +1,50 @@
-# Account deletion still failing on TestFlight: findings and next steps
+# Subscription-screen clarity and management
 
-## Finding 1: Is the live site running the fix? Yes, as of now (tested directly)
+## Part A — make account deletion unambiguous
 
-A preflight sent to https://totland.app just now, as if from the phone app, came back correct:
-- 204, `access-control-allow-origin: capacitor://localhost`
-- `access-control-allow-headers: authorization,content-type,x-tsr-redirect,x-tsr-serverfn,accept`
+Replace the current warning with concise copy that separates account data, store billing, and device-only play data:
 
-So the permission fix is live now. I can't tell from here whether it was already live when you tested. If you published after you ran that TestFlight test, the test hit the old site and will fail differently when you retry. The phone app sends every server call to totland.app, so what counts is the live site, not the app build.
+> This permanently deletes your grown-up account and child profiles saved to it. It does not cancel an App Store or Google Play subscription, and it does not erase play progress or stars stored on this device. This cannot be undone.
 
-**New problem found in the same test:** when a server call fails on the live site, the error reply has no permission header for the phone app. A test call came back `500` with an HTML "This page didn't load" page and no `access-control-allow-origin`. The phone's web view hides any reply without that header and reports it as a network failure. So **any server-side failure shows up as DEL-NET on the phone**, even with the preflight fixed. DEL-NET no longer proves there's a connection problem.
+- When a subscription is active, keep the existing highlighted billing warning immediately below this explanation, but tighten it to direct the parent to **Manage subscription** before deleting.
+- Update the success message so it does not imply that store billing or device-only progress was removed.
+- Preserve the typed `DELETE` confirmation and all deletion behaviour.
 
-The most likely server-side failure is a **mismatch between the app build and the live site**. Each server call is addressed by an ID made during the build. If the TestFlight app and the published site came from different builds, the phone asks for an ID the live site doesn't have. That gives the same 500 we saw in dev after a restart, and on the phone it looks like DEL-NET. This isn't confirmed yet. The TestFlight bundle and the live site need to be compared (step 1 below).
+## Part B — add a real native “Manage subscription” button
 
-## Finding 2: What caused the sign-out? Narrowed down, not confirmed
+The installed RevenueCat library already returns `CustomerInfo.managementURL`. This is a real, store-selected management destination:
 
-- **Deletion code: ruled out.** `doDelete` only signs out after the server confirms the deletion worked. On DEL-NET it never gets there.
-- **Sign-in check before deletion: ruled out.** If that check had signed you out, you'd see "Your sign-in has expired", not DEL-NET.
-- **Background checks (Premium check and child sync): ruled out for this error.** They only sign out when the error text says "unauthorized" or "invalid token". An HTML 500 page, or a reply the phone blocked, doesn't match.
-- **Most likely cause: two sign-in refreshes at once.** `doDelete` forces a refresh first (`refreshSession()`). The sign-in system may also be refreshing on its own at the same moment, when the app comes to the front or the 60-second child sync runs. If both use the same one-time refresh token, the backend treats it as reused and **ends the session on the server**. The app then signs out. That fits "signed out afterward, never before", because the forced refresh is new in the last deletion fix. It's the same kind of bug as the earlier Apple sign-in issue: the session really gets ended on the backend.
-- The backend's sign-in logs for the last 72 hours came back empty to my query, so I can't confirm this from logs yet.
+- **iOS/iPadOS:** the App Store subscription-management destination.
+- **Android:** the Google Play subscription-management destination, normally scoped to the relevant subscription/account.
+- RevenueCat chooses the current device’s store when subscriptions exist on more than one platform.
+- It returns `null` when there is no manageable active store subscription.
 
-## Proposed steps (need your approval: this touches sign-in and account deletion)
+Implementation:
 
-1. **Confirm the build match (no code change).** Compare the server call IDs in the TestFlight/Codemagic bundle with the published build. If they differ, fix the release process so the site is published from the same code before every Codemagic build. Then retest.
-2. **Add the permission header to error replies for the phone app** (`src/start.ts`, same middleware). Real server errors would then show their actual code (like DEL-500) instead of DEL-NET. No change to which websites are allowed.
-3. **Remove the forced `refreshSession()` from `doDelete`.** Rely on the existing check, which already refreshes when needed. This takes away the likely cause of the refresh collision and the sign-out.
-4. **Add a clear log line** when the app signs out for any reason, naming where it came from (deletion, Premium check, child sync, sign-in check). The next TestFlight run then shows exactly what happened.
-5. Verify with throwaway accounts: a simulated phone call to a stale ID now shows the real code, deletion works end to end, and no sign-out happens during two refreshes at once.
+1. Extend the existing native purchase helper to retrieve the current customer’s `managementURL` from RevenueCat.
+2. In the native Premium-active panel, show **Manage subscription** only when that real URL exists.
+3. Open that URL through the existing Capacitor Browser integration so the parent reaches the store-provided management destination; report a plain error if opening fails.
+4. Keep concise fallback instructions when no management URL is available, including the case where Premium came from the website rather than the device store.
+5. Do not change RevenueCat configuration, products, prices, Paddle, entitlement rules, purchases, restores, or the parental gate.
 
-Not touched: RevenueCat, Paddle, pricing, the parental gate.
+## Part C — backlog only
 
-## Technical details
-- Live preflight: 204 with the correct allow-headers. A POST to `/_serverFn/abc` from `capacitor://localhost` returns 500 HTML with no ACAO, so WebKit throws TypeError and the code maps that to DEL-NET.
-- `nativeCorsMiddleware` adds ACAO only on the success path. Error/500 responses produced outside it are missing the header.
-- Sign-out sources: verifiedSession.ts (3 places), useEntitlementSync.ts:75, useChildSync.ts:95, native-oauth.ts:85, parent.subscription.tsx:161/363.
+Add two unchecked roadmap notes without implementing either feature:
+
+- Letter/Number Pop choice-engine games: make a correctly selected tile visibly pop and disappear instead of leaving it under a green checkmark.
+- Hunt-engine games, including Alphabet Safari and Letter Detective: investigate why completing every target does not advance to the next round or reward screen, then fix it.
+
+## Verification
+
+- Confirm deletion copy accurately covers account/child cloud data, store billing, and device-only progress in active and inactive subscription states.
+- Simulate native iOS and Android customer information and verify the button uses RevenueCat’s returned store URL.
+- Verify the button is absent and fallback wording remains useful when `managementURL` is `null` or Premium is website-backed.
+- Verify opening failures are visible and no inert button is shown.
+- Confirm website subscription handling is unchanged.
+- Confirm both roadmap entries are present and no game code changed.
+
+## Expected changed files
+
+- `src/routes/parent.subscription.tsx`
+- `src/lib/purchases.ts`
+- `roadmap.md`

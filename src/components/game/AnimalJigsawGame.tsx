@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { shuffle, type SkillId } from "@/lib/content";
 import { L, getLang } from "@/lib/i18n";
 import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
-import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { JIGSAW_ANIMALS, jigsawTier, type JigsawAnimal } from "@/lib/jigsaw-animals";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
@@ -40,6 +40,7 @@ export function AnimalJigsawGame({
   const [refusedPieceId, setRefusedPieceId] = useState<string | null>(null);
   const [done, setDone] = useState(false);
   const [message, setMessage] = useState("");
+  const tally = useRef({ hits: 0, misses: 0 });
   const started = useRef(Date.now());
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
@@ -76,6 +77,9 @@ export function AnimalJigsawGame({
     if (piece.slot !== slotIndex) {
       // Wrong spot: gentle bounce back, no answer recorded, no penalty.
       setRefusedPieceId(pieceId);
+      // Parent stats only: invisible to the child, no effect on stars/level.
+      tally.current.misses += 1;
+      update((p) => recordParentMiss(p, skill));
       const retry = L("Hmm, try another spot!", "¡Mmm, prueba en otro lugar!");
       setMessage(retry);
       chime("retry", profile.sfx);
@@ -87,6 +91,7 @@ export function AnimalJigsawGame({
     const next = placed.slice();
     next[slotIndex] = pieceId;
     setPlaced(next);
+    tally.current.hits += 1;
     update((p) =>
       recordAnswer(p, {
         skill,
@@ -109,7 +114,7 @@ export function AnimalJigsawGame({
           setRound(round + 1);
         } else {
           update((p) => recordGameComplete(p, skill, 3, 1));
-          onFinish(3, 1);
+          onFinish(3, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses));
         }
       }, 2600);
     } else {

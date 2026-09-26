@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { type SkillId } from "@/lib/content";
 import { L, getLang } from "@/lib/i18n";
 import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
-import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { MAZE_REVEALS, makeMaze, mazeTier } from "@/lib/number-maze";
 import type { TracePoint } from "@/hooks/usePathTrace";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
@@ -42,6 +42,7 @@ export function NumberMazeGame({
   const doneRef = useRef(false);
   const lastRetrySpeech = useRef(0);
   const lastWrong = useRef(0);
+  const tally = useRef({ hits: 0, misses: 0 });
   const started = useRef(Date.now());
   const reveal = MAZE_REVEALS[round % MAZE_REVEALS.length] ?? MAZE_REVEALS[0]!;
 
@@ -67,6 +68,7 @@ export function NumberMazeGame({
     connectedRef.current = next;
     setConnected(next);
     setHintNext(false);
+    tally.current.hits += 1;
     update((p) =>
       recordAnswer(p, { skill, correct: true, responseMs: Date.now() - started.current, itemId: `maze-${i + 1}` }),
     );
@@ -83,7 +85,7 @@ export function NumberMazeGame({
         if (round + 1 < tier.rounds) setRound(round + 1);
         else {
           update((p) => recordGameComplete(p, skill, 3, 1));
-          onFinish(3, 1);
+          onFinish(3, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses));
         }
       }, 2400);
     } else {
@@ -100,6 +102,9 @@ export function NumberMazeGame({
     lastWrong.current = now;
     // Penalty-free: no answer recorded, no star/accuracy impact.
     setWrongIndex(i);
+    // Parent stats only: invisible to the child, no effect on stars/level.
+    tally.current.misses += 1;
+    update((p) => recordParentMiss(p, skill));
     window.setTimeout(() => setWrongIndex(null), 600);
     const want = connectedRef.current + 1;
     const retry = L(`Find ${want}!`, `¡Busca el ${want}!`);

@@ -3,7 +3,7 @@ import { orderSet } from "@/lib/rounds";
 import { shuffle, type SkillId } from "@/lib/content";
 import { L, getLang } from "@/lib/i18n";
 import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
-import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
 import { RocketLaunchScene } from "./RocketLaunchScene";
@@ -32,6 +32,7 @@ export function WordRocketGame({
   const [refusedTileId, setRefusedTileId] = useState<string | null>(null);
   const [launched, setLaunched] = useState(false);
   const [message, setMessage] = useState("");
+  const tally = useRef({ hits: 0, misses: 0 });
   const started = useRef(Date.now());
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
@@ -62,6 +63,9 @@ export function WordRocketGame({
     if (tile.label !== set.seq[slotIndex]!.label) {
       // Wrong slot: gentle bounce back, no answer recorded, no penalty.
       setRefusedTileId(tileId);
+      // Parent stats only: invisible to the child, no effect on stars/level.
+      tally.current.misses += 1;
+      update((p) => recordParentMiss(p, skill));
       const retry = L(
         `That slot needs a different letter. Try again!`,
         `Ese tanque necesita otra letra. ¡Inténtalo de nuevo!`,
@@ -76,6 +80,7 @@ export function WordRocketGame({
     const next = lockedSlots.slice();
     next[slotIndex] = tileId;
     setLockedSlots(next);
+    tally.current.hits += 1;
     update((p) =>
       recordAnswer(p, {
         skill,
@@ -99,7 +104,7 @@ export function WordRocketGame({
       say(stripEmoji(text));
       window.setTimeout(() => {
         update((p) => recordGameComplete(p, skill, 3, 1));
-        onFinish(3, 1);
+        onFinish(3, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses));
       }, 2600);
     } else {
       setMessage(L("Clunk! Fuel loaded.", "¡Clonc! Combustible listo."));

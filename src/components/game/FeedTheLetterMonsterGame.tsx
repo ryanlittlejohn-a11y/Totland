@@ -4,7 +4,7 @@ import { L, PRAISE_ES, getLang } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
 import { say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
-import { recordAnswer, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
 import { MonsterFeedingScene } from "./MonsterFeedingScene";
@@ -31,6 +31,7 @@ export function FeedTheLetterMonsterGame({
   const [refusedId, setRefusedId] = useState<string | null>(null);
   const [message, setMessage] = useState("");
   const stars = useRef(0);
+  const tally = useRef({ hits: 0, misses: 0 });
   const started = useRef(Date.now());
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
@@ -63,6 +64,9 @@ export function FeedTheLetterMonsterGame({
     if (!round || eatenId) return;
     if (id !== round.answerId) {
       setRefusedId(id);
+      // Parent stats only: invisible to the child, no effect on stars/level.
+      tally.current.misses += 1;
+      update((p) => recordParentMiss(p, skill));
       const retry = L(
         "Sniff, sniff! Try another letter.",
         "¡Snif, snif! Prueba otra letra.",
@@ -78,6 +82,7 @@ export function FeedTheLetterMonsterGame({
     setEatenId(id);
     setMessage(text);
     stars.current += 2;
+    tally.current.hits += 1;
     update((p) => recordAnswer(p, {
       skill,
       correct: true,
@@ -90,7 +95,7 @@ export function FeedTheLetterMonsterGame({
       if (index + 1 >= ROUNDS) {
         const total = stars.current;
         update((p) => recordGameComplete(p, skill, total, 1));
-        onFinish(total, 1);
+        onFinish(total, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses));
       } else {
         setIndex((current) => current + 1);
         nextRound();

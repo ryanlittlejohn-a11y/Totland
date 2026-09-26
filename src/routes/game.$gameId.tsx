@@ -4,6 +4,7 @@ import { PlayFrame } from "@/components/PlayFrame";
 import { LetterFishingGame } from "@/components/game/LetterFishingGame";
 import { FeedTheLetterMonsterGame } from "@/components/game/FeedTheLetterMonsterGame";
 import { WordRocketGame } from "@/components/game/WordRocketGame";
+import { AnimalJigsawGame } from "@/components/game/AnimalJigsawGame";
 import { ChoiceGame } from "@/components/game/ChoiceGame";
 import { HuntGame } from "@/components/game/HuntGame";
 import { OrderGame } from "@/components/game/OrderGame";

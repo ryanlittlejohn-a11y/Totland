@@ -1,65 +1,51 @@
-# Word Rocket plan
+# Animal Jigsaw — bespoke drag puzzle (plan)
 
-## Slot design: your choice (A or B)
+## What exists today
+- Catalog row 82 "Animal Jigsaw" (🐨, engine `choice`, kind `jigsawPiece`, puzzles skill, "Six-piece jigsaw", Premium).
+- Siblings on the same `jigsawPiece` kind + ChoiceGame: row 68 **Shape Puzzle** and row 81 **Simple Jigsaw**. The generator is also reused by `completePicture` (Alphabet/Number Jigsaw-style games). All of these stay unchanged.
+- The current "jigsaw" is not a picture at all: `jigsawPiece()` in rounds.ts picks a word+emoji and asks "Which piece completes the {word}?" with emoji choice tiles. So there are no existing jigsaw images to reuse.
 
-Word Rocket uses the existing `buildWord` round data. It picks a short CVC word such as CAT or SUN and makes one tile per letter.
+## The open question: where the animal pictures come from
 
-**A) Strict order (only the next empty slot accepts a tile)**
-- Pros: keeps today's lesson of spelling left to right, which is also the order kids read in. There is only ever one active slot, so it is simple to highlight ("put the next letter here"). Tap fallback is very simple: tap a tile and it goes to the next slot if it is correct.
-- Cons: a correct letter dropped on a later slot still bounces back, which can feel unfair to a 4-year-old ("but T *is* the last one!"). Most of the empty slots are just decoration. It feels less like a real drag game and more like tapping in order.
+Pieces only need one picture per animal. Cutting happens in the browser: every piece shows the same image, cropped to its own jigsaw-shaped region with an SVG clip path. No image-cutting tool is needed with any option below.
 
-**B) Flexible slots (each slot accepts only its own letter, in any order)**
-- Pros: kids can drop letters where they look right, which feels natural when dragging. It teaches where each letter sits in the word, and every slot is a real target. A correct drop never bounces, so there is less frustration.
-- Cons: kids might fill the word from the ends and skip the left-to-right sounding-out. It needs two-step taps for the fallback (tap a tile, then tap a slot), which adds one more step for VoiceOver users. It needs a rule for repeated letters (see the technical section).
+| Option | How | Pros | Cons |
+|---|---|---|---|
+| **A. AI-drawn illustrations (recommended)** | Generate 6 matching cartoon animal pictures (lion, elephant, koala, turtle, fox, owl) in one flat, bold, toddler-friendly style, square, plain background, bundled in the app | Looks like a real jigsaw; recognizable animals; works offline; each piece clearly shows part of the animal (ear, eye, tail) so matching makes sense | About 6 small images (~60–120 KB each, ~0.5 MB total) added to the app download; I review each for style and leave out any that come out wrong |
+| B. Code-drawn animals | Simple shapes (circles, ovals) drawn in code | Tiny, crisp at any size, easy to recolor for high contrast | Animals look basic and abstract; pieces are mostly blobs of one color, so children can't tell which piece goes where; lots of hand work per animal |
+| C. Giant emoji cut up | One big 🦁 cut into pieces | No assets | Emoji look different on iPhone, Android and web; pieces are mostly flat color; cropped emoji often look blurry or broken |
 
-**Recommendation: B.** It makes the most of real drag and fits "put the fuel where it goes". It also keeps the lesson in place: when the rocket launches, the whole word is read aloud left to right, and each correct letter is spoken as it locks in. If you want the sequencing lesson kept exactly, A is a clean, lower-risk choice.
+Recommendation: **A**. B and C make the pieces too alike to be a fair puzzle for ages 2–6.
 
-**Tap / VoiceOver fallback, matched to your choice**
-- A: tap a tile and it goes into the next slot if correct, or bounces back with a gentle retry if not. It is one step.
-- B: tap a tile to select it (it lifts up and gets outlined, and VoiceOver announces "C selected"), then tap a slot to place it. Tapping the same tile again deselects it. Slots are real buttons labeled "Fuel slot 1 of 3, empty".
+Silhouette: no extra image. The target outline is the same picture shown as a faint dark shape with dashed piece borders, so it always lines up exactly with the pieces.
 
-## Behavior (either design)
+## Piece count
+- Six pieces in a 3x2 grid with rounded jigsaw tabs, which matches the catalog description. Pieces are about 110–140 px on a phone, well above the usual minimum touch size.
+- The game already has age modes and levels, so easier play could start at 4 pieces (2x2) and step up to 6. **Your call:** always 6 (matches the description), or 4 then 6 as the child progresses.
+- One animal per round, 3 animals per game (6 pieces x 5 rounds is too long for toddlers). I can make it 5 if you prefer.
 
-- Rocket scene: the rocket sits in the middle and the fuel slots run up its body, one per letter. Jumbled letter tiles float in a row below it. All touch targets are at least 64px.
-- Spoken instruction each round, with a replay button: "Spell CAT to launch the rocket!" / "¡Escribe GATO... " built from the existing round word, e.g. "¡Escribe CAT para lanzar el cohete!"
-- Wrong drop, a dropped tile that misses every slot, or a wrong tap: the tile bounces back to its spot and a friendly retry line plays. No answer is recorded, and there is no effect on stars or accuracy. This is the same rule as Fishing and Monster.
-- Correct fill: the tile locks in with a clunk/lock animation and the theme's "launch" chime, and the letter is spoken.
-- All slots filled: rocket launch animation, praise, and the full-word reveal ("C-A-T spells cat!"). The game records one correct answer per letter, then recordGameComplete, then onFinish with the full 3 stars and accuracy 1. This is the same completion path OrderGame uses. Because wrong tries are penalty-free, every finished round earns full reward, matching the other bespoke games.
-- No timers. Reduced motion turns off floating, the lock bounce, and the launch flight (the rocket just shows "launched" in place), and the game stays playable. High contrast adds 4px outlines to tiles and slots and a strong outline on the highlighted slot.
+## Interaction (same rules as the other three)
+- Pieces sit scattered in a tray below the silhouette and can be dragged. Each has one correct slot.
+- Wrong slot or dropped outside: the piece bounces back to the tray with a gentle "Hmm, try another spot." No recorded miss, no effect on stars or accuracy.
+- Correct slot: the piece snaps in with a small "click" scale animation and a chime; that slot stops accepting drops (`isTargetEnabled`).
+- Whole puzzle done: dashed borders fade, the full animal pops with praise and the animal name line ("You made a lion! 🦁"). After the last animal: full reward, `recordGameComplete`, then the normal finish screen.
+- Tap fallback (Word Rocket pattern): tap a piece to select it (announced "Lion piece 3 selected"), then tap a slot. Slots are buttons with labels like "Top left spot" / "Arriba a la izquierda".
+- Spoken bilingual instruction each round ("Put the lion back together!" / "¡Arma el león!") through the existing narration path. No new audio gets generated.
+- No timers; `touch-action: none` on the play area; a second finger is ignored while dragging; reduced motion turns off tray wobble and snap/celebrate animations but keeps everything playable; high contrast gives pieces and slots thick outlines and makes the silhouette darker.
 
-## Engine and routing
-
-- New engine `rocket`. It is separate from `order` because it has different feedback and scoring rules (penalty-free instead of accuracy-based), just as `monster` was kept separate from `fishing`. Using the name `rocket` rather than something generic leaves room for other future rocket-style games.
-- Only catalog row 30 (Word Rocket) changes from `order` to `rocket`. It stays Premium and keeps its skill, kind, and copy. `rocket` maps to drag interaction.
-- `game.$gameId.tsx` gets a `rocket` branch. `OrderGame.tsx` and every other order game (Word Builder, Word Puzzle, Word Train, First Word Builder, Alphabet Train, Letter Garden, Alphabet Bridge, Alphabet Race, Number Train, Number Maze, Number Rain, Picture Path) stay untouched.
+## Scope limits
+- Only row 82 changes engine, to a new `jigsaw` engine with drag interaction. It stays Premium.
+- ChoiceGame.tsx, rounds.ts `jigsawPiece`/`completePicture`, Shape Puzzle, Simple Jigsaw and every other game are left alone.
+- The shared drag hook should need **no changes**: keyed handles plus `isTargetEnabled` already cover many pieces and many slots (the same shape as Word Rocket). If a gap turns up, it will be a small add-on only, and all three existing drag games get regression-tested.
 
 ## Technical details
+- New files: `src/components/game/AnimalJigsawGame.tsx` (rounds, scoring, narration, completion), `src/components/game/JigsawPuzzleScene.tsx` (silhouette slots as `DragTarget`s `slot-0..5`, pieces via `getHandleProps(pieceId)`, SVG `clipPath` jigsaw shapes generated from the grid, picture shown via `<image>` with offsets), `src/lib/jigsaw-animals.ts` (animal list: id, EN/ES names, image import, emoji).
+- Assets: `src/assets/jigsaw/{lion,elephant,koala,turtle,fox,owl}.jpg` (~768 px square, generated in one consistent style), imported like other bundled images so they work offline and in the native build.
+- Edits: `src/lib/catalog.ts` (add `jigsaw` to EngineId, row 82 engine, drag interaction mapping), `src/routes/game.$gameId.tsx` (jigsaw branch), `src/styles.css` (tray, snap, celebrate, reduced-motion, high-contrast), `roadmap.md`, and the `i18n` strings the scene uses.
+- Pieces match by piece id → slot id (each piece is unique, unlike repeated letters in Word Rocket).
 
-**Drag hook generalization.** `useDragToTarget` already registers many targets through `registerTarget(id)`, hit-tests all of them, returns the closest match within the hit slop, and passes `(targetId, handleId)` to `onDrop`. Monster added keyed handles. So multiple simultaneous targets need almost no change. Planned additive changes:
-- Optional `isTargetEnabled?: (targetId, handleId) => boolean`. Filled slots (and, in design A, every slot except the next one) are skipped during hover and hit testing. This way a drop never gets taken by a slot that is already full. It defaults to all enabled, so Fishing and Monster behave identically.
-- Hit slop stays 24px, but the closest-center tiebreak already handles slots that sit next to each other. The slot gap will be larger than 2 times the hit slop so there is no double-hit ambiguity.
-- No change to the single-pointer lock, pointer capture, cancellation, `touch-action: none`, or the anonymous `handleProps` API.
-
-**Repeated letters (design B).** Slots accept by letter label, not tile id. So in a word like "DAD", either D tile can go in either D slot. This avoids an unfair bounce.
-
-**Files**
-- `src/hooks/useDragToTarget.ts` (additive option only)
-- `src/components/game/WordRocketGame.tsx` (new: round, narration, lock/penalty-free logic, completion)
-- `src/components/game/RocketLaunchScene.tsx` (new: tiles via `getHandleProps`, slots via `DragTarget`, tap-select fallback, launch)
-- `src/lib/catalog.ts` (`rocket` engine type + interaction mapping + row 30)
-- `src/routes/game.$gameId.tsx` (rocket branch)
-- `src/styles.css` (rocket scene, lock, launch, reduced-motion, high-contrast)
-- `roadmap.md`, and `AGENTS.md` only if the drag rule needs a note on multi-target support
-
-No narration audio will be generated. Spoken lines use the existing cached voice, live voice, or device voice.
-
-## Verification (phone-sized browser)
-
-- Word Rocket: complete 5 rounds by drag and get the full reward. Run wrong-slot drops, off-target drops, and wrong taps, and confirm the tile bounces back, there is no recorded answer, and stars and accuracy are unchanged. Check the repeated-letter case (B), or the next-slot-only rule (A). Check that full slots reject drops.
-- Tap/keyboard fallback completes a round with no dragging.
-- Put a second pointer down during a drag and confirm it is ignored. Confirm there is no page scroll or text selection.
-- Reduced motion and high contrast visibly change the scene, and the game stays playable.
-- Fishing regression: drag, tap fallback, ignored second pointer, penalty-free wrong catch.
-- Monster regression: drag feed, tap feed, ignored second pointer, penalty-free wrong feed and bounce.
-- Open Word Puzzle, Word Train, First Word Builder, Word Builder, Alphabet Train, and Number Maze, and confirm the tap-in-order game is unchanged.
-- The build and type check are clean, and there are no runtime errors.
+## Verification
+- Animal Jigsaw: a full game by drag with full reward; wrong-slot and off-target drops plus wrong taps bounce with no recorded answer and no star/accuracy change; a round completed with taps only; keyboard works; second pointer ignored; no page scroll or text selection; reduced motion and high contrast visible and playable; images load offline (no network requests for pictures).
+- Regressions: Letter Fishing, Feed the Letter Monster and Word Rocket (drag, tap fallback, ignored second pointer, penalty-free wrong try).
+- Spot-checks: Shape Puzzle and Simple Jigsaw are still tap-choice.
+- Typecheck, build and runtime logs clean. Phone testing needs `bun run sync:app` plus a new Codemagic build.

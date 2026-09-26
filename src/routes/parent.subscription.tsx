@@ -132,9 +132,33 @@ function Subscription() {
   const doDelete = async () => {
     setDeleting(true);
     setDeleteError(null);
+    const signInAgain =
+      "Your sign-in has expired, so we couldn't confirm it's you. Please sign in again, then delete your account.";
     try {
-      await removeAccount({ data: undefined });
-      await supabase.auth.signOut();
+      if (typeof navigator !== "undefined" && navigator.onLine === false) {
+        setDeleteError("You're offline. Connect to the internet and try again.");
+        setDeleting(false);
+        return;
+      }
+      // Refresh the saved sign-in, then confirm it with the backend before
+      // attempting anything destructive.
+      await supabase.auth.refreshSession().catch(() => null);
+      if (!(await hasVerifiedSession())) {
+        setDeleteError(signInAgain);
+        setDeleting(false);
+        return;
+      }
+
+      const result = await removeAccount({ data: undefined });
+      if (!result.ok) {
+        setDeleteError(
+          `Something went wrong on our side and your account wasn't fully deleted. Please try again — nothing already removed will cause a problem. (Code: DEL-${result.step.toUpperCase()})`,
+        );
+        setDeleting(false);
+        return;
+      }
+
+      await supabase.auth.signOut({ scope: "local" }).catch(() => {});
       try {
         storageRemove("totland.family.v1");
       } catch {
@@ -145,8 +169,18 @@ function Subscription() {
       setDeleted(true);
       setDeleting(false);
     } catch (e) {
-      console.error(e);
-      setDeleteError("We couldn't delete your account just now. Please check your connection and try again.");
+      console.error("[deleteAccount]", e);
+      const status =
+        e instanceof Response ? e.status : (e as { status?: number; statusCode?: number })?.status ??
+          (e as { statusCode?: number })?.statusCode;
+      const msg = e instanceof Error ? e.message : String(e);
+      if (status === 401 || /unauthori[sz]ed/i.test(msg)) {
+        setDeleteError(signInAgain);
+      } else if (e instanceof TypeError || /failed to fetch|network|load failed/i.test(msg)) {
+        setDeleteError("We couldn't reach Totland. Check your internet connection and try again. (Code: DEL-NET)");
+      } else {
+        setDeleteError(`Something went wrong on our side. Please try again. (Code: DEL-${status ?? "ERR"})`);
+      }
       setDeleting(false);
     }
   };

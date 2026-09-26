@@ -1,5 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AREAS, CHARACTERS, LIBRARY_SIZE } from "@/lib/content";
+import { AREAS, CHARACTERS } from "@/lib/content";
+import { areaWholeLocked, FREE_WORD_FIND_COUNT, GAME_COUNT, WORD_FIND_COUNT } from "@/lib/library-counts";
 import { GAMES, WORLDS, gameById } from "@/lib/catalog";
 import { useProfile } from "@/lib/profile";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -208,7 +209,7 @@ function Home() {
       <section className="mt-6">
         <div className="flex items-center justify-between px-1">
           <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Skills to practice", "Habilidades")}</h2>
-          <span className="font-ui text-xs text-inksoft">{L(`${LIBRARY_SIZE} activities offline`, `${LIBRARY_SIZE} actividades sin conexión`)}</span>
+          <span className="font-ui text-xs text-inksoft">{L(`${GAME_COUNT} games + ${WORD_FIND_COUNT} word finds offline`, `${GAME_COUNT} juegos + ${WORD_FIND_COUNT} sopas de letras sin conexión`)}</span>
         </div>
 
         <div className="mt-3 space-y-3">
@@ -216,7 +217,9 @@ function Home() {
             const areaGames = GAMES.filter((game) => game.skill === a.id);
             const explored = areaGames.filter((game) => (profile.games[game.id]?.plays ?? 0) > 0).length;
             const exploration = areaGames.length > 0 ? Math.round((explored / areaGames.length) * 100) : null;
-            const locked = !a.free && !profile.premium;
+            // Games are locked one by one on the area page; only areas with no
+            // catalog games (Flash Cards) are locked as a whole.
+            const locked = areaWholeLocked(a) && !profile.premium;
             return (
               <Link
                 key={a.id}
@@ -265,7 +268,7 @@ function Home() {
           <div className="min-w-0 flex-1">
             <p className="font-ui text-lg font-bold leading-tight text-ink">{L("Word Finds", "Sopa de letras")}</p>
             <p className="truncate font-ui text-sm text-inksoft">
-              {L("100 puzzles — first 30 free", "100 juegos — los primeros 30 gratis")}
+              {L(`${WORD_FIND_COUNT} puzzles — first ${FREE_WORD_FIND_COUNT} free`, `${WORD_FIND_COUNT} juegos — los primeros ${FREE_WORD_FIND_COUNT} gratis`)}
             </p>
           </div>
           <span className="font-ui text-xl text-inksoft">›</span>

@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { AREAS, LETTERS, LIBRARY_SIZE } from "@/lib/content";
+import { AREAS, LETTERS } from "@/lib/content";
+import { GAME_COUNT, STORY_COUNT, FLASH_CARD_COUNT } from "@/lib/library-counts";
 import {
   masteryLabel,
   masteryScore,
@@ -191,6 +192,22 @@ function Dashboard() {
           {AREAS.map((a) => {
             const s = skillOf(stats, a.id);
             const mastery = masteryScore(s);
+            // Flash Cards and Storybooks have no right/wrong answers, so show
+            // an honest session count instead of a mastery bar.
+            if (a.id === "flashcards" || a.id === "stories") {
+              const sessions = stats.favorites[a.id] ?? 0;
+              return (
+                <div key={a.id} className="flex items-center gap-3">
+                  <span className="w-40 shrink-0 text-sm font-medium text-ink">
+                    {a.emoji} {a.title}
+                  </span>
+                  <span className="flex-1 text-xs text-inksoft">No right or wrong answers</span>
+                  <span className="w-20 shrink-0 text-right text-xs font-semibold text-inksoft">
+                    {sessions > 0 ? `${sessions} ${sessions === 1 ? "session" : "sessions"}` : "Ready to play"}
+                  </span>
+                </div>
+              );
+            }
             return (
               <div key={a.id} className="flex items-center gap-3">
                 <span className="w-40 shrink-0 text-sm font-medium text-ink">
@@ -326,7 +343,7 @@ function Dashboard() {
           </label>
         </div>
         <p className="mt-4 text-xs text-inksoft">
-          {LIBRARY_SIZE} activities are stored on this device. Progress stays on this device unless you sign in to sync
+          {GAME_COUNT} games, {WORD_FIND_THEMES.length} word finds, {STORY_COUNT} storybooks and {FLASH_CARD_COUNT} flash cards are stored on this device. Progress stays on this device unless you sign in to sync
           your family profiles — there is no child account, no ads and no tracking.
         </p>
       </section>

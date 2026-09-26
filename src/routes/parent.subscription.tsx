@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
-import { AREAS } from "@/lib/content";
+import { premiumBenefits } from "@/lib/library-counts";
 import { setVerifiedPremium, useProfile } from "@/lib/profile";
 import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
@@ -48,7 +48,7 @@ function Subscription() {
   const { profile, update } = useProfile();
   const { checkout } = Route.useSearch();
   const { user, ready } = useParentAuth();
-  const premiumAreas = AREAS.filter((a) => !a.free);
+  const benefits = premiumBenefits();
 
   const fetchSubscription = useServerFn(getMySubscription);
   const [sub, setSub] = useState<SubscriptionState | null>(null);
@@ -274,13 +274,12 @@ function Subscription() {
         )}
 
         <ul className="mt-4 space-y-1.5 text-sm text-ink">
-          {premiumAreas.map((a) => (
-            <li key={a.id}>
-              {a.emoji} {a.title} — {a.activities} activities
+          {benefits.map((b) => (
+            <li key={b.key}>
+              {b.emoji} {b.text}
             </li>
           ))}
           <li>✈️ Play anywhere, even with no internet — offline play is part of Premium</li>
-          <li>🎁 New content every month, downloaded for offline play</li>
         </ul>
       </section>
 

@@ -24,5 +24,15 @@ export async function hasVerifiedSession(): Promise<boolean> {
     }
     return false;
   }
-  return Boolean(u.user?.email_confirmed_at);
+  if (!u.user?.email_confirmed_at) return false;
+  // Protected calls verify tokens with getClaims, which is stricter than
+  // getUser (e.g. tokens signed by a rotated-out key pass getUser but fail
+  // getClaims). Check the same way here so such a token is cleared before it
+  // can reach a protected call and crash the screen.
+  const { data: c, error: claimsError } = await supabase.auth.getClaims(token);
+  if (claimsError || !c?.claims?.sub) {
+    await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    return false;
+  }
+  return true;
 }

@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { AREAS } from "@/lib/content";
 import { setVerifiedPremium, useProfile } from "@/lib/profile";
+import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
 import { useParentAuth } from "@/hooks/useParentAuth";
 import { ParentAuthCard } from "@/components/ParentAuthCard";
@@ -58,6 +59,12 @@ function Subscription() {
     if (!user) return null;
     setChecking(true);
     try {
+      // Confirm the saved sign-in with the backend first; a stale token must
+      // never reach a protected call.
+      if (!(await hasVerifiedSession())) {
+        setSub(null);
+        return null;
+      }
       const state = await fetchSubscription({ data: { environment: getPaddleEnvironment() } });
       setSub(state);
       // Cache the verified answer locally so the app keeps working offline.

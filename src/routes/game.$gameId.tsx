@@ -4,6 +4,7 @@ import { PlayFrame } from "@/components/PlayFrame";
 import { LetterFishingGame } from "@/components/game/LetterFishingGame";
 import { FeedTheLetterMonsterGame } from "@/components/game/FeedTheLetterMonsterGame";
 import { WordRocketGame } from "@/components/game/WordRocketGame";
+import { AnimalJigsawGame } from "@/components/game/AnimalJigsawGame";
 import { ChoiceGame } from "@/components/game/ChoiceGame";
 import { HuntGame } from "@/components/game/HuntGame";
 import { OrderGame } from "@/components/game/OrderGame";
@@ -119,6 +120,8 @@ function GameHost() {
         <FeedTheLetterMonsterGame key={key} kind={game.kind} skill={game.skill} rounds={game.rounds} theme={theme} onFinish={finish} />
       ) : engine === "rocket" ? (
         <WordRocketGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
+      ) : engine === "jigsaw" ? (
+        <AnimalJigsawGame key={key} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "hunt" ? (
         <HuntGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "order" ? (

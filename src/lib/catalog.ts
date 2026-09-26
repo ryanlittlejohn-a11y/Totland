@@ -13,6 +13,7 @@ export type EngineId =
   | "monster"
   | "rocket"
   | "jigsaw"
+  | "maze"
   | "hunt"
   | "order"
   | "memory"
@@ -141,7 +142,7 @@ const ROWS: Row[] = [
   [44, "Number Garden", "🌻", "choice", "numberQuantity", N, "numbers", "Plant that many flowers", "elr"],
   [45, "Number Rocket", "🚀", "choice", "findNumber", N, "numbers", "Numeral recognition", "elr"],
   [46, "Missing Number", "➖", "choice", "missingNumber", N, "numbers", "Complete 1, 2, _, 4", "lr"],
-  [47, "Number Maze", "🌀", "order", "numbers", N, "numbers", "Move through numbers in order", "lr"],
+  [47, "Number Maze", "🌀", "maze", "numbers", N, "numbers", "Move through numbers in order", "lr"],
   [48, "More or Less", "⚖️", "choice", "moreOrLess", N, "numbers", "Compare quantities", "lr"],
   [49, "Bigger Number", "🔝", "choice", "biggerNumber", N, "numbers", "Compare numerals", "lr"],
   [50, "Number Memory", "🧠", "memory", "numbers", N, "memory", "Match numeral pairs", "elr"],
@@ -232,7 +233,7 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
       : engine === "fishing" || engine === "monster" || engine === "rocket" || engine === "jigsaw" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
-      : engine === "tracing" ? "trace"
+      : engine === "tracing" || engine === "maze" ? "trace"
       : engine === "story" || engine === "storybuilder" ? "read"
       : "tap",
     minutes: engine === "adventure" ? 8 : 2,

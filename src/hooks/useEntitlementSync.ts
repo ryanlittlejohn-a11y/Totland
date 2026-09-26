@@ -54,6 +54,8 @@ export function useEntitlementSync() {
     const verify = async () => {
       const offline = typeof navigator !== "undefined" && navigator.onLine === false;
       const fromStore = await storePremium();
+      // First answer is in: the offline gate may now decide.
+      setVerifiedPremiumSettled();
       if (fromStore) {
         setPremium(true);
         return;

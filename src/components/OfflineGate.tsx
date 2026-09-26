@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
 import { Link, useRouterState } from "@tanstack/react-router";
 
-import { useProfile } from "@/lib/profile";
+import { useProfile, useVerifiedPremiumState } from "@/lib/profile";
 import { L } from "@/lib/i18n";
 import { apiOrigin, isNativeApp, withTimeout } from "@/lib/native";
 
@@ -106,11 +106,15 @@ function useOnlineStatus(active: boolean) {
  */
 export function OfflineGate({ children }: { children: ReactNode }) {
   const { profile, hydrated } = useProfile();
+  const { settled } = useVerifiedPremiumState();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   // Premium families never need this check at all, so never run it for them.
+  // Until the first launch-time Premium check has finished we don't know yet
+  // whether this family is Premium — wait instead of flashing the gate.
   const exempt =
     !hydrated ||
+    !settled ||
     profile.premium ||
     ALWAYS_ALLOWED.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 

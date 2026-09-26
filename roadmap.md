@@ -107,3 +107,8 @@
 - [x] Animal Jigsaw: 4-tier levels (2/4/6/9 pieces), 6 AI animal images, drag puzzle; verified all tiers + Fishing/Monster/Rocket regressions
 - [x] Number Maze: path-tracing engine (usePathTrace), 3/5/7/8/10 points by level, penalty-free, tap-in-order alternative; verify all tiers + 4 regressions
 - [x] Named game list per skill area (/play/$area layout + index + quick)
+
+## Honest skill-area exploration (approved plan)
+- [ ] Replace Home difficulty-level bars with named games explored / total games per skill
+- [ ] Give Flash Cards a neutral ready state and relabel parent area bars as mastery
+- [ ] Verify empty, partial, full, replayed, locked, bilingual, world, and parent states

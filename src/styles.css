@@ -490,3 +490,55 @@ html[data-reduced-motion="1"] .rocket-flames { animation: none !important; trans
 html[data-high-contrast="1"] .rocket-launch-scene { background: var(--card); outline: 3px solid var(--ink); }
 html[data-high-contrast="1"] .rocket-tile,
 html[data-high-contrast="1"] .rocket-slot { outline: 4px solid var(--ink); box-shadow: none; }
+
+/* ---- Animal Jigsaw ---- */
+.jigsaw-scene { background: color-mix(in oklch, var(--moss) 12%, var(--card)); padding-top: 1rem; }
+.jigsaw-silhouette {
+  filter: brightness(0) opacity(0.14);
+  pointer-events: none;
+}
+.jigsaw-slot {
+  position: relative;
+  border: 3px dashed color-mix(in oklch, var(--ink) 45%, transparent);
+  background: transparent;
+  padding: 0;
+  touch-action: manipulation;
+}
+.jigsaw-slot.is-hover { outline: 5px solid var(--amber); outline-offset: 2px; }
+.jigsaw-slot.is-filled { border-color: transparent; }
+.jigsaw-placed { animation: jigsaw-snap 320ms ease-out; background-repeat: no-repeat; }
+.jigsaw-piece {
+  touch-action: none;
+  background-repeat: no-repeat;
+  background-color: var(--card);
+  border: 3px solid color-mix(in oklch, var(--ink) 25%, transparent);
+  box-shadow: 0 4px 0 color-mix(in oklch, var(--ink) 20%, transparent);
+  animation: monster-float 2.8s ease-in-out infinite;
+  transition: transform 280ms ease-out, opacity 220ms ease-out;
+}
+.jigsaw-piece.is-dragging { z-index: 30; cursor: grabbing; animation: none; transition: none; }
+.jigsaw-piece.is-refused { animation: monster-refuse 550ms ease-in-out; }
+.jigsaw-piece.is-selected { outline: 4px solid var(--amber); }
+.jigsaw-piece-spacer { display: inline-block; }
+/* Rounded interlocking look for the 6-piece tier: pieces and slots get a
+   scalloped edge so they read as jigsaw cuts without shrinking touch area. */
+.jigsaw-piece.has-tabs, .jigsaw-placed.has-tabs {
+  border-radius: 22% 26% 24% 28% / 26% 22% 28% 24%;
+  border-width: 4px;
+}
+.jigsaw-slot.has-tabs { border-radius: 22% 26% 24% 28% / 26% 22% 28% 24%; }
+.jigsaw-complete { animation: jigsaw-done 600ms ease-out; border-radius: 1rem; }
+@keyframes jigsaw-snap { 0% { transform: scale(1.18); } 60% { transform: scale(0.95); } 100% { transform: scale(1); } }
+@keyframes jigsaw-done { 0% { transform: scale(1); } 40% { transform: scale(1.05); } 100% { transform: scale(1); } }
+@media (prefers-reduced-motion: reduce) {
+  .jigsaw-piece, .jigsaw-piece.is-refused, .jigsaw-placed, .jigsaw-complete { animation: none !important; }
+  .jigsaw-piece { transition: none; }
+}
+html[data-reduced-motion="1"] .jigsaw-piece,
+html[data-reduced-motion="1"] .jigsaw-piece.is-refused,
+html[data-reduced-motion="1"] .jigsaw-placed,
+html[data-reduced-motion="1"] .jigsaw-complete { animation: none !important; transition: none; }
+html[data-high-contrast="1"] .jigsaw-scene { background: var(--card); outline: 3px solid var(--ink); }
+html[data-high-contrast="1"] .jigsaw-silhouette { filter: brightness(0) opacity(0.35); }
+html[data-high-contrast="1"] .jigsaw-piece,
+html[data-high-contrast="1"] .jigsaw-slot { outline: 4px solid var(--ink); box-shadow: none; }

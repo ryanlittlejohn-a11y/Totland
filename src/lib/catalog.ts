@@ -11,6 +11,7 @@ export type EngineId =
   | "choice"
   | "fishing"
   | "monster"
+  | "rocket"
   | "hunt"
   | "order"
   | "memory"
@@ -121,7 +122,7 @@ const ROWS: Row[] = [
   [27, "Word Puzzle", "🪄", "order", "buildWord", S, "words", "Assemble letters into a word", "r", 1],
   [28, "Missing Letter Word", "✏️", "choice", "missingLetterWord", S, "words", "Complete C_T", "lr"],
   [29, "Word Fishing", "🐟", "choice", "missingLetterWord", S, "words", "Catch the missing letter", "lr", 1],
-  [30, "Word Rocket", "🛸", "order", "buildWord", S, "words", "Build a word to launch", "r", 1],
+  [30, "Word Rocket", "🛸", "rocket", "buildWord", S, "words", "Build a word to launch", "r", 1],
   [31, "Rhyming Pairs", "🎵", "choice", "rhyme", S, "words", "Hear rhyming words", "lr", 1],
   [32, "Same Sound", "🔁", "choice", "sameSound", A, "phonics", "Same beginning sound", "lr", 1],
   [33, "Word Memory", "🗂️", "memory", "wordPicture", S, "memory", "Match word to picture", "r", 1],
@@ -227,7 +228,7 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
     difficultyMax: 5,
     interaction:
       engine === "hunt" ? "tap-many"
-      : engine === "fishing" || engine === "monster" ? "drag"
+      : engine === "fishing" || engine === "monster" || engine === "rocket" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
       : engine === "tracing" ? "trace"

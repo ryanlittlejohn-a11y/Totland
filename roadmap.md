@@ -1,5 +1,14 @@
 # Roadmap
 
+## Native server-call permission fix (approved 2026-09-26)
+- [x] Root cause: `x-tsr-serverfn` missing from native CORS allowed headers in src/start.ts blocked every server call from the phone app
+- [ ] Add `x-tsr-serverfn` to native allowed headers
+- [ ] Verify all 7 native server calls (deleteMyAccount, getMySubscription x2, listChildren/upsertChild/deleteChild, speakText, submitContactInquiry) pass preflight; website unchanged
+- [ ] Stress-test child sync merge: local-only children + remote children, second-device sign-in, no duplicates/loss
+- [ ] Verify website-Premium (Paddle) recognized in simulated native session
+- [ ] Re-verify account deletion end to end with throwaway account
+- [ ] Remind: new Codemagic build + TestFlight retest, especially child sync across real devices
+
 ## Payments (approved plan)
 - [x] Enable built-in payments (Paddle)
 - [x] Create products: Premium Monthly $2.99/mo, Premium Yearly $19.99/yr

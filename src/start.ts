@@ -61,7 +61,7 @@ const nativeCorsMiddleware = createMiddleware().server(async ({ next, request })
   const corsHeaders: Record<string, string> = {
     "access-control-allow-origin": origin!,
     "access-control-allow-methods": "GET,POST,OPTIONS",
-    "access-control-allow-headers": "authorization,content-type,x-tsr-redirect,accept",
+    "access-control-allow-headers": "authorization,content-type,x-tsr-redirect,x-tsr-serverfn,accept",
     "access-control-max-age": "86400",
     vary: "origin",
   };

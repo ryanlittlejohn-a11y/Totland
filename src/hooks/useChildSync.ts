@@ -27,8 +27,18 @@ export function useChildSync() {
 
     const signedIn = async () => {
       const { data } = await supabase.auth.getSession();
-      const user = data.session?.user;
-      return Boolean(user && user.email_confirmed_at);
+      const session = data.session;
+      const user = session?.user;
+      if (!user || !user.email_confirmed_at) return false;
+      // A stale or malformed token (e.g. left over from an old build) makes
+      // every protected call fail with "Invalid token" — treat it as signed out.
+      const token = session?.access_token ?? "";
+      const expired = typeof session?.expires_at === "number" && session.expires_at * 1000 <= Date.now();
+      if (token.split(".").length !== 3 || expired) {
+        await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+        return false;
+      }
+      return true;
     };
 
     const sync = async () => {
@@ -92,7 +102,11 @@ export function useChildSync() {
           activeChildId: next.some((c) => c.id === local.activeChildId) ? local.activeChildId : next[0]!.id,
         };
         saveFamily(family);
-      } catch {
+      } catch (err) {
+        // A rejected session on the backend: clear it so the error stops repeating.
+        if (err instanceof Error && /unauthorized|invalid token/i.test(err.message)) {
+          await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+        }
         // Offline or a backend hiccup: keep playing from the device copy.
       } finally {
         running = false;

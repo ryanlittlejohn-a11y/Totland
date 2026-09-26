@@ -14,11 +14,13 @@ export interface DragToTargetOptions {
   hitSlop?: number;
   /** point used for hit-testing, given the handle's current rect (default: center) */
   getTipPoint?: (rect: DOMRect) => { x: number; y: number };
+  /** optional filter: return false to make a target non-droppable (e.g. a filled slot) */
+  isTargetEnabled?: (targetId: string, handleId?: string) => boolean;
 }
 
 type Point = { x: number; y: number };
 
-export function useDragToTarget({ onDrop, onHover, disabled, hitSlop = 24, getTipPoint }: DragToTargetOptions) {
+export function useDragToTarget({ onDrop, onHover, disabled, hitSlop = 24, getTipPoint, isTargetEnabled }: DragToTargetOptions) {
   const targets = useRef(new Map<string, HTMLElement>());
   const rects = useRef(new Map<string, DOMRect>());
   const pointerId = useRef<number | null>(null);
@@ -43,6 +45,7 @@ export function useDragToTarget({ onDrop, onHover, disabled, hitSlop = 24, getTi
     let best: string | null = null;
     let bestD = Infinity;
     rects.current.forEach((r, id) => {
+      if (isTargetEnabled && !isTargetEnabled(id, handleId.current ?? undefined)) return;
       if (p.x >= r.left - hitSlop && p.x <= r.right + hitSlop && p.y >= r.top - hitSlop && p.y <= r.bottom + hitSlop) {
         const d = Math.hypot(p.x - (r.left + r.width / 2), p.y - (r.top + r.height / 2));
         if (d < bestD) { bestD = d; best = id; }

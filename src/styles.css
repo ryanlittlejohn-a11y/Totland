@@ -432,3 +432,61 @@ html[data-reduced-motion="1"] .monster-body.is-sniffing .monster-face { animatio
 html[data-high-contrast="1"] .monster-feeding-scene { background: var(--card); outline: 3px solid var(--ink); }
 html[data-high-contrast="1"] .monster-letter,
 html[data-high-contrast="1"] .monster-mouth { outline: 4px solid var(--ink); box-shadow: none; }
+
+/* ------------------------------------------------------- word rocket */
+.rocket-launch-scene {
+  min-height: 24rem;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+  background: linear-gradient(to bottom, color-mix(in oklch, var(--night) 20%, var(--card)), color-mix(in oklch, var(--sky) 22%, var(--card)));
+}
+.rocket-body { display: grid; place-items: center; gap: 0.5rem; padding-top: 1.25rem; }
+.rocket-ship { font-size: 6rem; line-height: 1; filter: drop-shadow(0 5px 0 color-mix(in oklch, var(--ink) 20%, transparent)); }
+.rocket-body.is-launched .rocket-ship { animation: rocket-launch 1.6s ease-in forwards; }
+.rocket-flames { font-size: 2.5rem; margin-top: -1rem; animation: monster-float 300ms ease-in-out infinite; }
+.rocket-slots { display: flex; gap: 0.75rem; }
+.rocket-slot {
+  display: grid;
+  width: 4.25rem;
+  height: 4.25rem;
+  place-items: center;
+  border: 3px dashed color-mix(in oklch, var(--ink) 45%, transparent);
+  border-radius: 1rem;
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+  font-family: var(--font-ui);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+.rocket-slot.is-hover { outline: 5px solid var(--amber); outline-offset: 3px; }
+.rocket-slot.is-filled { border-style: solid; border-color: var(--ink); background: var(--amber); animation: rocket-lock 380ms ease-out; }
+.rocket-tile {
+  min-width: 72px;
+  min-height: 72px;
+  touch-action: none;
+  background: var(--card);
+  box-shadow: 0 4px 0 color-mix(in oklch, var(--ink) 20%, transparent);
+  animation: monster-float 2.8s ease-in-out infinite;
+  transition: transform 280ms ease-out, opacity 220ms ease-out;
+}
+.rocket-tile.is-dragging { z-index: 30; cursor: grabbing; animation: none; transition: none; }
+.rocket-tile.is-refused { animation: monster-refuse 550ms ease-in-out; }
+.rocket-tile.is-selected { outline: 4px solid var(--amber); }
+.rocket-tile-spacer { width: 5rem; height: 5rem; }
+@keyframes rocket-lock { 0% { transform: scale(1.25); } 60% { transform: scale(0.94); } 100% { transform: scale(1); } }
+@keyframes rocket-launch { 40% { transform: translateY(-6px) rotate(-2deg); } 100% { transform: translateY(-22rem) rotate(4deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .rocket-tile, .rocket-tile.is-refused, .rocket-slot.is-filled,
+  .rocket-body.is-launched .rocket-ship, .rocket-flames { animation: none !important; }
+  .rocket-tile { transition: none; }
+}
+html[data-reduced-motion="1"] .rocket-tile,
+html[data-reduced-motion="1"] .rocket-tile.is-refused,
+html[data-reduced-motion="1"] .rocket-slot.is-filled,
+html[data-reduced-motion="1"] .rocket-body.is-launched .rocket-ship,
+html[data-reduced-motion="1"] .rocket-flames { animation: none !important; transition: none; }
+html[data-high-contrast="1"] .rocket-launch-scene { background: var(--card); outline: 3px solid var(--ink); }
+html[data-high-contrast="1"] .rocket-tile,
+html[data-high-contrast="1"] .rocket-slot { outline: 4px solid var(--ink); box-shadow: none; }

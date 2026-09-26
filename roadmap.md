@@ -163,8 +163,8 @@
 - [ ] (User) Publish, new Codemagic build, TestFlight retest of deletion; send the [signout] line if a sign-out happens
 
 ## Subscription-screen clarity and management (approved 2026-09-26)
-- [ ] Clarify exactly what account deletion removes and preserves
-- [ ] Add a real native Manage subscription button when RevenueCat supplies a management URL
+- [x] Clarify exactly what account deletion removes and preserves
+- [x] Add a real native Manage subscription button when RevenueCat supplies a management URL
 - [ ] Verify iOS/Android URLs, fallback wording, opening failures, and unchanged website handling
 
 ## Future game interaction backlog

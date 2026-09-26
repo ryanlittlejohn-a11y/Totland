@@ -18,6 +18,7 @@ import { isNativeApp, nativePlatform } from "@/lib/native";
 import { StorePurchasePanel } from "@/components/StorePurchasePanel";
 import { useStoreEntitlement } from "@/hooks/useStoreEntitlement";
 import { storageRemove } from "@/lib/storage";
+import { openStoreSubscriptionManagement } from "@/lib/purchases";
 
 
 
@@ -118,10 +119,26 @@ function Subscription() {
   };
 
   const native = isNativeApp();
-  const { storeActive, refresh: refreshStore } = useStoreEntitlement(user?.id ?? null);
+  const { storeActive, managementURL, refresh: refreshStore } = useStoreEntitlement(user?.id ?? null);
   const active = (emailVerified && (sub?.active ?? false)) || storeActive;
   const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
   const storeName = nativePlatform() === "android" ? "Google Play" : "App Store";
+  const [managingSubscription, setManagingSubscription] = useState(false);
+  const [manageError, setManageError] = useState<string | null>(null);
+
+  const manageSubscription = async () => {
+    if (!managementURL) return;
+    setManagingSubscription(true);
+    setManageError(null);
+    try {
+      await openStoreSubscriptionManagement(managementURL);
+    } catch (e) {
+      console.error("[manageSubscription]", e);
+      setManageError(`We couldn't open ${storeName} subscription settings. Please try again.`);
+    } finally {
+      setManagingSubscription(false);
+    }
+  };
 
 
   const removeAccount = useServerFn(deleteMyAccount);
@@ -236,10 +253,27 @@ function Subscription() {
               </p>
             )}
             {native ? (
-              <p className="mt-2 text-inksoft">
-                To switch plans or cancel, open your device settings and manage subscriptions in the {storeName}.
-                Canceling keeps premium until the end of your paid period.
-              </p>
+              <div className="mt-2 text-inksoft">
+                {managementURL ? (
+                  <>
+                    <p>Switch or cancel your plan in the {storeName}. Canceling keeps premium until the end of your paid period.</p>
+                    <button
+                      type="button"
+                      onClick={() => void manageSubscription()}
+                      disabled={managingSubscription}
+                      className="mt-3 rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream disabled:opacity-60"
+                    >
+                      {managingSubscription ? "Opening…" : "Manage subscription"}
+                    </button>
+                  </>
+                ) : (
+                  <p>
+                    There isn't an active {storeName} subscription to manage on this device. If you subscribed on the
+                    website, manage it at paddle.net. Canceling keeps premium until the end of your paid period.
+                  </p>
+                )}
+                {manageError && <p className="mt-2 text-clay">{manageError}</p>}
+              </div>
             ) : (
               <p className="mt-2 text-inksoft">
                 To switch plans, update your card, or cancel, visit{" "}
@@ -329,8 +363,8 @@ function Subscription() {
         <section className="rounded-3xl bg-card p-5 wood-block">
           <h2 className="font-ui text-lg font-bold text-ink">Your account has been deleted</h2>
           <p className="mt-2 text-sm text-inksoft">
-            Your grown-up account, child profiles and subscription record have been permanently removed. Totland still
-            works on this device with the free activities.
+            Your grown-up account and its saved child profiles have been permanently removed. Play progress and stars
+            stored on this device remain here. Any App Store or Google Play subscription must still be canceled in the store.
           </p>
           <Link to="/" className="mt-3 inline-block rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream">
             Back to play
@@ -386,13 +420,18 @@ function Subscription() {
             <div className="mt-5 border-t border-border pt-4">
               <h3 className="font-ui text-sm font-bold text-clay">Delete account</h3>
               <p className="mt-2 text-xs text-inksoft">
-                This permanently removes your grown-up account, every child profile saved to it, and your subscription
-                record. It cannot be undone.
+                This permanently deletes your grown-up account and child profiles saved to it. It does not cancel an App
+                Store or Google Play subscription, and it does not erase play progress or stars stored on this device.
+                This cannot be undone.
               </p>
               {active && (
                 <p className="mt-2 text-xs text-clay">
-                  You have an active subscription. Deleting your account does not cancel billing — cancel first
-                  {native ? ` in the ${storeName} from your device settings` : " at paddle.net with your checkout email"}.
+                  You have an active subscription. Manage and cancel it before deleting
+                  {native && managementURL
+                    ? ` using the Manage subscription button above`
+                    : native
+                      ? ` in the ${storeName} from your device settings`
+                      : " at paddle.net with your checkout email"}.
                 </p>
               )}
 

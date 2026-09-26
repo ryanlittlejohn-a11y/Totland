@@ -77,7 +77,7 @@ export function LetterFishingGame({
     tally.current.hits += 1;
     update((p) => recordAnswer(p, { skill, correct: true, responseMs: Date.now() - started.current, itemId: round.answerId }));
     themeChime(theme.motif, profile.sfx);
-    say(stripEmoji(text));
+    sayParts([praise, round.reveal ?? ""]);
     window.setTimeout(() => {
       if (index + 1 >= ROUNDS) {
         const total = stars.current;

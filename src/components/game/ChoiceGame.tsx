@@ -70,7 +70,7 @@ export function ChoiceGame({
       setStars((s) => s + (misses === 0 ? 2 : 1));
       setMessage(`${praise} ${round.reveal ?? ""}`.trim());
       themeChime(theme.motif, profile.sfx);
-      say(stripEmoji(`${praise} ${round.reveal ?? ""}`));
+      sayParts([praise, round.reveal ?? ""]);
       window.setTimeout(() => {
         if (index + 1 >= ROUNDS) {
           const total = stars + (misses === 0 ? 2 : 1);
@@ -88,7 +88,7 @@ export function ChoiceGame({
       setWrongId(opt.id);
       setMessage(misses >= 1 ? `${praise} ${round.hint}` : praise);
       chime("retry", profile.sfx);
-      say(stripEmoji(misses >= 1 ? `${praise} ${round.hint}` : praise));
+      sayParts(misses >= 1 ? [praise, round.hint] : [praise]);
       window.setTimeout(() => {
         setState("asking");
         setWrongId(null);

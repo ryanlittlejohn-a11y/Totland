@@ -91,7 +91,7 @@ export function LetterRainGame({
       itemId: round.answerId,
     }));
     themeChime(theme.motif, profile.sfx);
-    say(stripEmoji(text));
+    sayParts([praise, round.reveal ?? ""]);
     window.setTimeout(() => {
       if (index + 1 >= ROUNDS) {
         const total = stars.current;

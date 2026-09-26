@@ -8,6 +8,18 @@ import { apiOrigin, isNativeApp, isServerPath } from "./native";
  */
 let installed = false;
 
+/** Status of the most recent server reply seen by the bridge, so error messages can show the real code. */
+let lastServerStatus: number | null = null;
+export function getLastServerStatus(): number | null {
+  return lastServerStatus;
+}
+
+async function track(p: Promise<Response>): Promise<Response> {
+  const res = await p;
+  lastServerStatus = res.status;
+  return res;
+}
+
 export function installNativeApiBridge(): void {
   if (installed) return;
   if (typeof window === "undefined") return;
@@ -27,9 +39,9 @@ export function installNativeApiBridge(): void {
       if (local && isServerPath(url.pathname)) {
         const target = `${origin}${url.pathname}${url.search}`;
         if (request) {
-          return originalFetch(new Request(target, request), init);
+          return track(originalFetch(new Request(target, request), init));
         }
-        return originalFetch(target, init);
+        return track(originalFetch(target, init));
       }
     } catch {
       // fall through to the untouched fetch

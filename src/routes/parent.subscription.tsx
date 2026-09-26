@@ -1,3 +1,4 @@
+import { getLastServerStatus } from "@/lib/native-bridge";
 import { signOutLocal } from "@/lib/signout-log";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
@@ -171,10 +172,16 @@ function Subscription() {
       setDeleting(false);
     } catch (e) {
       console.error("[deleteAccount]", e);
-      const status =
-        e instanceof Response ? e.status : (e as { status?: number; statusCode?: number })?.status ??
-          (e as { statusCode?: number })?.statusCode;
       const msg = e instanceof Error ? e.message : String(e);
+      const bridged = getLastServerStatus();
+      const status =
+        e instanceof Response
+          ? e.status
+          : ((e as { status?: number })?.status ??
+            (e as { statusCode?: number })?.statusCode ??
+            // The server replied with an error page: use the real status the
+            // app bridge saw, or 500 for the server's own error page.
+            (/^\s*</.test(msg) ? (bridged && bridged >= 400 ? bridged : 500) : undefined));
       if (status === 401 || /unauthori[sz]ed/i.test(msg)) {
         setDeleteError(signInAgain);
       } else if (e instanceof TypeError || /failed to fetch|network|load failed/i.test(msg)) {

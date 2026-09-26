@@ -60,15 +60,7 @@ export function useEntitlementSync() {
       if (offline) return;
 
       try {
-        const { data } = await supabase.auth.getSession();
-        const session = data.session;
-        const user = session?.user;
-        const token = session?.access_token ?? "";
-        const expired = typeof session?.expires_at === "number" && session.expires_at * 1000 <= Date.now();
-        if (!user || !user.email_confirmed_at || token.split(".").length !== 3 || expired) {
-          if (user && (token.split(".").length !== 3 || expired)) {
-            await supabase.auth.signOut({ scope: "local" }).catch(() => {});
-          }
+        if (!(await hasVerifiedSession())) {
           setPremium(false);
           return;
         }

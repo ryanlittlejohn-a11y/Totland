@@ -1,70 +1,78 @@
-# Animal Jigsaw — bespoke drag puzzle (plan)
+# Number Maze — bespoke path-tracing game (plan)
 
 ## What exists today
-- Catalog row 82 "Animal Jigsaw" (🐨, engine `choice`, kind `jigsawPiece`, puzzles skill, "Six-piece jigsaw", Premium).
-- Siblings on the same `jigsawPiece` kind + ChoiceGame: row 68 **Shape Puzzle** and row 81 **Simple Jigsaw**. The generator is also reused by `completePicture` (Alphabet/Number Jigsaw-style games). All of these stay unchanged.
-- The current "jigsaw" is not a picture at all: `jigsawPiece()` in rounds.ts picks a word+emoji and asks "Which piece completes the {word}?" with emoji choice tiles. So there are no existing jigsaw images to reuse.
+- Catalog row 47: "Number Maze", engine `order`, kind `numbers`, skill numbers, free, description "Move through numbers in order".
+- It uses the shared OrderGame tap-in-sequence mechanic. The `numbers` round builder gives 3 numbers at level 1, 5 at levels 2-3, and 7 at levels 4-5, starting at a random number. 14 catalog rows use the `order` engine, and all of them stay unchanged.
+- It has a theme entry in game-themes.ts ("Follow the number path!"). That entry stays as is.
 
-## The open question: where the animal pictures come from
+## Honest assessment: what can be reused, and what's new
+- **useDragToTarget: doesn't fit and won't be touched.** It models "pick up one item and drop it on one target". A maze is one continuous stroke that passes through many points and never drops anything. Forcing it in would mean changing the shared hook the four shipped games depend on.
+- **TracingCanvas: borrow the ideas only.** It's a small handwriting canvas that paints dots and counts coverage, and it has no idea of points or order. Three techniques are worth copying: the no-scroll touch setting, holding onto the finger for the whole stroke, and converting screen positions into board positions. The component itself stays untouched.
+- **Verdict: this is a genuinely new, fifth interaction pattern.** It gets a new, small, self-contained path-tracing hook. Nothing that already ships is changed.
 
-Pieces only need one picture per animal. Cutting happens in the browser: every piece shows the same image, cropped to its own jigsaw-shaped region with an SVG clip path. No image-cutting tool is needed with any option below.
+## Maze layout and difficulty (tied to the numbers skill level, like Jigsaw)
+The points sit on a winding, hand-drawn-looking path across a square board. It's a connect-the-dots trail, not a walled maze. A faint dotted guide path shows the route, and a solid trail is drawn as the child connects each point.
 
-| Option | How | Pros | Cons |
-|---|---|---|---|
-| **A. AI-drawn illustrations (recommended)** | Generate 6 matching cartoon animal pictures (lion, elephant, koala, turtle, fox, owl) in one flat, bold, toddler-friendly style, square, plain background, bundled in the app | Looks like a real jigsaw; recognizable animals; works offline; each piece clearly shows part of the animal (ear, eye, tail) so matching makes sense | About 6 small images (~60–120 KB each, ~0.5 MB total) added to the app download; I review each for style and leave out any that come out wrong |
-| B. Code-drawn animals | Simple shapes (circles, ovals) drawn in code | Tiny, crisp at any size, easy to recolor for high contrast | Animals look basic and abstract; pieces are mostly blobs of one color, so children can't tell which piece goes where; lots of hand work per animal |
-| C. Giant emoji cut up | One big 🦁 cut into pieces | No assets | Emoji look different on iPhone, Android and web; pieces are mostly flat color; cropped emoji often look blurry or broken |
+| Numbers level | Points | Numbers used | Layout | Mazes per session |
+|---|---|---|---|---|
+| 1 | 3 | 1-3 | gentle curve | 4 |
+| 2 | 5 | 1-5 | S-curve | 3 |
+| 3 | 7 | 1-7 | S-curve | 3 |
+| 4 | 8 | 1-8 | zigzag snake | 2 |
+| 5 | 10 | 1-10 | spiral or snake | 2 |
 
-Recommendation: **A**. B and C make the pieces too alike to be a fair puzzle for ages 2–6.
+- Numbers always start at 1, matching "connect 1, 2, 3..." for ages 2-6. Point counts sit just above the existing order-game counts (3/5/7) and stay at or below 10.
+- There's a small set of hand-designed layouts per level (about 3 each), picked at random and possibly mirrored. Points are placed so they are never closer than one touch-target width apart.
+- Each point is a round number stone at least 64 px wide, about 72 px on phones. Level 5 (10 points) was checked against the smallest phone board (about 340 px square).
+- The level is fixed when the game starts, so a level-up mid-game doesn't rebuild the board. This is the same approach as Jigsaw.
+- **Reveal:** each completed maze shows the traced shape filling in as a simple picture (star, fish, heart, house, and so on, drawn in code as outlines), plus a praise line.
 
-Silhouette: no extra image. The target outline is the same picture shown as a faint dark shape with dashed piece borders, so it always lines up exactly with the pieces.
+## Interaction rules
+- **Start:** the child puts a finger on 1, or on the last connected number when resuming. Starting anywhere else draws nothing, and the next number gently pulses as a hint.
+- **Drawing:** while the finger moves, a live line follows it from the last connected number.
+- **Correct number:** the finger enters the next number's zone (slightly larger than the stone). The number locks, the segment becomes solid, a short chime plays, and the number is spoken.
+- **Wrong number:** entering a number out of order (for example 5 when 3 is next) is penalty-free. That stone wiggles and the loose line snaps back to the last connected number. Nothing is recorded, and stars and accuracy are unaffected. A gentle "Find 3!" is spoken no more than about every 2 seconds. Progress is kept.
+- **Passing over a connected number:** nothing happens.
+- **Lifting the finger:** progress is kept and the loose line disappears. The child continues from the last connected number. There are no timers.
+- **Maze finished (highest number reached):** the reveal animation plays, with praise and a reward chime. After the last maze comes the full reward: `recordGameComplete(profile, "numbers", 3, 1)` and `onFinish(3, 1)`.
+- **Scoring:** each correct connection is recorded as a correct answer, the same as Jigsaw placements. Misses are never recorded.
 
-## Difficulty tiers tied to the existing level scale
-The app's adaptive engine levels a skill 1–5 (three correct in a row level up, two misses level down). Because this game never records misses (wrong drops are penalty-free), a child's puzzles level rises steadily with play — which is exactly what a jigsaw ramp wants.
+## Tapping as a full alternative to dragging (VoiceOver)
+- Every number stone is a real button labeled, for example, "Number 3, next". Connected stones are labeled "connected". Stones not yet reached are labeled "Number 5".
+- **Tapping the next number connects it in full.** It draws the segment, plays the chime, speaks the number, and announces it to VoiceOver. The whole maze can be finished with taps alone, with no dragging needed. Enter and Space also work from a keyboard.
+- Tapping a wrong number gives the same penalty-free wiggle, and VoiceOver hears "Find 3".
+- A visually hidden live message keeps the child updated, for example "3 connected. Next: 4."
+- Drag and tap can be mixed freely.
 
-| Level | Pieces | Grid | Cut style |
-|---|---|---|---|
-| 1–2 | 2 | 2x1 (left/right halves) | One straight cut down the middle |
-| 3 | 4 | 2x2 | Straight-edged grid cuts |
-| 4 | 6 | 3x2 (matches the "Six-piece jigsaw" description) | Rounded jigsaw tabs |
-| 5 | 9 | 3x3 | Straight-edged grid cuts |
+## Baseline requirements
+- The spoken instruction is given each maze (EN/ES): "Trace the path: start at 1 and follow the numbers!" It uses the existing library, live voice or device voice. No new audio is generated.
+- **Touch:** no page scrolling on the board. Only the first finger draws, and any other finger is ignored until it lifts. Text selection is blocked.
+- **Reduced motion:** no pulsing, wiggle or reveal animation. The line and lock-ins still appear right away, so the game stays fully playable.
+- **High contrast:** thick outlines on the stones, a solid dark trail, and "next" is shown by an outline plus the label, not by color alone.
 
-Reasoning: levels 1–2 share 2 pieces because two halves already teach the "pieces make a picture" idea and the jump to 4 is the big one; 9 pieces is kept for level 5 only, since by then the child has earned it through steady play.
-
-**Tabs vs straight cuts at 9 pieces:** at 3x3 on a phone, each piece is about 100–110 px — big enough to touch, but adding interlocking tabs makes each piece's grab area uneven (the tab dips shrink it) and makes slot edges visually busy for ages 2–6. Straight-edged grid cuts keep all nine pieces evenly sized and easy to grab, and the difficulty already comes from having more pieces. Tabs appear only at 6 pieces, where pieces are ~120–140 px and tabs add charm without hurting touch targets.
-
-## Rounds per session scale with piece count
-Each round is one animal. Sessions stay short either way:
-- 2 pieces → 4 animals (each is quick)
-- 4 pieces → 3 animals
-- 6 pieces → 3 animals
-- 9 pieces → 2 animals
-
-## One image per animal, all tiers
-The same six AI-drawn illustrations are used at every level — only the cut pattern changes. No extra art per difficulty. Each image stays square so 2x1, 2x2, 3x2 and 3x3 cuts all crop cleanly.
-
-## Interaction (same rules as the other three)
-- Pieces sit scattered in a tray below the silhouette and can be dragged. Each has one correct slot.
-- Wrong slot or dropped outside: the piece bounces back to the tray with a gentle "Hmm, try another spot." No recorded miss, no effect on stars or accuracy.
-- Correct slot: the piece snaps in with a small "click" scale animation and a chime; that slot stops accepting drops (`isTargetEnabled`).
-- Whole puzzle done: dashed borders fade, the full animal pops with praise and the animal name line ("You made a lion! 🦁"). After the last animal: full reward, `recordGameComplete`, then the normal finish screen.
-- Tap fallback (Word Rocket pattern): tap a piece to select it (announced "Lion piece 3 selected"), then tap a slot. Slots are buttons with labels like "Top left spot" / "Arriba a la izquierda".
-- Spoken bilingual instruction each round ("Put the lion back together!" / "¡Arma el león!") through the existing narration path. No new audio gets generated.
-- No timers; `touch-action: none` on the play area; a second finger is ignored while dragging; reduced motion turns off tray wobble and snap/celebrate animations but keeps everything playable; high contrast gives pieces and slots thick outlines and makes the silhouette darker.
-
-## Scope limits
-- Only row 82 changes engine, to a new `jigsaw` engine with drag interaction. It stays Premium.
-- ChoiceGame.tsx, rounds.ts `jigsawPiece`/`completePicture`, Shape Puzzle, Simple Jigsaw and every other game are left alone.
-- The shared drag hook should need **no changes**: keyed handles plus `isTargetEnabled` already cover many pieces and many slots (the same shape as Word Rocket). If a gap turns up, it will be a small add-on only, and all three existing drag games get regression-tested.
-
-## Technical details
-- New files: `src/components/game/AnimalJigsawGame.tsx` (rounds, scoring, narration, completion), `src/components/game/JigsawPuzzleScene.tsx` (silhouette slots as `DragTarget`s `slot-0..5`, pieces via `getHandleProps(pieceId)`, SVG `clipPath` jigsaw shapes generated from the grid, picture shown via `<image>` with offsets), `src/lib/jigsaw-animals.ts` (animal list: id, EN/ES names, image import, emoji).
-- Assets: `src/assets/jigsaw/{lion,elephant,koala,turtle,fox,owl}.jpg` (~768 px square, generated in one consistent style), imported like other bundled images so they work offline and in the native build.
-- Edits: `src/lib/catalog.ts` (add `jigsaw` to EngineId, row 82 engine, drag interaction mapping), `src/routes/game.$gameId.tsx` (jigsaw branch), `src/styles.css` (tray, snap, celebrate, reduced-motion, high-contrast), `roadmap.md`, and the `i18n` strings the scene uses.
-- Pieces match by piece id → slot id (each piece is unique, unlike repeated letters in Word Rocket).
+## Scope
+- Only row 47 changes engine, from `order` to a new `maze` engine with the "trace" interaction.
+- Not touched: OrderGame.tsx, the round builder, the other 13 order rows (Alphabet Train, Letter Garden, Number Train, Number Rain, Picture Path, and so on), useDragToTarget, DragTarget, TracingCanvas, and anything related to sign-in, subscriptions, payments or the parental gate.
 
 ## Verification
-- Animal Jigsaw: a full game by drag with full reward; wrong-slot and off-target drops plus wrong taps bounce with no recorded answer and no star/accuracy change; a round completed with taps only; keyboard works; second pointer ignored; no page scroll or text selection; reduced motion and high contrast visible and playable; images load offline (no network requests for pictures).
-- Regressions: Letter Fishing, Feed the Letter Monster and Word Rocket (drag, tap fallback, ignored second pointer, penalty-free wrong try).
-- Spot-checks: Shape Puzzle and Simple Jigsaw are still tap-choice.
-- Typecheck, build and runtime logs clean. Phone testing needs `bun run sync:app` plus a new Codemagic build.
+- **All five levels:** correct point count and number of mazes, and finishing by drag gives the full reward.
+- **Wrong-order touches:** they bounce, nothing is recorded, stars and accuracy are unchanged, and the child can resume.
+- **Lifting mid-path:** progress is kept.
+- **Tap-only:** a full session can be finished without dragging, including by keyboard, and the VoiceOver labels and live messages are present.
+- **Touch safety:** a second finger is ignored and the page doesn't scroll.
+- **Accessibility settings:** reduced motion and high contrast both still leave the game playable.
+- **Regression checks:** Letter Fishing, Feed the Letter Monster, Word Rocket and Animal Jigsaw. Number Train, Alphabet Train and Picture Path stay unchanged tap-in-order games.
+- Typecheck and build are clean.
+
+## Technical details
+- **New files:**
+  - `src/hooks/usePathTrace.ts`: tracks one pointer (holds onto it and ignores any second pointer), converts screen positions to board positions, and tests each position against the point zones. It reports enter-point, move and end events.
+  - `src/lib/number-maze.ts`: layouts per level, the level-to-tier mapping, and the reveal shapes.
+  - `src/components/game/NumberMazeScene.tsx`: an SVG board with the guide path, the trail, the live line, and the stone buttons.
+  - `src/components/game/NumberMazeGame.tsx`: rounds, speech, recording and the finish step.
+- **Edited files:**
+  - `src/lib/catalog.ts`: add `maze` to the engine list, map it to the "trace" interaction, and change row 47 only.
+  - `src/routes/game.$gameId.tsx`: add a maze branch.
+  - `src/styles.css`: maze styles, including reduced-motion and high-contrast rules.
+  - `roadmap.md`
+- **Assumption:** the game stays free, as row 47 is today. The theme mascot and colors are reused.

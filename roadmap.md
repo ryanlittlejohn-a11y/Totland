@@ -171,7 +171,7 @@
 - [x] Add correct-answer pop-and-disappear for findUpper/findNumber ChoiceGame variants with reduced-motion fallback
 - [x] Freeze HuntGame boards and complete exactly once from the freshly computed found list
 - [x] Correct the three learning-data privacy claims, two bespoke objectives, and per-game age descriptions
-- [ ] Verify ChoiceGame variants, all hunt games including final-target level-up, bilingual copy, age ranges, and live totals
+- [x] Verify ChoiceGame variants, all hunt games including final-target level-up, bilingual copy, age ranges, and live totals
 
 ## Future game interaction backlog
 - [x] Letter/Number Pop games (findUpper/findNumber choice-engine games): make the selected tile visually pop and disappear on a correct answer, instead of showing a green checkmark overlay on top of the still-present tile.

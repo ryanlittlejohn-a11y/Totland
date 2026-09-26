@@ -51,8 +51,8 @@ export const MAZE_REVEALS: MazeReveal[] = [
 ];
 
 export function makeMaze(count: number): TracePoint[] {
-  const options = LAYOUTS[count] ?? LAYOUTS[3];
-  const base = options[Math.floor(Math.random() * options.length)];
+  const options = LAYOUTS[count] ?? LAYOUTS[3]!;
+  const base = options[Math.floor(Math.random() * options.length)] ?? options[0]!;
   const fx = Math.random() < 0.5;
   const fy = Math.random() < 0.5;
   return base.map((p) => ({ x: fx ? 100 - p.x : p.x, y: fy ? 100 - p.y : p.y }));

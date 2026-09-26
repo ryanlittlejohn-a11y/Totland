@@ -43,7 +43,7 @@ export function NumberMazeGame({
   const lastRetrySpeech = useRef(0);
   const lastWrong = useRef(0);
   const started = useRef(Date.now());
-  const reveal = MAZE_REVEALS[round % MAZE_REVEALS.length];
+  const reveal = MAZE_REVEALS[round % MAZE_REVEALS.length] ?? MAZE_REVEALS[0]!;
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 

@@ -93,7 +93,6 @@ export function LetterRainScene({
 
       <div
         className="rain-accessible-list"
-        role="group"
         aria-label={L("Choose a letter", "Elige una letra")}
         data-rain-accessible-list
       >

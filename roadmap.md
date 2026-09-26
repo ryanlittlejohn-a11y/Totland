@@ -180,5 +180,5 @@
 ## English narration Tier 1 (approved 2026-09-26)
 - [x] Praise and reveal/hint play as back-to-back clips (component approach)
 - [x] Rhyme hints use a comma instead of "…" so Hannah can say them
-- [ ] Record Tier 1 English lines + rhyme hints into the shared library
+- [ ] Record Tier 1 English lines + rhyme hints: 91 of 763 recorded (1,699 credits); blocked — the ElevenLabs API key "Lovable" hit its own credit cap (account still has credit)
 - [ ] Later decision: Tier 2 (prompts, Word Finds) and Tier 3 (reveals/hints); Spanish out of scope

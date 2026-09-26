@@ -58,6 +58,12 @@ function Subscription() {
     if (!user) return null;
     setChecking(true);
     try {
+      // Confirm the saved sign-in with the backend first; a stale token must
+      // never reach a protected call.
+      if (!(await hasVerifiedSession())) {
+        setSub(null);
+        return null;
+      }
       const state = await fetchSubscription({ data: { environment: getPaddleEnvironment() } });
       setSub(state);
       // Cache the verified answer locally so the app keeps working offline.

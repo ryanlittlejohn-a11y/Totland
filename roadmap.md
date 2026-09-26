@@ -119,7 +119,7 @@
 - [x] Verify accessibility, motion/contrast modes, performance proxy, layouts, and game regressions
 
 ## TestFlight subscription fixes (approved)
-- [ ] OfflineGate waits for the first Premium check (settled signal) before showing the offline screen
-- [ ] Fix "your the App Store account" copy in StorePurchasePanel
-- [ ] Add Terms/Privacy links inside the native purchase box
-- [ ] Verify offline cold launch (Premium vs free), panel copy, link targets
+- [x] OfflineGate waits for the first Premium check (settled signal) before showing the offline screen
+- [x] Fix "your the App Store account" copy in StorePurchasePanel
+- [x] Add Terms/Privacy links inside the native purchase box
+- [x] Verify offline cold launch (Premium vs free), panel copy, link targets

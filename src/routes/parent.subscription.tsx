@@ -195,7 +195,7 @@ function Subscription() {
             )}
             {native ? (
               <p className="mt-2 text-inksoft">
-                To switch plans or cancel, open your device settings and manage subscriptions in {storeName}.
+                To switch plans or cancel, open your device settings and manage subscriptions in the {storeName}.
                 Canceling keeps premium until the end of your paid period.
               </p>
             ) : (
@@ -350,7 +350,7 @@ function Subscription() {
               {active && (
                 <p className="mt-2 text-xs text-clay">
                   You have an active subscription. Deleting your account does not cancel billing — cancel first
-                  {native ? ` in ${storeName} from your device settings` : " at paddle.net with your checkout email"}.
+                  {native ? ` in the ${storeName} from your device settings` : " at paddle.net with your checkout email"}.
                 </p>
               )}
 

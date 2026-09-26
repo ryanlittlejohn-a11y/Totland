@@ -311,6 +311,15 @@ html[data-away="1"] *::after {
 .game-theme[data-shape="block"] .game-theme__option { border-radius: 0.8rem; }
 .game-theme[data-shape="puzzle"] .game-theme__option { border-radius: 1.8rem 0.7rem 1.8rem 0.7rem; }
 .game-theme[data-shape="drop"] .game-theme__option { border-radius: 55% 45% 60% 40% / 65% 45% 55% 35%; }
+.choice-option--popped {
+  pointer-events: none;
+  animation: choice-pop-away 650ms ease-out forwards;
+}
+@keyframes choice-pop-away {
+  0% { transform: scale(1); opacity: 1; }
+  42% { transform: scale(1.18); opacity: 1; }
+  100% { transform: scale(0.9); opacity: 0; }
+}
 
 html[data-high-contrast="1"] .game-theme,
 html[data-high-contrast="1"] .game-theme__mascot,
@@ -324,9 +333,11 @@ html[data-high-contrast="1"] .game-theme { background: var(--card); }
   .anim-bob,
   .anim-twinkle,
   .anim-pop,
-  .anim-wiggle {
+  .anim-wiggle,
+  .choice-option--popped {
     animation: none !important;
   }
+  .choice-option--popped { opacity: 0; transform: none; }
   .game-theme__sky { animation: none !important; }
 }
 
@@ -335,9 +346,11 @@ html[data-reduced-motion="1"] .anim-bob,
 html[data-reduced-motion="1"] .anim-twinkle,
 html[data-reduced-motion="1"] .anim-pop,
 html[data-reduced-motion="1"] .anim-wiggle,
+html[data-reduced-motion="1"] .choice-option--popped,
 html[data-reduced-motion="1"] .game-theme__sky {
   animation: none !important;
 }
+html[data-reduced-motion="1"] .choice-option--popped { opacity: 0; transform: none; }
 
 /* ------------------------------------------------- letter fishing */
 .fishing-pond {

@@ -112,7 +112,7 @@ const ROWS: Row[] = [
   [14, "Letter Shadow", "🌑", "choice", "letterShadow", A, "letters", "Match a letter to its silhouette", "elr"],
   [15, "Letter Maze", "🌀", "hunt", "letters", A, "letters", "Follow one letter through a maze", "lr"],
   [16, "Letter Detective", "🔍", "hunt", "letters", A, "letters", "Find every copy of a letter", "elr"],
-  [17, "Letter Rain", "🌧️", "rain", "findUpper", A, "letters", "Quick letter recognition", "lr"],
+  [17, "Letter Rain", "🌧️", "rain", "findUpper", A, "letters", "Relaxed letter recognition with no timer", "lr"],
   [18, "Letter Memory", "🧠", "memory", "letters", A, "memory", "Remember letter pairs", "elr"],
   [19, "Letter Puzzle", "🧩", "choice", "letterPuzzle", P, "puzzles", "Assemble a letter", "lr"],
   [20, "Alphabet Race", "🏁", "order", "letters", A, "letters", "Race through the alphabet", "lr"],
@@ -182,7 +182,7 @@ const ROWS: Row[] = [
   [80, "Long or Short", "📏", "choice", "longShort", P, "puzzles", "Compare length", "elr"],
 
   [81, "Simple Jigsaw", "🧩", "choice", "jigsawPiece", P, "puzzles", "Four-piece jigsaw", "elr"],
-  [82, "Animal Jigsaw", "🐨", "jigsaw", "jigsawPiece", P, "puzzles", "Six-piece jigsaw", "lr", 1],
+  [82, "Animal Jigsaw", "🐨", "jigsaw", "jigsawPiece", P, "puzzles", "Build animal jigsaws", "lr", 1],
   [83, "Alphabet Jigsaw", "🔠", "choice", "letterPuzzle", P, "puzzles", "Assemble letters", "lr"],
   [84, "Number Jigsaw", "🔢", "choice", "numberPuzzle", P, "puzzles", "Assemble numbers", "lr"],
   [85, "Picture Puzzle", "🖼️", "choice", "completePicture", P, "puzzles", "Complete an image", "lr", 1],

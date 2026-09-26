@@ -123,3 +123,10 @@
 - [x] Fix "your the App Store account" copy in StorePurchasePanel
 - [x] Add Terms/Privacy links inside the native purchase box
 - [x] Verify offline cold launch (Premium vs free), panel copy, link targets
+
+## Native Apple/Google sign-in return (approved)
+- [x] Sheet page clears its saved sign-in on the device only (no backend logout that kills the app's session)
+- [x] After handing the session over, confirm it with the backend once; show the existing "didn't work" message on failure
+- [x] Verify: no other backend logout on the native return, session survives, website sign-in unchanged
+- [ ] (User) Rename the Lovable project to "Totland" and check the consent screen
+- [ ] (User, later) Own Apple Services ID + Google OAuth client to replace Lovable branding on Apple/Google screens

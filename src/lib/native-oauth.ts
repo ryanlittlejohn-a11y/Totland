@@ -76,6 +76,15 @@ export async function completeNativeOAuth(url: string): Promise<boolean> {
       }
       const { error } = await supabase.auth.setSession({ access_token, refresh_token });
       ok = !error;
+      if (ok) {
+        // Confirm once with the backend that the handed-over session is live,
+        // so a dead session reports failure instead of flashing signed-in.
+        const { data: u, error: userError } = await supabase.auth.getUser();
+        if (userError || !u.user) {
+          ok = false;
+          await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+        }
+      }
     }
   } catch {
     ok = false;

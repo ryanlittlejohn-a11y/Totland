@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { isNativeApp } from "@/lib/native";
-import { configurePurchases, storeEntitlementActive, storePurchasesAvailable } from "@/lib/purchases";
+import { configurePurchases, getStoreEntitlementState, storePurchasesAvailable } from "@/lib/purchases";
 
 /**
  * Premium as reported by Apple's / Google's store through RevenueCat.
@@ -14,14 +14,16 @@ import { configurePurchases, storeEntitlementActive, storePurchasesAvailable } f
  */
 export function useStoreEntitlement(userId?: string | null) {
   const [storeActive, setStoreActive] = useState(false);
+  const [managementURL, setManagementURL] = useState<string | null>(null);
 
   const refresh = useCallback(async () => {
     if (!storePurchasesAvailable()) return false;
     try {
       await configurePurchases(userId ?? undefined);
-      const active = await storeEntitlementActive();
-      setStoreActive(active);
-      return active;
+      const state = await getStoreEntitlementState();
+      setStoreActive(state.active);
+      setManagementURL(state.managementURL);
+      return state.active;
     } catch (e) {
       console.error(e);
       return false;
@@ -50,5 +52,5 @@ export function useStoreEntitlement(userId?: string | null) {
     };
   }, [refresh]);
 
-  return { storeActive, refresh };
+  return { storeActive, managementURL, refresh };
 }

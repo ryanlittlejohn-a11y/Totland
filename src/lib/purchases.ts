@@ -36,6 +36,11 @@ export interface StoreOffer {
   packageRef: unknown;
 }
 
+export interface StoreEntitlementState {
+  active: boolean;
+  managementURL: string | null;
+}
+
 function apiKey(): string | undefined {
   const platform = nativePlatform();
   if (platform === "ios") return import.meta.env["VITE_REVENUECAT_IOS_KEY"] as string | undefined;
@@ -160,12 +165,28 @@ export async function restoreStorePurchases(): Promise<boolean> {
   return hasPremium(customerInfo);
 }
 
-/** Current entitlement straight from the store, used as a fast local check. */
-export async function storeEntitlementActive(): Promise<boolean> {
-  if (!storePurchasesAvailable()) return false;
+/** Current entitlement and store-management destination from RevenueCat. */
+export async function getStoreEntitlementState(): Promise<StoreEntitlementState> {
+  if (!storePurchasesAvailable()) return { active: false, managementURL: null };
   const { Purchases } = await plugin();
   const { customerInfo } = await Purchases.getCustomerInfo();
-  return hasPremium(customerInfo);
+  return {
+    active: hasPremium(customerInfo),
+    managementURL: customerInfo.managementURL,
+  };
+}
+
+/** Current entitlement straight from the store, used as a fast local check. */
+export async function storeEntitlementActive(): Promise<boolean> {
+  return (await getStoreEntitlementState()).active;
+}
+
+/** Open the store-provided subscription management destination. */
+export async function openStoreSubscriptionManagement(managementURL: string): Promise<void> {
+  const url = new URL(managementURL);
+  if (url.protocol !== "https:") throw new Error("Unsupported subscription management URL");
+  const { Browser } = await import("@capacitor/browser");
+  await Browser.open({ url: url.toString(), presentationStyle: "popover" });
 }
 
 

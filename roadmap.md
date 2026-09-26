@@ -114,6 +114,6 @@
 - [x] Verify empty, partial, full, replayed, locked, bilingual, world, and parent states
 
 ## Letter Rain bespoke interaction (approved Option A)
-- [ ] Add the self-contained rain engine and accessible animated/static scene
-- [ ] Keep wrong catches and waiting penalty-free across all five skill levels
+- [x] Add the self-contained rain engine and accessible animated/static scene
+- [x] Keep wrong catches and waiting penalty-free across all five skill levels
 - [ ] Verify accessibility, motion/contrast modes, performance proxy, layouts, and game regressions

@@ -4,6 +4,7 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { AREAS } from "@/lib/content";
 import { setVerifiedPremium, useProfile } from "@/lib/profile";
+import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
 import { useParentAuth } from "@/hooks/useParentAuth";
 import { ParentAuthCard } from "@/components/ParentAuthCard";

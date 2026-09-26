@@ -1,3 +1,4 @@
+import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 

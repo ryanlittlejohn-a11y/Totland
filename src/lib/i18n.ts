@@ -282,7 +282,7 @@ const TITLES: Record<string, string> = {
   "Numbers 1–20": "Números 1–20", "Count, match and compare": "Cuenta, empareja y compara",
   Colors: "Colores", "Color quest and sorting": "Busca y clasifica colores",
   Shapes: "Figuras", "Build with shapes": "Construye con figuras",
-  "First Words": "Primeras palabras", "200+ picture words": "Más de 200 palabras con imagen",
+  "First Words": "Primeras palabras", "Picture words": "Palabras con imagen",
   "Beginning Sounds": "Sonidos iniciales", "Hear the first sound": "Escucha el primer sonido",
   "Matching & Memory": "Parejas y memoria", "Flip and match pairs": "Voltea y forma parejas",
   Puzzles: "Rompecabezas", "Slide the pieces home": "Coloca las piezas",
@@ -435,6 +435,8 @@ const TITLES: Record<string, string> = {
 /** Translate an authored app title/blurb/objective. */
 export function title(text: string): string {
   if (current === "en" || !text) return text;
+  const words = /^(\d+) picture words$/.exec(text);
+  if (words) return `${words[1]} palabras con imagen`;
   return TITLES[text] ?? sentence(text);
 }
 

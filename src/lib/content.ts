@@ -27,23 +27,21 @@ export interface Area {
   blurb: string;
   tint: "clay" | "amber" | "moss" | "sky" | "plum" | "wood";
   free: boolean;
-  /** how many generated activities this area can produce */
-  activities: number;
 }
 
 export const AREAS: Area[] = [
-  { id: "letters", title: "ABC & Phonics", emoji: "🔤", blurb: "Find, pop and learn letters", tint: "clay", free: true, activities: 104 },
-  { id: "numbers", title: "Numbers 1–20", emoji: "🔢", blurb: "Count, match and compare", tint: "sky", free: true, activities: 100 },
-  { id: "colors", title: "Colors", emoji: "🎨", blurb: "Color quest and sorting", tint: "plum", free: true, activities: 48 },
-  { id: "shapes", title: "Shapes", emoji: "🔷", blurb: "Build with shapes", tint: "moss", free: true, activities: 40 },
-  { id: "words", title: "First Words", emoji: "🍎", blurb: "200+ picture words", tint: "amber", free: false, activities: 120 },
-  { id: "phonics", title: "Beginning Sounds", emoji: "👂", blurb: "Hear the first sound", tint: "clay", free: false, activities: 78 },
-  { id: "memory", title: "Matching & Memory", emoji: "🧠", blurb: "Flip and match pairs", tint: "sky", free: true, activities: 60 },
-  { id: "puzzles", title: "Puzzles", emoji: "🧩", blurb: "Slide the pieces home", tint: "moss", free: false, activities: 100 },
-  { id: "tracing", title: "Letter Tracing", emoji: "✏️", blurb: "Trace big and small letters", tint: "wood", free: true, activities: 52 },
-  { id: "flashcards", title: "Flash Cards", emoji: "🃏", blurb: "Tap to hear the word", tint: "amber", free: false, activities: 100 },
-  { id: "wordsearch", title: "Word Search", emoji: "🔎", blurb: "Tiny, gentle grids", tint: "plum", free: false, activities: 100 },
-  { id: "stories", title: "Storybooks", emoji: "📖", blurb: "Read along together", tint: "wood", free: false, activities: 25 },
+  { id: "letters", title: "ABC & Phonics", emoji: "🔤", blurb: "Find, pop and learn letters", tint: "clay", free: true },
+  { id: "numbers", title: "Numbers 1–20", emoji: "🔢", blurb: "Count, match and compare", tint: "sky", free: true },
+  { id: "colors", title: "Colors", emoji: "🎨", blurb: "Color quest and sorting", tint: "plum", free: true },
+  { id: "shapes", title: "Shapes", emoji: "🔷", blurb: "Build with shapes", tint: "moss", free: true },
+  { id: "words", title: "First Words", emoji: "🍎", blurb: "Picture words", tint: "amber", free: false },
+  { id: "phonics", title: "Beginning Sounds", emoji: "👂", blurb: "Hear the first sound", tint: "clay", free: false },
+  { id: "memory", title: "Matching & Memory", emoji: "🧠", blurb: "Flip and match pairs", tint: "sky", free: true },
+  { id: "puzzles", title: "Puzzles", emoji: "🧩", blurb: "Slide the pieces home", tint: "moss", free: false },
+  { id: "tracing", title: "Letter Tracing", emoji: "✏️", blurb: "Trace big and small letters", tint: "wood", free: true },
+  { id: "flashcards", title: "Flash Cards", emoji: "🃏", blurb: "Tap to hear the word", tint: "amber", free: false },
+  { id: "wordsearch", title: "Word Search", emoji: "🔎", blurb: "Tiny, gentle grids", tint: "plum", free: false },
+  { id: "stories", title: "Storybooks", emoji: "📖", blurb: "Read along together", tint: "wood", free: false },
 ];
 
 export const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
@@ -265,8 +263,11 @@ export function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-/** Total bundled activity count, shown to parents. */
-export const LIBRARY_SIZE = AREAS.reduce((n, a) => n + a.activities, 0);
+/** Live picture-word count shown on the First Words card (never hardcoded). */
+{
+  const words = AREAS.find((a) => a.id === "words");
+  if (words) words.blurb = `${WORDS.length} picture words`;
+}
 
 /* ------------------------------------------------------------------ *
  * Extra structured content used by the 100-game catalog.

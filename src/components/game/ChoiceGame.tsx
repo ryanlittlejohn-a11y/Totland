@@ -26,6 +26,7 @@ export function ChoiceGame({
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, skill).level;
+  const popsOnCorrect = kind === "findUpper" || kind === "findNumber";
 
   const [index, setIndex] = useState(0);
   const [round, setRound] = useState<Round | null>(null);
@@ -137,10 +138,11 @@ export function ChoiceGame({
             <button
               key={opt.id}
               type="button"
+              disabled={state === "correct"}
               onClick={() => answer(opt)}
               aria-label={opt.label ?? opt.id}
               className={`game-theme__option aspect-square bg-card grid place-items-center wood-block transition-transform active:translate-y-1 ${
-                highlight ? "scale-[1.04] bg-amber" : ""
+                highlight && popsOnCorrect ? "choice-option--popped bg-amber" : highlight ? "scale-[1.04] bg-amber" : ""
               } ${state === "retry" && wrongId === opt.id ? "anim-wiggle" : ""}`}
             >
               {opt.swatch ? (

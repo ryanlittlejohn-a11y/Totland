@@ -23,12 +23,19 @@ import { themeForGame } from "@/lib/game-themes";
 import { checkBadges, recordSession, useProfile } from "@/lib/profile";
 import { L, title as tTitle } from "@/lib/i18n";
 
+const ageRangeFor = (ageModes: Array<"explorer" | "learner" | "reader">) => {
+  const minimum = ageModes.includes("explorer") ? 2 : ageModes.includes("learner") ? 3 : 4;
+  const maximum = ageModes.includes("reader") ? 6 : ageModes.includes("learner") ? 4 : 3;
+  return { label: `${minimum}–${maximum}`, minimum, maximum };
+};
+
 export const Route = createFileRoute("/game/$gameId")({
   head: ({ params }) => {
     const game = gameById(params.gameId);
     const title = game ? `${game.title} — Totland` : "Play a game — Totland";
+    const ages = game ? ageRangeFor(game.ageModes) : null;
     const description = game
-      ? `${game.title}: a short, playful ${game.skill} game for ages 2–6 with gentle feedback and no timers.`
+      ? `${game.title}: a short, playful ${game.skill} game for ages ${ages?.label} with gentle feedback and no timers.`
       : "A short, playful Totland learning game with gentle feedback and no timers.";
     return {
       meta: [
@@ -56,7 +63,7 @@ export const Route = createFileRoute("/game/$gameId")({
                 applicationCategory: "EducationalGame",
                 operatingSystem: "Web, iOS, Android",
                 isFamilyFriendly: true,
-                audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },
+                audience: { "@type": "PeopleAudience", suggestedMinAge: ages?.minimum, suggestedMaxAge: ages?.maximum },
               }),
             },
           ]

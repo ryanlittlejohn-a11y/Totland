@@ -294,7 +294,10 @@ function Home() {
         <span className="text-sm text-cream/60">{L("🔒 Grown-ups only", "🔒 Solo adultos")}</span>
       </Link>
       <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
-        Offline-first · No ads · Data stays on device
+        {L(
+          "Offline-first · No ads · Data stays on device unless you sign in to sync",
+          "Sin conexión · Sin anuncios · Los datos quedan en el dispositivo salvo que inicies sesión para sincronizar",
+        )}
       </p>
       <section className="mt-4 rounded-3xl bg-card p-4 wood-block">
         <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">

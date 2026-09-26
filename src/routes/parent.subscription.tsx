@@ -489,8 +489,8 @@ function Subscription() {
         <h2 className="font-ui text-lg font-bold text-ink">Privacy</h2>
         <ul className="mt-2 space-y-1.5 text-sm text-inksoft">
           <li>· No child accounts, no chat, no social features, no external links in the child area.</li>
-          <li>· Learning data is stored on this device only.</li>
-          <li>· The grown-up account stores only an email address, used for your subscription.</li>
+          <li>· Learning data stays on this device unless you sign in to sync child profiles and progress.</li>
+          <li>· A signed-in grown-up account stores your email, synced child profiles and progress, and subscription record.</li>
           <li>· No third-party advertising or behavioural profiling.</li>
           <li>· Payment details are handled entirely by our payment provider — they never touch this app.</li>
           <li>· Purchases, settings and links sit behind the parental gate.</li>

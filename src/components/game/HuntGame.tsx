@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { huntSet } from "@/lib/rounds";
 import type { SkillId } from "@/lib/content";
 import { chime, say, themeChime } from "@/lib/speech";
@@ -21,37 +21,53 @@ export function HuntGame({
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, skill).level;
-  const set = useMemo(() => (hydrated ? huntSet(kind, level) : null), [hydrated, kind, level]);
+  const [set, setSet] = useState<ReturnType<typeof huntSet> | null>(null);
 
   const [found, setFound] = useState<string[]>([]);
   const [taps, setTaps] = useState(0);
+  const foundRef = useRef<string[]>([]);
+  const tapsRef = useRef(0);
+  const completedRef = useRef(false);
+  const finishTimerRef = useRef<number | null>(null);
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
+
+  useEffect(() => {
+    if (hydrated && !set) setSet(huntSet(kind, level));
+  }, [hydrated, kind, level, set]);
+
+  useEffect(() => () => {
+    if (finishTimerRef.current !== null) window.clearTimeout(finishTimerRef.current);
+  }, []);
 
   useEffect(() => {
     if (set) say(L(`Find ${set.label}. Tap every one you can see.`, `Busca ${set.label}. Toca todos los que veas.`));
   }, [set]);
 
-  useEffect(() => {
-    if (!set || found.length !== set.targetIds.length || found.length === 0) return undefined;
-    const accuracy = set.targetIds.length / Math.max(1, taps);
-    const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;
-    update((p) => recordGameComplete(p, skill, stars, 1));
-    chime("reward", profile.sfx);
-    const t = window.setTimeout(() => onFinish(stars, accuracy), 800);
-    return () => window.clearTimeout(t);
-  }, [found, set, taps, skill, update, onFinish, profile.sfx]);
-
   if (!set) return <div className="h-64 rounded-3xl felt-panel" />;
 
   const tap = (id: string) => {
-    if (found.includes(id)) return;
+    if (completedRef.current || foundRef.current.includes(id)) return;
     const hit = set.targetIds.includes(id);
-    setTaps((t) => t + 1);
+    const nextTaps = tapsRef.current + 1;
+    tapsRef.current = nextTaps;
+    setTaps(nextTaps);
     update((p) => recordAnswer(p, { skill, correct: hit, responseMs: 2500 }));
     if (hit) themeChime(theme.motif, profile.sfx);
     else chime("retry", profile.sfx);
     if (hit) {
-      setFound((f) => [...f, id]);
+      const nextFound = [...foundRef.current, id];
+      foundRef.current = nextFound;
+      setFound(nextFound);
       say(L("Found one!", "¡Encontraste uno!"));
+      if (nextFound.length === set.targetIds.length) {
+        completedRef.current = true;
+        const accuracy = set.targetIds.length / Math.max(1, nextTaps);
+        const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;
+        update((p) => recordGameComplete(p, skill, stars, 1));
+        chime("reward", profile.sfx);
+        finishTimerRef.current = window.setTimeout(() => onFinishRef.current(stars, accuracy), 800);
+      }
     } else {
       say(L(`Keep looking for ${set.label}.`, `Sigue buscando ${set.label}.`));
     }

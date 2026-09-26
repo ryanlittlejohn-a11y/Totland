@@ -167,6 +167,12 @@
 - [x] Add a real native Manage subscription button when RevenueCat supplies a management URL
 - [x] Verify iOS/Android URLs, fallback wording, opening failures, and unchanged website handling
 
+## Game interaction fixes and accuracy audit (approved 2026-09-26)
+- [x] Add correct-answer pop-and-disappear for findUpper/findNumber ChoiceGame variants with reduced-motion fallback
+- [x] Freeze HuntGame boards and complete exactly once from the freshly computed found list
+- [x] Correct the three learning-data privacy claims, two bespoke objectives, and per-game age descriptions
+- [x] Verify ChoiceGame variants, all hunt games including final-target level-up, bilingual copy, age ranges, and live totals
+
 ## Future game interaction backlog
-- [ ] Letter/Number Pop games (findUpper/findNumber choice-engine games): make the selected tile visually pop and disappear on a correct answer, instead of showing a green checkmark overlay on top of the still-present tile.
-- [ ] Hunt-type games (Alphabet Safari, Letter Detective, and other hunt-engine games): once all copies of the target letter/item are found (e.g. “4 of 4 found”), the game does not automatically advance to the next round or the reward screen — investigate and fix.
+- [x] Letter/Number Pop games (findUpper/findNumber choice-engine games): make the selected tile visually pop and disappear on a correct answer, instead of showing a green checkmark overlay on top of the still-present tile.
+- [x] Hunt-type games (Alphabet Safari, Letter Detective, and other hunt-engine games): once all copies of the target letter/item are found (e.g. “4 of 4 found”), the game does not automatically advance to the next round or the reward screen — investigate and fix.

@@ -23,8 +23,14 @@ export function AnimalJigsawGame({
   onFinish: (stars: number, accuracy: number) => void;
 }) {
   const { profile, update, hydrated } = useProfile();
-  const level = skillOf(profile, skill).level;
-  const tier = jigsawTier(level);
+  // Tier is fixed for the whole session: placing pieces levels the puzzles
+  // skill up, and re-reading the level mid-game would reset the board.
+  const [tier, setTier] = useState(() => jigsawTier(1));
+  const tierSet = useRef(false);
+  if (hydrated && !tierSet.current) {
+    tierSet.current = true;
+    setTier(jigsawTier(skillOf(profile, skill).level));
+  }
   const total = tier.cols * tier.rows;
 
   const [animals, setAnimals] = useState<JigsawAnimal[]>([]);

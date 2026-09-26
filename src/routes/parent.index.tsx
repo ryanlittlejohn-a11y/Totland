@@ -186,7 +186,7 @@ function Dashboard() {
       </section>
 
       <section className="rounded-3xl bg-card p-5 wood-block">
-        <h2 className="font-ui text-lg font-bold text-ink">Per-area progress</h2>
+        <h2 className="font-ui text-lg font-bold text-ink">Per-area mastery</h2>
         <div className="mt-3 space-y-2">
           {AREAS.map((a) => {
             const s = skillOf(stats, a.id);

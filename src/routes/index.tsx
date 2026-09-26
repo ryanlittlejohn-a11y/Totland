@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AREAS, CHARACTERS, LIBRARY_SIZE } from "@/lib/content";
 import { GAMES, WORLDS, gameById } from "@/lib/catalog";
-import { skillOf, useProfile } from "@/lib/profile";
+import { useProfile } from "@/lib/profile";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { L, title as tTitle } from "@/lib/i18n";
 
@@ -213,7 +213,9 @@ function Home() {
 
         <div className="mt-3 space-y-3">
           {AREAS.map((a) => {
-            const s = skillOf(profile, a.id);
+            const areaGames = GAMES.filter((game) => game.skill === a.id);
+            const explored = areaGames.filter((game) => (profile.games[game.id]?.plays ?? 0) > 0).length;
+            const exploration = areaGames.length > 0 ? Math.round((explored / areaGames.length) * 100) : null;
             const locked = !a.free && !profile.premium;
             return (
               <Link
@@ -229,9 +231,25 @@ function Home() {
                 <div className="min-w-0 flex-1">
                   <p className="font-ui text-lg font-bold leading-tight text-ink">{tTitle(a.title)}</p>
                   <p className="truncate font-ui text-sm text-inksoft">{locked ? L("Premium world", "Mundo premium") : tTitle(a.blurb)}</p>
-                  <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-felt">
-                    <div className="h-full rounded-full bg-moss" style={{ width: `${(s.level / 5) * 100}%` }} />
-                  </div>
+                   {exploration === null ? (
+                     <p className="mt-2 font-ui text-xs font-semibold text-inksoft">{L("Ready to play", "Listo para jugar")}</p>
+                   ) : (
+                     <div className="mt-2">
+                       <div
+                         className="h-2 w-full overflow-hidden rounded-full bg-felt"
+                         role="progressbar"
+                         aria-label={L("Games explored", "Juegos explorados")}
+                         aria-valuenow={explored}
+                         aria-valuemin={0}
+                         aria-valuemax={areaGames.length}
+                       >
+                         <div className="h-full rounded-full bg-moss" style={{ width: `${exploration}%` }} />
+                       </div>
+                       <p className="mt-1 font-ui text-xs font-semibold text-inksoft">
+                         {L(`${explored} of ${areaGames.length} games explored`, `${explored} de ${areaGames.length} juegos explorados`)}
+                       </p>
+                     </div>
+                   )}
                 </div>
                 <span className="font-ui text-xl text-inksoft">›</span>
               </Link>

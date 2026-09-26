@@ -109,6 +109,6 @@
 - [x] Named game list per skill area (/play/$area layout + index + quick)
 
 ## Honest skill-area exploration (approved plan)
-- [ ] Replace Home difficulty-level bars with named games explored / total games per skill
-- [ ] Give Flash Cards a neutral ready state and relabel parent area bars as mastery
+- [x] Replace Home difficulty-level bars with named games explored / total games per skill
+- [x] Give Flash Cards a neutral ready state and relabel parent area bars as mastery
 - [ ] Verify empty, partial, full, replayed, locked, bilingual, world, and parent states

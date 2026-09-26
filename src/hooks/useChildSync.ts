@@ -3,6 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
 import { deleteChild, listChildren, upsertChild, type RemoteChild } from "@/lib/children.functions";
+import { hasVerifiedSession } from "@/lib/verifiedSession";
 import {
   defaultProfile,
   loadFamily,
@@ -25,21 +26,7 @@ export function useChildSync() {
   useEffect(() => {
     let running = false;
 
-    const signedIn = async () => {
-      const { data } = await supabase.auth.getSession();
-      const session = data.session;
-      const user = session?.user;
-      if (!user || !user.email_confirmed_at) return false;
-      // A stale or malformed token (e.g. left over from an old build) makes
-      // every protected call fail with "Invalid token" — treat it as signed out.
-      const token = session?.access_token ?? "";
-      const expired = typeof session?.expires_at === "number" && session.expires_at * 1000 <= Date.now();
-      if (token.split(".").length !== 3 || expired) {
-        await supabase.auth.signOut({ scope: "local" }).catch(() => {});
-        return false;
-      }
-      return true;
-    };
+    const signedIn = hasVerifiedSession;
 
     const sync = async () => {
       if (running) return;

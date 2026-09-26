@@ -1,0 +1,28 @@
+import { supabase } from "@/integrations/supabase/client";
+
+/**
+ * Returns true only when the saved sign-in is confirmed valid by the backend.
+ * A token that looks right on the device but is rejected by the backend
+ * (revoked, signed by an old key, corrupted) is cleared so protected calls
+ * never run with it. Network failures return false without signing out.
+ */
+export async function hasVerifiedSession(): Promise<boolean> {
+  const { data } = await supabase.auth.getSession();
+  const session = data.session;
+  if (!session?.user) return false;
+  const token = session.access_token ?? "";
+  const expired = typeof session.expires_at === "number" && session.expires_at * 1000 <= Date.now();
+  if (token.split(".").length !== 3 || expired) {
+    await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    return false;
+  }
+  const { data: u, error } = await supabase.auth.getUser(token);
+  if (error) {
+    const status = (error as { status?: number }).status;
+    if (status === 401 || status === 403 || status === 400) {
+      await supabase.auth.signOut({ scope: "local" }).catch(() => {});
+    }
+    return false;
+  }
+  return Boolean(u.user?.email_confirmed_at);
+}

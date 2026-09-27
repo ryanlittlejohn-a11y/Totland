@@ -1,58 +1,41 @@
-# Fix Spanish rhymes and tracing wording
+# Refresh App Store screenshots and review notes
 
-## Proposed Spanish rhyme content
+## Findings
 
-Keep the existing 10 English pairs unchanged. Give Spanish its own 10-pair bank so the game selects genuine Spanish rhymes instead of translating English words independently:
+- The original media package still exists and contains complete English and Spanish sets: eight iPhone 6.9-inch screenshots, eight iPad 13-inch screenshots, four preview videos, contact sheets, and an upload guide.
+- Those screenshots were captured from the real app and then composited into branded device-frame layouts outside the app. The project contains the finished package and its earlier plan, but no reusable capture script, layout template, or source file. Regeneration therefore means rebuilding that production workflow rather than rerunning an existing tool.
+- Several current screenshots are stale: they show 100 games instead of 104, use the old game presentation, and predate the six bespoke games, improved tracing, corrected reward/progress behavior, and clearer Premium boundaries.
+- The current catalog contains 104 games: 87 free and 17 Premium. Word Finds contains 100 puzzles: the first 30 are free and 70 are Premium.
 
-| Pair | Meaning | Ending |
-|---|---|---|
-| gato / pato | cat / duck | -ato |
-| rana / lana | frog / wool | -ana |
-| ratón / botón | mouse / button | -ón |
-| queso / beso | cheese / kiss | -eso |
-| conejo / espejo | rabbit / mirror | -ejo |
-| fresa / mesa | strawberry / table | -esa |
-| ardilla / silla | squirrel / chair | -illa |
-| limón / camión | lemon / truck | -ón |
-| estrella / botella | star / bottle | -ella |
-| caracol / sol | snail / sun | -ol |
+## Proposed eight-screenshot story
 
-Add matching child-friendly picture symbols for every Spanish word. Spanish prompts, answer choices, hints, and reveals will all use this Spanish bank; English keeps its current bank and behavior.
+Use the same order for iPhone and iPad, with separate English and Spanish wording. Every image will be captured from the current app. Free gameplay screens will use free catalog entries; screens that describe the whole catalog will visibly retain lock markers where the app shows them.
 
-## Correct Spanish tracing wording
+1. **Learning feels like play** — current Home screen with Today’s Adventure and learning worlds.
+2. **Fish for letters and sounds** — live Letter Fishing round, one of the new bespoke free games.
+3. **Make letters pop** — live Letter Pop round showing the corrected pop-and-disappear success interaction.
+4. **Trace letters step by step** — current letter-tracing activity, showing guided tracing rather than a Premium word-tracing tier.
+5. **Hunt, find, and celebrate** — live free Hunt activity with its current target progress and successful completion flow.
+6. **30 Word Finds free to replay** — current Word Finds library, with free puzzles playable and later Premium puzzles visibly locked.
+7. **Stars and stickers mark progress** — current rewards shelf with earned stars, stickers, and badges.
+8. **Five worlds. 104 games.** — current Worlds screen with its exact live catalog count; any Premium entries encountered beyond this overview remain visibly locked.
 
-The actual tracing set contains six shapes. Use these translations and articles everywhere the tracing activity displays or speaks them:
+This set deliberately avoids presenting Premium-only gameplay—such as Word Rocket, Animal Jigsaw, Story Builder, or 4–5-letter word tracing—as free. The updated subscription wording belongs in reviewer guidance rather than the child-focused screenshot story.
 
-- el círculo
-- el cuadrado
-- el triángulo
-- la estrella
-- el corazón
-- el rombo
+## What can be produced here
 
-Use **el** for every numeral, for example:
+- Rebuild and deliver polished, upload-ready branded screenshots for both required device sizes, using fresh captures from the real app and recreating the existing warm headline/device-frame treatment.
+- Deliver clean source captures, final opaque PNGs, contact sheets, and an updated upload-order guide.
+- The current request concerns the eight screenshots; existing preview videos will remain unchanged unless video updates are requested separately.
+- Native store purchase sheets cannot be honestly captured in the browser preview. They are not needed for this proposed screenshot story.
 
-- “Vamos a trazar el 5. Sigue la línea con tu dedo.”
-- “Ahora traza el 5.”
-- “¡Qué bonito el 5! ¡Muy bien!”
+## Proposed App Review Information note
 
-Apply the matching article and adjective to shapes, for example:
+> No account is required to use Totland or test its free content. From the Home screen, scroll to “Grown-ups” and tap “Parent dashboard” or “Premium”; answer the multiplication question to pass the parental gate. Sign in with Apple or Google is optional and is used only to sync family profiles and progress across devices. To test Premium, open the gated Subscription screen and use the standard Apple in-app purchase flow; no demo account is required. The free experience includes 87 learning games and the first 30 of 100 Word Finds. Premium unlocks 17 additional games, the remaining 70 Word Finds, 93 picture flash cards, five storybooks, and offline play.
 
-- “Vamos a trazar el círculo. Sigue la línea con tu dedo.”
-- “Ahora traza la estrella.”
-- “¡Qué bonito el triángulo! ¡Muy bien!”
-- “¡Qué bonita la estrella! ¡Muy bien!”
+## Verification before delivery
 
-Keep letter tracing’s existing feminine wording unchanged. Make retry wording neutral for non-letter tracing so it cannot use the wrong gender. Translate the visible shape instruction as well as narration, while retaining the English internal shape identifiers needed by the tracing canvas.
-
-## Verification
-
-- Exercise the Spanish rhyme generator repeatedly and confirm only the proposed pairs appear, every correct choice genuinely rhymes, distractors still work, and English output is byte-for-byte unchanged.
-- Exercise all digits 0–9 and all six shapes through initial, next, success, and retry narration states; confirm correct nouns, accents, articles, and adjective agreement.
-- Confirm letter tracing remains unchanged and the tracing canvas still receives its existing internal identifiers.
-- Check the relevant game screens in Spanish and English, then check the app’s build result.
-- Audit the shared clip library against the final Spanish text and report every new or replaced Lucy line, exact line count, exact character count, and credit estimate. Do not generate audio.
-
-## Scope
-
-Only Spanish rhyme data and Spanish number/shape tracing wording will change. No English content, scoring, game behavior, sign-in, payments, or audio files will be changed.
+- Capture only current, real app states and confirm all visible counts and claims against the live catalog.
+- Confirm no Premium-only activity is shown as freely playable and all library lock markers remain visible.
+- Inspect all 16 English final images at full resolution for clipping, overlap, opacity, exact dimensions, and legibility; localize and inspect a Spanish set only if it is included in the approved scope.
+- Preserve existing app behavior; this work changes store media and reviewer copy only.

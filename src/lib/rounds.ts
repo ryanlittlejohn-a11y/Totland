@@ -175,7 +175,10 @@ function sameSound(level: number): Round {
 function rhyme(level: number): Round {
   const rhymes = getLang() === "es" ? RHYMES_ES : RHYMES;
   const [a, b] = pick(rhymes) as [string, string];
-  const pool = rhymes.flat().filter((w) => w !== a && w !== b);
+  const sameSpanishRhyme = new Set(["ratón", "botón", "limón", "camión"]);
+  const pool = rhymes.flat().filter((w) =>
+    w !== a && w !== b && !(getLang() === "es" && sameSpanishRhyme.has(a) && sameSpanishRhyme.has(w)),
+  );
   const others = shuffle(pool).slice(0, count(level) - 1);
   return base({
     skill: "words",

@@ -201,4 +201,4 @@
 - [x] Finalize the reviewer note from live Premium benefit counts and deliver an upload-order guide
 - [ ] Hold Spanish screenshot updates for later
 
-- [ ] URGENT: fix the ordering-game crash in the middle of a round (keep each round fixed, skip a missing tile safely), then check all 11 games in EN/ES
+- [x] URGENT: fix the ordering-game crash in the middle of a round (keep each round fixed, skip a missing tile safely), then check all 11 games in EN/ES

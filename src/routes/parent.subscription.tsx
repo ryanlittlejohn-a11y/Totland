@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
-import { premiumBenefits } from "@/lib/library-counts";
+import { FREE_GAME_COUNT, FREE_WORD_FIND_COUNT, premiumBenefits } from "@/lib/library-counts";
 import { setVerifiedPremium, useProfile } from "@/lib/profile";
 import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
@@ -225,8 +225,8 @@ function Subscription() {
           </span>
         </div>
         <p className="mt-2 text-sm text-inksoft">
-          Free includes the ABC, numbers, colors, shapes, memory and tracing worlds. Premium unlocks everything and every
-          new release.
+          Free includes {FREE_GAME_COUNT} games drawn from every world, plus {FREE_WORD_FIND_COUNT} Word Finds.
+          Premium unlocks everything and every new release.
         </p>
 
         {waitingForPayment && (

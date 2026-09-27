@@ -1,61 +1,32 @@
-# Rebalance free vs Premium games (40 free / 64 Premium)
+# Hannah's voice not playing on TestFlight: findings and proposed fix
 
-Heads-up: this changes what Premium unlocks, so it falls under the "subscriptions" area you asked me to flag. Nothing is changed until you approve this list.
+## Findings (checked live, nothing changed)
 
-## Where things stand now
-104 games: 87 free, 17 Premium. Two of the six showcase games are **currently Premium**: Word Rocket (#30) and Animal Jigsaw (#82). The plan makes them free, as you asked.
+1. **Not a publish gap.** The live site answers the iPhone app's voice requests correctly. I sent Hannah's request from the live site exactly as the iPhone app does (same app origin and headers). It got a 200 reply with real audio ("Can you find the letter N?", 32 KB) and the right permission header. Playing Letter Pop on the live website also gets Hannah's audio back. This is different from the CORS bug: the live backend already has yesterday's fixes.
+2. **Recorded lines are served fine.** Recorded lines come from the shared library and never touch ElevenLabs. So the ElevenLabs key and its remaining credits don't affect the hundreds of clips we pre-recorded. The key only matters for brand-new lines. I didn't test it live because that would generate audio.
+3. **Recent changes are not the cause.** Nothing in the last two days touched how narration plays. The only speech change added the praise-plus-teaching split, and it's add-on only. The connection fixes only add permission headers. Today's work (ordering-game crash, rebalance, wording) didn't touch audio.
+4. **Likely cause (in the app itself, found by reading the code):** one "no" from the server turns off Hannah until the app is closed.
+   - When the server says "unavailable" for any single line, the app turns off Hannah's voice for the rest of the session. That includes every already-recorded line.
+   - The server says "unavailable" for a line that isn't recorded yet when the family isn't signed in. On TestFlight that's the normal case: Premium works without an account.
+   - Many lines contain a name or change each round, so the first one that isn't recorded switches Hannah off, often within seconds.
+   - After that, the iPhone falls back to the device voice. Silent mode can make that fallback silent (see point 5). Closing and reopening the app resets it.
+   - The iPhone app also skips downloading common lines ahead of time. It was turned off because it froze real devices. So almost nothing is saved on the device yet, and every line depends on the server.
+5. **Possible second cause, iPhone only:** the app never asks iOS to play sound when the ring/silent switch is on silent. With the switch on silent, iPhone apps like this can go fully quiet: Hannah, the device voice and possibly the music. I can't confirm this from here.
+6. **Web vs native:** the same shutoff logic runs on the website too, but it hits the iPhone app much harder. The iPhone app starts with nothing saved on the device, and the silent-switch issue only exists there.
 
-## Result: exactly 40 free / 64 Premium
-49 games move from free to Premium. 2 move from Premium to free (Word Rocket, Animal Jigsaw). I used your exact target because it gives every area a sensible number of free games.
+**Not yet confirmed:** whether the tester hears the robotic device voice or nothing at all, and whether the phone was on silent. That answer tells us which cause (point 4 or 5) they hit.
 
-| Area | Now free / total | Proposed free | Free games kept |
-|---|---|---|---|
-| ABC & Letters | 17 / 17 | 6 | Letter Pop, Alphabet Safari, Feed the Letter Monster, Letter Fishing, Letter Rain, Alphabet Train |
-| Beginning Sounds | 4 / 5 | 2 | What Starts With B?, Sound Match |
-| First Words | 5 / 10 | 4 | Picture Word Match, First Word Builder, **Word Rocket**, Daily Adventure |
-| Numbers | 18 / 18 | 6 | Count the Animals, Number Pop, Number Train, Number Match, Number Maze, Number Hunt |
-| Colors | 4 / 4 | 4 | Color Pop, Color Match, Rainbow Sort, Color Detective |
-| Shapes | 8 / 8 | 4 | Shape Pop, Shape Match, Shape Sort, Shape Shadow |
-| Matching & Memory | 9 / 11 | 3 | Uppercase Match, Color Memory, Animal Memory |
-| Puzzles | 15 / 18 | 5 | Simple Jigsaw, **Animal Jigsaw**, What's Different?, Big or Small, Hidden Objects |
-| Word Search | 2 / 5 | 2 | Letters, Colors (unchanged, follows Word Finds) |
-| Tracing | 4 / 6 | 3 | Letter Tracing, Number Tracing, Word Tracing: 2 Letters |
-| Storybooks | 1 / 2 | 1 | Read With Me |
-| **Total** | **87 / 104** | **40** | |
+## Proposed fix (after your approval)
 
-## Games that move from free to Premium (49)
-- **Letters (11):** Letter Bubbles, Letter Rocket, Letter Garden, Missing Letter, Alphabet Bridge, Upper to Lowercase, Lower to Uppercase, Letter Shadow, Letter Maze, Letter Detective, Alphabet Race
-- **Beginning Sounds (2):** Beginning Sound Train, Sound Detective
-- **First Words (2):** Word Builder, Missing Letter Word
-- **Numbers (12):** Number Bubbles, Number Fishing, Count the Stars, Number Monster, Number Garden, Number Rocket, Missing Number, More or Less, Bigger Number, Counting Train, Count the Fruit, Number Rain
-- **Shapes (4):** Shape Builder, Shape Hunt, Shape Train, What's Missing?
-- **Memory (6):** Letter Memory, Number Memory, Shape Memory, Letter Memory Park, Number Memory Park, Picture Memory
-- **Puzzles (11):** Letter Puzzle, Number Puzzle, Shape Puzzle, Which Comes Next?, Sort the Toys, Long or Short, Alphabet Jigsaw, Number Jigsaw, Picture Path, Match the Shadows, Pattern Builder
-- **Tracing (1):** Word Tracing: 3 Letters
+- **Only real account-wide problems switch Hannah off:** out of credits, or a rate limit from ElevenLabs. When a single line just isn't recorded, only that line uses the device voice. The next recorded line still plays in Hannah's voice.
+- **iPhone silent switch:** set the app's sound to keep playing when the ring/silent switch is on silent, like other kids' learning apps. This is one small setting in the iPhone app's startup code. It needs a new Codemagic build, but no backend publish.
+- Verify in a test browser as a signed-out family: play through a new line that isn't recorded, then confirm the next recorded line still uses Hannah. Check on the live site too.
 
-## Why these choices
-- **Every area keeps 1 to 6 free games.** The biggest areas (Letters, Numbers) keep 6 each because they're what parents look for first. Small areas keep most of their games, so a free user never finds an area with only one option.
-- **Easiest games stay free.** Most games kept free are playable in Explorer mode (ages 2–3), so a first-time child can play right away. The ones moving to Premium are mostly Learner/Reader games (sequences, comparing, missing items, spelling) plus near-duplicates (Bubbles/Rocket/Fishing variants of Pop; several extra memory boards).
-- **One game of each type stays free.** Pick-one, drag, ordering, hunt, memory, tracing, maze and story games all stay free, so a free user tries every kind of play.
-- **Colors stays fully free:** it's only 4 games, all toddler-level.
-
-## Keep free — a bad idea to lock
-- Everything in the App Store screenshots: Letter Fishing, Letter Pop, Letter Tracing, Alphabet Safari, Word Finds #1–30. Locking them would make the screenshots show locked content as free.
-- The six showcase games.
-- Daily Adventure and Read With Me: these are the "first session" experiences.
-- Alphabet Train: the simplest ordering game, and it was just fixed.
-
-## Word Finds and Flash Cards
-- **Word Finds: I recommend no change.** 30 free / 70 Premium is already 30/70, stricter than 40/60.
-- **Flash Cards: I recommend no change.** All 93 cards are already Premium-only. The free games already use the same picture words, so free users still see that content.
-
-## Side effects you should know about
-- **Children playing now will lose 49 games** they could play before. Their stars and progress stay, but those games will show the Premium lock.
-- **Your App Review note and listing need new numbers**: "40 free + 64 Premium" instead of "87 + 17". The build now under review describes the old split. I'll update APP-STORE-LISTING-UPDATE.txt and the Premium benefits list will update itself.
-- The Premium benefits screen and parent numbers update automatically from the catalog.
+Sign-in, payments, the parental gate, scoring and the premium flags stay untouched. No audio gets generated.
 
 ## Technical details
-- Only change: the premium flag on the affected rows in `src/lib/catalog.ts` (add `1` to 49 rows, remove it from #30 and #82). No change to Word Search mapping, Word Finds, Flash Cards, the purchase flow, or the parental gate.
-- While building, check that Home, the Worlds pages, Quick Play and Daily Adventure only pick unlocked games for free users, and still pick something in every area.
-- Verify: counts read 104 / 40 / 64, `premiumBenefits()` output, and that a free profile can open each kept game but sees the lock on a sample of moved ones. Also confirm a Premium profile still opens everything, and the build is clean.
-- Update roadmap.md and the reviewer-note file with the new numbers.
+
+- `src/lib/speech.ts` `fetchAndStore`: call `blockVoiceRequests()` only when `result.reason` is `"quota"` or `"rate_limit"`; treat `"service"` as a per-line miss.
+- Optional: `tts.functions.ts` could return a distinct `"not_recorded"` reason for anonymous library misses so the client never confuses it with an outage.
+- `ios/App/App/AppDelegate.swift`: set `AVAudioSession.sharedInstance().setCategory(.playback, mode: .spokenAudio, options: [.mixWithOthers])` at launch. Web deploy unaffected.
+- Evidence: live `POST /_serverFn/9dccd720…` with `Origin: capacitor://localhost` returned 200 + audio. The OPTIONS preflight allows `x-tsr-serverfn`.

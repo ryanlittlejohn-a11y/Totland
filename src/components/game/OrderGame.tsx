@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { orderSet } from "@/lib/rounds";
 import { shuffle, type SkillId } from "@/lib/content";
 import { chime, say, themeChime } from "@/lib/speech";
@@ -37,16 +37,26 @@ export function OrderGame({
     if (set) say(set.spoken);
   }, [set]);
 
+  // Keep the latest onFinish without re-running completion when the parent
+  // re-renders (it passes a new function each time, which used to cancel the
+  // reward timer). Completion is recorded exactly once per round.
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
+  const doneRef = useRef(false);
+  const finishTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(finishTimer.current), []);
+
   useEffect(() => {
-    if (!set || placed.length !== set.seq.length || placed.length === 0) return undefined;
+    if (doneRef.current) return;
+    if (!set || placed.length !== set.seq.length || placed.length === 0) return;
+    doneRef.current = true;
     const accuracy = set.seq.length / Math.max(1, taps);
     const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;
     update((p) => recordGameComplete(p, skill, stars, 1));
     chime("reward", profile.sfx);
     say(L("You did it! The whole line is in order.", "¡Lo lograste! Toda la fila está en orden."));
-    const t = window.setTimeout(() => onFinish(stars, accuracy), 900);
-    return () => window.clearTimeout(t);
-  }, [placed, set, taps, skill, update, onFinish, profile.sfx]);
+    finishTimer.current = window.setTimeout(() => onFinishRef.current(stars, accuracy), 900);
+  }, [placed, set, taps, skill, update, profile.sfx]);
 
   if (!set) return <div className="h-64 rounded-3xl felt-panel" />;
 

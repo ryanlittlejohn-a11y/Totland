@@ -182,3 +182,11 @@
 - [x] Rhyme hints use a comma instead of "…" so Hannah can say them
 - [x] Record Tier 1 English lines + rhyme hints: all 763 recorded (12,242 credits total); finished 2026-09-26 with the new ElevenLabs key
 - [ ] Later decision: Tier 2 (prompts, Word Finds) and Tier 3 (reveals/hints); Spanish out of scope
+
+## Narration: English Tier 2 + Spanish Tier 1 (approved 2026-09-27)
+- [x] Spanish rhyme hint: "…" swapped for a comma so Lucy can say it
+- [x] English Tier 2 recorded (Hannah): 865 question prompts + 1,019 Word Finds lines
+- [x] Spanish Tier 1 recorded (Lucy): 745 lines, praise and teaching line kept as separate clips
+- [ ] Spanish number/shape tracing lines: waiting on a wording fix (they currently say "la 5" and English shape names)
+- [ ] Spanish rhyme pairs are translated word by word and don't rhyme: needs new Spanish rhyme pairs
+- [ ] English Tier 3 (reveals and hints) still on hold

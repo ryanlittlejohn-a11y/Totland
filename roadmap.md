@@ -202,3 +202,5 @@
 - [ ] Hold Spanish screenshot updates for later
 
 - [x] URGENT: fix the ordering-game crash in the middle of a round (keep each round fixed, skip a missing tile safely), then check all 11 games in EN/ES
+
+- [x] Rebalance free/Premium to 40/64: 49 games to Premium, Word Rocket + Animal Jigsaw to free; update App Store reviewer note numbers

@@ -187,7 +187,7 @@
 - [x] Spanish rhyme hint: "…" swapped for a comma so Lucy can say it
 - [x] English Tier 2 recorded (Hannah): 865 question prompts + 1,019 Word Finds lines
 - [x] Spanish Tier 1 recorded (Lucy): 745 lines, praise and teaching line kept as separate clips
-- [ ] Replace translated English rhyme pairs with the approved 10-pair Spanish rhyme bank and matching pictures
-- [ ] Correct every Spanish number/shape tracing prompt, article, translated shape name, and adjective agreement
-- [ ] Verify Spanish and English behavior, then report the exact Lucy replacement-line count and cost without generating audio
+- [x] Replace translated English rhyme pairs with the approved 10-pair Spanish rhyme bank and matching pictures
+- [x] Correct every Spanish number/shape tracing prompt, article, translated shape name, and adjective agreement
+- [x] Verify Spanish and English behavior, then report the exact Lucy replacement-line count and cost without generating audio (79 lines, 2,509 characters; no audio generated)
 - [ ] English Tier 3 (reveals and hints) still on hold

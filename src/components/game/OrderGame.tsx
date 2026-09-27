@@ -21,7 +21,12 @@ export function OrderGame({
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, skill).level;
-  const set = useMemo(() => (hydrated ? orderSet(kind, level) : null), [hydrated, kind, level]);
+  // Freeze the round once it is ready: a mid-round level change (streak-based)
+  // must not re-pick the items, or placed tiles vanish from the set and crash.
+  const [set, setSet] = useState<ReturnType<typeof orderSet> | null>(null);
+  useEffect(() => {
+    if (hydrated && !set) setSet(orderSet(kind, level));
+  }, [hydrated, set, kind, level]);
   const jumbled = useMemo(() => (set ? shuffle(set.seq) : []), [set]);
 
   const [placed, setPlaced] = useState<string[]>([]);
@@ -69,7 +74,8 @@ export function OrderGame({
       <div className="mt-4 flex min-h-[72px] flex-wrap items-center gap-2 rounded-3xl felt-panel p-3">
         {placed.length === 0 && <span className="font-ui text-sm text-inksoft">{L("Your line starts here…", "Tu fila empieza aquí…")}</span>}
         {placed.map((id) => {
-          const item = set.seq.find((s) => s.id === id)!;
+          const item = set.seq.find((s) => s.id === id);
+          if (!item) return null;
           return (
             <span key={id} className="grid size-12 place-items-center rounded-xl bg-amber/40 font-ui text-xl font-bold text-ink">
               {item.label}

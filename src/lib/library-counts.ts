@@ -34,7 +34,10 @@ export function premiumBenefits(): Benefit[] {
       const count = a.id === "flashcards" ? FLASH_CARD_COUNT : 0;
       return [{ key: a.id, emoji: a.emoji, text: `${a.title} — ${count} picture cards` }];
     }
-    return n > 0 ? [{ key: a.id, emoji: a.emoji, text: `${a.title} — ${n} more ${n === 1 ? "game" : "games"}` }] : [];
+    // The tracing area mixes Letter/Number Tracing (free) with Word Tracing
+    // tiers (Premium) — name the Premium ones specifically, not the area title.
+    const label = a.id === "tracing" ? "Word Tracing (3–5 letters)" : a.title;
+    return n > 0 ? [{ key: a.id, emoji: a.emoji, text: `${label} — ${n} more ${n === 1 ? "game" : "games"}` }] : [];
   });
   return [
     ...perArea,

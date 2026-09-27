@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { orderSet } from "@/lib/rounds";
 import { shuffle, type SkillId } from "@/lib/content";
 import { chime, say, themeChime } from "@/lib/speech";
@@ -21,7 +21,12 @@ export function OrderGame({
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, skill).level;
-  const set = useMemo(() => (hydrated ? orderSet(kind, level) : null), [hydrated, kind, level]);
+  // Freeze the round once it is ready: a mid-round level change (streak-based)
+  // must not re-pick the items, or placed tiles vanish from the set and crash.
+  const [set, setSet] = useState<ReturnType<typeof orderSet> | null>(null);
+  useEffect(() => {
+    if (hydrated && !set) setSet(orderSet(kind, level));
+  }, [hydrated, set, kind, level]);
   const jumbled = useMemo(() => (set ? shuffle(set.seq) : []), [set]);
 
   const [placed, setPlaced] = useState<string[]>([]);
@@ -32,16 +37,26 @@ export function OrderGame({
     if (set) say(set.spoken);
   }, [set]);
 
+  // Keep the latest onFinish without re-running completion when the parent
+  // re-renders (it passes a new function each time, which used to cancel the
+  // reward timer). Completion is recorded exactly once per round.
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
+  const doneRef = useRef(false);
+  const finishTimer = useRef<number | undefined>(undefined);
+  useEffect(() => () => window.clearTimeout(finishTimer.current), []);
+
   useEffect(() => {
-    if (!set || placed.length !== set.seq.length || placed.length === 0) return undefined;
+    if (doneRef.current) return;
+    if (!set || placed.length !== set.seq.length || placed.length === 0) return;
+    doneRef.current = true;
     const accuracy = set.seq.length / Math.max(1, taps);
     const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;
     update((p) => recordGameComplete(p, skill, stars, 1));
     chime("reward", profile.sfx);
     say(L("You did it! The whole line is in order.", "¡Lo lograste! Toda la fila está en orden."));
-    const t = window.setTimeout(() => onFinish(stars, accuracy), 900);
-    return () => window.clearTimeout(t);
-  }, [placed, set, taps, skill, update, onFinish, profile.sfx]);
+    finishTimer.current = window.setTimeout(() => onFinishRef.current(stars, accuracy), 900);
+  }, [placed, set, taps, skill, update, profile.sfx]);
 
   if (!set) return <div className="h-64 rounded-3xl felt-panel" />;
 
@@ -69,7 +84,8 @@ export function OrderGame({
       <div className="mt-4 flex min-h-[72px] flex-wrap items-center gap-2 rounded-3xl felt-panel p-3">
         {placed.length === 0 && <span className="font-ui text-sm text-inksoft">{L("Your line starts here…", "Tu fila empieza aquí…")}</span>}
         {placed.map((id) => {
-          const item = set.seq.find((s) => s.id === id)!;
+          const item = set.seq.find((s) => s.id === id);
+          if (!item) return null;
           return (
             <span key={id} className="grid size-12 place-items-center rounded-xl bg-amber/40 font-ui text-xl font-bold text-ink">
               {item.label}

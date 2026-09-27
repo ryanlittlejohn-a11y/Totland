@@ -169,7 +169,7 @@ const SENTENCES: [string, string][] = [
   ["It starts with {}.", "Empieza con {}."],
   ["Both start with {}.", "Las dos empiezan con {}."],
   ["Listen: {} starts with {}.", "Escucha: {} empieza con {}."],
-  ["{}, {}. They sound the same at the end.", "{}… {}. Suenan igual al final."],
+  ["{}, {}. They sound the same at the end.", "{}, {}. Suenan igual al final."],
   ["{} — {}.", "{} — {}."],
   ["The word is {}.", "La palabra es {}."],
   ["Look for the {}.", "Busca: {}."],

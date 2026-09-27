@@ -192,3 +192,11 @@
 - [x] Verify Spanish and English behavior, then report the exact Lucy replacement-line count and cost without generating audio (79 lines, 2,509 characters; no audio generated)
 - [x] Record all 79 corrected Spanish rhyme/tracing lines in Lucy's voice (1,280 credits used) and verify every app lookup resolves from the shared library
 - [ ] English Tier 3 (reveals and hints) still on hold
+
+## English App Store resubmission media (approved 2026-09-27)
+- [x] Rebuild eight current English screenshots for iPhone 6.9-inch and iPad 13-inch from real app captures
+- [x] Use only free gameplay; keep the Word Finds free/Premium split visible and show the exact 104-game count
+- [x] Recreate the warm headline/device-frame treatment and inspect all 16 upload-ready PNGs
+- [x] Remove markdown asterisks around the App Store description welcome line
+- [x] Finalize the reviewer note from live Premium benefit counts and deliver an upload-order guide
+- [ ] Hold Spanish screenshot updates for later

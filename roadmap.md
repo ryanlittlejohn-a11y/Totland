@@ -194,9 +194,9 @@
 - [ ] English Tier 3 (reveals and hints) still on hold
 
 ## English App Store resubmission media (approved 2026-09-27)
-- [ ] Rebuild eight current English screenshots for iPhone 6.9-inch and iPad 13-inch from real app captures
-- [ ] Use only free gameplay; keep the Word Finds free/Premium split visible and show the exact 104-game count
-- [ ] Recreate the warm headline/device-frame treatment and inspect all 16 upload-ready PNGs
-- [ ] Remove markdown asterisks around the App Store description welcome line
-- [ ] Finalize the reviewer note from live Premium benefit counts and deliver an upload-order guide
+- [x] Rebuild eight current English screenshots for iPhone 6.9-inch and iPad 13-inch from real app captures
+- [x] Use only free gameplay; keep the Word Finds free/Premium split visible and show the exact 104-game count
+- [x] Recreate the warm headline/device-frame treatment and inspect all 16 upload-ready PNGs
+- [x] Remove markdown asterisks around the App Store description welcome line
+- [x] Finalize the reviewer note from live Premium benefit counts and deliver an upload-order guide
 - [ ] Hold Spanish screenshot updates for later

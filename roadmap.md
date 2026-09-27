@@ -190,4 +190,5 @@
 - [x] Replace translated English rhyme pairs with the approved 10-pair Spanish rhyme bank and matching pictures
 - [x] Correct every Spanish number/shape tracing prompt, article, translated shape name, and adjective agreement
 - [x] Verify Spanish and English behavior, then report the exact Lucy replacement-line count and cost without generating audio (79 lines, 2,509 characters; no audio generated)
+- [x] Record all 79 corrected Spanish rhyme/tracing lines in Lucy's voice (1,280 credits used) and verify every app lookup resolves from the shared library
 - [ ] English Tier 3 (reveals and hints) still on hold

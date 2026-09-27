@@ -1,5 +1,11 @@
 # Roadmap
 
+## Hannah voice shutoff fix (approved 2026-09-27)
+- [x] Only quota/rate-limit replies disable Hannah for the session; unrecorded lines fall back per line (src/lib/speech.ts)
+- [x] iOS: play narration through the silent switch (AVAudioSession .playback in AppDelegate.swift)
+- [ ] New Codemagic build + TestFlight check (client-only; no backend republish needed)
+
+
 ## Native server-call permission fix (approved 2026-09-26)
 - [x] Root cause: `x-tsr-serverfn` missing from native CORS allowed headers in src/start.ts blocked every server call from the phone app
 - [ ] Add `x-tsr-serverfn` to native allowed headers

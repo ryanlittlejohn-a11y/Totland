@@ -193,7 +193,10 @@ async function fetchAndStore(
   try {
     const result = await speakText({ data: { text, lang } });
     if (result.status !== "ok") {
-      blockVoiceRequests();
+      // Only account-wide failures pause Hannah for the session. A line that
+      // simply isn't recorded yet ("service") falls back for that line only,
+      // so the next recorded line still plays in Hannah's voice.
+      if (result.reason === "quota" || result.reason === "rate_limit") blockVoiceRequests();
       return null;
     }
     const blob = await toBlob(result.audio);

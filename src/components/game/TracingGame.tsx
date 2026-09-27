@@ -26,6 +26,20 @@ export function letterTracingQueue(uppercase: string[], lowercase: string[], rec
 const nonLetterGlyphs = (kind: string) =>
   kind === "numbers" ? Array.from({ length: 10 }, (_, index) => String(index)) : SHAPES.map((shape) => shape.name);
 
+const SPANISH_SHAPES: Record<string, { article: "el" | "la"; label: string; adjective: "bonito" | "bonita" }> = {
+  circle: { article: "el", label: "círculo", adjective: "bonito" },
+  square: { article: "el", label: "cuadrado", adjective: "bonito" },
+  triangle: { article: "el", label: "triángulo", adjective: "bonito" },
+  star: { article: "la", label: "estrella", adjective: "bonita" },
+  heart: { article: "el", label: "corazón", adjective: "bonito" },
+  diamond: { article: "el", label: "rombo", adjective: "bonito" },
+};
+
+function spanishNonLetterGlyph(kind: string, glyph: string) {
+  if (kind === "numbers") return { article: "el" as const, label: glyph, adjective: "bonito" as const };
+  return SPANISH_SHAPES[glyph] ?? { article: "la" as const, label: glyph, adjective: "bonita" as const };
+}
+
 /** Existing tracing canvas with systematic uppercase/lowercase coverage around it. */
 export function TracingGame({ kind = "letters", onFinish }: { kind?: string; onFinish: (stars: number, accuracy: number) => void }) {
   const { profile, update, hydrated } = useProfile();
@@ -43,7 +57,12 @@ export function TracingGame({ kind = "letters", onFinish }: { kind?: string; onF
       : shuffle(nonLetterGlyphs(kind)).slice(0, 3);
     setQueue(nextQueue);
     const first = nextQueue[0];
-    if (first) say(L(`Let's trace ${first}. Follow the line with your finger.`, `Vamos a trazar la ${first}. Sigue la línea con tu dedo.`));
+    if (first) {
+      const spanish = spanishNonLetterGlyph(kind, first);
+      say(isLetters
+        ? L(`Let's trace ${first}. Follow the line with your finger.`, `Vamos a trazar la ${first}. Sigue la línea con tu dedo.`)
+        : L(`Let's trace ${first}. Follow the line with your finger.`, `Vamos a trazar ${spanish.article} ${spanish.label}. Sigue la línea con tu dedo.`));
+    }
   }, [hydrated, isLetters, kind, profile, queue.length]);
 
   if (!hydrated || !queue.length) return null;
@@ -54,7 +73,14 @@ export function TracingGame({ kind = "letters", onFinish }: { kind?: string; onF
       return good && isLetters ? recordTracedLetter(scored, glyph) : scored;
     });
     chime(good ? "correct" : "retry", profile.sfx);
-    say(good ? L(`Beautiful ${glyph}! Great job!`, `¡Qué bonita ${glyph}! ¡Muy bien!`) : L("Great try! Let's trace it again.", "¡Buen intento! Vamos a trazarla otra vez."));
+    const spanish = spanishNonLetterGlyph(kind, glyph);
+    say(good
+      ? isLetters
+        ? L(`Beautiful ${glyph}! Great job!`, `¡Qué bonita ${glyph}! ¡Muy bien!`)
+        : L(`Beautiful ${glyph}! Great job!`, `¡Qué ${spanish.adjective} ${spanish.article} ${spanish.label}! ¡Muy bien!`)
+      : isLetters
+        ? L("Great try! Let's trace it again.", "¡Buen intento! Vamos a trazarla otra vez.")
+        : L("Great try! Let's trace it again.", "¡Buen intento! Vamos a intentarlo otra vez."));
     if (!good) {
       setAttempt((value) => value + 1);
       return;
@@ -68,13 +94,20 @@ export function TracingGame({ kind = "letters", onFinish }: { kind?: string; onF
     setIndex(next);
     setAttempt(0);
     const nextGlyph = queue[next];
-    if (nextGlyph) say(L(`Now trace ${nextGlyph}.`, `Ahora traza la ${nextGlyph}.`));
+    if (nextGlyph) {
+      const nextSpanish = spanishNonLetterGlyph(kind, nextGlyph);
+      say(isLetters
+        ? L(`Now trace ${nextGlyph}.`, `Ahora traza la ${nextGlyph}.`)
+        : L(`Now trace ${nextGlyph}.`, `Ahora traza ${nextSpanish.article} ${nextSpanish.label}.`));
+    }
   };
 
   return (
     <div>
       <p className="font-ui text-[22px] font-semibold text-ink">
-        {isLetters ? L(`Trace the letter ${glyph}`, `Traza la letra ${glyph}`) : L(`Trace ${glyph}`, `Traza ${glyph}`)}
+        {isLetters
+          ? L(`Trace the letter ${glyph}`, `Traza la letra ${glyph}`)
+          : L(`Trace ${glyph}`, `Traza ${spanishNonLetterGlyph(kind, glyph).article} ${spanishNonLetterGlyph(kind, glyph).label}`)}
       </p>
       <p className="mt-1 font-ui text-sm text-inksoft">{index + 1} / 3</p>
       <TracingCanvas key={`${glyph}-${attempt}`} glyph={glyph} onDone={finishGlyph} />

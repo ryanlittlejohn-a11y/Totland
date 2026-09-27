@@ -285,10 +285,18 @@ export const RHYMES: string[][] = [
   ["sun", "bun"], ["snake", "cake"], ["goat", "boat"], ["mouse", "house"], ["duck", "truck"],
 ];
 
+export const RHYMES_ES: string[][] = [
+  ["gato", "pato"], ["rana", "lana"], ["ratón", "botón"], ["queso", "beso"], ["conejo", "espejo"],
+  ["fresa", "mesa"], ["ardilla", "silla"], ["limón", "camión"], ["estrella", "botella"], ["caracol", "sol"],
+];
+
 export const RHYME_EMOJI: Record<string, string> = {
   cat: "🐱", hat: "🎩", dog: "🐶", frog: "🐸", star: "⭐", car: "🚗", bee: "🐝", tree: "🌳",
   moon: "🌙", spoon: "🥄", sun: "☀️", bun: "🥐", snake: "🐍", cake: "🍰", goat: "🐐", boat: "⛵",
   mouse: "🐭", house: "🏠", duck: "🦆", truck: "🚚",
+  gato: "🐱", pato: "🦆", rana: "🐸", lana: "🧶", ratón: "🐭", botón: "🔘", queso: "🧀", beso: "💋",
+  conejo: "🐰", espejo: "🪞", fresa: "🍓", mesa: "🍽️", ardilla: "🐿️", silla: "🪑", limón: "🍋",
+  camión: "🚚", estrella: "⭐", botella: "🍼", caracol: "🐌", sol: "☀️",
 };
 
 export interface CategorySet {

@@ -217,7 +217,7 @@
 - [ ] ON HOLD: Spanish phonics / spelling / missing-letter / Word Finds lines (~1,190) — need a Spanish word bank first
 
 ## Apple Kids Category 1.3 data-flow (approved 2026-09-28)
-- [ ] Verify external hosts in packaged app, backend region, pod list
-- [ ] Self-host Baloo 2 + Nunito Sans; remove Google Fonts; prove no third-party requests
-- [ ] Deletion: also delete contact_inquiries; 30-day purge of voice_generation_events; verify with throwaway accounts
-- [ ] Privacy Notice + subscription deletion wording + manifest; updated Apple reply
+- [x] Verify external hosts in packaged app, backend region, pod list
+- [x] Self-host Baloo 2 + Nunito Sans; remove Google Fonts; prove no third-party requests
+- [x] Deletion: also delete contact_inquiries; 30-day purge of voice_generation_events; verify with throwaway accounts
+- [x] Privacy Notice + subscription deletion wording + manifest; updated Apple reply

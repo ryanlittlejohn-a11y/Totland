@@ -1,35 +1,37 @@
-# Number Pop device voice: findings and proposed fix
+# No voice at all on the Mac (iOS app on Apple Silicon) — findings and next step
 
-## Findings (read-only, verified)
+## What I checked (read-only)
 
-**1. No Number Pop audio is missing.** Number Pop's lines are all recorded in the shared library under the exact wording the app uses today. That's 69 of 69:
-- 20 questions: "Can you find the number 1?" through "…20?"
-- 20 reveals: "That's 1!" through "That's 20!"
-- 20 retry hints: "one looks like 1." through "twenty looks like 20."
-- All 9 English praise and try-again lines
+1. **Narration setting default** — Unchanged. A fresh profile starts with narration **on** (`narration: true`). The recent fix never touched the profile or settings code. Games switch narration on or off only from the saved setting, and only the grown-up Settings toggle changes that setting. I found nothing that reads a fresh profile as "off". A family that switched narration off earlier would keep it off, because the setting is shared by all children and synced to the account.
 
-**2. The wording hasn't changed since the game was built.** The question, reveal and hint text in Number Pop was last touched on 4 Sep, before any tier was recorded. The order-game crash fix and the wording fixes didn't touch it, so the text still matches what was recorded.
+2. **Tap-to-unlock on a Mac** — I **can't verify** this. My test browser is Chrome on Linux, not Apple's iOS web engine running on macOS. I can't run the iOS app on a Mac, so anything I said about gestures there would be a guess. From the code: the unlock listens for mouse, touch and key presses, so a Mac click should count. A mouse-trackpad click sends "pointerdown", not "touchend", and that is enough. If Hannah's clip is refused, the app keeps it and tries again on the next tap. So a missed unlock should give delayed voice, not permanent silence.
 
-**3. It isn't only Number Pop.** Number Bubbles, Number Fishing and Number Rocket use the same line generator, so their lines are identical and all recorded. Letter Pop is also fully recorded: 78 of 78 questions, hints and reveals. If one of these games falls back to the device voice, the cause is the same for all of them.
+3. **allowGenerate change** — It only has an effect when the pause flag is on. For a normal request, the app sends `allowGenerate: true`. The server checks the shared library first, then signs in, applies the hourly limit, calls ElevenLabs, saves the clip and returns it. The early exit happens only when `allowGenerate` is false. Every other failure returns "unavailable" or throws, and the app catches both and uses the device voice. The fix can't make the app go silent.
 
-**4. Root cause: something switched Hannah off for the whole session.** The audio itself is fine.
-- A game falls back for every line (question, praise and reveal) only when the session-wide "voice unavailable" flag is on. While that flag is on, the app skips the shared library completely, so even recorded lines use the device voice.
-- Before the fix on 27 Sep (16:08 UTC), **any** single unrecorded line turned that flag on. That's the bug we already fixed.
-- Since that fix, only a quota or rate-limit response from our server can turn it on. Our server logs no voice generation attempts at all in the last 3 days. That makes it very unlikely the current code turned the flag on.
-- **Most likely explanation:** the tester's TestFlight build was made before the 27 Sep fix. I can't see which build they have, so please confirm the build number or date. Also, inside the phone app the flag lasts until the app is fully closed, not just sent to the background. So one bad moment can keep Hannah off across several games.
+4. **Device-voice fallback** — There is a real weakness, and it affects Mac and iPhone alike. It isn't specific to the Mac:
+   - It speaks right after `speechSynthesis.cancel()`. On Apple's web engine, a line started straight after cancel is sometimes dropped without any error.
+   - It speaks after a network wait, so not during a tap, and the tap-unlock never unlocks the device voice. Apple's web engine can block speech that a tap didn't start.
+   - An empty voice list is fine: the app just uses the default voice. There's no retry, but there doesn't need to be one.
+   - If speech fails, nothing reports it. We can't tell "blocked" apart from "played".
 
-**5. A weak spot remains in the current code.** Even after the fix, one real quota or rate-limit event still makes recorded lines use the device voice for the rest of that app session. The flag should only stop the app from *creating new* lines. It shouldn't stop it from *playing ones that are already recorded*.
+## Key point
 
-## Proposed changes (after your approval)
+Silence from **both** Hannah and the device voice points to a shared cause, not the voice code. The likely candidates are the narration setting being off, the Mac's sound output or mute, or Apple's web engine on macOS blocking all web audio. Two parts that work independently are unlikely to fail together because of the recent fix.
 
-1. **You check:** confirm the tester's build was made after 27 Sep 16:08 UTC. If it wasn't, a new Codemagic build alone should fix what they're hearing.
-2. **Code hardening (small, speech only):** when the voice is paused for quota or rate limit, keep playing recorded lines from the shared library. Use the device voice only for lines that have never been recorded.
-3. **Verify:** with the pause flag forced on, Number Pop and Letter Pop should still play Hannah for all their lines. A deliberately unrecorded line should use the device voice, and no new audio should be created.
+## I need your answers before I can go further
 
-No changes to game rules, scoring, sign-in, payments, the parental gate or Premium. No audio will be recorded.
+- In the app's grown-up Settings on the Mac, is **Voice narration** switched on?
+- Is the Mac's volume up and not muted? Does the **background music** or the **tap chime** play in the app? If the music plays but voice doesn't, the cause is in narration. If nothing plays at all, it's the Mac's sound or the environment.
 
-## Technical details
+## Genuinely unknown without a real device
 
-- `src/lib/speech.ts`: `fetchAndStore` returns early when `voiceRequestsBlocked()` is true, before it ever calls `speakText`, so library hits get skipped too. The plan is to always call `speakText` and send it an `allowGenerate: false` hint while blocked.
-- `src/lib/tts.functions.ts`: add an optional `allowGenerate` input. When it's false, a library miss returns `unavailable/service` right away, without checking sign-in, the rate limit or ElevenLabs. Library hits are unchanged.
-- Evidence: SHA-256 keys `en:<text>` were checked against the `voice-clips` storage objects. `voice_generation_events` has 0 rows in the last 3 days. The per-line fix is commit 09f09fe (27 Sep 16:08 UTC).
+- How Apple's web engine handles tap-unlock and speech when an iOS app runs on macOS.
+- Whether the iPhone build has the same problem. The code paths are the same, so an iPhone test is the clearest check.
+
+## Proposed next step (after your answers, no changes yet)
+
+- If the music also plays silently: nothing to fix in code; it's the Mac's sound settings or a macOS limitation. We recommend testing on the iPhone.
+- If the music plays but voice doesn't: a small, approved-first change that
+  - adds a tiny on-device log of why each line didn't play (setting off, refused, fallback used), with no data sent anywhere, and
+  - makes the device voice more reliable: a short pause after cancel, and unlocking speech on the first tap.
+  This needs a new Codemagic build. No changes to game rules, scoring, sign-in, payments, the parental gate or Premium, and no audio recorded.

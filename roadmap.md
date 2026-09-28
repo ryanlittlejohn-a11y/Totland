@@ -1,5 +1,9 @@
 # Roadmap
 
+## Voice pause still plays recorded lines (approved 2026-09-28)
+- [x] While paused, look up shared library with allowGenerate:false; device voice only for unrecorded lines
+- [ ] New Codemagic build + TestFlight check
+
 ## Hannah voice shutoff fix (approved 2026-09-27)
 - [x] Only quota/rate-limit replies disable Hannah for the session; unrecorded lines fall back per line (src/lib/speech.ts)
 - [x] iOS: play narration through the silent switch (AVAudioSession .playback in AppDelegate.swift)

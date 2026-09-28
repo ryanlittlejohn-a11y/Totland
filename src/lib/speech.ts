@@ -189,9 +189,11 @@ async function fetchAndStore(
   lang: string,
   wantUrl = true,
 ): Promise<string | null> {
-  if (voiceRequestsBlocked()) return null;
+  // While paused (quota/rate limit), still play recorded lines from the shared
+  // library — only generating brand-new lines is paused.
+  const allowGenerate = !voiceRequestsBlocked();
   try {
-    const result = await speakText({ data: { text, lang } });
+    const result = await speakText({ data: { text, lang, allowGenerate } });
     if (result.status !== "ok") {
       // Only account-wide failures pause Hannah for the session. A line that
       // simply isn't recorded yet ("service") falls back for that line only,

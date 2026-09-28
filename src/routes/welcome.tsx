@@ -23,6 +23,14 @@ export const Route = createFileRoute("/welcome")({
 });
 
 const OUTFITS = ["🎒", "🎩", "🧣", "👑", "🕶️", "🎀"];
+const OUTFIT_NAMES: Record<string, [string, string]> = {
+  "🎒": ["Backpack", "Mochila"], "🎩": ["Top hat", "Sombrero de copa"], "🧣": ["Scarf", "Bufanda"],
+  "👑": ["Crown", "Corona"], "🕶️": ["Sunglasses", "Gafas de sol"], "🎀": ["Bow", "Lazo"],
+};
+const BG_NAMES: Record<string, [string, string]> = {
+  moss: ["Green background", "Fondo verde"], sky: ["Blue background", "Fondo azul"],
+  amber: ["Yellow background", "Fondo amarillo"], plum: ["Pink background", "Fondo rosa"],
+};
 const BGS = [
   { id: "moss", swatch: "oklch(0.72 0.11 145)" },
   { id: "sky", swatch: "oklch(0.76 0.1 240)" },
@@ -84,6 +92,7 @@ function Welcome() {
               key={m.id}
               type="button"
               onClick={() => setMode(m.id)}
+              aria-pressed={mode === m.id}
               className={`flex w-full items-center gap-4 rounded-3xl p-4 text-left wood-block ${
                 mode === m.id ? "bg-amber/40" : "bg-card"
               }`}
@@ -110,6 +119,7 @@ function Welcome() {
                   key={c.id}
                   type="button"
                   aria-label={c.name}
+                  aria-pressed={character === c.id}
                   onClick={() => {
                     setCharacter(c.id);
                     say(c.name);
@@ -130,7 +140,8 @@ function Welcome() {
                 <button
                   key={o}
                   type="button"
-                  aria-label={`outfit ${o}`}
+                  aria-label={L(...(OUTFIT_NAMES[o] ?? ["Outfit", "Ropa"]))}
+                  aria-pressed={outfit === o}
                   onClick={() => setOutfit(o)}
                   className={`aspect-square grid place-items-center rounded-2xl text-2xl ${
                     outfit === o ? "bg-amber/50" : "bg-felt"
@@ -145,7 +156,8 @@ function Welcome() {
                 <button
                   key={b.id}
                   type="button"
-                  aria-label={`background ${b.id}`}
+                  aria-label={L(...(BG_NAMES[b.id] ?? ["Background", "Fondo"]))}
+                  aria-pressed={bg === b.id}
                   onClick={() => setBg(b.id)}
                   className={`size-10 rounded-full ring-2 ${bg === b.id ? "ring-ink" : "ring-transparent"}`}
                   style={{ background: b.swatch }}

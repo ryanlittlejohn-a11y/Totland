@@ -19,7 +19,7 @@ export function PlayFrame({
           aria-label={L("Back to the map", "Volver al mapa")}
           className="grid size-14 shrink-0 place-items-center rounded-2xl bg-card text-2xl wood-block"
         >
-          🏠
+          <span aria-hidden="true">🏠</span>
         </Link>
         <div className="flex-1">
           <p className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Playing now", "Jugando ahora")}</p>

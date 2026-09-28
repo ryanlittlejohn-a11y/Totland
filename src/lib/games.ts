@@ -81,7 +81,7 @@ function numberRound(level: number): Round {
     options: shuffle([count, ...others]).map((n) => ({ id: String(n), label: String(n), big: true })),
     answerId: String(count),
     hint: `Point and count: ${Array.from({ length: count }, (_, i) => i + 1).join(", ")}.`,
-    reveal: `${count}! There are ${count} ${item}.`,
+    reveal: `${count}! There are ${count}.`,
     columns: 3,
   };
 }
@@ -95,7 +95,7 @@ function colorRound(level: number): Round {
     spoken: `Can you tap the color ${target.name}?`,
     options: shuffle([target, ...others]).map((c) => ({ id: c.name, swatch: c.swatch })),
     answerId: target.name,
-    hint: `${target.name} looks like ${target.emoji}.`,
+    hint: `Look for something ${target.name}.`,
     reveal: `That's ${target.name}!`,
     columns: 3,
   };
@@ -110,7 +110,7 @@ function shapeRound(level: number): Round {
     spoken: `Where is the ${target.name}?`,
     options: shuffle([target, ...others]).map((s) => ({ id: s.name, clip: s.clip })),
     answerId: target.name,
-    hint: `A ${target.name} looks like ${target.emoji}.`,
+    hint: `Look for the ${target.name}.`,
     reveal: `Yes — a ${target.name}!`,
     columns: 3,
   };

@@ -113,6 +113,11 @@ export const speakText = createServerFn({ method: "POST" })
       console.warn("Voice library lookup failed", e);
     }
 
+    // Paused caller: library lookup only, no sign-in/limit/provider checks.
+    if (!data.allowGenerate) {
+      return { status: "unavailable", reason: "service" } satisfies SpeakResult;
+    }
+
     // 2. Library miss — this is the only path that spends provider credits, so
     // it requires a signed-in account (others fall back to the device voice)
     // and is capped per caller per hour.

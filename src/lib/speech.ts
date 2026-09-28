@@ -77,23 +77,62 @@ if (typeof window !== "undefined" && "speechSynthesis" in window) {
   };
 }
 
+/** Apple's web engine can silently drop a line spoken straight after cancel(). */
+const AFTER_CANCEL_MS = 60;
+let deviceToken = 0;
+let pendingDevice: { text: string; opts: { rate?: number; pitch?: number } } | null = null;
+
 function sayWithDeviceVoice(text: string, opts: { rate?: number; pitch?: number }) {
-  if (typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  if (typeof window === "undefined" || !("speechSynthesis" in window)) {
+    logNarration("device-missing");
+    return;
+  }
+  logNarration("device-attempt", text.slice(0, 40));
+  const token = ++deviceToken;
   try {
     window.speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(text);
-    const voice = pickWarmVoice();
-    if (voice) u.voice = voice;
-    u.rate = opts.rate ?? 0.85;
-    u.pitch = opts.pitch ?? 1.15;
-    u.volume = 0.95;
-    u.lang = voice?.lang ?? speechLang();
-    u.onend = () => duckMusic(false);
-    u.onerror = () => duckMusic(false);
-    duckMusic(true);
+  } catch {
+    /* ignore */
+  }
+  window.setTimeout(() => {
+    if (token !== deviceToken || !enabled) return;
+    try {
+      const u = new SpeechSynthesisUtterance(text);
+      const voice = pickWarmVoice();
+      if (voice) u.voice = voice;
+      u.rate = opts.rate ?? 0.85;
+      u.pitch = opts.pitch ?? 1.15;
+      u.volume = 0.95;
+      u.lang = voice?.lang ?? speechLang();
+      u.onstart = () => logNarration("device-started", voice?.name ?? "default voice");
+      u.onend = () => duckMusic(false);
+      u.onerror = (e) => {
+        duckMusic(false);
+        const code = (e as SpeechSynthesisErrorEvent).error ?? "unknown";
+        if (code === "canceled" || code === "interrupted") return;
+        logNarration("device-error", code);
+        if (code === "not-allowed") pendingDevice = { text, opts }; // replay on next tap
+      };
+      duckMusic(true);
+      window.speechSynthesis.speak(u);
+    } catch (e) {
+      logNarration("device-error", e instanceof Error ? e.name : "exception");
+    }
+  }, AFTER_CANCEL_MS);
+}
+
+/** Speak an empty, silent line inside the first tap so later device-voice
+ *  fallbacks (which start after a network wait) are not blocked. */
+let devicePrimed = false;
+function primeDeviceVoice() {
+  if (devicePrimed || typeof window === "undefined" || !("speechSynthesis" in window)) return;
+  devicePrimed = true;
+  try {
+    const u = new SpeechSynthesisUtterance(" ");
+    u.volume = 0;
     window.speechSynthesis.speak(u);
   } catch {
-    /* narration is optional */
+    devicePrimed = false;
   }
 }
 

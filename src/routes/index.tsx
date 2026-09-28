@@ -94,7 +94,7 @@ function Home() {
             aria-label={L("Sticker shelf", "Estante de calcomanías")}
             className="grid size-11 place-items-center rounded-2xl bg-card text-xl wood-block"
           >
-            🎁
+            <span aria-hidden="true">🎁</span>
           </Link>
         </div>
       </header>

@@ -14,6 +14,50 @@ import {
   tracingProgressOf,
 } from "@/lib/profile";
 import { setNarration } from "@/lib/speech";
+import { formatNarrationLog } from "@/lib/narration-log";
+
+/** Read-only, on-device narration diagnostics for testers; nothing is sent. */
+function NarrationDiagnostics() {
+  const [log, setLog] = useState("");
+  const [copied, setCopied] = useState(false);
+  return (
+    <details
+      className="rounded-xl bg-felt p-3 text-xs text-inksoft ring-1 ring-border"
+      onToggle={(e) => {
+        if ((e.currentTarget as HTMLDetailsElement).open) setLog(formatNarrationLog());
+      }}
+    >
+      <summary className="cursor-pointer font-semibold text-ink">Narration diagnostics</summary>
+      <p className="mt-2">Kept on this device only. Copy it to send to us if voices go quiet.</p>
+      <pre className="mt-2 max-h-48 overflow-auto whitespace-pre-wrap break-words" aria-label="Narration log">
+        {log || "No narration events yet."}
+      </pre>
+      <div className="mt-2 flex gap-2">
+        <button
+          type="button"
+          className="rounded-lg bg-clay px-3 py-1.5 font-semibold text-primary-foreground"
+          onClick={() => {
+            const text = formatNarrationLog();
+            setLog(text);
+            void navigator.clipboard?.writeText(text).then(
+              () => setCopied(true),
+              () => setCopied(false),
+            );
+          }}
+        >
+          {copied ? "Copied" : "Copy"}
+        </button>
+        <button
+          type="button"
+          className="rounded-lg px-3 py-1.5 font-semibold text-ink ring-1 ring-border"
+          onClick={() => setLog(formatNarrationLog())}
+        >
+          Refresh
+        </button>
+      </div>
+    </details>
+  );
+}
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";

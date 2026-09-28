@@ -225,3 +225,9 @@
 - [x] Self-host Baloo 2 + Nunito Sans; remove Google Fonts; prove no third-party requests
 - [x] Deletion: also delete contact_inquiries; 30-day purge of voice_generation_events; verify with throwaway accounts
 - [x] Privacy Notice + subscription deletion wording + manifest; updated Apple reply
+
+## Silent narration fix (approved 2026-09-28)
+- [x] 4 s time limit on Hannah requests → device voice fallback
+- [x] Device voice: pause after cancel, prime inside first tap, replay on not-allowed
+- [x] On-device narration diagnostics log (50 events) in parent Settings with Copy
+- [ ] New Codemagic build + check on Mac and iPhone (read the diagnostics log)

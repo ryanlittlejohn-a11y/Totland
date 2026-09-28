@@ -1,80 +1,35 @@
-# Kids Category (1.3) data-flow audit and draft reply to Apple
+# Number Pop device voice: findings and proposed fix
 
-Read-only audit. No files changed. Items marked **[UNVERIFIED]** need confirmation before you send. Approving this plan starts only the follow-up checks in the last section. It does not change code.
+## Findings (read-only, verified)
 
-## 1. SDKs and native plugins in the iOS build
+**1. No Number Pop audio is missing.** Number Pop's lines are all recorded in the shared library under the exact wording the app uses today. That's 69 of 69:
+- 20 questions: "Can you find the number 1?" through "…20?"
+- 20 reveals: "That's 1!" through "That's 20!"
+- 20 retry hints: "one looks like 1." through "twenty looks like 20."
+- All 9 English praise and try-again lines
 
-| Component | What it does | Sends data off device? |
-|---|---|---|
-| Capacitor core, App, SplashScreen, StatusBar | Native shell, deep links, splash, status bar | No |
-| Capacitor Preferences | Stores this app's own data on the device | No |
-| Capacitor Network | Checks whether the device is online | No. The app separately pings our own `/api/public/diag` |
-| Capacitor Browser | Opens the sign-in sheet and Apple's subscription management page | Only to the pages it opens |
-| RevenueCat Purchases 12.3.2 | App Store purchases, restores and entitlement checks | Yes, to RevenueCat |
-| supabase-js | Parent sign-in and family sync | Yes, to our backend (Lovable Cloud) |
+**2. The wording hasn't changed since the game was built.** The question, reveal and hint text in Number Pop was last touched on 4 Sep, before any tier was recorded. The order-game crash fix and the wording fixes didn't touch it, so the text still matches what was recorded.
 
-The app has no analytics, advertising, attribution or crash SDKs (no Firebase, Sentry, Meta or Google Analytics).
-**[UNVERIFIED]** `Podfile.lock` is not in the repo, and the committed `Podfile` does not yet list the Browser, Network or Preferences pods. `cap sync` adds them in the cloud build. Check the pod list in the latest build log.
+**3. It isn't only Number Pop.** Number Bubbles, Number Fishing and Number Rocket use the same line generator, so their lines are identical and all recorded. Letter Pop is also fully recorded: 78 of 78 questions, hints and reveals. If one of these games falls back to the device voice, the cause is the same for all of them.
 
-## 2. Network destinations
+**4. Root cause: something switched Hannah off for the whole session.** The audio itself is fine.
+- A game falls back for every line (question, praise and reveal) only when the session-wide "voice unavailable" flag is on. While that flag is on, the app skips the shared library completely, so even recorded lines use the device voice.
+- Before the fix on 27 Sep (16:08 UTC), **any** single unrecorded line turned that flag on. That's the bug we already fixed.
+- Since that fix, only a quota or rate-limit response from our server can turn it on. Our server logs no voice generation attempts at all in the last 3 days. That makes it very unlikely the current code turned the flag on.
+- **Most likely explanation:** the tester's TestFlight build was made before the 27 Sep fix. I can't see which build they have, so please confirm the build number or date. Also, inside the phone app the flag lasts until the app is fully closed, not just sent to the background. So one bad moment can keep Hannah off across several games.
 
-**Child play area**
-- **Google Fonts (fonts.googleapis.com / fonts.gstatic.com), a third party.** The app's shared page setup loads two web fonts from Google. It most likely happens on every launch, including while a child plays. Google receives the device IP address, user agent and font request. **[UNVERIFIED that the packaged app includes this; highly likely]**. This is the most important finding for Guideline 1.3.
-- **Our server (totland.lovable.app), speech lines.** When a narration clip is not already on the device, the app sends the text and language to our server. The server either returns a stored clip or asks ElevenLabs to create one. ElevenLabs receives only the text and a voice ID, never user or device data. For rate limiting, our server stores a SHA-256 hash of the caller's IP address (`voice_generation_events`, with no set expiry).
-- **Our server, diagnostics.** A GET reachability ping (carries nothing), plus crash, freeze and rejection reports (see section 3).
-- **Our server, music fallback.** Music is bundled in the app. It streams from our host only if the bundled copy fails.
+**5. A weak spot remains in the current code.** Even after the fix, one real quota or rate-limit event still makes recorded lines use the device voice for the rest of that app session. The flag should only stop the app from *creating new* lines. It shouldn't stop it from *playing ones that are already recorded*.
 
-**Parent area (behind the gate)**
-- **Our backend (Lovable Cloud).** Email and password sign-in, or Google or Apple sign-in through our own `/~oauth` page in the in-app browser. Also family sync, account deletion and the contact form.
-- **RevenueCat.** When signed out, RevenueCat's own anonymous ID is used (`$RCAnonymousID:…`). When signed in, `logIn` uses the parent's backend account UUID. The app never sets subscriber attributes such as email, name or phone. It never calls `collectDeviceIdentifiers` or ad-ID APIs, and it does not use AdSupport or App Tracking Transparency. **[UNVERIFIED]** RevenueCat's own SDK sends device metadata (such as OS, app version, locale and IP) with receipt requests, as its documentation describes.
-- **Apple.** App Store purchases, and the subscription management page.
-- **RevenueCat to our server.** A webhook writes the subscription status against the account UUID.
+## Proposed changes (after your approval)
 
-**Paddle is web-only.** On native, the subscription page shows the App Store purchase panel. `paddle.js` loads only from the website checkout path.
+1. **You check:** confirm the tester's build was made after 27 Sep 16:08 UTC. If it wasn't, a new Codemagic build alone should fix what they're hearing.
+2. **Code hardening (small, speech only):** when the voice is paused for quota or rate limit, keep playing recorded lines from the shared library. Use the device voice only for lines that have never been recorded.
+3. **Verify:** with the pause flag forced on, Number Pop and Letter Pop should still play Hannah for all their lines. A deliberately unrecorded line should use the device voice, and no new audio should be created.
 
-## 3. Telemetry and error reporting
-- `crash-report.ts` sends up to 12 reports per session to our own `/api/public/diag`. Each report contains the type (error, rejection or freeze), up to 500 characters of message, up to 1,500 characters of stack trace, the screen path and the platform. The server writes it to the server log and discards it. Nothing is stored in the database. The request's IP reaches our hosting provider's logs.
-- `lovable-error-reporting.ts` only forwards to `window.__lovableEvents` or `__lovableReportRuntimeError` if those exist. They exist only inside the Lovable editor preview. **[UNVERIFIED]** Whether the published web bundle or the packaged app contains any script injected by Lovable. Confirm by searching the built `dist-app/` for external script tags.
+No changes to game rules, scoring, sign-in, payments, the parental gate or Premium. No audio will be recorded.
 
-## 4. Third-party runtime loads in the native app
-- Google Fonts, as above. Nothing else was found. No CDN scripts or images load in the native app (Paddle's CDN is web-only).
+## Technical details
 
-## 5. Backend storage when a parent signs in
-- Sign-in records: email, password hash or Apple/Google identity, and names or email from the Apple/Google profile where provided.
-- `child_profiles`: the child's display name as typed, age, emoji outfit, avatar colour, and a `data` field (progress, stars, settings).
-- `subscriptions`: store or Paddle IDs, product, status and billing period.
-- `contact_inquiries` (only if the contact form is used): name, email and message.
-- **Region [UNVERIFIED]**: confirm the backend region in Cloud settings.
-- **Retention**: kept while the account is active. There is no automatic expiry.
-- **Deletion**: the in-app "Delete account" removes child profiles, subscriptions and the login. **Gaps:** contact messages are kept, with only the account link removed. The hashed-IP voice rate-limit rows have no expiry. RevenueCat's copy of the account is not deleted.
-
-## 6. Mismatches with the privacy manifest and Privacy Notice
-1. Google Fonts is not disclosed anywhere. It is a third-party request while children play.
-2. The Privacy Notice says deletion "permanently removes" your data, but contact messages and RevenueCat records remain.
-3. The Notice lists "Service providers" generically. It does not name Lovable Cloud (hosting and database), ElevenLabs ("our speech provider") or Google.
-4. The hashed-IP rate-limit record is not mentioned, and it has no retention period.
-5. The manifest declares Email, Name, User ID, Product Interaction, Purchase History, Other data, Other User Content, Crash Data and Performance Data. This broadly matches. "Name" (the child's typed display name and the parent's name from Apple/Google) is correctly marked as linked. The manifest has no entry for the device IP sent to Google Fonts.
-
-## Draft reply to Apple (only valid once the Google Fonts issue is resolved or disclosed)
-
-> **1. Third-party analytics:** No. Totland includes no third-party analytics SDK or service. The app sends anonymous crash and freeze reports (error text, stack trace, screen name, platform) only to our own server. They are written to server logs and are not shared with anyone.
->
-> **2. Third-party advertising:** No. There are no ads, ad SDKs or tracking. The app does not access the IDFA and does not use App Tracking Transparency.
->
-> **3. Sharing with third parties:** Only with the processors needed to run the service, never for advertising or marketing:
-> (a) RevenueCat, to validate App Store purchases. It uses an anonymous RevenueCat ID, or, if a parent has signed in, our random account ID. We send no email, name or other attributes.
-> (b) Apple, which processes the purchase.
-> (c) Lovable Cloud, our hosting, authentication and database provider, which stores parent account data. [REGION: confirm]
-> (d) ElevenLabs, which receives only the text of narration lines, sent from our server, to produce the spoken audio. It receives no user or device data.
-> [(e) Google Fonts: remove before sending, or disclose if still present.]
->
-> **4. Other data collected:** Children's play works with no account. Progress stays on the device. A parent may optionally create an account behind a parental gate, using email, Apple or Google sign-in. That account stores the parent's email, the child profile nickname, age, avatar choice and game progress (to sync between the family's devices), plus subscription status. Parents can delete the account in the app. Contact-form messages (name, email, message) are used only to reply. Our server keeps a one-way hash of the IP address to rate-limit narration requests. None of this is used for advertising, profiling or tracking.
-
-## Follow-up checks to run next (read-only)
-1. Build `dist-app/` in a temporary folder and search it for `fonts.googleapis`, other external hosts and any Lovable-injected scripts.
-2. Look up the backend region.
-3. Check the latest Codemagic log for the resolved pod list.
-
-Separately, I can propose fixes (fonts bundled inside the app, deletion gaps, Privacy Notice wording). I will only make those after you approve.
-
-Terms of Use issue: add the link to the App Store description yourself, using `https://totland.app/terms` or Apple's standard EULA. No code change is needed.
+- `src/lib/speech.ts`: `fetchAndStore` returns early when `voiceRequestsBlocked()` is true, before it ever calls `speakText`, so library hits get skipped too. The plan is to always call `speakText` and send it an `allowGenerate: false` hint while blocked.
+- `src/lib/tts.functions.ts`: add an optional `allowGenerate` input. When it's false, a library miss returns `unavailable/service` right away, without checking sign-in, the rate limit or ElevenLabs. Library hits are unchanged.
+- Evidence: SHA-256 keys `en:<text>` were checked against the `voice-clips` storage objects. `voice_generation_events` has 0 rows in the last 3 days. The per-line fix is commit 09f09fe (27 Sep 16:08 UTC).

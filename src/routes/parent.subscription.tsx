@@ -363,8 +363,10 @@ function Subscription() {
         <section className="rounded-3xl bg-card p-5 wood-block">
           <h2 className="font-ui text-lg font-bold text-ink">Your account has been deleted</h2>
           <p className="mt-2 text-sm text-inksoft">
-            Your grown-up account and its saved child profiles have been permanently removed. Play progress and stars
-            stored on this device remain here. Any App Store or Google Play subscription must still be canceled in the store.
+            Your grown-up account, its saved child profiles, your subscription record with us and your signed-in support
+            messages have been permanently removed. Play progress and stars stored on this device remain here. Any App
+            Store or Google Play subscription must still be canceled in the store; Apple, Google and RevenueCat keep their
+            own purchase records under their own policies.
           </p>
           <Link to="/" className="mt-3 inline-block rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream">
             Back to play
@@ -420,9 +422,10 @@ function Subscription() {
             <div className="mt-5 border-t border-border pt-4">
               <h3 className="font-ui text-sm font-bold text-clay">Delete account</h3>
               <p className="mt-2 text-xs text-inksoft">
-                This permanently deletes your grown-up account and child profiles saved to it. It does not cancel an App
-                Store or Google Play subscription, and it does not erase play progress or stars stored on this device.
-                This cannot be undone.
+                This permanently deletes your grown-up account, the child profiles saved to it, your subscription record
+                with us and any support messages you sent while signed in. It does not cancel an App Store or Google Play
+                subscription — Apple, Google and RevenueCat keep their own purchase records under their own policies — and
+                it does not erase play progress or stars stored on this device. This cannot be undone.
               </p>
               {active && (
                 <p className="mt-2 text-xs text-clay">

@@ -157,22 +157,30 @@ function PrivacyPage() {
           </li>
           <li>
             <strong>Apple and RevenueCat (in-app purchases):</strong> purchases
-            made in the iPhone or iPad app are sold by Apple; RevenueCat helps
-            us confirm your entitlement so Premium unlocks on your devices.
+            made in the iPhone or iPad app are sold by Apple; RevenueCat checks
+            the App Store receipt so Premium unlocks on your devices. RevenueCat
+            receives a random anonymous ID it creates, or, if you sign in, our
+            random account ID. We do not send it your email, name or any
+            advertising identifier. Apple and RevenueCat keep their own
+            purchase records under their own privacy policies.
           </li>
           <li>
-            <strong>Our speech provider:</strong> receives the text to be
-            spoken and the language, as described above.
+            <strong>ElevenLabs (narration voice):</strong> our server, not
+            the app, sends ElevenLabs only the text of a narration line and its
+            language, and receives the audio. ElevenLabs receives no user or
+            device data.
+          </li>
+          <li>
+            <strong>Lovable Cloud (hosting, database and sign-in):</strong>{" "}
+            hosts the Totland website and server and stores parent accounts,
+            synced child profiles, subscription records and support messages,
+            in the United States, on our behalf and solely to operate the
+            service.
           </li>
           <li>
             <strong>Email delivery:</strong> confirmations, account emails and
             support notifications are sent from our notify.totland.app sending
-            domain through our email provider.
-          </li>
-          <li>
-            <strong>Service providers:</strong> hosting, authentication, and
-            database providers that process data on our behalf under
-            contract, solely to operate the service.
+            domain through Lovable Cloud&rsquo;s email service.
           </li>
           <li>
             <strong>Professional advisers</strong> (legal, accounting) where

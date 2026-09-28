@@ -215,3 +215,9 @@
 - [x] Text fixes: pattern hint "…" → ".", Spanish gender/article agreement, leftover English, picture-slot blanks (EN + ES)
 - [x] Record clean Spanish Tier 3 (1,328) then Tier 2 (558) in Lucy + 46 changed English lines incl. 30 pattern hints in Hannah (19,325 credits)
 - [ ] ON HOLD: Spanish phonics / spelling / missing-letter / Word Finds lines (~1,190) — need a Spanish word bank first
+
+## Apple Kids Category 1.3 data-flow (approved 2026-09-28)
+- [x] Verify external hosts in packaged app, backend region, pod list
+- [x] Self-host Baloo 2 + Nunito Sans; remove Google Fonts; prove no third-party requests
+- [x] Deletion: also delete contact_inquiries; 30-day purge of voice_generation_events; verify with throwaway accounts
+- [x] Privacy Notice + subscription deletion wording + manifest; updated Apple reply

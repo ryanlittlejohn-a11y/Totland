@@ -13,3 +13,4 @@
 - Autonomous moving-target games use bounded CSS transform/opacity animations with a static semantic and reduced-motion control path — avoids per-frame React work and preserves accessibility.
 - Spanish rhyme rounds use their own authored rhyme bank rather than translated English pairs — translated pairs do not preserve rhyme.
 - Spanish sentence templates in i18n.ts use agreement tokens ({El}/{el}/{un}/{f}/{o}/{n}/{s}/{lc}) and match most-fixed-wording first — keeps article/gender correct without per-noun templates.
+- Fonts (Baloo 2, Nunito Sans) are self-hosted via @fontsource imports in styles.css; never load Google Fonts or other third-party hosts — Apple Kids Category forbids third-party requests during child play.

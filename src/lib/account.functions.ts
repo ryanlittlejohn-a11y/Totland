@@ -2,7 +2,9 @@ import { createServerFn } from "@tanstack/react-start";
 
 import { requireSupabaseAuth } from "@/integrations/supabase/auth-middleware";
 
-export type DeleteAccountResult = { ok: true } | { ok: false; step: "children" | "subscriptions" | "account" };
+export type DeleteAccountResult =
+  | { ok: true }
+  | { ok: false; step: "children" | "subscriptions" | "contact" | "account" };
 
 /**
  * Permanently deletes the signed-in grown-up account: their child profiles,
@@ -27,6 +29,14 @@ export const deleteMyAccount = createServerFn({ method: "POST" })
     if (subs.error) {
       console.error("[deleteMyAccount] subscriptions step failed", subs.error);
       return { ok: false, step: "subscriptions" };
+    }
+
+    // Support messages this grown-up sent while signed in. Must run before the
+    // login is removed, otherwise the link is cleared and the rows are orphaned.
+    const contact = await supabaseAdmin.from("contact_inquiries").delete().eq("user_id", userId);
+    if (contact.error) {
+      console.error("[deleteMyAccount] contact step failed", contact.error);
+      return { ok: false, step: "contact" };
     }
 
     const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);

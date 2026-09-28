@@ -213,5 +213,5 @@
 
 ## Voice audit follow-up (approved 2026-09-28)
 - [x] Text fixes: pattern hint "…" → ".", Spanish gender/article agreement, leftover English, picture-slot blanks (EN + ES)
-- [ ] Record clean Spanish Tier 3 then Tier 2 (Lucy) + changed English lines incl. 30 pattern hints (Hannah)
+- [x] Record clean Spanish Tier 3 (1,328) then Tier 2 (558) in Lucy + 46 changed English lines incl. 30 pattern hints in Hannah (19,325 credits)
 - [ ] ON HOLD: Spanish phonics / spelling / missing-letter / Word Finds lines (~1,190) — need a Spanish word bank first

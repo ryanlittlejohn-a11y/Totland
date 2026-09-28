@@ -10,7 +10,7 @@ const VOICES: Record<string, string> = {
 
 const BUCKET = "voice-clips";
 
-export type SpeakInput = { text: string; lang?: string };
+export type SpeakInput = { text: string; lang?: string; allowGenerate?: boolean };
 
 export type SpeakResult =
   | { status: "ok"; audio: string }
@@ -94,7 +94,9 @@ export const speakText = createServerFn({ method: "POST" })
     if (!text) throw new Error("Nothing to say");
     if (!ALLOWED_TEXT.test(text)) throw new Error("Unsupported narration text");
     const lang = input?.lang === "es" ? "es" : "en";
-    return { text, lang };
+    // false = library lookup only; never generate (used while voice is paused).
+    const allowGenerate = input?.allowGenerate !== false;
+    return { text, lang, allowGenerate };
   })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");

@@ -6,6 +6,7 @@ import { getLang, speechLang } from "./i18n";
 import { speakText } from "./tts.functions";
 import { duckMusic } from "./music";
 import { onGesture, registerAudio } from "./audio-unlock";
+import { logNarration } from "./narration-log";
 import type { ThemeMotif } from "./game-themes";
 
 /** Remove emoji/pictographs so the voice only speaks words. */
@@ -223,6 +224,11 @@ async function toBlob(base64: string): Promise<Blob> {
 
 /** Download a line. `wantUrl: false` (prewarming) never creates an object URL,
  *  so background caching costs no memory at all. */
+/** Live narration never waits longer than this for a line; a hung request falls
+ *  back to the device voice. Prewarming (no playback) is not time-limited. */
+export const VOICE_TIMEOUT_MS = 4000;
+const TIMED_OUT = Symbol("timed-out");
+
 async function fetchAndStore(
   text: string,
   lang: string,
@@ -232,12 +238,27 @@ async function fetchAndStore(
   // library — only generating brand-new lines is paused.
   const allowGenerate = !voiceRequestsBlocked();
   try {
-    const result = await speakText({ data: { text, lang, allowGenerate } });
+    const request = speakText({ data: { text, lang, allowGenerate } });
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const result = wantUrl
+      ? await Promise.race([
+          request,
+          new Promise<typeof TIMED_OUT>((resolve) => {
+            timer = setTimeout(() => resolve(TIMED_OUT), VOICE_TIMEOUT_MS);
+          }),
+        ]).finally(() => clearTimeout(timer))
+      : await request;
+    if (result === TIMED_OUT) {
+      request.catch(() => undefined); // a late answer is simply ignored
+      if (wantUrl) logNarration("hannah-failed", `timed out after ${VOICE_TIMEOUT_MS}ms`);
+      return null;
+    }
     if (result.status !== "ok") {
       // Only account-wide failures pause Hannah for the session. A line that
       // simply isn't recorded yet ("service") falls back for that line only,
       // so the next recorded line still plays in Hannah's voice.
       if (result.reason === "quota" || result.reason === "rate_limit") blockVoiceRequests();
+      if (wantUrl) logNarration("hannah-unavailable", result.reason);
       return null;
     }
     const blob = await toBlob(result.audio);
@@ -251,10 +272,14 @@ async function fetchAndStore(
       }
     }
     if (!wantUrl) return null;
+    logNarration("hannah-ok");
     const url = URL.createObjectURL(blob);
     remember(key, url);
     return url;
-  } catch {
+  } catch (e) {
+    if (wantUrl) {
+      logNarration("hannah-failed", e instanceof Error ? `${e.name}: ${e.message}` : "request failed");
+    }
     return null;
   }
 }
@@ -276,6 +301,19 @@ if (typeof window !== "undefined") {
     pendingUrl = null;
     playUrl(url, playToken);
   });
+  // Runs synchronously inside the tap itself (onGesture's first call is
+  // deferred), which is what Apple's engine needs to allow speech.
+  const deviceGesture = () => {
+    primeDeviceVoice();
+    if (pendingDevice && enabled) {
+      const { text, opts } = pendingDevice;
+      pendingDevice = null;
+      sayWithDeviceVoice(text, opts);
+    }
+  };
+  window.addEventListener("pointerdown", deviceGesture, { passive: true });
+  window.addEventListener("touchend", deviceGesture, { passive: true });
+  window.addEventListener("keydown", deviceGesture);
 }
 
 function stopAudio() {
@@ -296,8 +334,9 @@ function playUrl(url: string, token: number) {
   player.volume = 1;
   player.muted = false;
   duckMusic(true);
-  void player.play().catch(() => {
+  void player.play().catch((e: unknown) => {
     duckMusic(false);
+    logNarration("hannah-refused", e instanceof Error ? e.name : "play refused");
     pendingUrl = url; // refused: replay on the next tap
   });
 }
@@ -305,7 +344,11 @@ function playUrl(url: string, token: number) {
 
 /** Speak a line in Hannah's voice (cached), falling back to the device voice. */
 export function say(text: string, opts: { rate?: number; pitch?: number } = {}) {
-  if (!enabled || typeof window === "undefined") return;
+  if (typeof window === "undefined") return;
+  if (!enabled) {
+    logNarration("setting-off");
+    return;
+  }
   const clean = text.trim();
   if (!clean) return;
   const lang = getLang();
@@ -317,14 +360,17 @@ export function say(text: string, opts: { rate?: number; pitch?: number } = {}) 
   void (async () => {
     const cached = await cachedBlobUrl(clean, lang);
     if (cached) {
+      logNarration("cache-hit");
       playUrl(cached, token);
       return;
     }
     if (typeof navigator !== "undefined" && navigator.onLine === false) {
+      logNarration("hannah-failed", "offline");
       if (token === playToken) sayWithDeviceVoice(clean, opts);
       return;
     }
     if (!canUseRemoteNarration(clean)) {
+      logNarration("hannah-unavailable", "text not eligible");
       if (token === playToken) sayWithDeviceVoice(clean, opts);
       return;
     }

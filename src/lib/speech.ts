@@ -383,9 +383,18 @@ export function say(text: string, opts: { rate?: number; pitch?: number } = {}) 
 /** Resolve one line to a playable clip URL (device cache, then shared library). */
 async function resolveClip(text: string, lang: string): Promise<string | null> {
   const cached = await cachedBlobUrl(text, lang);
-  if (cached) return cached;
-  if (typeof navigator !== "undefined" && navigator.onLine === false) return null;
-  if (!canUseRemoteNarration(text)) return null;
+  if (cached) {
+    logNarration("cache-hit");
+    return cached;
+  }
+  if (typeof navigator !== "undefined" && navigator.onLine === false) {
+    logNarration("hannah-failed", "offline");
+    return null;
+  }
+  if (!canUseRemoteNarration(text)) {
+    logNarration("hannah-unavailable", "text not eligible");
+    return null;
+  }
   return fetchAndStore(text, lang);
 }
 
@@ -398,7 +407,11 @@ export function sayParts(parts: string[], opts: { rate?: number; pitch?: number 
     say(pieces[0] ?? "", opts);
     return;
   }
-  if (!enabled || typeof window === "undefined") return;
+  if (typeof window === "undefined") return;
+  if (!enabled) {
+    logNarration("setting-off");
+    return;
+  }
   const lang = getLang();
   const token = ++playToken;
   stopAudio();

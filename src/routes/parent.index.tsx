@@ -385,6 +385,7 @@ function Dashboard() {
               className="mt-1 w-full accent-[oklch(0.68_0.148_32)]"
             />
           </label>
+          <NarrationDiagnostics />
         </div>
         <p className="mt-4 text-xs text-inksoft">
           {GAME_COUNT} games, {WORD_FIND_THEMES.length} word finds, {STORY_COUNT} storybooks and {FLASH_CARD_COUNT} flash cards are stored on this device. Progress stays on this device unless you sign in to sync

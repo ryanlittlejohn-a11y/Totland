@@ -1,37 +1,35 @@
-# No voice at all on the Mac (iOS app on Apple Silicon) — findings and next step
+# Silent narration on the Mac (iOS app): allowed-origin check and voice hardening
 
-## What I checked (read-only)
+## Allowed-origin finding (read-only)
 
-1. **Narration setting default** — Unchanged. A fresh profile starts with narration **on** (`narration: true`). The recent fix never touched the profile or settings code. Games switch narration on or off only from the saved setting, and only the grown-up Settings toggle changes that setting. I found nothing that reads a fresh profile as "off". A family that switched narration off earlier would keep it off, because the setting is shared by all children and synced to the account.
+- **Finding from the code:** the backend list of allowed app addresses doesn't tell a Mac apart from an iPhone. It accepts exactly `capacitor://localhost`, `ionic://localhost`, `http://localhost` and `https://localhost`, compared as exact text. It doesn't look at the user-agent, the device type or the platform. When the iOS app runs on an Apple Silicon Mac, the binary, the web engine and the app's local address (`capacitor://localhost`, Capacitor's default iOS scheme, which we don't override) are all the same as on an iPhone. So by the code alone, a Mac should be accepted exactly like an iPhone.
+- **What I can't verify:** I can't prove what address the Mac actually sends without a real request from that Mac. Code reading can't show it.
+- **Why it probably isn't the whole story:** if the backend blocked the voice request, the app would get an error and switch to the device voice. You heard **neither** voice. Two things fit that:
+  1. **The voice request hangs instead of failing.** The Hannah request has no time limit. If it never answers, the app waits forever and never falls back. That gives total silence for every line.
+  2. **The device voice is blocked or dropped** by Apple's web engine, because it speaks right after cancel and outside a tap.
 
-2. **Tap-to-unlock on a Mac** — I **can't verify** this. My test browser is Chrome on Linux, not Apple's iOS web engine running on macOS. I can't run the iOS app on a Mac, so anything I said about gestures there would be a guess. From the code: the unlock listens for mouse, touch and key presses, so a Mac click should count. A mouse-trackpad click sends "pointerdown", not "touchend", and that is enough. If Hannah's clip is refused, the app keeps it and tries again on the next tap. So a missed unlock should give delayed voice, not permanent silence.
+  The diagnostic log below will show which one it is on the first try.
 
-3. **allowGenerate change** — It only has an effect when the pause flag is on. For a normal request, the app sends `allowGenerate: true`. The server checks the shared library first, then signs in, applies the hourly limit, calls ElevenLabs, saves the clip and returns it. The early exit happens only when `allowGenerate` is false. Every other failure returns "unavailable" or throws, and the app catches both and uses the device voice. The fix can't make the app go silent.
+**No change to the server's allowed-origin list is proposed.** Nothing in the code shows it's wrong, and widening it without evidence would weaken a security control. If the log shows a different address from the Mac, I'll come back to you with that exact one-line addition before making it.
 
-4. **Device-voice fallback** — There is a real weakness, and it affects Mac and iPhone alike. It isn't specific to the Mac:
-   - It speaks right after `speechSynthesis.cancel()`. On Apple's web engine, a line started straight after cancel is sometimes dropped without any error.
-   - It speaks after a network wait, so not during a tap, and the tap-unlock never unlocks the device voice. Apple's web engine can block speech that a tap didn't start.
-   - An empty voice list is fine: the app just uses the default voice. There's no retry, but there doesn't need to be one.
-   - If speech fails, nothing reports it. We can't tell "blocked" apart from "played".
+## Proposed fix (app-side narration only)
 
-## Key point
+1. **Time limit on Hannah requests.** If a line doesn't arrive within about 4 seconds, stop waiting and use the device voice for that line. The pause-for-session rules stay unchanged.
+2. **Brief pause after cancel.** Wait about 60 ms after cancelling before speaking with the device voice, so Apple's web engine doesn't drop the line.
+3. **Device voice unlocked inside the first tap.** On the very first tap, speak a silent, empty line through the device voice, in the same way the Hannah player is already primed. Later fallbacks that start after a network wait are then allowed. If a device-voice line still errors as "not allowed", keep it and replay it on the next tap, as Hannah already does.
+4. **On-device diagnostic log.** Keep the last 50 narration events in memory and in local storage on the device only. Nothing is sent anywhere. Events include: setting off, played from cache, Hannah OK, Hannah unavailable (quota / rate limit / service), Hannah request failed (with the error name or "timed out"), Hannah refused by the player, device voice attempted, device voice started, device voice error (with its code), and no device voice available. A grown-up can read it in the parent area's Settings under a small "Narration diagnostics" line, with a Copy button, so a tester can paste it to us.
 
-Silence from **both** Hannah and the device voice points to a shared cause, not the voice code. The likely candidates are the narration setting being off, the Mac's sound output or mute, or Apple's web engine on macOS blocking all web audio. Two parts that work independently are unlikely to fail together because of the recent fix.
+## Not touched
 
-## I need your answers before I can go further
+Game rules, scoring, sign-in, payments, the parental gate, Premium and the server's allowed-origin list stay the same. No audio is recorded.
 
-- In the app's grown-up Settings on the Mac, is **Voice narration** switched on?
-- Is the Mac's volume up and not muted? Does the **background music** or the **tap chime** play in the app? If the music plays but voice doesn't, the cause is in narration. If nothing plays at all, it's the Mac's sound or the environment.
+## Rollout
 
-## Genuinely unknown without a real device
+Everything here is app-side. It reaches the Mac and iPhone only through a new Codemagic build; no publish is needed. After the build, open any game on the Mac, tap once, then open the diagnostics line. It will show exactly where narration stops.
 
-- How Apple's web engine handles tap-unlock and speech when an iOS app runs on macOS.
-- Whether the iPhone build has the same problem. The code paths are the same, so an iPhone test is the clearest check.
+## Technical details
 
-## Proposed next step (after your answers, no changes yet)
-
-- If the music also plays silently: nothing to fix in code; it's the Mac's sound settings or a macOS limitation. We recommend testing on the iPhone.
-- If the music plays but voice doesn't: a small, approved-first change that
-  - adds a tiny on-device log of why each line didn't play (setting off, refused, fallback used), with no data sent anywhere, and
-  - makes the device voice more reliable: a short pause after cancel, and unlocking speech on the first tap.
-  This needs a new Codemagic build. No changes to game rules, scoring, sign-in, payments, the parental gate or Premium, and no audio recorded.
+- `src/lib/speech.ts`: wrap `speakText` in the existing `withTimeout` helper from `native.ts`, with a 4000 ms fallback of null. Keep `sayWithDeviceVoice` behind `setTimeout(…, 60)` after `cancel()`. Add a first-gesture `onGesture` prime of `speechSynthesis` with an empty utterance at volume 0. Add utterance `onstart` and `onerror` logging. Keep a pending device-voice replay on a `not-allowed` error.
+- New `src/lib/narration-log.ts`: ring buffer of 50 entries (`{t, event, detail}`) mirrored to localStorage `totland.narration-log`, with no network calls.
+- `src/routes/parent.index.tsx`: read-only diagnostics display with a Copy button, next to the existing narration toggle. The toggle logic itself is unchanged.
+- `roadmap.md`: add "Mac silent narration: timeout, device-voice hardening, diagnostic log" plus the pending build and Mac check.

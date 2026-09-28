@@ -210,3 +210,8 @@
 - [x] URGENT: fix the ordering-game crash in the middle of a round (keep each round fixed, skip a missing tile safely), then check all 11 games in EN/ES
 
 - [x] Rebalance free/Premium to 40/64: 49 games to Premium, Word Rocket + Animal Jigsaw to free; update App Store reviewer note numbers
+
+## Voice audit follow-up (approved 2026-09-28)
+- [x] Text fixes: pattern hint "…" → ".", Spanish gender/article agreement, leftover English, picture-slot blanks (EN + ES)
+- [ ] Record clean Spanish Tier 3 then Tier 2 (Lucy) + changed English lines incl. 30 pattern hints (Hannah)
+- [ ] ON HOLD: Spanish phonics / spelling / missing-letter / Word Finds lines (~1,190) — need a Spanish word bank first

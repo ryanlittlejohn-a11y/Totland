@@ -357,7 +357,7 @@ function findColor(level: number): Round {
     spoken: `Can you tap the colour ${target.name}?`,
     options: shuffle([target, ...others]).map((c) => ({ id: c.name, swatch: c.swatch, label: c.name })),
     answerId: target.name,
-    hint: `${target.name} looks like ${target.emoji}.`,
+    hint: `Look for something ${target.name}.`,
     reveal: `That's ${target.name}!`,
   });
 }
@@ -386,7 +386,7 @@ function sortColor(level: number): Round {
     options: shuffle([target, ...others]).map((c) => ({ id: c.name, emoji: c.emoji, label: c.name })),
     answerId: target.name,
     hint: `Look for something ${target.name}.`,
-    reveal: `${target.emoji} is ${target.name}!`,
+    reveal: `That's ${target.name}!`,
   });
 }
 
@@ -399,7 +399,7 @@ function findShape(level: number): Round {
     spoken: `Where is the ${target.name}?`,
     options: shuffle([target, ...others]).map((s) => ({ id: s.name, clip: s.clip, label: s.name })),
     answerId: target.name,
-    hint: `A ${target.name} looks like ${target.emoji}.`,
+    hint: `Look for the ${target.name}.`,
     reveal: `Yes — a ${target.name}!`,
   });
 }
@@ -449,7 +449,7 @@ function patternNext(level: number): Round {
     spoken: "Which shape comes next in the pattern?",
     options: shuffle([answer, ...others]).map((s) => ({ id: s.name, clip: s.clip, label: s.name })),
     answerId: answer.name,
-    hint: `The pattern goes ${a.name}, ${b.name}, ${a.name}, ${b.name}…`,
+    hint: `The pattern goes ${a.name}, ${b.name}, ${a.name}, ${b.name}.`,
     reveal: `A ${answer.name} comes next!`,
   });
 }
@@ -503,9 +503,11 @@ function sortRule(level: number): Round {
     options: shuffle([answer, ...others]).map((it) => ({ id: it.label, emoji: it.emoji, label: it.label })),
     answerId: answer.label,
     hint: `Think about ${cat.title.toLowerCase()}.`,
-    reveal: `${answer.emoji} belongs with ${cat.title}!`,
+    reveal: `That one belongs with ${cat.title}!`,
   });
 }
+
+const aOrAn = (w: string) => (/^[aeiou]/i.test(w) ? "An" : "A");
 
 function bigSmall(): Round {
   const big = pick([
@@ -531,7 +533,7 @@ function bigSmall(): Round {
     ]),
     answerId: askBig ? "big" : "small",
     hint: askBig ? "A big thing takes up lots of space." : "A small thing fits in your hand.",
-    reveal: askBig ? `A ${big.label} is big!` : `An ${small.label} is small!`,
+    reveal: askBig ? `${aOrAn(big.label)} ${big.label} is big!` : `${aOrAn(small.label)} ${small.label} is small!`,
     columns: 2,
   });
 }

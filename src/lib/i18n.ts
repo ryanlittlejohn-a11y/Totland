@@ -72,7 +72,7 @@ const NOUNS: Record<string, string> = {
   nineteen: "diecinueve", twenty: "veinte",
   // category titles
   Animals: "Animales", Food: "Comida", Toys: "Juguetes", "Things that go": "Cosas que se mueven",
-  Nature: "Naturaleza", Home: "La casa", "My body": "Mi cuerpo", Clothes: "La ropa",
+  Nature: "Naturaleza", Home: "La casa", home: "la casa", "My body": "Mi cuerpo", Clothes: "La ropa",
   animals: "animales", food: "comida", toys: "juguetes", nature: "naturaleza",
   "my body": "mi cuerpo", clothes: "la ropa", "things that go": "cosas que se mueven",
 };
@@ -109,9 +109,10 @@ const SENTENCES: [string, string][] = [
   ["Which number is bigger?", "¿Qué número es mayor?"],
   ["Tap the {} one!", "¡Toca el que es {}!"],
   ["{}  Which one is the same colour?", "{}  ¿Cuál es del mismo color?"],
-  ["Put the {} thing in the {} basket", "Pon la cosa {} en la cesta {}"],
+  ["Put the {} thing in the {} basket", "Pon la cosa {f} en la cesta {f}"],
   ["Where is the {}?", "¿Dónde está: {}?"],
   ["Which shape fits the shadow?", "¿Qué figura encaja en la sombra?"],
+  ["Which shape fits this shadow?", "¿Qué figura encaja en esta sombra?"],
   ["Find the other {}", "Encuentra el otro: {}"],
   ["Which one goes in the {} box?", "¿Cuál va en la caja: {}?"],
   ["Something is missing — which shape completes it?", "Falta algo — ¿qué figura lo completa?"],
@@ -141,7 +142,7 @@ const SENTENCES: [string, string][] = [
   ["Which group has {}?", "¿Qué grupo tiene {}?"],
   ["Which letter finishes the word {}?", "¿Qué letra completa la palabra {}?"],
   ["Which letter fits this shadow?", "¿Qué letra encaja en esta sombra?"],
-  ["Which one belongs in the {} basket?", "¿Cuál va en la cesta {}?"],
+  ["Which one belongs in the {} basket?", "¿Cuál va en la cesta {f}?"],
   ["Which one belongs with {}?", "¿Cuál va con {}?"],
   ["Which piece completes the {}?", "¿Qué pieza completa: {}?"],
   ["Which piece is missing?", "¿Qué pieza falta?"],
@@ -180,8 +181,8 @@ const SENTENCES: [string, string][] = [
   ["A {} looks like {}.", "Un {} se ve así: {}."],
   ["It is {}.", "Es {}."],
   ["Look for something {}.", "Busca algo de color {}."],
-  ["Look at the empty space — it is a {}.", "Mira el espacio vacío — es un {}."],
-  ["The pattern goes {}, {}, {}, {}…", "El patrón es {}, {}, {}, {}…"],
+  ["Look at the empty space — it is a {}.", "Mira el espacio vacío — es {un}."],
+  ["The pattern goes {}, {}, {}, {}.", "El patrón es {}, {}, {}, {}."],
   ["Most of them look the same — find the one that does not.", "Casi todos se ven iguales — encuentra el que no."],
   ["Count both groups and compare.", "Cuenta los dos grupos y compara."],
   ["Count each group slowly.", "Cuenta cada grupo despacio."],
@@ -210,17 +211,20 @@ const SENTENCES: [string, string][] = [
   ["{}, {}, {}!", "¡{}, {}, {}!"],
   ["{} is more than {}.", "{} es más que {}."],
   ["{} is bigger!", "¡{} es mayor!"],
-  ["{} comes next!", "¡Sigue {}!"],
+  ["{} comes next!", "¡Sigue el {}!"],
   ["A {} comes next!", "¡Sigue: {}!"],
   ["{} is {}!", "¡{} es {}!"],
   ["Both are {}!", "¡Los dos son {}!"],
   ["The {} fits!", "¡{} encaja!"],
   ["Yes — a {}!", "¡Sí — {}!"],
-  ["The {} was different!", "¡{} era diferente!"],
+  ["The {} was different!", "¡{El} era{n} diferente{s}!"],
   ["The {} is complete! {}", "¡La imagen de {} está completa! {}"],
   ["{} belongs with {}!", "¡{} va con {}!"],
-  ["A {} is big!", "¡{} es grande!"],
-  ["An {} is small!", "¡{} es pequeño!"],
+  ["That one belongs with {}!", "¡Eso va con {lc}!"],
+  ["A {} is big!", "¡{El} es grande!"],
+  ["An {} is big!", "¡{El} es grande!"],
+  ["A {} is small!", "¡{El} es pequeñ{o}!"],
+  ["An {} is small!", "¡{El} es pequeñ{o}!"],
   ["That one is long!", "¡Ese es largo!"],
   ["That one is short!", "¡Ese es corto!"],
   ["{} {}", "{} {}"],
@@ -243,7 +247,20 @@ const SENTENCES: [string, string][] = [
 interface Compiled {
   re: RegExp;
   es: string;
+  literal: number;
 }
+
+/* Spanish agreement helpers for sentence tokens. */
+const MASC_A = new Set(["día", "mapa", "panda", "koala", "planeta", "sofá"]);
+const FEM_OTHER = new Set(["flor", "nariz", "miel", "noche", "leche", "llave", "nube", "serpiente", "mano", "red", "luz", "sal"]);
+const SINGULAR_S = new Set(["paraguas", "autobús", "arcoíris", "ciempiés"]);
+function esForm(n: string): { fem: boolean; plural: boolean } {
+  const w = n.toLowerCase().trim();
+  const plural = w.endsWith("s") && !SINGULAR_S.has(w);
+  const fem = !MASC_A.has(w) && !SINGULAR_S.has(w) && (FEM_OTHER.has(w) || /(a|as|ción|sión|dad)$/.test(w));
+  return { fem, plural };
+}
+const FEM_COLOR: Record<string, string> = { rojo: "roja", amarillo: "amarilla", morado: "morada", blanco: "blanca", negro: "negra" };
 
 let compiled: Compiled[] | null = null;
 
@@ -256,20 +273,37 @@ function compile(): Compiled[] {
   compiled = SENTENCES.map(([en, es]) => ({
     re: new RegExp("^" + escapeRe(en).split("\\{\\}").join("(.+?)") + "$"),
     es,
+    literal: en.replace(/\{\}/g, "").length,
   }));
-  // longer templates first so specific patterns win over `{} {}`
-  compiled.sort((a, b) => b.re.source.length - a.re.source.length);
+  // most fixed wording first, so "Which group has more?" beats "Which group has {}?"
+  // and "A {} is big!" beats "{} is {}!"; ties fall back to the longer template.
+  compiled.sort((a, b) => b.literal - a.literal || b.re.source.length - a.re.source.length);
   return compiled;
 }
 
 /** Translate one authored sentence; unknown sentences stay in English. */
 export function sentence(text: string): string {
   if (current === "en" || !text) return text;
+  // multi-word nouns shown as a word reveal ("ICE CREAM 🍦") would otherwise split on the space
+  if (/^ice cream(?=[^A-Za-z]*$)/i.test(text)) return "helado" + text.slice(9);
   for (const { re, es } of compile()) {
     const m = text.match(re);
     if (!m) continue;
     let i = 1;
-    return es.replace(/\{\}/g, () => noun((m[i++] ?? "").trim()));
+    let last = { fem: false, plural: false };
+    return es.replace(/\{(El|el|un|f|lc|o|n|s)?\}/g, (_t, k?: string) => {
+      if (k === "o") return last.plural ? (last.fem ? "as" : "os") : last.fem ? "a" : "o";
+      if (k === "n") return last.plural ? "n" : "";
+      if (k === "s") return last.plural ? "s" : "";
+      const w = noun((m[i++] ?? "").trim());
+      if (k === "f") return FEM_COLOR[w] ?? w;
+      if (k === "lc") return w.charAt(0).toLowerCase() + w.slice(1);
+      if (!k) return w;
+      last = esForm(w);
+      if (k === "un") return `${last.fem ? "una" : "un"} ${w}`;
+      const art = last.plural ? (last.fem ? "las" : "los") : last.fem ? "la" : "el";
+      return `${k === "El" ? art.charAt(0).toUpperCase() + art.slice(1) : art} ${w}`;
+    });
   }
   return text;
 }

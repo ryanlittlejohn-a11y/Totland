@@ -62,6 +62,9 @@ const nativeCorsMiddleware = createMiddleware().server(async ({ next, request })
     "access-control-allow-origin": origin!,
     "access-control-allow-methods": "GET,POST,OPTIONS",
     "access-control-allow-headers": "authorization,content-type,x-tsr-redirect,x-tsr-serverfn,accept",
+    // Without this the webview hides the reply-format marker and every server
+    // call in the app decodes to undefined.
+    "access-control-expose-headers": "x-tss-serialized, x-tss-raw, content-type",
     "access-control-max-age": "86400",
     vary: "origin",
   };

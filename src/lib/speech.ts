@@ -229,6 +229,18 @@ async function toBlob(base64: string): Promise<Blob> {
 export const VOICE_TIMEOUT_MS = 4000;
 const TIMED_OUT = Symbol("timed-out");
 
+type VoiceReply =
+  | { status: "ok"; audio: string }
+  | { status: "unavailable"; reason: string };
+
+/** Guard against a reply that isn't the expected shape (e.g. undecoded). */
+export function isSpeakResult(v: unknown): v is VoiceReply {
+  if (!v || typeof v !== "object") return false;
+  const r = v as { status?: unknown; audio?: unknown };
+  if (r.status === "ok") return typeof r.audio === "string" && r.audio.length > 0;
+  return r.status === "unavailable";
+}
+
 async function fetchAndStore(
   text: string,
   lang: string,
@@ -251,6 +263,10 @@ async function fetchAndStore(
     if (result === TIMED_OUT) {
       request.catch(() => undefined); // a late answer is simply ignored
       if (wantUrl) logNarration("hannah-failed", `timed out after ${VOICE_TIMEOUT_MS}ms`);
+      return null;
+    }
+    if (!isSpeakResult(result)) {
+      if (wantUrl) logNarration("hannah-failed", "unexpected reply");
       return null;
     }
     if (result.status !== "ok") {

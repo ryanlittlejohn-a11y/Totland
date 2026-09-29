@@ -231,3 +231,6 @@
 - [x] Device voice: pause after cancel, prime inside first tap, replay on not-allowed
 - [x] On-device narration diagnostics log (50 events) in parent Settings with Copy
 - [ ] New Codemagic build + check on Mac and iPhone (read the diagnostics log)
+
+- [ ] Voice reply fix (expose-headers + reply-shape guard): publish, new Codemagic build, then recheck deletion, child sync, subscription check on a real device
+- [ ] On hold: on-device text-to-speech plugin for device-voice fallback (needs separate approval)

@@ -27,17 +27,33 @@ is not shown to parents.
 
 2. **Background music — three tracks** ("Little Steps, Big Dreams", "Curious
    Steps", "Forest of Wonder") — generated with **ElevenLabs Music** on a paid
-   plan (Starter, then Creator). ElevenLabs help center
-   (https://elevenlabs.io/docs/help-center/legal/can-i-publish-the-content-i-generate-on-the-platform):
-   *"All paid plans include a commercial license... content generated during
-   a paid subscription can be used commercially, and indefinitely."*
-   Eleven Music Service Terms: Starter/Creator+ plans restrict Outputs from
-   **offline** (non-internet/non-app) TV/radio/film/live-event use, high-traffic
-   public events, and bulk third-party licensing/distribution — none of which
-   apply to music played back inside Totland's own mobile app.
-   **Commercial use: Yes, for in-app playback.** Do NOT release these tracks
-   as standalone streaming-platform singles (Spotify/Apple Music/etc.) or
-   license them out — that crosses into the restricted use cases.
+   plan (Starter, then Creator). Per the Eleven Music Terms, Exhibit A
+   (Music Commercial Rights Table, https://elevenlabs.io/eleven-music-model-specific-terms):
+   Creator-plan Media Rights = *"All online and offline commercial use
+   permitted, except film, TV, radio, and Studio Games."*
+   Totland is not a "Studio Game" exclusion case, for two independent
+   reasons: (a) Section 4.8(j) defines "Studio Game" as a monetized
+   interactive experience "but does not include an Indie Game," and
+   Section 4.8(c) defines "Indie Game" as one with under $500,000 revenue
+   since launch, published by an entity with under $1,000,000 annual
+   revenue — Totland is pre-launch with $0 revenue, so it qualifies as an
+   Indie Game today, which is carved out of the restriction; (b) ElevenLabs
+   Support (email, 2026-09-20, filed below) separately noted that "an
+   educational learning app that uses background music is not
+   characteristically a video game," so the Studio Games category likely
+   doesn't apply at all regardless of revenue.
+   **Commercial use: Yes, for in-app playback, as of 2026-10-09.**
+   Do NOT release these tracks as standalone streaming-platform singles or
+   license them to third parties — that crosses into Music Library /
+   Streaming Distribution restrictions (prohibited on Creator plan).
+   **Ongoing duty (Section 4.7):** monitor Totland's and the owner's total
+   game revenue. If Totland's revenue reaches $500,000 since launch, or the
+   owner's total game-revenue across all games reaches $1,000,000 in a
+   fiscal year, the Indie Game carve-out stops applying — at that point
+   there are 60 days to upgrade to a plan whose Media Rights include Studio
+   Games before this restriction would bind future use (previously
+   distributed copies remain fine). Revisit this note well before either
+   threshold is approached.
    Still TODO: file the dated receipt/plan-tier proof for each generation.
 
 3. **"Hannah" narration voice** (`ZSNL4hPqCnqoMPaI4jGX`, ElevenLabs Voice
@@ -56,13 +72,58 @@ is not shown to parents.
 
 ## Missing — real records still needed
 
-- **ElevenLabs support correspondence**: the owner has a support-team email
-  confirming account-specific commercial terms. File it here (as text or a
-  linked attachment) once available — it's the strongest piece of proof for
-  items 2–3 above.
 - Dated receipts/plan-tier snapshots for the Lovable generation sessions and
   ElevenLabs generation sessions, to pin down exactly which plan was active
   when each asset was produced.
+- Confirmation of the "Hannah" voice's individual Library listing terms
+  (commercial-use permission and current notice period) — ElevenLabs Support
+  could not confirm this specific voice's terms by email and pointed to the
+  Voice Library listing itself as the source of truth.
+
+## Primary source correspondence
+
+**ElevenLabs Support, 2026-09-20** (full text, filed for audit trail):
+
+> On question 1 (Studio Games): Our documentation confirms that Starter and
+> Creator plans permit all online and offline commercial use of Eleven Music
+> output, with carve-outs for film, TV, radio, and Studio Games. As you've
+> noted, "Studio Games" refers to commercialized video games available on
+> more than one platform. An educational learning app that uses background
+> music is not characteristically a video game, so that definition would not
+> appear to apply to Totland. That said, we can't offer a legal
+> interpretation of the terms or make a definitive classification of your
+> specific app. The authoritative text is the Eleven Music Model-Specific
+> Terms at https://elevenlabs.io/eleven-music-model-specific-terms, which is
+> what you'll want to reference for your records.
+>
+> On question 2 (individual use vs. company operation): Our documentation
+> indicates that the "individual use only" framing on Starter relates to
+> personal, non-commercial use rather than to the type of legal entity
+> operating the project. Creator plan and above support commercial use of
+> generated music. Operating Totland through a company should not by itself
+> require a different plan at the Creator tier. For any precise entity-level
+> restrictions, the Model-Specific Terms at the link above are the source of
+> truth, as we can't interpret those on your behalf.
+>
+> On question 3 (Starter-plan tracks after upgrading): I'm not able to
+> confirm the specific content of Section 2(b) from the documentation I have
+> access to, so I can't verify your characterization of that provision.
+> Please review the actual Eleven Music Model-Specific Terms document
+> directly before relying on that reading for rights records.
+>
+> For formal written confirmation intended for App Store review, the terms
+> document itself is the authoritative source, and you may also want a legal
+> professional to review your specific use case.
+
+**Note on Section 1.5 (Effect of Plan Changes)**, found independently while
+verifying question 3 above: *"If you upgrade to a higher-priced plan, all
+future use and all Output in your account at the time of the upgrade are
+subject to the upgraded plan."* Practical read: Output generated while on
+Starter, still sitting in the account at the moment of upgrading to Creator,
+becomes governed by Creator's (more permissive) terms going forward — so the
+Starter-vs-Creator generation split for the three tracks is not a live risk
+once the account is on Creator. Not legal advice; the Terms document is the
+source of truth per ElevenLabs Support's own repeated caveat above.
 
 ## Placeholder table (still unverified — pre-existing sample data)
 

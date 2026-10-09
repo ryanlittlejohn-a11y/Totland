@@ -1,18 +1,50 @@
 import { Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
 import { L } from "@/lib/i18n";
 
+/** Matches the default viewport meta set in __root.tsx's head config. */
+const DEFAULT_VIEWPORT = "width=device-width, initial-scale=1, viewport-fit=cover";
+/** Tightened only while a game is on screen, so toddlers can't pinch/double-tap zoom mid-play. */
+const GAME_VIEWPORT = "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover";
+
+/**
+ * Shared wrapper for every playable screen (games, word finds, stories,
+ * adventure) and a couple of browse/list screens that reuse the same shell.
+ * Scopes "no accidental scroll/zoom/text-select" to actual gameplay only —
+ * pass `scrollable` for a list/browse screen (e.g. the Word Finds picker)
+ * so it keeps normal scrolling.
+ */
 export function PlayFrame({
   title,
   progress,
+  scrollable = false,
   children,
 }: {
   title: string;
   progress?: { done: number; total: number };
+  /** Set true for browse/list screens (not actual gameplay) that reuse this shell. */
+  scrollable?: boolean;
   children: ReactNode;
 }) {
+  // iOS/Android page-level pinch & double-tap zoom is governed by the
+  // viewport meta tag, not CSS — tighten it only for the lifetime of this
+  // screen, and always restore the default on unmount/navigation away.
+  useEffect(() => {
+    if (scrollable) return;
+    const meta = document.querySelector('meta[name="viewport"]');
+    const previous = meta?.getAttribute("content") ?? DEFAULT_VIEWPORT;
+    meta?.setAttribute("content", GAME_VIEWPORT);
+    return () => {
+      meta?.setAttribute("content", previous);
+    };
+  }, [scrollable]);
+
   return (
-    <div className="mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-4 pb-8 pt-4">
+    <div
+      className={`mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-4 pb-8 pt-4 ${
+        scrollable ? "" : "touch-none select-none overscroll-contain [-webkit-touch-callout:none]"
+      }`}
+    >
       <div className="flex items-center gap-3">
         <Link
           to="/"

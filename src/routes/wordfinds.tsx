@@ -33,7 +33,7 @@ function WordFindsPage() {
   const [visible, setVisible] = useState(20);
 
   return (
-    <PlayFrame title={L("Word Finds", "Sopa de letras")}>
+    <PlayFrame title={L("Word Finds", "Sopa de letras")} scrollable>
       <p className="font-ui text-sm text-inksoft">
         {L(
           `${WORD_FIND_THEMES.length} puzzles. The first ${FREE_WORD_FINDS} are free to play again and again.`,

@@ -206,6 +206,18 @@ const ROWS: Row[] = [
   [102, "Word Tracing: 3 Letters", "✍️", "tracing", "words3", S, "tracing", "Trace three-letter words", "lr", 1],
   [103, "Word Tracing: 4 Letters", "✍️", "tracing", "words4", S, "tracing", "Trace four-letter words", "r", 1],
   [104, "Word Tracing: 5 Letters", "✍️", "tracing", "words5", S, "tracing", "Trace five-letter words", "r", 1],
+
+  // Content expansion batch — reuses existing engines/round-generators with
+  // fresh titles (same pattern as rows 1-104); strengthens the thinnest
+  // skill areas (colors/shapes) and the Explorer (ages 2-3) age-mode tag.
+  [105, "Rainbow Hunt", "🌈", "hunt", "colors", C, "colors", "Find every color in a scene", "elr"],
+  [106, "Color Twins", "🧠", "memory", "colors", C, "memory", "Match color pairs", "elr", 1],
+  [107, "Paint Match", "🖌️", "choice", "colorMatch", C, "colors", "Match the same color", "elr"],
+  [108, "Color Carousel", "🎠", "choice", "sortColor", C, "colors", "Sort by color", "elr", 1],
+  [109, "Shape Safari", "🦓", "hunt", "shapes", C, "shapes", "Find shapes in a scene", "elr", 1],
+  [110, "Shape Twins", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
+  [111, "Twin Shapes", "🔷", "choice", "shapeMatch", C, "shapes", "Match identical shapes", "elr"],
+  [112, "Pattern Parade", "🔁", "choice", "patternNext", C, "shapes", "Continue a shape pattern", "lr", 1],
 ];
 
 const MODE_MAP: Record<string, AgeMode> = { e: "explorer", l: "learner", r: "reader" };

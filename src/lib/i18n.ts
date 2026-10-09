@@ -536,6 +536,56 @@ export const STORIES_ES: Record<string, { title: string; pages: string[] }> = {
       "Olivo bosteza y se duerme.",
     ],
   },
+  "bear-rainy-day": {
+    title: "El día de lluvia de Zarza",
+    pages: [
+      "La lluvia toca la ventana de Zarza el oso.",
+      "Se pone sus botas amarillas.",
+      "¡Splash! Salta en un charco.",
+      "Un arcoíris aparece después de la lluvia.",
+      "Zarza sonríe al cielo.",
+    ],
+  },
+  "fox-sharing-berries": {
+    title: "Elena la zorra comparte sus moras",
+    pages: [
+      "Elena la zorra encuentra un arbusto de moras.",
+      "Su amigo Olivo no tiene ninguna.",
+      "Elena le da la mitad a Olivo.",
+      "Los dos disfrutan de una rica merienda.",
+      "Compartir hizo las moras más dulces.",
+    ],
+  },
+  "bolt-helper-day": {
+    title: "El día de ayudante de Chispa",
+    pages: [
+      "Chispa ve juguetes por todo el piso.",
+      "¡Bip! Es hora de ordenar.",
+      "Guarda cada juguete en su caja.",
+      "El cuarto se ve limpio y ordenado.",
+      "Chispa pita una cancioncita feliz.",
+    ],
+  },
+  "dino-camp-stars": {
+    title: "La noche de estrellas de Dina",
+    pages: [
+      "Dina arma una carpa acogedora.",
+      "Tuesta un malvavisco junto al fuego.",
+      "Arriba, las estrellas empiezan a brillar.",
+      "Dina cuenta cinco estrellas brillantes.",
+      "Se queda dormida bajo el cielo nocturno.",
+    ],
+  },
+  "owl-forest-friends": {
+    title: "Olivo y sus amigos del bosque",
+    pages: [
+      "Olivo el búho vuela por el bosque.",
+      "Saluda a una tortuga dormilona.",
+      "Un conejo saltarín también se une.",
+      "Pronto todos los amigos están juntos.",
+      "Miran el atardecer uno junto al otro.",
+    ],
+  },
 };
 
 export function storyTitle(id: string, en: string): string {

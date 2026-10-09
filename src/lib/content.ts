@@ -225,6 +225,66 @@ export const STORIES: Story[] = [
       { text: "Ollie yawns and sleeps.", emoji: "😴" },
     ],
   },
+  {
+    id: "bear-rainy-day",
+    title: "Bramble Bear's Rainy Day",
+    cover: "🐻",
+    pages: [
+      { text: "Rain taps on Bramble Bear's window.", emoji: "🌧️" },
+      { text: "He puts on his yellow boots.", emoji: "👢" },
+      { text: "Splash! He jumps in a puddle.", emoji: "💦" },
+      { text: "A rainbow peeks out after the rain.", emoji: "🌈" },
+      { text: "Bramble Bear smiles at the sky.", emoji: "😊" },
+    ],
+  },
+  {
+    id: "fox-sharing-berries",
+    title: "Fern Fox Shares Her Berries",
+    cover: "🦊",
+    pages: [
+      { text: "Fern Fox finds a bush of berries.", emoji: "🫐" },
+      { text: "Her friend Ollie has none.", emoji: "🦉" },
+      { text: "Fern Fox gives Ollie half.", emoji: "🤝" },
+      { text: "They both have a tasty snack.", emoji: "😋" },
+      { text: "Sharing made the berries sweeter.", emoji: "💛" },
+    ],
+  },
+  {
+    id: "bolt-helper-day",
+    title: "Bolt the Robot's Helper Day",
+    cover: "🤖",
+    pages: [
+      { text: "Bolt sees toys all over the floor.", emoji: "🧸" },
+      { text: "Beep! Time to help clean up.", emoji: "🧹" },
+      { text: "He puts each toy back in its box.", emoji: "📦" },
+      { text: "The room looks neat and tidy.", emoji: "✨" },
+      { text: "Bolt beeps a happy little song.", emoji: "🎵" },
+    ],
+  },
+  {
+    id: "dino-camp-stars",
+    title: "Dot the Dino's Starry Camp-Out",
+    cover: "🦖",
+    pages: [
+      { text: "Dot sets up a cozy tent.", emoji: "⛺" },
+      { text: "She toasts a marshmallow by the fire.", emoji: "🔥" },
+      { text: "Up above, stars begin to twinkle.", emoji: "✨" },
+      { text: "Dot counts five bright stars.", emoji: "🌟" },
+      { text: "She falls asleep under the night sky.", emoji: "😴" },
+    ],
+  },
+  {
+    id: "owl-forest-friends",
+    title: "Ollie Owl's Forest Friends",
+    cover: "🦉",
+    pages: [
+      { text: "Ollie Owl flies through the forest.", emoji: "🌲" },
+      { text: "He waves hello to a sleepy turtle.", emoji: "🐢" },
+      { text: "A bouncy rabbit hops along too.", emoji: "🐰" },
+      { text: "Soon all the friends are together.", emoji: "🤗" },
+      { text: "They watch the sunset side by side.", emoji: "🌇" },
+    ],
+  },
 ];
 
 /** Little characters that make up the app's original visual universe. */

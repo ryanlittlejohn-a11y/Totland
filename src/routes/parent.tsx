@@ -110,6 +110,13 @@ function ParentLayout() {
       <div className="mt-5">
         <Outlet />
       </div>
+      <footer className="mt-8 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-xs text-inksoft">
+        <Link to="/guides/toddler-learning-games" className="underline">Guide</Link>
+        <Link to="/terms" className="underline">Terms of Use</Link>
+        <Link to="/privacy" className="underline">Privacy</Link>
+        <Link to="/refund" className="underline">Refunds</Link>
+        <Link to="/contact" className="underline">Contact</Link>
+      </footer>
     </main>
   );
 }

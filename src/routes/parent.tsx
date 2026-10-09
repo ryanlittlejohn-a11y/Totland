@@ -64,7 +64,6 @@ function ParentLayout() {
             type="button"
             onClick={() => {
               if (Number(value) === a * b) {
-                sessionStorage.setItem(GATE_KEY, "1");
                 setOpen(true);
               } else setError(true);
             }}

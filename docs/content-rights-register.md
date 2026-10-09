@@ -1,9 +1,10 @@
 # Totland content rights register
 
-> **STATUS: PARTIALLY VERIFIED (2026-10-09).** The three items below have
-> been checked against primary-source terms as of this date. Everything else
-> in this file is still an **UNVERIFIED PLACEHOLDER** — sample data from an
-> unfinished mockup. Figures such as "5 shipped, 20 in production" and any
+> **STATUS: VERIFIED for the three high-risk AI-generated assets (2026-10-09)**:
+> Lovable artwork, ElevenLabs Music tracks, and the "Hannah" narration voice
+> are all confirmed commercial-use-clear — see "Verified" below. Everything
+> else in this file is still an **UNVERIFIED PLACEHOLDER** — sample data from
+> an unfinished mockup. Figures such as "5 shipped, 20 in production" and any
 > `example.org` URLs remain illustrative only, not real records.
 
 This register is documentation only. It is no longer part of the app bundle and
@@ -58,27 +59,24 @@ is not shown to parents.
 
 3. **"Hannah" narration voice** (`ZSNL4hPqCnqoMPaI4jGX`, ElevenLabs Voice
    Library, `eleven_multilingual_v2`) — commercial use of *output* is covered
-   by the same paid-plan commercial license as above. Voice Library terms
-   add a separate wrinkle: Library voices carry the *original voice owner's*
-   sharing terms, and if that owner ever stops sharing the voice, ElevenLabs
-   gives account holders advance notice (up to a 2-year notice period) before
-   access ends — so this is an operational continuity risk, not an
-   infringement risk. **Commercial use: Yes, subject to notice-period churn.**
-   Still TODO: (a) confirm this specific voice's listing allows commercial use
-   (not every Library voice does — some are restricted to higher tiers or
-   excluded from commercial use by the owner), (b) note the voice's current
-   notice-period length, (c) keep a fallback plan (re-record narration or
-   switch voices) if "Hannah" is ever pulled.
+   by the same paid-plan commercial license as above. Checked directly in the
+   ElevenLabs dashboard (2026-10-09): the voice shows **no commercial-use
+   restriction flag** and a **2-year notice period** if the voice's owner
+   ever removes it from the Library — the standard Voice Library default,
+   not an elevated restriction. The public listing also places Hannah in
+   ElevenLabs' own "Entertainment TV" category with 73.6K users and 221.5M
+   characters generated, consistent with a mainstream catalog voice rather
+   than an obscure individual clone at risk of sudden removal.
+   **Commercial use: Yes. Verified 2026-10-09 — fully resolved.**
+   Residual risk is only the 2-year notice window if ever pulled; keep a
+   fallback (re-record narration or switch voices) noted for that scenario,
+   but no action needed now.
 
 ## Missing — real records still needed
 
 - Dated receipts/plan-tier snapshots for the Lovable generation sessions and
   ElevenLabs generation sessions, to pin down exactly which plan was active
   when each asset was produced.
-- Confirmation of the "Hannah" voice's individual Library listing terms
-  (commercial-use permission and current notice period) — ElevenLabs Support
-  could not confirm this specific voice's terms by email and pointed to the
-  Voice Library listing itself as the source of truth.
 
 ## Primary source correspondence
 

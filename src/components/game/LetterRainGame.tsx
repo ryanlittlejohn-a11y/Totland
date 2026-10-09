@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
-import { L, PRAISE_ES, getLang } from "@/lib/i18n";
+import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
 import { chime, say, sayParts, setNarration, themeChime } from "@/lib/speech";
@@ -37,10 +37,7 @@ export function LetterRainGame({
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
-  const prompt = (value: Round) => L(
-    `Catch the letter ${value.answerId}! Take your time — it will come back.`,
-    `¡Atrapa la letra ${value.answerId}! Tómate tu tiempo — volverá.`,
-  );
+  const prompt = (value: Round) => enginePrompt("catchPatient", skill, value.answerId);
 
   const nextRound = useCallback(() => {
     const generated = roundForKind(kind, level);

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
-import { L, PRAISE_ES, getLang } from "@/lib/i18n";
+import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
 import { say, sayParts, setNarration, themeChime } from "@/lib/speech";
@@ -39,7 +39,7 @@ export function LetterFishingGame({
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
-  const prompt = (r: Round) => L(`Catch the letter ${r.answerId}!`, `¡Pesca la letra ${r.answerId}!`);
+  const prompt = (r: Round) => enginePrompt("catch", skill, r.answerId);
 
   const nextRound = useCallback(() => {
     const r = roundForKind(kind, level);

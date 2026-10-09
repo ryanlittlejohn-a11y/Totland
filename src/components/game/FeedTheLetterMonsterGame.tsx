@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { LETTERS, PRAISE, pick, shuffle, type SkillId } from "@/lib/content";
-import { L, PRAISE_ES, getLang } from "@/lib/i18n";
+import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
 import { say, sayParts, setNarration, themeChime } from "@/lib/speech";
@@ -36,10 +36,7 @@ export function FeedTheLetterMonsterGame({
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
-  const prompt = (r: Round) => L(
-    `Feed the monster the letter ${r.answerId}!`,
-    `¡Dale al monstruo la letra ${r.answerId}!`,
-  );
+  const prompt = (r: Round) => enginePrompt("feedMonster", skill, r.answerId);
 
   const nextRound = useCallback(() => {
     const generated = roundForKind(kind, level);

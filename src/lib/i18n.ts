@@ -242,6 +242,20 @@ const SENTENCES: [string, string][] = [
   ["Tap the letters in alphabet order", "Toca las letras en orden alfabético"],
   ["Tap the letters in alphabet order.", "Toca las letras en orden alfabético."],
   ["Find {}. Tap every one you can see.", "Busca {}. Toca todos los que veas."],
+  // engine-flavor prompts (fishing / monster / rain) — reuse per-skill wording
+  // so narration matches whatever the child is catching/feeding/finding.
+  ["Catch the letter {}!", "¡Pesca la letra {}!"],
+  ["Catch the number {}!", "¡Pesca el número {}!"],
+  ["Catch the {} one!", "¡Pesca el {}!"],
+  ["Catch the {}!", "¡Pesca {el}!"],
+  ["Catch the letter {}! Take your time — it will come back.", "¡Atrapa la letra {}! Tómate tu tiempo — volverá."],
+  ["Catch the number {}! Take your time — it will come back.", "¡Atrapa el número {}! Tómate tu tiempo — volverá."],
+  ["Catch the {} one! Take your time — it will come back.", "¡Atrapa el {}! Tómate tu tiempo — volverá."],
+  ["Catch the {}! Take your time — it will come back.", "¡Atrapa {el}! Tómate tu tiempo — volverá."],
+  ["Feed the monster the letter {}!", "¡Dale al monstruo la letra {}!"],
+  ["Feed the monster the number {}!", "¡Dale al monstruo el número {}!"],
+  ["Feed the monster the {} one!", "¡Dale al monstruo el {}!"],
+  ["Feed the monster the {}!", "¡Dale al monstruo {el}!"],
 ];
 
 interface Compiled {
@@ -616,4 +630,42 @@ export function translateRound<T extends AnyRound>(r: T): T {
     reveal: r.reveal ? sentence(r.reveal) : r.reveal,
     options: r.options.map((o) => (o.label ? { ...o, label: noun(o.label) } : o)) as T["options"],
   };
+}
+
+/* ------------------------------------------------- engine flavor prompts */
+
+/**
+ * Themed "catch / feed the monster" phrasing for the Fishing, Monster and
+ * Rain engines, built per the round's own skill so new skills (colors,
+ * shapes, numbers) get correct, already-gender-aware Spanish via the same
+ * `sentence()` template system used everywhere else — not bespoke grammar.
+ */
+export type EngineVerb = "catch" | "catchPatient" | "feedMonster";
+
+const ENGINE_TEMPLATES: Record<EngineVerb, { letters: string; numbers: string; colors: string; other: string }> = {
+  catch: {
+    letters: "Catch the letter {}!",
+    numbers: "Catch the number {}!",
+    colors: "Catch the {} one!",
+    other: "Catch the {}!",
+  },
+  catchPatient: {
+    letters: "Catch the letter {}! Take your time — it will come back.",
+    numbers: "Catch the number {}! Take your time — it will come back.",
+    colors: "Catch the {} one! Take your time — it will come back.",
+    other: "Catch the {}! Take your time — it will come back.",
+  },
+  feedMonster: {
+    letters: "Feed the monster the letter {}!",
+    numbers: "Feed the monster the number {}!",
+    colors: "Feed the monster the {} one!",
+    other: "Feed the monster the {}!",
+  },
+};
+
+export function enginePrompt(verb: EngineVerb, skill: string, answerId: string): string {
+  const t = ENGINE_TEMPLATES[verb];
+  const template = skill === "letters" ? t.letters : skill === "numbers" ? t.numbers : skill === "colors" ? t.colors : t.other;
+  const en = template.replace("{}", answerId);
+  return current === "es" ? sentence(en) : en;
 }

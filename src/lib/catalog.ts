@@ -218,6 +218,19 @@ const ROWS: Row[] = [
   [110, "Shape Twins", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
   [111, "Twin Shapes", "🔷", "choice", "shapeMatch", C, "shapes", "Match identical shapes", "elr"],
   [112, "Pattern Parade", "🔁", "choice", "patternNext", C, "shapes", "Continue a shape pattern", "lr", 1],
+
+  // Generalized engine-flavor batch — Fishing/Monster/Rain now speak
+  // correctly for any skill (see enginePrompt in i18n.ts), so each engine
+  // goes from one letters-only game to covering colors/shapes/numbers too.
+  [113, "Fishing for Colors", "🎣", "fishing", "findColor", C, "colors", "Color recognition, fishing theme", "elr"],
+  [114, "Fishing for Shapes", "🎣", "fishing", "findShape", C, "shapes", "Shape recognition, fishing theme", "elr", 1],
+  [115, "Catch the Number", "🎣", "fishing", "findNumber", N, "numbers", "Numeral recognition, fishing theme", "elr", 1],
+  [116, "Color Monster", "👾", "monster", "findColor", C, "colors", "Color recognition, feed the monster", "elr"],
+  [117, "Shape Monster", "👾", "monster", "findShape", C, "shapes", "Shape recognition, feed the monster", "elr", 1],
+  [118, "Hungry for Numbers", "👾", "monster", "findNumber", N, "numbers", "Numeral recognition, feed the monster", "elr", 1],
+  [119, "Color Rain", "🌧️", "rain", "findColor", C, "colors", "Relaxed color recognition with no timer", "lr"],
+  [120, "Shape Rain", "🌧️", "rain", "findShape", C, "shapes", "Relaxed shape recognition with no timer", "lr", 1],
+  [121, "Falling Numbers", "🌧️", "rain", "findNumber", N, "numbers", "Relaxed numeral recognition with no timer", "lr", 1],
 ];
 
 const MODE_MAP: Record<string, AgeMode> = { e: "explorer", l: "learner", r: "reader" };

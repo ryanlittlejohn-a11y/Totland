@@ -15,8 +15,11 @@ export const Route = createFileRoute("/parent")({
   component: ParentLayout,
 });
 
-const GATE_KEY = "totland.gate";
-
+/**
+ * Apple Kids (1.3): the check is held only in memory for this visit to the
+ * parent area. Leaving to the child side unmounts this layout, so every new
+ * entry asks again. Never persist it to storage.
+ */
 function ParentLayout() {
   const [open, setOpen] = useState(false);
   const [a, setA] = useState(3);
@@ -25,7 +28,11 @@ function ParentLayout() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    setOpen(sessionStorage.getItem(GATE_KEY) === "1");
+    try {
+      sessionStorage.removeItem("totland.gate");
+    } catch {
+      // storage unavailable — nothing to clear
+    }
     setA(3 + Math.floor(Math.random() * 6));
     setB(2 + Math.floor(Math.random() * 6));
   }, []);

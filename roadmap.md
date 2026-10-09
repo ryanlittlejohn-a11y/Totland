@@ -236,6 +236,6 @@
 - [ ] On hold: on-device text-to-speech plugin for device-voice fallback (needs separate approval)
 
 ## Apple 1.3 (iPad) rejection fix
-- [ ] Remove Guide/Terms/Privacy/Refunds/Contact links and "For grown-ups" guide link from home; show them inside the parent area
-- [ ] Grown-up check re-asks on every entry from the child side (no sessionStorage persistence)
-- [ ] Re-audit at iPad Air 11" (820x1180): external links, purchase actions, deep links, back navigation
+- [x] Remove Guide/Terms/Privacy/Refunds/Contact links and "For grown-ups" guide link from home; show them inside the parent area
+- [x] Grown-up check re-asks on every entry from the child side (no sessionStorage persistence)
+- [x] Re-audit at iPad Air 11" (820x1180): external links, purchase actions, deep links, back navigation

@@ -14,3 +14,4 @@
 - Spanish rhyme rounds use their own authored rhyme bank rather than translated English pairs — translated pairs do not preserve rhyme.
 - Spanish sentence templates in i18n.ts use agreement tokens ({El}/{el}/{un}/{f}/{o}/{n}/{s}/{lc}) and match most-fixed-wording first — keeps article/gender correct without per-noun templates.
 - Fonts (Baloo 2, Nunito Sans) are self-hosted via @fontsource imports in styles.css; never load Google Fonts or other third-party hosts — Apple Kids Category forbids third-party requests during child play.
+- The parental gate state lives only in the /parent layout component memory, never in storage, and child-facing screens never link to pages with external links — Apple Kids 1.3 requires a fresh gate on every entry.

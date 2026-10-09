@@ -61,6 +61,7 @@ function NarrationDiagnostics() {
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
 import { setLang, type Lang } from "@/lib/i18n";
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";
+import { GetTheAppCard } from "@/components/GetTheAppCard";
 
 
 export const Route = createFileRoute("/parent/")({
@@ -392,6 +393,8 @@ function Dashboard() {
           your family profiles — there is no child account, no ads and no tracking.
         </p>
       </section>
+
+      <GetTheAppCard />
 
       <section className="rounded-3xl bg-card p-5 wood-block">
         <h2 className="font-ui text-lg font-bold text-ink">Help &amp; legal</h2>

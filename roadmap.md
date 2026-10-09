@@ -234,3 +234,8 @@
 
 - [ ] Voice reply fix (expose-headers + reply-shape guard): publish, new Codemagic build, then recheck deletion, child sync, subscription check on a real device
 - [ ] On hold: on-device text-to-speech plugin for device-voice fallback (needs separate approval)
+
+## Apple 1.3 (iPad) rejection fix
+- [x] Remove Guide/Terms/Privacy/Refunds/Contact links and "For grown-ups" guide link from home; show them inside the parent area
+- [x] Grown-up check re-asks on every entry from the child side (no sessionStorage persistence)
+- [x] Re-audit at iPad Air 11" (820x1180): external links, purchase actions, deep links, back navigation

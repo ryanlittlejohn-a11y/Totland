@@ -15,8 +15,11 @@ export const Route = createFileRoute("/parent")({
   component: ParentLayout,
 });
 
-const GATE_KEY = "totland.gate";
-
+/**
+ * Apple Kids (1.3): the check is held only in memory for this visit to the
+ * parent area. Leaving to the child side unmounts this layout, so every new
+ * entry asks again. Never persist it to storage.
+ */
 function ParentLayout() {
   const [open, setOpen] = useState(false);
   const [a, setA] = useState(3);
@@ -25,7 +28,11 @@ function ParentLayout() {
   const [error, setError] = useState(false);
 
   useEffect(() => {
-    setOpen(sessionStorage.getItem(GATE_KEY) === "1");
+    try {
+      sessionStorage.removeItem("totland.gate");
+    } catch {
+      // storage unavailable — nothing to clear
+    }
     setA(3 + Math.floor(Math.random() * 6));
     setB(2 + Math.floor(Math.random() * 6));
   }, []);
@@ -57,7 +64,6 @@ function ParentLayout() {
             type="button"
             onClick={() => {
               if (Number(value) === a * b) {
-                sessionStorage.setItem(GATE_KEY, "1");
                 setOpen(true);
               } else setError(true);
             }}
@@ -104,6 +110,13 @@ function ParentLayout() {
       <div className="mt-5">
         <Outlet />
       </div>
+      <footer className="mt-8 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-xs text-inksoft">
+        <Link to="/guides/toddler-learning-games" className="underline">Guide</Link>
+        <Link to="/terms" className="underline">Terms of Use</Link>
+        <Link to="/privacy" className="underline">Privacy</Link>
+        <Link to="/refund" className="underline">Refunds</Link>
+        <Link to="/contact" className="underline">Contact</Link>
+      </footer>
     </main>
   );
 }

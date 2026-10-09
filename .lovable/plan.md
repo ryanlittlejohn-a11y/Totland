@@ -1,49 +1,41 @@
-# Fix: Hannah never plays in the phone app, and the device voice is silent
+# Apple 1.3 rejection — what's reachable without the grown-up check
 
-## Root cause 1: the "o.status" crash (reproduced)
+## Findings (traced from the real route tree)
 
-**Where it happens:** `fetchAndStore` in `src/lib/speech.ts`, at the line `if (result.status !== "ok")`. The minified live code calls the voice request `i` and its answer `o`, which is where the logged name comes from.
+The grown-up check lives only in `src/routes/parent.tsx`, so it protects `/parent`, `/parent/children` and `/parent/subscription` and nothing else. Typing or deep-linking straight to `/parent/subscription` still shows the check, because the layout draws the check in place of its child pages.
 
-**What is undefined:** the value the voice request hands back. The timeout is not involved. When it fires it returns a special marker that gets checked first, and that path logs "timed out after 4000ms" instead.
+### 1. Ungated links out of the app (most likely what Apple hit)
+The home screen footer (`src/routes/index.tsx`, lines 316–330) and the "For grown-ups" card link straight to top-level pages that are **not** under `/parent`:
 
-**Why it's undefined:**
-- The server answers the phone app correctly: HTTP 200, full Hannah audio, and the right permission header. I checked this with the exact request the app sends, from the phone's own address.
-- To decode the answer, the app looks for a marker header called `x-tss-serialized`.
-- A browser only lets a page from another address read a response header if the server lists it as readable (Access-Control-Expose-Headers). Our allowed-origin list doesn't do that.
-- The website runs on the same address as the server, so it can always read the marker. That's why every earlier check on the website passed.
-- In the phone app the marker is hidden and reads as missing. The app then treats the encoded reply as plain data, looks for a `result` field that doesn't exist, and gets `undefined`. Reading `.status` from that crashes.
+| Page (route file) | What a child can tap with no check |
+|---|---|
+| `/terms` (`src/routes/terms.tsx`) | paddle.com buyer terms (external, line 163); `mailto:Support@totland.app` (line 279) |
+| `/privacy` (`src/routes/privacy.tsx`) | paddle.com privacy (line 150); two `mailto:` links (264, 300) |
+| `/refund` (`src/routes/refund.tsx`) | paddle.net (53); reportaproblem.apple.com (79); `mailto:` (108) |
+| `/contact` (`src/routes/contact.tsx`) | `mailto:` (94); contact form that sends data off the device |
+| `/guides/toddler-learning-games` | no external links, but links on to `/privacy` |
 
-**Reproduced:** I loaded a page from `http://localhost`, which is on the phone-app list, and sent the real Number Pop request to the live server in a real browser:
-`status 200, content-type application/json, x-tss-serialized = null, .result = undefined`.
-The same request from the website decodes normally and plays Hannah.
+Path: Home → footer "Terms"/"Privacy"/"Refunds"/"Contact" → external link or email. No check at any step. Same for the subscription page's own legal links once inside, but those are already gated.
 
-**Wider impact:** every server call from the phone app decodes the same way, so the same fault reaches them too: account deletion, children sync and subscription checks. This bug may also explain the earlier Number Pop "robotic voice only" report. I haven't confirmed either of these on a device.
+### 2. The check stays open for the whole app session
+`parent.tsx` stores the pass in `sessionStorage` (`totland.gate`). After a grown-up passes once, a child who later taps "Ask a grown-up about Totland Premium", "Parents & settings", a locked Word Find's "Grown-ups: unlock" or the offline screen's "See Premium" goes straight to Subscribe / Restore / Manage subscription with no new check, until the app is fully closed. Apple's "cannot be disabled" wording plausibly covers this. On iPad it's easier to hit, because the app usually keeps running in the background rather than being closed.
 
-## Root cause 2: "device-missing"
+### 3. Checked and clean
+- Subscribe, Restore and Manage subscription (RevenueCat link, opened in the in-app browser): all only appear on `/parent/subscription`, which is behind the check.
+- The App Store / Google Play card and the support email on the dashboard are under `/parent`, so they're behind the check.
+- "Ask a grown-up" hint, "Parents & settings", locked Word Find and the offline "See Premium" link all go to `/parent/...`, so each lands on the check first (subject to finding 2).
+- iPad width: the home, worlds, world and area screens use no width-based layouts (no `sm:/md:/lg:` classes found), so nothing extra appears at iPad Air 11" size. The page sits in the same centred column. A live iPad-viewport screenshot pass is step 1 below, so I'm not claiming more than the code shows.
+- The install prompt only appears in a browser that offers installing, never in the phone/tablet app. App deep links only lead to normal pages, so they land on the check.
+- Nothing from the rebalance, subscription wording, CORS, deletion or narration work changed the check or added links.
+- The check has no skip button, and Back can't get past it.
 
-That log is written only when `window.speechSynthesis` doesn't exist. It is not logged when `pickWarmVoice()` finds no voice, and it has nothing to do with the audio player. So on this phone the app's built-in screen has no speech feature at all. Chimes and music use a different, ordinary sound feature, which is why they still play.
+## Proposed fix (needs your approval — touches the parental gate)
+1. Check at iPad Air 11" (820×1180) that findings 1–2 reproduce and that nothing else shows up.
+2. In the app only (the website stays as it is): either hide the home footer legal/contact/guide links and the "For grown-ups" card, or send them through the grown-up check. Recommended: hide them on the home screen and show Terms/Privacy/Refund/Contact inside the parent area, which Apple accepts.
+3. Put a check in front of every link that leaves the app on the legal and contact pages, in the app (Paddle, Apple report-a-problem, email). This covers the case where one of those pages is reached some other way.
+4. The check expires: ask again every time someone goes into the parent area from the child side (or after a short timeout such as 2 minutes), and always ask again before Subscribe, Restore and Manage subscription, if you want the strictest version.
+5. Re-run the full audit at phone and iPad width. Then a new Codemagic build. No publish needed unless the website should change too.
 
-I can't reproduce this part here, because desktop browsers always include the speech feature. What the log shows for certain: on this device the fallback voice has never been able to work.
-
-## Root cause 3: was this caused by the timeout change?
-
-No. Before that change the line was `const result = await speakText(...)` followed by the same `result.status` check, so it would have crashed the same way. The fault started when phone-app server calls began going through the allowed-origin list (the account-deletion fix). The timeout change only added the log that finally showed it.
-
-## Proposed fix (needs your approval: fix 1 changes the server's allowed-origin list)
-
-1. **Server, needs a publish only:** in `nativeCorsMiddleware` (`src/start.ts`), add one header to replies for the phone app:
-   `access-control-expose-headers: x-tss-serialized, x-tss-raw, content-type`
-   Nothing else changes: same allowed addresses, same methods, same checks. The fix reaches existing builds as soon as it's published.
-2. **App, needs a Codemagic build:** in `fetchAndStore`, check that the reply has the expected shape before reading `.status`. Anything unexpected is logged as `hannah-failed — unexpected reply`, falls back cleanly, and never crashes.
-3. **Device voice (needs a separate decision):** the phone's built-in screen has no speech feature, so the fallback needs a small on-device speech plugin, `@capacitor-community/text-to-speech`, which uses Apple's own voice. It makes no network calls and adds no tracking. It is still a new component, and your rules require approving each one. It would also need a Codemagic build. If you'd rather not add it, the fallback stays silent on these phones, but once fix 1 is live, Hannah will cover every recorded line.
-
-## Verification after approval
-- Repeat the browser test from the phone-app address and confirm the marker header is now readable and the reply decodes into `{ status: "ok", audio }`.
-- Check that the website still behaves the same.
-- Run a malformed reply through the app code and confirm it's logged and falls back without crashing.
-- No changes to game rules, scoring, sign-in, payments, the grown-up check, Premium or recordings.
-
-## Files
-- `src/start.ts` (one header added)
-- `src/lib/speech.ts` (reply-shape check)
-- If approved: `package.json`, `bun.lock` and a small change in `src/lib/speech.ts` for the on-device voice plugin.
+## Questions for you
+- Item 2: hide the links on the home screen, or keep them behind the check?
+- Item 4: ask again every time, or after a short timeout?

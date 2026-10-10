@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "Hundreds of bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Offline, ad-free, privacy-first.",
+          `${GAME_COUNT} bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Offline, ad-free, privacy-first.`,
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://totland.app/" },
@@ -116,7 +116,7 @@ function Home() {
         >
           <div>
             <p className="font-ui text-2xl font-bold leading-tight text-primary-foreground">{L("Today's Adventure", "La aventura de hoy")}</p>
-            <p className="font-ui text-sm font-semibold text-primary-foreground/85">{L("5 little games · Bramble & You", "5 juegos cortos · Zarza y tú")}</p>
+            <p className="font-ui text-sm font-semibold text-primary-foreground/85">{L("5 games + flash cards · Bramble & You", "5 juegos + tarjetas · Zarza y tú")}</p>
           </div>
           <span className="grid size-14 place-items-center rounded-full bg-card text-3xl anim-floaty">🐻</span>
         </Link>

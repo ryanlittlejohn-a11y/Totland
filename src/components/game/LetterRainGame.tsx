@@ -117,7 +117,8 @@ export function LetterRainGame({
       </button>
 
       <LetterRainScene
-        letters={round.options.map((option) => ({ id: option.id, label: option.label ?? option.id }))}
+        options={round.options}
+        skill={skill}
         caughtId={caughtId}
         splashedId={splashedId}
         disabled={!!caughtId}

@@ -104,7 +104,8 @@ export function LetterFishingGame({
       </button>
 
       <FishingPond
-        letters={round.options.map((o) => ({ id: o.id, label: o.label ?? o.id }))}
+        options={round.options}
+        skill={skill}
         caughtId={caughtId}
         bouncedId={bouncedId}
         disabled={!!caughtId}

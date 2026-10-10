@@ -41,9 +41,11 @@ export function FeedTheLetterMonsterGame({
   const nextRound = useCallback(() => {
     const generated = roundForKind(kind, level);
     const optionIds = new Set(generated.options.map((option) => option.id));
-    const extras = shuffle(LETTERS.filter((letter) => !optionIds.has(letter)))
-      .slice(0, Math.max(0, 3 - generated.options.length))
-      .map((letter) => ({ id: letter, label: letter, big: true }));
+    const extras = skill === "letters"
+      ? shuffle(LETTERS.filter((letter) => !optionIds.has(letter)))
+          .slice(0, Math.max(0, 3 - generated.options.length))
+          .map((letter) => ({ id: letter, label: letter, big: true }))
+      : [];
     const r = { ...generated, options: shuffle([...generated.options, ...extras]) };
     setRound(r);
     setEatenId(null);
@@ -51,7 +53,7 @@ export function FeedTheLetterMonsterGame({
     setMessage("");
     started.current = Date.now();
     say(prompt(r));
-  }, [kind, level]);
+  }, [kind, level, skill]);
 
   useEffect(() => {
     if (hydrated && !round) nextRound();
@@ -114,7 +116,8 @@ export function FeedTheLetterMonsterGame({
       </button>
 
       <MonsterFeedingScene
-        letters={round.options.map((option) => ({ id: option.id, label: option.label ?? option.id }))}
+        options={round.options}
+        skill={skill}
         eatenId={eatenId}
         refusedId={refusedId}
         disabled={!!eatenId}

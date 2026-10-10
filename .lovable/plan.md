@@ -37,7 +37,7 @@
 ## Flagged for separate decisions
 
 - **Free/Premium split:** leave it at the current 46/75. Moving one game to Premium to create 45/76 changes Premium access and needs explicit approval.
-- **Nine new Fishing/Monster/Rain games:** their shared scenes currently render every option as text and announce it as a “letter,” so color and shape variants do not show real swatches/shapes and have incorrect accessibility wording. This is a gameplay/presentation repair larger than copy polish; leave it unchanged pending approval.
+- **Nine new Fishing/Monster/Rain games:** their shared scenes currently render every option as text and announce it as a “letter,” so color and shape variants do not show real swatches/shapes and have incorrect accessibility wording. At beginner level, Color Monster and Shape Monster also insert an unrelated alphabet letter as a third choice. These are gameplay/presentation repairs larger than copy polish; leave them unchanged pending approval.
 - **Narration:** the 17 games and five stories have not been checked against the recorded Hannah library. Do not generate audio; retain this as a separate count-only audit.
 - **Payments and prices:** do not change the hardcoded website price displays or payment catalog in this pass.
 - Do not change the parental gate, scroll fix, sign-in, scoring, purchases, subscriptions, or on-device Premium behavior.

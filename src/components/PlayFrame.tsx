@@ -42,7 +42,7 @@ export function PlayFrame({
   return (
     <div
       className={`mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-4 pb-8 pt-4 ${
-        scrollable ? "" : "touch-none select-none overscroll-contain [-webkit-touch-callout:none]"
+        scrollable ? "" : "touch-pan-y select-none overscroll-contain [-webkit-touch-callout:none]"
       }`}
     >
       <div className="flex items-center gap-3">

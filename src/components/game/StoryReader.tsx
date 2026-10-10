@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { STORIES } from "@/lib/content";
 import { say } from "@/lib/speech";
 import { setStoryMusic } from "@/lib/music";
@@ -10,10 +11,13 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
     setStoryMusic(true);
     return () => setStoryMusic(false);
   }, []);
-  const { update } = useProfile();
+  const { profile, update } = useProfile();
+  const navigate = useNavigate();
   const [storyId, setStoryId] = useState<string | null>(null);
   const [page, setPage] = useState(0);
-  const story = STORIES.find((s) => s.id === storyId);
+  const found = STORIES.find((s) => s.id === storyId);
+  // Never open a Premium story without Premium, even if state is stale.
+  const story = found && (!found.premium || profile.premium) ? found : undefined;
 
   useEffect(() => {
     if (story) say(storyPage(story.id, page, story.pages[page]!.text));
@@ -24,20 +28,30 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
       <div>
         <p className="font-ui text-[22px] font-semibold text-ink">{L("Choose a story", "Elige un cuento")}</p>
         <div className="mt-4 grid grid-cols-2 gap-3">
-          {STORIES.map((s) => (
-            <button
-              key={s.id}
-              type="button"
-              onClick={() => {
-                setStoryId(s.id);
-                setPage(0);
-              }}
-              className="rounded-3xl bg-card p-4 text-left wood-block active:translate-y-1"
-            >
-              <span className="text-5xl">{s.cover}</span>
-              <p className="mt-3 font-ui font-bold leading-tight text-ink">{storyTitle(s.id, s.title)}</p>
-            </button>
-          ))}
+          {STORIES.map((s) => {
+            const locked = !!s.premium && !profile.premium;
+            return (
+              <button
+                key={s.id}
+                type="button"
+                data-locked={locked || undefined}
+                aria-label={locked ? `${storyTitle(s.id, s.title)} — ${L("Premium", "Premium")}` : undefined}
+                onClick={() => {
+                  if (locked) {
+                    navigate({ to: "/parent/subscription", search: { checkout: undefined } });
+                    return;
+                  }
+                  setStoryId(s.id);
+                  setPage(0);
+                }}
+                className="rounded-3xl bg-card p-4 text-left wood-block active:translate-y-1"
+              >
+                <span className="text-5xl" aria-hidden>{locked ? "🔒" : s.cover}</span>
+                <p className="mt-3 font-ui font-bold leading-tight text-ink">{storyTitle(s.id, s.title)}</p>
+                {locked ? <p className="font-ui text-xs text-inksoft">{L("Premium", "Premium")}</p> : null}
+              </button>
+            );
+          })}
         </div>
       </div>
     );

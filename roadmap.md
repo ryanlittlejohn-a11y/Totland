@@ -239,3 +239,7 @@
 - [x] Remove Guide/Terms/Privacy/Refunds/Contact links and "For grown-ups" guide link from home; show them inside the parent area
 - [x] Grown-up check re-asks on every entry from the child side (no sessionStorage persistence)
 - [x] Re-audit at iPad Air 11" (820x1180): external links, purchase actions, deep links, back navigation
+
+## Game-screen scroll fix
+- [x] PlayFrame: touch-none -> touch-pan-y so tall game screens can scroll on iPhone
+- [ ] Real iPhone/iPad check: drag, tracing, pinch/double-tap zoom on game screens

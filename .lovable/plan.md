@@ -1,41 +1,38 @@
-# Apple 1.3 rejection — what's reachable without the grown-up check
+# Report: changes since commit f5a89c2 (read-only)
 
-## Findings (traced from the real route tree)
+## 1. Commits after f5a89c2
+None. The project is still at f5a89c2 ("Restored Paddle links to web", 10 Oct 00:05 UTC), and there are no unsaved changes. Nothing changed after your verified commit.
 
-The grown-up check lives only in `src/routes/parent.tsx`, so it protects `/parent`, `/parent/children` and `/parent/subscription` and nothing else. Typing or deep-linking straight to `/parent/subscription` still shows the check, because the layout draws the check in place of its child pages.
+The outside changes (author ryanlittlejohn-a11y, timezone -0500) were all made on 9 Oct, **before** f5a89c2. Times below are in that -0500 timezone (19:38–20:39 UTC):
 
-### 1. Ungated links out of the app (most likely what Apple hit)
-The home screen footer (`src/routes/index.tsx`, lines 316–330) and the "For grown-ups" card link straight to top-level pages that are **not** under `/parent`:
+| Commit | Time | What it changed |
+|---|---|---|
+| ed04b94 | 13:38 | Added the Get the App card (App Store / Google Play links) to the parent dashboard only. Also updated the rights register. |
+| 96c386b | 13:40 | Rights register document only. |
+| 31b6268 | 14:05 | Rights register document only (Hannah voice terms). |
+| 91e844a | 14:21 | Game screens now block pinch-zoom, scrolling and text selection while a game is open, and put zoom back afterwards. The Word Finds list still scrolls. |
+| 0c2533f | 14:28 | Games went from 104 to 112 (8 new color/shape games) and storybooks from 5 to 10 (English and Spanish). |
+| 2d45750 | 15:39 | Games went from 112 to 121 (Fishing, Monster and Rain games for colors, shapes and numbers), plus Spanish/English wording for them. |
 
-| Page (route file) | What a child can tap with no check |
-|---|---|
-| `/terms` (`src/routes/terms.tsx`) | paddle.com buyer terms (external, line 163); `mailto:Support@totland.app` (line 279) |
-| `/privacy` (`src/routes/privacy.tsx`) | paddle.com privacy (line 150); two `mailto:` links (264, 300) |
-| `/refund` (`src/routes/refund.tsx`) | paddle.net (53); reportaproblem.apple.com (79); `mailto:` (108) |
-| `/contact` (`src/routes/contact.tsx`) | `mailto:` (94); contact form that sends data off the device |
-| `/guides/toddler-learning-games` | no external links, but links on to `/privacy` |
+The parental gate fix (00:05 UTC on 10 Oct) was made after these, so it already includes them. My audit at iPad size ran against this same code.
 
-Path: Home → footer "Terms"/"Privacy"/"Refunds"/"Contact" → external link or email. No check at any step. Same for the subscription page's own legal links once inside, but those are already gated.
+## 2. Parental gate fix: current state
+- **Website-only footer:** unchanged. It shows only after the page loads, and only when the app isn't the phone/tablet app.
+- **Grown-up check:** still asks every time. The only storage line left clears the old saved pass; nothing saves one.
+- **Home screen:** Terms, Privacy, Refunds, Contact and Guide appear only through the website-only footer. The "For grown-ups" card is gone.
+- Nothing has been reverted, worked around or rebuilt.
 
-### 2. The check stays open for the whole app session
-`parent.tsx` stores the pass in `sessionStorage` (`totland.gate`). After a grown-up passes once, a child who later taps "Ask a grown-up about Totland Premium", "Parents & settings", a locked Word Find's "Grown-ups: unlock" or the offline screen's "See Premium" goes straight to Subscribe / Restore / Manage subscription with no new check, until the app is fully closed. Apple's "cannot be disabled" wording plausibly covers this. On iPad it's easier to hit, because the app usually keeps running in the background rather than being closed.
+## 3. Home screen
+It isn't a new home screen. "Today's Adventure" and "The five worlds" have been there since 4 Sep. "Browse all 121 games" uses a live count, which went up because of the new games. Every link on it stays inside the app: games, worlds, rewards, the welcome screen, Word Finds, the parent area, and the website-only footer. Locked areas go to /parent, which shows the check. The iPad-width test on 10 Oct used this exact screen.
 
-### 3. Checked and clean
-- Subscribe, Restore and Manage subscription (RevenueCat link, opened in the in-app browser): all only appear on `/parent/subscription`, which is behind the check.
-- The App Store / Google Play card and the support email on the dashboard are under `/parent`, so they're behind the check.
-- "Ask a grown-up" hint, "Parents & settings", locked Word Find and the offline "See Premium" link all go to `/parent/...`, so each lands on the check first (subject to finding 2).
-- iPad width: the home, worlds, world and area screens use no width-based layouts (no `sm:/md:/lg:` classes found), so nothing extra appears at iPad Air 11" size. The page sits in the same centred column. A live iPad-viewport screenshot pass is step 1 below, so I'm not claiming more than the code shows.
-- The install prompt only appears in a browser that offers installing, never in the phone/tablet app. App deep links only lead to normal pages, so they land on the check.
-- Nothing from the rebalance, subscription wording, CORS, deletion or narration work changed the check or added links.
-- The check has no skip button, and Back can't get past it.
+## 4. Other things to flag (nothing touches the gate, sign-in, subscriptions or deletion)
+- **Free/Premium balance moved:** it's now 45 free and 76 Premium, no longer the 40/64 you approved. All numbers parents see are worked out live, so the wording stays accurate. The split itself was never approved in this conversation.
+- **Narration for the 17 new games and 5 new storybooks:** not checked against Hannah's recordings. Lines with no recording will use the device voice, or stay silent on phones that have no device voice.
+- **Zoom and scroll blocking on game screens:** a broad change. It could affect drag and tracing games and long story pages on iPad. It hasn't been tested on a real device.
+- **Get the App card:** only on the dashboard, which is behind the check (included in the earlier audit).
+- No new pages, no new links out of the app, and no changes to sign-in, subscriptions, account deletion or the server's allowed-address list.
 
-## Proposed fix (needs your approval — touches the parental gate)
-1. Check at iPad Air 11" (820×1180) that findings 1–2 reproduce and that nothing else shows up.
-2. In the app only (the website stays as it is): either hide the home footer legal/contact/guide links and the "For grown-ups" card, or send them through the grown-up check. Recommended: hide them on the home screen and show Terms/Privacy/Refund/Contact inside the parent area, which Apple accepts.
-3. Put a check in front of every link that leaves the app on the legal and contact pages, in the app (Paddle, Apple report-a-problem, email). This covers the case where one of those pages is reached some other way.
-4. The check expires: ask again every time someone goes into the parent area from the child side (or after a short timeout such as 2 minutes), and always ask again before Subscribe, Restore and Manage subscription, if you want the strictest version.
-5. Re-run the full audit at phone and iPad width. Then a new Codemagic build. No publish needed unless the website should change too.
-
-## Questions for you
-- Item 2: hide the links on the home screen, or keep them behind the check?
-- Item 4: ask again every time, or after a short timeout?
+## Suggested next steps (needs your approval)
+1. Approve or adjust the new 45/76 free/Premium split.
+2. Check the narration lines for the new games and storybooks against Hannah's recordings, using the counts only. No recording.
+3. Play-test drag, tracing and story screens at iPad width after the zoom/scroll change.

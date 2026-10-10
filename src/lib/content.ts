@@ -162,6 +162,8 @@ export interface Story {
   title: string;
   cover: string;
   pages: StoryPage[];
+  /** Premium-only story; free users see it locked in Read With Me. */
+  premium?: boolean;
 }
 
 export const STORIES: Story[] = [
@@ -227,6 +229,7 @@ export const STORIES: Story[] = [
   },
   {
     id: "bear-rainy-day",
+    premium: true,
     title: "Bramble Bear's Rainy Day",
     cover: "🐻",
     pages: [
@@ -239,6 +242,7 @@ export const STORIES: Story[] = [
   },
   {
     id: "fox-sharing-berries",
+    premium: true,
     title: "Fern Fox Shares Her Berries",
     cover: "🦊",
     pages: [
@@ -251,6 +255,7 @@ export const STORIES: Story[] = [
   },
   {
     id: "bolt-helper-day",
+    premium: true,
     title: "Bolt the Robot's Helper Day",
     cover: "🤖",
     pages: [
@@ -263,6 +268,7 @@ export const STORIES: Story[] = [
   },
   {
     id: "dino-camp-stars",
+    premium: true,
     title: "Dot the Dino's Starry Camp-Out",
     cover: "🦖",
     pages: [
@@ -275,6 +281,7 @@ export const STORIES: Story[] = [
   },
   {
     id: "owl-forest-friends",
+    premium: true,
     title: "Ollie Owl's Forest Friends",
     cover: "🦉",
     pages: [

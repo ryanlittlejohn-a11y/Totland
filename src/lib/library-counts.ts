@@ -12,6 +12,8 @@ export const WORD_FIND_COUNT = WORD_FIND_THEMES.length;
 export const FREE_WORD_FIND_COUNT = Math.min(FREE_WORD_FINDS, WORD_FIND_COUNT);
 export const PREMIUM_WORD_FIND_COUNT = WORD_FIND_COUNT - FREE_WORD_FIND_COUNT;
 export const STORY_COUNT = STORIES.length;
+export const PREMIUM_STORY_COUNT = STORIES.filter((s) => s.premium).length;
+export const FREE_STORY_COUNT = STORY_COUNT - PREMIUM_STORY_COUNT;
 export const FLASH_CARD_COUNT = WORDS.length;
 export const PREMIUM_GAME_COUNT = GAMES.filter((g) => g.premium).length;
 export const FREE_GAME_COUNT = GAME_COUNT - PREMIUM_GAME_COUNT;
@@ -42,6 +44,13 @@ export function premiumBenefits(): Benefit[] {
   });
   return [
     ...perArea,
+    ...(PREMIUM_STORY_COUNT > 0
+      ? [{
+          key: "storybooks",
+          emoji: "📚",
+          text: `Storybooks — ${PREMIUM_STORY_COUNT} more ${PREMIUM_STORY_COUNT === 1 ? "story" : "stories"} (all ${STORY_COUNT})`,
+        }]
+      : []),
     {
       key: "wordfinds",
       emoji: "🔎",

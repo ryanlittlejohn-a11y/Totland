@@ -67,7 +67,7 @@ export function FishingPond({
               data-letter={option.id}
               className={`fishing-letter grid size-20 place-items-center rounded-full font-ui text-5xl font-bold text-ink ${
                 caught ? "is-caught" : ""
-              } ${bounced ? "anim-wiggle is-bounced" : ""} ${drag.hoverId === l.id ? "is-hover" : ""}`}
+              } ${bounced ? "anim-wiggle is-bounced" : ""} ${drag.hoverId === option.id ? "is-hover" : ""}`}
               style={{ animationDelay: `${i * 300}ms` }}
             >
               <GameOptionVisual option={option} />

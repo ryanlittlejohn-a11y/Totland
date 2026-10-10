@@ -38,7 +38,7 @@ export function StoryReader({ onFinish }: { onFinish: (stars: number) => void })
                 aria-label={locked ? `${storyTitle(s.id, s.title)} — ${L("Premium", "Premium")}` : undefined}
                 onClick={() => {
                   if (locked) {
-                    navigate({ to: "/parent/subscription" });
+                    navigate({ to: "/parent/subscription", search: { checkout: undefined } });
                     return;
                   }
                   setStoryId(s.id);

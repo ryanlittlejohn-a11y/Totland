@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import type { SkillId } from "@/lib/content";
+import type { Option } from "@/lib/games";
 import { L } from "@/lib/i18n";
-
-export interface RainLetter {
-  id: string;
-  label: string;
-}
+import { GameOptionVisual, optionAriaLabel } from "./GameOptionVisual";
 
 type RainStyle = CSSProperties & {
   "--rain-lane": string;
@@ -18,13 +16,15 @@ type RainStyle = CSSProperties & {
  * complete the whole game with tap, keyboard, or VoiceOver.
  */
 export function LetterRainScene({
-  letters,
+  options,
+  skill,
   caughtId,
   splashedId,
   disabled,
   onCatch,
 }: {
-  letters: RainLetter[];
+  options: Option[];
+  skill: SkillId;
   caughtId: string | null;
   splashedId: string | null;
   disabled: boolean;
@@ -41,15 +41,15 @@ export function LetterRainScene({
   }, []);
 
   const motion = useMemo(
-    () => letters.map((letter, index) => ({
-      ...letter,
-      lane: `${((index + 0.5) / letters.length) * 100}%`,
-      duration: `${9 + ((index * 2 + letters.length) % 6)}s`,
+    () => options.map((option, index) => ({
+      ...option,
+      lane: `${((index + 0.5) / options.length) * 100}%`,
+      duration: `${9 + ((index * 2 + options.length) % 6)}s`,
       // Negative offsets distribute the drops through their lanes immediately,
       // instead of presenting an empty board during the first fall cycle.
       delay: `-${index * 2.1 + 0.6}s`,
     })),
-    [letters],
+    [options],
   );
 
   return (
@@ -82,7 +82,7 @@ export function LetterRainScene({
               data-rain-letter={letter.id}
             >
               <span className={`rain-drop__surface ${splashedId === letter.id ? "is-splashed" : ""} ${caughtId === letter.id ? "is-caught" : ""}`}>
-                {letter.label}
+                <GameOptionVisual option={letter} />
               </span>
             </button>
           );
@@ -93,20 +93,20 @@ export function LetterRainScene({
 
       <div
         className="rain-accessible-list"
-        aria-label={L("Choose a letter", "Elige una letra")}
+        aria-label={L("Choose an answer", "Elige una respuesta")}
         data-rain-accessible-list
       >
-        {letters.map((letter) => (
+        {options.map((option) => (
           <button
-            key={letter.id}
+            key={option.id}
             type="button"
             disabled={disabled}
-            aria-label={L(`Letter ${letter.label}`, `Letra ${letter.label}`)}
-            onClick={() => onCatch(letter.id)}
-            className={`rain-static-letter ${splashedId === letter.id ? "is-splashed" : ""} ${caughtId === letter.id ? "is-caught" : ""}`}
-            data-rain-static-letter={letter.id}
+            aria-label={optionAriaLabel(skill, option)}
+            onClick={() => onCatch(option.id)}
+            className={`rain-static-letter ${splashedId === option.id ? "is-splashed" : ""} ${caughtId === option.id ? "is-caught" : ""}`}
+            data-rain-static-letter={option.id}
           >
-            {letter.label}
+            <GameOptionVisual option={option} />
           </button>
         ))}
       </div>

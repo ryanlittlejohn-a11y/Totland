@@ -1,21 +1,21 @@
 import { useDragToTarget } from "@/hooks/useDragToTarget";
+import type { SkillId } from "@/lib/content";
+import type { Option } from "@/lib/games";
 import { L } from "@/lib/i18n";
 import { DragTarget } from "./DragTarget";
-
-export interface PondLetter {
-  id: string;
-  label: string;
-}
+import { GameOptionVisual, optionAriaLabel } from "./GameOptionVisual";
 
 /** Fishing visuals on top of the generic drag primitive. */
 export function FishingPond({
-  letters,
+  options,
+  skill,
   caughtId,
   bouncedId,
   disabled,
   onCatch,
 }: {
-  letters: PondLetter[];
+  options: Option[];
+  skill: SkillId;
   caughtId: string | null;
   bouncedId: string | null;
   disabled: boolean;
@@ -33,7 +33,7 @@ export function FishingPond({
 
   return (
     <div className="fishing-pond relative mt-5 select-none overflow-hidden rounded-3xl" data-testid="fishing-pond">
-      <span className="sr-only">{L("Tap a letter to catch it.", "Toca una letra para pescarla.")}</span>
+      <span className="sr-only">{L("Tap an answer to catch it.", "Toca una respuesta para pescarla.")}</span>
       {/* rod + hook */}
       <div className="relative z-10 flex h-40 justify-center" aria-hidden>
         <div
@@ -55,22 +55,22 @@ export function FishingPond({
       </div>
       {/* water */}
       <div className="fishing-water relative -mt-8 flex flex-wrap items-end justify-center gap-4 px-4 pb-8 pt-10">
-        {letters.map((l, i) => {
-          const caught = caughtId === l.id;
-          const bounced = bouncedId === l.id;
+        {options.map((option, i) => {
+          const caught = caughtId === option.id;
+          const bounced = bouncedId === option.id;
           return (
             <DragTarget
-              key={l.id}
-              register={drag.registerTarget(l.id)}
-              onClick={() => !disabled && onCatch(l.id)}
-              aria-label={L(`Letter ${l.label}`, `Letra ${l.label}`)}
-              data-letter={l.id}
+              key={option.id}
+              register={drag.registerTarget(option.id)}
+              onClick={() => !disabled && onCatch(option.id)}
+              aria-label={optionAriaLabel(skill, option)}
+              data-letter={option.id}
               className={`fishing-letter grid size-20 place-items-center rounded-full font-ui text-5xl font-bold text-ink ${
                 caught ? "is-caught" : ""
               } ${bounced ? "anim-wiggle is-bounced" : ""} ${drag.hoverId === l.id ? "is-hover" : ""}`}
               style={{ animationDelay: `${i * 300}ms` }}
             >
-              {l.label}
+              <GameOptionVisual option={option} />
             </DragTarget>
           );
         })}

@@ -225,7 +225,7 @@ function Subscription() {
           </span>
         </div>
         <p className="mt-2 text-sm text-inksoft">
-          Free includes {FREE_GAME_COUNT} games drawn from every world, plus {FREE_WORD_FIND_COUNT} Word Finds.
+          Free includes {FREE_GAME_COUNT} games drawn from every world, plus {FREE_WORD_FIND_COUNT} Word Finds and {FREE_STORY_COUNT} storybooks.
           Premium unlocks everything and every new release.
         </p>
 

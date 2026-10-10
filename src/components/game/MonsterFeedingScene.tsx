@@ -55,7 +55,7 @@ export function MonsterFeedingScene({
               {...drag.getHandleProps(option.id)}
               onClick={() => tapFeed(option.id)}
               disabled={disabled}
-              aria-label={L(`Feed ${optionAriaLabel(skill, option)}`, `Dar ${optionAriaLabel(skill, option)}`)}
+              aria-label={L(`Feed ${optionAriaLabel(skill, option)}`, `Dar al monstruo: ${optionAriaLabel(skill, option)}`)}
               data-monster-letter={option.id}
               className={`monster-letter game-theme__option relative z-10 mx-auto grid size-20 cursor-grab place-items-center rounded-2xl font-ui text-5xl font-bold text-ink ${
                 active ? "is-dragging" : ""

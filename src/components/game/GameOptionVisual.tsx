@@ -12,11 +12,11 @@ export function optionAriaLabel(skill: SkillId, option: Option): string {
 
 export function GameOptionVisual({ option }: { option: Option }) {
   if (option.swatch) {
-    return <span className="size-12 rounded-full ring-2 ring-border" style={{ background: option.swatch }} />;
+    return <span className="game-option-swatch size-12 rounded-full ring-2 ring-border" style={{ background: option.swatch }} />;
   }
   if (option.clip) {
-    return <span className="size-12 bg-clay" style={{ clipPath: option.clip }} />;
+    return <span className="game-option-shape size-12 bg-clay" style={{ clipPath: option.clip }} />;
   }
   if (option.emoji) return <span className="text-5xl">{option.emoji}</span>;
-  return <span>{option.label ?? option.id}</span>;
+  return <span className="game-option-label">{option.label ?? option.id}</span>;
 }

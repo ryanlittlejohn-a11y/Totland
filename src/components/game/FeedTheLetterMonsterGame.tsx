@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { LETTERS, PRAISE, pick, shuffle, type SkillId } from "@/lib/content";
+import { COLORS, LETTERS, PRAISE, SHAPES, pick, shuffle, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
@@ -37,15 +37,27 @@ export function FeedTheLetterMonsterGame({
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
   const prompt = (r: Round) => enginePrompt("feedMonster", skill, r.answerId);
+  const answerName = L(
+    skill === "colors" ? "color" : skill === "shapes" ? "shape" : skill === "numbers" ? "number" : "letter",
+    skill === "colors" ? "color" : skill === "shapes" ? "figura" : skill === "numbers" ? "número" : "letra",
+  );
 
   const nextRound = useCallback(() => {
     const generated = roundForKind(kind, level);
     const optionIds = new Set(generated.options.map((option) => option.id));
-    const extras = skill === "letters"
-      ? shuffle(LETTERS.filter((letter) => !optionIds.has(letter)))
-          .slice(0, Math.max(0, 3 - generated.options.length))
-          .map((letter) => ({ id: letter, label: letter, big: true }))
-      : [];
+    const needed = Math.max(0, 3 - generated.options.length);
+    const pool = skill === "colors"
+      ? COLORS.map((color) => ({ id: color.name, swatch: color.swatch }))
+      : skill === "shapes"
+        ? SHAPES.map((shape) => ({ id: shape.name, clip: shape.clip }))
+        : skill === "numbers"
+          ? Array.from({ length: level <= 1 ? 5 : level <= 2 ? 10 : level <= 4 ? 15 : 20 }, (_, index) => ({
+              id: String(index + 1),
+              label: String(index + 1),
+              big: true,
+            }))
+          : LETTERS.map((letter) => ({ id: letter, label: letter, big: true }));
+    const extras = shuffle(pool.filter((option) => !optionIds.has(option.id))).slice(0, needed);
     const r = { ...generated, options: shuffle([...generated.options, ...extras]) };
     setRound(r);
     setEatenId(null);
@@ -67,8 +79,8 @@ export function FeedTheLetterMonsterGame({
       tally.current.misses += 1;
       update((p) => recordParentMiss(p, skill));
       const retry = L(
-        "Sniff, sniff! Try another letter.",
-        "¡Snif, snif! Prueba otra letra.",
+        `Sniff, sniff! Try another ${answerName}.`,
+        `¡Snif, snif! Prueba ${answerName === "figura" ? "otra" : answerName === "letra" ? "otra" : "otro"} ${answerName}.`,
       );
       setMessage(retry);
       say(retry);
@@ -134,7 +146,7 @@ export function FeedTheLetterMonsterGame({
         <p className="font-ui font-semibold text-ink">
           {message || L(
             "Drag a letter to the monster's mouth — or tap it.",
-            "Arrastra una letra a la boca del monstruo — o tócala.",
+            `Arrastra ${answerName === "figura" || answerName === "letra" ? "una" : "un"} ${answerName} a la boca del monstruo — o tócalo.`,
           )}
         </p>
       </div>

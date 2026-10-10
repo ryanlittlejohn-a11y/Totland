@@ -38,6 +38,10 @@ export function LetterRainGame({
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
   const prompt = (value: Round) => enginePrompt("catchPatient", skill, value.answerId);
+  const answerName = L(
+    skill === "colors" ? "color" : skill === "shapes" ? "shape" : skill === "numbers" ? "number" : "letter",
+    skill === "colors" ? "color" : skill === "shapes" ? "figura" : skill === "numbers" ? "número" : "letra",
+  );
 
   const nextRound = useCallback(() => {
     const generated = roundForKind(kind, level);
@@ -61,8 +65,8 @@ export function LetterRainGame({
       tally.current.misses += 1;
       update((p) => recordParentMiss(p, skill));
       const retry = L(
-        "Splash! Try another letter — take your time.",
-        "¡Splash! Prueba otra letra — tómate tu tiempo.",
+        `Splash! Try another ${answerName} — take your time.`,
+        `¡Splash! Prueba ${answerName === "figura" || answerName === "letra" ? "otra" : "otro"} ${answerName} — tómate tu tiempo.`,
       );
       setMessage(retry);
       chime("retry", profile.sfx);
@@ -135,8 +139,8 @@ export function LetterRainGame({
         <span className="text-xl" aria-hidden>{caughtId ? "🌟" : splashedId ? "💧" : "☂️"}</span>
         <p className="font-ui font-semibold text-ink" data-rain-status>
           {message || L(
-            "Tap the rainy letter — it always comes back.",
-            "Toca la letra de lluvia — siempre vuelve.",
+            `Tap the rainy ${answerName} — it always comes back.`,
+            `Toca ${answerName === "figura" || answerName === "letra" ? "la" : "el"} ${answerName} de lluvia — siempre vuelve.`,
           )}
         </p>
       </div>

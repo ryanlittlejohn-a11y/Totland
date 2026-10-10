@@ -4,7 +4,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
-import { FREE_GAME_COUNT, FREE_WORD_FIND_COUNT, premiumBenefits } from "@/lib/library-counts";
+import { FREE_GAME_COUNT, FREE_WORD_FIND_COUNT, FREE_STORY_COUNT, premiumBenefits } from "@/lib/library-counts";
 import { setVerifiedPremium, useProfile } from "@/lib/profile";
 import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";

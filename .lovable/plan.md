@@ -1,38 +1,59 @@
-# Report: changes since commit f5a89c2 (read-only)
+# Report: Hermes changes and the game-screen zoom/scroll block (read-only)
 
-## 1. Commits after f5a89c2
-None. The project is still at f5a89c2 ("Restored Paddle links to web", 10 Oct 00:05 UTC), and there are no unsaved changes. Nothing changed after your verified commit.
+## Part A — Changes since commit f5a89c2
+- **No commits after f5a89c2.** The project is still on it, with no unsaved changes.
+- **Outside changes:** six commits by ryanlittlejohn-a11y on 9 Oct, all made before f5a89c2:
+  - ed04b94 — Get the App card on the parent dashboard (behind the check)
+  - 96c386b, 31b6268 — rights register document only
+  - 91e844a — game-screen zoom/scroll/text-select block
+  - 0c2533f — games 104 to 112, stories 5 to 10
+  - 2d45750 — games 112 to 121
+- **Parental gate fix:**
+  - The footer still shows on the website only.
+  - The check still asks every time and nothing saves it.
+  - The home screen in the app still has no legal links.
+  - Nothing was reverted.
+- **Home screen:** not new. "Today's Adventure" and "The five worlds" date from 4 Sep, and "121 games" is a live count. No links leave the app.
+- **Other things to flag:**
+  - The free/Premium split moved from the 40/64 you approved to 45 free / 76 Premium. Nobody approved that.
+  - Narration for the 17 new games and 5 new stories hasn't been checked against Hannah's recordings.
+  - No changes to sign-in, subscriptions, deletion or the allowed-address list.
 
-The outside changes (author ryanlittlejohn-a11y, timezone -0500) were all made on 9 Oct, **before** f5a89c2. Times below are in that -0500 timezone (19:38–20:39 UTC):
+## Part B — Testing commit 91e844a (simulated iPhone 390x844 and iPad 820x1180)
 
-| Commit | Time | What it changed |
-|---|---|---|
-| ed04b94 | 13:38 | Added the Get the App card (App Store / Google Play links) to the parent dashboard only. Also updated the rights register. |
-| 96c386b | 13:40 | Rights register document only. |
-| 31b6268 | 14:05 | Rights register document only (Hannah voice terms). |
-| 91e844a | 14:21 | Game screens now block pinch-zoom, scrolling and text selection while a game is open, and put zoom back afterwards. The Word Finds list still scrolls. |
-| 0c2533f | 14:28 | Games went from 104 to 112 (8 new color/shape games) and storybooks from 5 to 10 (English and Spanish). |
-| 2d45750 | 15:39 | Games went from 112 to 121 (Fishing, Monster and Rain games for colors, shapes and numbers), plus Spanish/English wording for them. |
+What the change does: every game, story, Word Find puzzle, quick-play and adventure screen gets `touch-action: none` and no text selection. Pinch-zoom is also switched off while the screen is open. The Word Finds list is the only screen exempted.
 
-The parental gate fix (00:05 UTC on 10 Oct) was made after these, so it already includes them. My audit at iPad size ran against this same code.
+### Confirmed by test
+- **Zoom block switches off properly.** It's on for every game. It's off again after leaving by the home button, and off on the home screen, the Word Finds list, the grown-up check and the subscription page.
+- **All 10 storybooks, including the 5 new ones, fit the screen** on both widths. Every page's Next button is on screen, so no scrolling is needed inside a story.
+- **Grown-up check and subscription screens are untouched.** They don't use the game frame, so the block never applies there.
+- **Word Finds list is exempt:** zoom is allowed, and normal scrolling is allowed in principle (it's the only screen marked as scrollable).
+- **No game screen has a typing box,** so blocking text selection can't break any input.
 
-## 2. Parental gate fix: current state
-- **Website-only footer:** unchanged. It shows only after the page loads, and only when the app isn't the phone/tablet app.
-- **Grown-up check:** still asks every time. The only storage line left clears the old saved pass; nothing saves one.
-- **Home screen:** Terms, Privacy, Refunds, Contact and Guide appear only through the website-only footer. The "For grown-ups" card is gone.
-- Nothing has been reverted, worked around or rebuilt.
+### Problem found (iPhone width)
+`touch-action: none` on the whole screen also stops a finger from scrolling the page. Any game taller than the phone screen becomes stuck. I subtracted the preview-only "test mode" banner (49px) from the figures below:
+- **Read With Me story picker:** the last row of stories is off the bottom of the screen. That row is "Dot the Dino's Starry Camp-Out" and "Ollie Owl's Forest Friends", both new stories. A child on iPhone may not be able to reach them.
+- **Letter Rain and Color Rain:** answer buttons sit up to ~47px below the bottom edge.
+- **Feed the Letter Monster and Color Monster:** the screen runs ~45px past the bottom.
+- **Animal Jigsaw:** ~128px past the bottom.
+- **Word Rocket:** ~17px past the bottom.
+- **Number Maze and Letter Tracing:** they fit.
+- **iPad width:** nothing goes past the bottom except the preview-only banner.
 
-## 3. Home screen
-It isn't a new home screen. "Today's Adventure" and "The five worlds" have been there since 4 Sep. "Browse all 121 games" uses a live count, which went up because of the new games. Every link on it stays inside the app: games, worlds, rewards, the welcome screen, Word Finds, the parent area, and the website-only footer. Locked areas go to /parent, which shows the check. The iPad-width test on 10 Oct used this exact screen.
+### Drag and tracing games
+- **Drag pieces:** in Letter Fishing, Feed the Letter Monster, Word Rocket, Animal Jigsaw and the new Fishing/Monster/Rain games, the pieces already blocked touch scrolling on themselves before this change. The shared drag handling also blocks it. So the new screen-wide block adds nothing they didn't already have, and finger presses still reach the game.
+- **Tracing:** Number Maze and the tracing canvas likewise already blocked touch scrolling on themselves.
+- **Not playable here:** most new games are Premium, so in testing I only reached the lock screen. They use the same game types as the free ones I checked.
 
-## 4. Other things to flag (nothing touches the gate, sign-in, subscriptions or deletion)
-- **Free/Premium balance moved:** it's now 45 free and 76 Premium, no longer the 40/64 you approved. All numbers parents see are worked out live, so the wording stays accurate. The split itself was never approved in this conversation.
-- **Narration for the 17 new games and 5 new storybooks:** not checked against Hannah's recordings. Lines with no recording will use the device voice, or stay silent on phones that have no device voice.
-- **Zoom and scroll blocking on game screens:** a broad change. It could affect drag and tracing games and long story pages on iPad. It hasn't been tested on a real device.
-- **Get the App card:** only on the dashboard, which is behind the check (included in the earlier audit).
-- No new pages, no new links out of the app, and no changes to sign-in, subscriptions, account deletion or the server's allowed-address list.
+### Can't be verified here — needs a real iPhone and iPad
+- **The simulated touch swipe is unreliable.** It didn't scroll even the normal home screen, so I can't prove the stuck scrolling with a simulated finger. My finding comes from how Apple's web engine handles `touch-action: none`, plus the measured heights. A real device must confirm it.
+- **Drag and tracing feel:** whether they're unchanged needs real fingers. I can't simulate multi-touch or Apple's web engine.
+- **Whether iOS honours the "no zoom" setting:** Safari ignores it, and the app's web view may as well. In that case pinch-zoom is only blocked by the touch setting.
+- **Mid-game double-tap zoom on iPad.**
 
-## Suggested next steps (needs your approval)
-1. Approve or adjust the new 45/76 free/Premium split.
-2. Check the narration lines for the new games and storybooks against Hannah's recordings, using the counts only. No recording.
-3. Play-test drag, tracing and story screens at iPad width after the zoom/scroll change.
+## Proposed fix (needs approval — small, one file)
+In `src/components/PlayFrame.tsx`, change the game-screen class from `touch-none` to `touch-pan-y`. That still blocks pinch-zoom and double-tap zoom but lets a finger scroll up and down, so the stuck screens above become reachable again. Drag pieces, the maze and the tracing canvas keep blocking scrolling on themselves, so dragging and tracing are unaffected. Keep the zoom-off-then-back-on behaviour and the Word Finds exemption as they are. Then repeat the height check above. The change goes out with the next Codemagic build and needs a publish for the website, followed by the real-device checks listed above.
+
+## Other follow-ups (separate approvals)
+1. Confirm or change the 45/76 free/Premium split.
+2. Check narration for the new games and stories against Hannah's recordings (counts only, no recording).

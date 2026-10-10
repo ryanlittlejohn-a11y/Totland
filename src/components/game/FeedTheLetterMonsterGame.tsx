@@ -145,7 +145,7 @@ export function FeedTheLetterMonsterGame({
         <span className="text-xl" aria-hidden>{eatenId ? "🌟" : refusedId ? "👃" : "👾"}</span>
         <p className="font-ui font-semibold text-ink">
           {message || L(
-            "Drag a letter to the monster's mouth — or tap it.",
+            `Drag a ${answerName} to the monster's mouth — or tap it.`,
             `Arrastra ${answerName === "figura" || answerName === "letra" ? "una" : "un"} ${answerName} a la boca del monstruo — o tócalo.`,
           )}
         </p>

@@ -245,8 +245,8 @@
 - [ ] Real iPhone/iPad check: drag, tracing, pinch/double-tap zoom on game screens
 
 ## Catalog expansion polish (approved 2026-10-10)
-- [ ] Accept and verify the live 46 free / 75 Premium split without changing flags
-- [ ] Replace stale visible counts and polish all 17 new games' English/Spanish titles, objectives, and visual themes
-- [ ] Render real swatches/shapes/numbers in the nine new Fishing/Monster/Rain games with accurate accessibility names
-- [ ] Keep beginner Monster decoys within the current color/shape/number skill instead of adding alphabet letters
-- [ ] Verify representative new games in English/Spanish and free/locked states
+- [x] Accept and verify the live 46 free / 75 Premium split without changing flags
+- [x] Replace stale visible counts and polish all 17 new games' English/Spanish titles, objectives, and visual themes
+- [x] Render real swatches/shapes/numbers in the nine new Fishing/Monster/Rain games with accurate accessibility names
+- [x] Keep beginner Monster decoys within the current color/shape/number skill instead of adding alphabet letters
+- [x] Verify representative new games in English/Spanish and free/locked states

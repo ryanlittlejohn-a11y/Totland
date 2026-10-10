@@ -4,6 +4,7 @@ import { areaWholeLocked, FREE_WORD_FIND_COUNT, GAME_COUNT, WORD_FIND_COUNT } fr
 import { GAMES, WORLDS, gameById } from "@/lib/catalog";
 import { useProfile } from "@/lib/profile";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { WebLegalFooter } from "@/components/WebLegalFooter";
 import { L, title as tTitle } from "@/lib/i18n";
 
 
@@ -299,6 +300,7 @@ function Home() {
           "Sin conexión · Sin anuncios · Los datos quedan en el dispositivo salvo que inicies sesión para sincronizar",
         )}
       </p>
+      <WebLegalFooter />
       <InstallPrompt />
     </main>
   );

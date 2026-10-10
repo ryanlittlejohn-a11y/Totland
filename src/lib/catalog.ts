@@ -210,7 +210,7 @@ const ROWS: Row[] = [
   // Content expansion batch — reuses existing engines/round-generators with
   // fresh titles (same pattern as rows 1-104); strengthens the thinnest
   // skill areas (colors/shapes) and the Explorer (ages 2-3) age-mode tag.
-  [105, "Rainbow Hunt", "🌈", "hunt", "colors", C, "colors", "Find every color in a scene", "elr"],
+  [105, "Rainbow Hunt", "🌈", "hunt", "colors", C, "colors", "Find every object of a color", "elr"],
   [106, "Color Twins", "🧠", "memory", "colors", C, "memory", "Match color pairs", "elr", 1],
   [107, "Paint Match", "🖌️", "choice", "colorMatch", C, "colors", "Match the same color", "elr"],
   [108, "Color Carousel", "🎠", "choice", "sortColor", C, "colors", "Sort by color", "elr", 1],
@@ -222,12 +222,12 @@ const ROWS: Row[] = [
   // Generalized engine-flavor batch — Fishing/Monster/Rain now speak
   // correctly for any skill (see enginePrompt in i18n.ts), so each engine
   // goes from one letters-only game to covering colors/shapes/numbers too.
-  [113, "Fishing for Colors", "🎣", "fishing", "findColor", C, "colors", "Color recognition, fishing theme", "elr"],
-  [114, "Fishing for Shapes", "🎣", "fishing", "findShape", C, "shapes", "Shape recognition, fishing theme", "elr", 1],
-  [115, "Catch the Number", "🎣", "fishing", "findNumber", N, "numbers", "Numeral recognition, fishing theme", "elr", 1],
-  [116, "Color Monster", "👾", "monster", "findColor", C, "colors", "Color recognition, feed the monster", "elr"],
-  [117, "Shape Monster", "👾", "monster", "findShape", C, "shapes", "Shape recognition, feed the monster", "elr", 1],
-  [118, "Hungry for Numbers", "👾", "monster", "findNumber", N, "numbers", "Numeral recognition, feed the monster", "elr", 1],
+  [113, "Fishing for Colors", "🎣", "fishing", "findColor", C, "colors", "Catch the matching color", "elr"],
+  [114, "Fishing for Shapes", "🎣", "fishing", "findShape", C, "shapes", "Catch the matching shape", "elr", 1],
+  [115, "Catch the Number", "🎣", "fishing", "findNumber", N, "numbers", "Catch the spoken number", "elr", 1],
+  [116, "Color Monster", "👾", "monster", "findColor", C, "colors", "Feed the monster a matching color", "elr"],
+  [117, "Shape Monster", "👾", "monster", "findShape", C, "shapes", "Feed the monster a matching shape", "elr", 1],
+  [118, "Hungry for Numbers", "👾", "monster", "findNumber", N, "numbers", "Feed the monster the spoken number", "elr", 1],
   [119, "Color Rain", "🌧️", "rain", "findColor", C, "colors", "Relaxed color recognition with no timer", "lr"],
   [120, "Shape Rain", "🌧️", "rain", "findShape", C, "shapes", "Relaxed shape recognition with no timer", "lr", 1],
   [121, "Falling Numbers", "🌧️", "rain", "findNumber", N, "numbers", "Relaxed numeral recognition with no timer", "lr", 1],

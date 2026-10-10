@@ -10,6 +10,7 @@ import {
   updateChild,
   useFamily,
 } from "@/lib/profile";
+import { LETTERS } from "@/lib/content";
 
 export const Route = createFileRoute("/parent/children")({
   head: () => ({
@@ -75,7 +76,7 @@ function Children() {
                 <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-inksoft">
                   <span>⭐ {c.profile.stars} stars</span>
                   <span>· {c.profile.gamesCompleted} games</span>
-                  <span>· {letters.mastered.length}/26 letters</span>
+                  <span>· {letters.mastered.length}/{LETTERS.length} letters</span>
                   <span>· {accuracy(letters)}% letters accuracy</span>
                 </div>
 

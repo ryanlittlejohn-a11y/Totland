@@ -40,6 +40,10 @@ export function LetterFishingGame({
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
   const prompt = (r: Round) => enginePrompt("catch", skill, r.answerId);
+  const answerName = L(
+    skill === "colors" ? "color" : skill === "shapes" ? "shape" : skill === "numbers" ? "number" : "letter",
+    skill === "colors" ? "color" : skill === "shapes" ? "figura" : skill === "numbers" ? "número" : "letra",
+  );
 
   const nextRound = useCallback(() => {
     const r = roundForKind(kind, level);
@@ -104,7 +108,8 @@ export function LetterFishingGame({
       </button>
 
       <FishingPond
-        letters={round.options.map((o) => ({ id: o.id, label: o.label ?? o.id }))}
+        options={round.options}
+        skill={skill}
         caughtId={caughtId}
         bouncedId={bouncedId}
         disabled={!!caughtId}
@@ -117,7 +122,10 @@ export function LetterFishingGame({
       >
         <span className="text-xl" aria-hidden>{caughtId ? "🌟" : bouncedId ? "💛" : "🎣"}</span>
         <p className="font-ui font-semibold text-ink">
-          {message || L("Drag the hook down to the letter — or tap it.", "Arrastra el anzuelo hasta la letra — o tócala.")}
+          {message || L(
+            `Drag the hook down to the ${answerName} — or tap it.`,
+            `Arrastra el anzuelo hasta ${answerName === "figura" || answerName === "letra" ? "la" : "el"} ${answerName} — o tócalo.`,
+          )}
         </p>
       </div>
     </GameThemeScene>

@@ -1,22 +1,22 @@
 import { useRef } from "react";
 import { useDragToTarget } from "@/hooks/useDragToTarget";
+import type { SkillId } from "@/lib/content";
+import type { Option } from "@/lib/games";
 import { L } from "@/lib/i18n";
 import { DragTarget } from "./DragTarget";
-
-export interface MonsterLetter {
-  id: string;
-  label: string;
-}
+import { GameOptionVisual, optionAriaLabel } from "./GameOptionVisual";
 
 /** Monster visuals layered over the shared item-to-target drag primitive. */
 export function MonsterFeedingScene({
-  letters,
+  options,
+  skill,
   eatenId,
   refusedId,
   disabled,
   onFeed,
 }: {
-  letters: MonsterLetter[];
+  options: Option[];
+  skill: SkillId;
   eatenId: string | null;
   refusedId: string | null;
   disabled: boolean;
@@ -42,21 +42,21 @@ export function MonsterFeedingScene({
 
   return (
     <div className="monster-feeding-scene relative mt-5 select-none overflow-hidden rounded-3xl" data-testid="monster-feeding-scene">
-      <span className="sr-only">{L("Tap a letter to feed it to the monster.", "Toca una letra para dársela al monstruo.")}</span>
+      <span className="sr-only">{L("Tap an answer to feed it to the monster.", "Toca una respuesta para dársela al monstruo.")}</span>
       <div className="monster-letter-field grid grid-cols-2 gap-4 px-4 pb-5 pt-6 sm:grid-cols-4">
-        {letters.map((letter, index) => {
-          const active = drag.activeHandleId === letter.id;
-          const eaten = eatenId === letter.id;
-          const refused = refusedId === letter.id;
+        {options.map((option, index) => {
+          const active = drag.activeHandleId === option.id;
+          const eaten = eatenId === option.id;
+          const refused = refusedId === option.id;
           return (
             <button
-              key={letter.id}
+              key={option.id}
               type="button"
-              {...drag.getHandleProps(letter.id)}
-              onClick={() => tapFeed(letter.id)}
+              {...drag.getHandleProps(option.id)}
+              onClick={() => tapFeed(option.id)}
               disabled={disabled}
-              aria-label={L(`Feed letter ${letter.label}`, `Dar la letra ${letter.label}`)}
-              data-monster-letter={letter.id}
+              aria-label={L(`Feed ${optionAriaLabel(skill, option)}`, `Dar al monstruo: ${optionAriaLabel(skill, option)}`)}
+              data-monster-letter={option.id}
               className={`monster-letter game-theme__option relative z-10 mx-auto grid size-20 cursor-grab place-items-center rounded-2xl font-ui text-5xl font-bold text-ink ${
                 active ? "is-dragging" : ""
               } ${eaten ? "is-eaten" : ""} ${refused ? "is-refused" : ""}`}
@@ -65,7 +65,7 @@ export function MonsterFeedingScene({
                 animationDelay: `${index * 180}ms`,
               }}
             >
-              {letter.label}
+              <GameOptionVisual option={option} />
             </button>
           );
         })}

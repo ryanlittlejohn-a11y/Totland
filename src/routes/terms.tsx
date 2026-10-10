@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { LegalPage } from "../components/LegalPage";
-import { WORD_FIND_THEMES } from "@/lib/wordfinds";
+import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";
 
 export const Route = createFileRoute("/terms")({
   head: () => ({
@@ -83,7 +83,7 @@ function TermsPage() {
         <h2>4. Free and Premium features</h2>
         <p>
           Totland can be used free of charge with a set of free activities,
-          including the first 30 Word Find puzzles, which can be replayed as
+          including the first {FREE_WORD_FINDS} Word Find puzzles, which can be replayed as
           often as you like. The free version requires an internet connection
           to play.
         </p>

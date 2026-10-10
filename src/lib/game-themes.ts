@@ -93,6 +93,23 @@ export const GAME_THEMES: Record<string, GameTheme> = {
   "picture-memory": theme("🖼️", "▣  ·  ▣", "Remember the picture pairs!", "¡Recuerda las parejas de imágenes!", "sky", "ticket", "bubble"),
   "picture-puzzle": theme("🖼️", "◩  🖼️  ◪", "Complete the picture puzzle!", "¡Completa el rompecabezas de imágenes!", "amber", "puzzle", "fit"),
   "complete-the-picture": theme("🎨", "🖌️  ◇  🎨", "Choose the finishing piece!", "¡Elige la pieza final!", "clay", "puzzle", "fit"),
+  "rainbow-hunt": theme("🌈", "☁️  🌈  ☁️", "Find every color!", "¡Encuentra todos los colores!", "sky", "round", "discover"),
+  "color-twins": theme("🧠", "🎨  ·  🎨", "Match the color twins!", "¡Une los colores gemelos!", "plum", "round", "fit"),
+  "paint-match": theme("🖌️", "🎨  ·  🖌️", "Match the paint colors!", "¡Une los colores de pintura!", "clay", "round", "fit"),
+  "color-carousel": theme("🎠", "🌈  🎠  🌈", "Sort the carousel colors!", "¡Clasifica los colores del carrusel!", "amber", "ticket", "bell"),
+  "shape-safari": theme("🦓", "▲  🌿  ●", "Find every shape!", "¡Encuentra todas las figuras!", "moss", "round", "discover"),
+  "shape-twins": theme("🧠", "◆  ·  ◆", "Match the shape twins!", "¡Une las figuras gemelas!", "plum", "block", "fit"),
+  "twin-shapes": theme("🔷", "◆  ↔  ◆", "Find the matching shape!", "¡Busca la figura igual!", "sky", "block", "fit"),
+  "pattern-parade": theme("🔁", "●  ■  ▲", "Continue the parade!", "¡Continúa el desfile!", "amber", "ticket", "bell"),
+  "fishing-for-colors": theme("🎣", "🌈  〰️  🐟", "Catch the color!", "¡Pesca el color!", "sky", "round", "splash"),
+  "fishing-for-shapes": theme("🎣", "◆  〰️  🐟", "Catch the shape!", "¡Pesca la figura!", "moss", "round", "splash"),
+  "catch-the-number": theme("🎣", "1  〰️  🐟", "Catch the number!", "¡Pesca el número!", "amber", "round", "splash"),
+  "color-monster": theme("👾", "🎨  ·  🌈", "Feed the color monster!", "¡Alimenta al monstruo de colores!", "plum", "ticket", "munch"),
+  "shape-monster": theme("👾", "▲  ·  ◆", "Feed the shape monster!", "¡Alimenta al monstruo de figuras!", "moss", "ticket", "munch"),
+  "hungry-for-numbers": theme("👾", "1  ·  2", "Feed the number monster!", "¡Alimenta al monstruo de números!", "amber", "ticket", "munch"),
+  "color-rain": theme("☂️", "☁️  🌈  💧", "Catch the rainy color!", "¡Atrapa el color de lluvia!", "sky", "drop", "rain"),
+  "shape-rain": theme("☂️", "☁️  ◆  💧", "Catch the rainy shape!", "¡Atrapa la figura de lluvia!", "plum", "drop", "rain"),
+  "falling-numbers": theme("☂️", "☁️  1  💧", "Catch the falling number!", "¡Atrapa el número que cae!", "night", "drop", "rain"),
 };
 
 export const NEUTRAL_GAME_THEME: GameTheme = theme("🦊", "✦  ·  ✦", "Let's play!", "¡Vamos a jugar!", "clay", "block", "tap");

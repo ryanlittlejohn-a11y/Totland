@@ -195,6 +195,7 @@ const SENTENCES: [string, string][] = [
   ["Look at how far each one stretches.", "Mira hasta dónde llega cada uno."],
   ["The picture is a {}.", "La imagen es: {}."],
   // reveals
+  ["{}, like in {}! {}", "¡{}, como en {}! {}"],
   ["{} is for {}! {}", "¡{} es de {}! {}"],
   ["{} is for {}!", "¡{} es de {}!"],
   ["That's {}!", "¡Es {}!"],

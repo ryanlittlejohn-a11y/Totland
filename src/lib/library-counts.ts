@@ -4,7 +4,7 @@
  * the copy automatically — never hardcode these numbers in UI text.
  */
 import { GAMES } from "./catalog";
-import { AREAS, STORIES, WORDS, type Area } from "./content";
+import { AREAS, STORIES, WORDS, WORDS_ES, type Area } from "./content";
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "./wordfinds";
 
 export const GAME_COUNT = GAMES.length;
@@ -15,6 +15,7 @@ export const STORY_COUNT = STORIES.length;
 export const PREMIUM_STORY_COUNT = STORIES.filter((s) => s.premium).length;
 export const FREE_STORY_COUNT = STORY_COUNT - PREMIUM_STORY_COUNT;
 export const FLASH_CARD_COUNT = WORDS.length;
+export const FLASH_CARD_COUNT_ES = WORDS_ES.length;
 export const PREMIUM_GAME_COUNT = GAMES.filter((g) => g.premium).length;
 export const FREE_GAME_COUNT = GAME_COUNT - PREMIUM_GAME_COUNT;
 

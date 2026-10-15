@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { LETTERS, SHAPES } from "@/lib/content";
+import { SHAPES, alphabet } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import {
   recordAnswer,
@@ -14,7 +14,7 @@ import { TracingCanvas } from "./TracingCanvas";
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 
 export function letterTracingQueue(uppercase: string[], lowercase: string[], recent: string[]): string[] {
-  const forms = LETTERS.flatMap((letter) => [letter, letter.toLowerCase()]);
+  const forms = alphabet().flatMap((letter) => [letter, letter.toLowerCase()]);
   const uncovered = forms.filter((glyph) =>
     glyph === glyph.toUpperCase() ? !uppercase.includes(glyph) : !lowercase.includes(glyph.toUpperCase()),
   );

@@ -3,6 +3,7 @@
  * Everything here is original app content (no third-party assets),
  * so the whole child experience works with zero network access.
  */
+import { getLang } from "./i18n";
 
 export type SkillId =
   | "letters"
@@ -118,8 +119,69 @@ export const WORDS: WordItem[] = [
 ].map(([word, emoji]) => ({ word: word as string, emoji: emoji as string, letter: (word as string).charAt(0).toUpperCase() }));
 
 export function wordsForLetter(letter: string) {
-  return WORDS.filter((w) => w.letter === letter.toUpperCase());
+  return bankWords().filter((w) => w.letter === letter.toUpperCase());
 }
+
+/** Spanish alphabet: 27 letters, Ñ between N and O. */
+export const LETTERS_ES = [..."ABCDEFGHIJKLMN", "Ñ", ..."OPQRSTUVWXYZ"];
+
+/**
+ * Authored Spanish picture words, keyed by their real Spanish first letter
+ * (never translated from English — translation broke "U es de paraguas").
+ * Hard C/G only. Ñ has no toddler word, so it has no entry (see revealFor).
+ */
+export const WORDS_ES: WordItem[] = (
+  [
+    ["A", [["abeja", "🐝"], ["avión", "✈️"], ["araña", "🕷️"], ["árbol", "🌳"]]],
+    ["B", [["barco", "⛵"], ["ballena", "🐳"], ["bebé", "👶"], ["burro", "🫏"]]],
+    ["C", [["casa", "🏠"], ["conejo", "🐰"], ["cama", "🛏️"], ["cohete", "🚀"]]],
+    ["D", [["dedo", "☝️"], ["dado", "🎲"], ["dinosaurio", "🦖"], ["delfín", "🐬"]]],
+    ["E", [["elefante", "🐘"], ["estrella", "⭐"], ["erizo", "🦔"], ["escoba", "🧹"]]],
+    ["F", [["flor", "🌻"], ["fresa", "🍓"], ["foca", "🦭"], ["fuego", "🔥"]]],
+    ["G", [["gato", "🐱"], ["gallina", "🐔"], ["globo", "🎈"], ["guitarra", "🎸"]]],
+    ["H", [["helado", "🍦"], ["huevo", "🥚"], ["hoja", "🍃"], ["hormiga", "🐜"]]],
+    ["I", [["iglú", "🧊"], ["isla", "🏝️"], ["insecto", "🐞"], ["imán", "🧲"]]],
+    ["J", [["jirafa", "🦒"], ["jugo", "🧃"], ["jabón", "🧼"], ["jaguar", "🐆"]]],
+    ["K", [["koala", "🐨"], ["kiwi", "🥝"]]],
+    ["L", [["luna", "🌙"], ["león", "🦁"], ["limón", "🍋"], ["leche", "🥛"]]],
+    ["M", [["mono", "🐵"], ["manzana", "🍎"], ["mano", "✋"], ["mariposa", "🦋"]]],
+    ["N", [["nube", "☁️"], ["nariz", "👃"], ["nido", "🪹"], ["naranja", "🍊"]]],
+    ["O", [["oso", "🐻"], ["ojo", "👁️"], ["oveja", "🐑"], ["oreja", "👂"]]],
+    ["P", [["pato", "🦆"], ["perro", "🐶"], ["pez", "🐟"], ["pelota", "⚽"], ["pera", "🍐"]]],
+    ["Q", [["queso", "🧀"]]],
+    ["R", [["ratón", "🐭"], ["rana", "🐸"], ["robot", "🤖"], ["reina", "👑"]]],
+    ["S", [["sol", "☀️"], ["sandía", "🍉"], ["serpiente", "🐍"], ["sombrero", "🎩"]]],
+    ["T", [["tortuga", "🐢"], ["tigre", "🐯"], ["tren", "🚂"], ["tambor", "🥁"]]],
+    ["U", [["uvas", "🍇"], ["unicornio", "🦄"]]],
+    ["V", [["vaca", "🐄"], ["vela", "🕯️"], ["violín", "🎻"], ["volcán", "🌋"]]],
+    ["W", [["wafle", "🧇"]]],
+    ["X", [["xilófono", "🎹"]]],
+    ["Y", [["yoyó", "🪀"], ["yate", "🛥️"]]],
+    ["Z", [["zorro", "🦊"], ["zapato", "👟"], ["zanahoria", "🥕"]]],
+  ] as [string, [string, string][]][]
+).flatMap(([letter, words]) => words.map(([word, emoji]) => ({ word, emoji, letter })));
+
+/** Spanish short spelling words — tiles and voice always match. */
+export const CVC_WORDS_ES: { word: string; emoji: string }[] = [
+  { word: "sol", emoji: "☀️" }, { word: "oso", emoji: "🐻" }, { word: "ojo", emoji: "👁️" },
+  { word: "pez", emoji: "🐟" }, { word: "pan", emoji: "🍞" }, { word: "luz", emoji: "💡" },
+  { word: "mar", emoji: "🌊" }, { word: "ajo", emoji: "🧄" }, { word: "uva", emoji: "🍇" },
+];
+
+/** Letters that never get "first sound" questions in Spanish: H is silent,
+ *  Ñ has no toddler word, X's sound varies. Letter recognition only. */
+export const NO_SOUND_LETTERS_ES = new Set(["H", "Ñ", "X"]);
+
+/** Language-aware content accessors used by every letter/word game. */
+export const alphabet = () => (getLang() === "es" ? LETTERS_ES : LETTERS);
+export const bankWords = () => (getLang() === "es" ? WORDS_ES : WORDS);
+export const spellingWords = () => (getLang() === "es" ? CVC_WORDS_ES : CVC_WORDS);
+/** Words that may be the target of a "starts with / first sound" question. */
+export const soundWords = () =>
+  getLang() === "es" ? WORDS_ES.filter((w) => !NO_SOUND_LETTERS_ES.has(w.letter)) : WORDS;
+/** Letters a "which letter starts…" question may use as answer or decoy. */
+export const soundLetters = () =>
+  getLang() === "es" ? LETTERS_ES.filter((l) => !NO_SOUND_LETTERS_ES.has(l)) : LETTERS;
 
 export interface ColorItem {
   name: string;

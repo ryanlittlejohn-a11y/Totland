@@ -38,10 +38,18 @@ export function WordRocketGame({
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
   const word = set ? set.seq.map((s) => s.label).join("") : "";
+  // Letter Rocket / Number Rocket load an alphabet or counting run instead of a word.
+  const ordering = kind === "letters" || kind === "numbers";
+  const isNumber = kind === "numbers";
 
   const prompt = useCallback(
-    (w: string) => L(`Spell ${w} to launch the rocket!`, `¡Escribe ${w} para lanzar el cohete!`),
-    [],
+    (w: string) =>
+      kind === "numbers"
+        ? L("Load the numbers in order, smallest first, to launch the rocket!", "¡Carga los números en orden, del más pequeño al más grande, para lanzar el cohete!")
+        : kind === "letters"
+          ? L("Load the letters in alphabet order to launch the rocket!", "¡Carga las letras en orden alfabético para lanzar el cohete!")
+          : L(`Spell ${w} to launch the rocket!`, `¡Escribe ${w} para lanzar el cohete!`),
+    [kind],
   );
 
   useEffect(() => {
@@ -66,10 +74,9 @@ export function WordRocketGame({
       // Parent stats only: invisible to the child, no effect on stars/level.
       tally.current.misses += 1;
       update((p) => recordParentMiss(p, skill));
-      const retry = L(
-        `That slot needs a different letter. Try again!`,
-        `Ese tanque necesita otra letra. ¡Inténtalo de nuevo!`,
-      );
+      const retry = isNumber
+        ? L(`That slot needs a different number. Try again!`, `Ese tanque necesita otro número. ¡Inténtalo de nuevo!`)
+        : L(`That slot needs a different letter. Try again!`, `Ese tanque necesita otra letra. ¡Inténtalo de nuevo!`);
       setMessage(retry);
       chime("retry", profile.sfx);
       say(retry);
@@ -93,7 +100,10 @@ export function WordRocketGame({
     say(tile.label);
 
     if (next.every(Boolean)) {
-      const reveal = getLang() === "es"
+      const run = set.seq.map((s) => s.label).join(", ");
+      const reveal = ordering
+        ? `${run}!`
+        : getLang() === "es"
         ? `¡${word.split("").join("-")} forma ${word.toLowerCase()}!`
         : `${word.split("").join("-")} spells ${word.toLowerCase()}!`;
       const praise = L("Blast off! ", "¡Despegue! ");
@@ -132,6 +142,7 @@ export function WordRocketGame({
         launched={launched}
         disabled={launched}
         onPlace={onPlace}
+        itemKind={isNumber ? "number" : "letter"}
       />
 
       <div
@@ -142,10 +153,13 @@ export function WordRocketGame({
       >
         <span className="text-xl" aria-hidden>{launched ? "🌟" : refusedTileId ? "🛢️" : "🚀"}</span>
         <p className="font-ui font-semibold text-ink">
-          {message || L(
+          {message || (isNumber ? L(
+            "Drag each number into its fuel slot — or tap a number, then a slot.",
+            "Arrastra cada número a su tanque — o toca un número y luego un tanque.",
+          ) : L(
             "Drag each letter into its fuel slot — or tap a letter, then a slot.",
             "Arrastra cada letra a su tanque — o toca una letra y luego un tanque.",
-          )}
+          ))}
         </p>
       </div>
     </GameThemeScene>

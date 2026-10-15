@@ -16,6 +16,7 @@ export interface RocketTile {
 export function RocketLaunchScene({
   tiles,
   slots,
+  itemKind = "letter",
   lockedSlots,
   refusedTileId,
   launched,
@@ -25,6 +26,8 @@ export function RocketLaunchScene({
   tiles: RocketTile[];
   /** expected label per slot, left to right */
   slots: string[];
+  /** names tiles in screen-reader labels */
+  itemKind?: "letter" | "number";
   /** tile id locked into each slot index, or null */
   lockedSlots: (string | null)[];
   refusedTileId: string | null;
@@ -91,7 +94,7 @@ export function RocketLaunchScene({
                 disabled={disabled || !!lockedId}
                 aria-label={
                   tile
-                    ? L(`Fuel slot ${index + 1} of ${slots.length}, letter ${tile.label}`, `Tanque ${index + 1} de ${slots.length}, letra ${tile.label}`)
+                    ? L(`Fuel slot ${index + 1} of ${slots.length}, ${itemKind} ${tile.label}`, `Tanque ${index + 1} de ${slots.length}, ${itemKind === "number" ? "número" : "letra"} ${tile.label}`)
                     : L(`Fuel slot ${index + 1} of ${slots.length}, empty`, `Tanque ${index + 1} de ${slots.length}, vacío`)
                 }
                 data-rocket-slot={index}
@@ -121,8 +124,8 @@ export function RocketLaunchScene({
               disabled={disabled}
               aria-label={
                 selected
-                  ? L(`Letter ${tile.label}, selected. Tap a fuel slot to place it.`, `Letra ${tile.label}, elegida. Toca un tanque para colocarla.`)
-                  : L(`Letter ${tile.label}`, `Letra ${tile.label}`)
+                  ? L(`${itemKind === "number" ? "Number" : "Letter"} ${tile.label}, selected. Tap a fuel slot to place it.`, `${itemKind === "number" ? "Número" : "Letra"} ${tile.label}, elegid${itemKind === "number" ? "o" : "a"}. Toca un tanque para colocarl${itemKind === "number" ? "o" : "a"}.`)
+                  : L(`${itemKind === "number" ? "Number" : "Letter"} ${tile.label}`, `${itemKind === "number" ? "Número" : "Letra"} ${tile.label}`)
               }
               aria-pressed={selected}
               data-rocket-tile={tile.id}

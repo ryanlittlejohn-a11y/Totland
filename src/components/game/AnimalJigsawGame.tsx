@@ -3,6 +3,7 @@ import { shuffle, type SkillId } from "@/lib/content";
 import { L, getLang } from "@/lib/i18n";
 import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
 import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
+import { JIGSAW_VEHICLES } from "@/lib/jigsaw-vehicles";
 import { JIGSAW_ANIMALS, jigsawTier, type JigsawAnimal } from "@/lib/jigsaw-animals";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
@@ -58,7 +59,7 @@ export function AnimalJigsawGame({
 
   useEffect(() => {
     if (!hydrated || animals.length) return;
-    setAnimals(shuffle(JIGSAW_ANIMALS).slice(0, tier.rounds));
+    setAnimals(shuffle(kind === "jigsawEasy" ? JIGSAW_VEHICLES : JIGSAW_ANIMALS).slice(0, tier.rounds));
   }, [hydrated, animals.length, tier.rounds]);
 
   useEffect(() => {

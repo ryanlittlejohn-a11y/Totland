@@ -1,136 +1,70 @@
-# Spanish Letter Word Bank — Findings and Proposal
+# Group 1 rebuild: 11 misnamed games — findings and proposal
 
-Read-only findings, then a proposal. Nothing changes until approved.
+Investigation only. Nothing has been changed.
 
-## 1. How Spanish letter content is made today
+## Key finding
 
-There is **no Spanish word list for letters**. One English list (93 picture words, A–Z) drives everything:
+Changing the engine setting alone isn't enough for any of the 11 except one. There are two reasons:
 
-```text
-English word list (content.ts)  ->  letter = first English letter ("umbrella" -> U)
-        |
-round built in English: "U is for umbrella!"
-        |
-translated at display time (i18n.ts): sentence template "{} is for {}" -> "¡{} es de {}!"
-        + noun lookup "umbrella" -> "paraguas"
-        =  "¡U es de paraguas!"
-```
+1. **The real scenes skip a game's picture clue.** Fishing, Rain and Monster only show the answer choices and speak the question. They never show the extra picture some games depend on: the objects to count, the word with a missing letter, or the shape pattern. If Number Monster, Word Fishing or Shape Train were moved over unchanged, they would have nothing to look at.
+2. **Rocket, Maze and Jigsaw are fixed to one kind of content.** Rocket only spells words, Maze only does numbers 1–10, and Jigsaw only uses the 6 animal pictures. The letter and number versions need their own content.
 
-The letter comes from the English spelling; only the noun is swapped. So whenever the Spanish word starts with a different letter, the line is wrong. Same problem in:
-- "Which one starts with…", "Which letter starts…", "Which word starts like…" (phonics games)
-- Spelling and missing-letter games: the tiles spell **C-A-T** while the voice says "gato".
-- Flash cards: "C es de gato".
+## Per-game breakdown
 
-Spanish word tracing is **not** affected — it already has its own authored Spanish words.
+| # | Game | Today | Real scene | What it needs | Effort |
+|---|---|---|---|---|---|
+| 55 | Number Rain | Tap-in-order engine | Rain | Rain only does "tap the number you hear." That would make it a copy of Falling Numbers (#121). It needs an "in order" mode in Rain: catch 1, then 2, then 3… | Medium |
+| 7 | Letter Rocket | Tap-the-letter | Rocket | Rocket builds a sequence. Rocket can already put letters in alphabet order (the order game has this), so it needs a small change to let Rocket use that set | Small |
+| 45 | Number Rocket | Tap-the-number | Rocket | Same as above, using the existing "numbers in order" set | Small |
+| 29 | Word Fishing | Missing-letter word | Fishing | Fishing must show the word with the gap and its picture (e.g. 🐱 C_T) above the pond | Medium |
+| 39 | Number Fishing | Tap-the-number | Fishing | Changing the engine setting alone would be enough, **but then it's a true copy of #115** (see below) | Small (but a copy) |
+| 43 | Number Monster | Count the objects | Monster | Monster must show the objects to count (e.g. 🍎🍎🍎) and accept the matching number. Otherwise it's a copy of Hungry for Numbers (#118) | Medium |
+| 15 | Letter Maze | Find-the-letters scene | Maze | Maze is numbers only. It needs a letter version (A→B→C…, English 26 / Spanish 27 with Ñ) plus letter rewards | Medium |
+| 83 | Alphabet Jigsaw | Tap-the-letter | Jigsaw | Jigsaw is fixed to the animal pictures. It needs a letter picture set, e.g. big letter + matching picture (A 🍎). In Spanish it must use the Spanish word list | Large (new pictures) |
+| 84 | Number Jigsaw | Tap-the-number | Jigsaw | Same, using a number picture set (e.g. "3" with three ducks) | Large (new pictures) |
+| 81 | Simple Jigsaw | Tap the right picture | Jigsaw | **Two-piece mode already exists** (level 1–2). Option: keep the 6 animals and always cut 2–4 pieces, or give it its own set (vehicles/fruit) so it doesn't repeat Animal Jigsaw | Small (fixed easy cut) / Large (new set) |
+| 69 | Shape Train | Pick the next shape in the pattern | Rocket/Order? | **There's no train scene.** Nearest real option: the Rocket sequence scene recolored as train cars, showing the pattern so far. In effect a new scene | Large |
 
-## 2. All 26 letters today (93 words: 34 correct, 59 wrong in Spanish)
+## Number Fishing (#39) vs Catch the Number (#115)
 
-| Letter | English words → Spanish | Correct in Spanish |
-|---|---|---|
-| A | apple→manzana, ant→hormiga, avocado→aguacate, airplane→avión, acorn→bellota | 2 of 5 |
-| B | ball→pelota, bear→oso, banana→plátano, bus→autobús, bee→abeja, boat→barco | 1 of 6 |
-| C | cat→gato, cake→pastel, car→coche, cow→vaca, cloud→nube, carrot→zanahoria | 1 of 6 |
-| D | dog→perro, duck→pato, drum→tambor, donut→dona, dinosaur→dinosaurio | 2 of 5 |
-| E | egg→huevo, elephant→elefante, eye→ojo | 1 of 3 |
-| F | fox→zorro, fish→pez, frog→rana, flower→flor, fire→fuego | 2 of 5 |
-| G | goat→cabra, grapes→uvas, gift→regalo, guitar→guitarra | 1 of 4 |
-| H | hat→sombrero, horse→caballo, house→casa, honey→miel | **0 of 4** |
-| I | ice cream→helado, igloo→iglú, insect→insecto | 2 of 3 |
-| J | jam→mermelada, jellyfish→medusa, juice→jugo | 1 of 3 |
-| K | kite→cometa, key→llave, koala→koala | 1 of 3 |
-| L | lion→león, leaf→hoja, lemon→limón, ladybug→mariquita | 2 of 4 |
-| M | moon→luna, mouse→ratón, milk→leche, monkey→mono | 1 of 4 |
-| N | nest→nido, nose→nariz, night→noche | 3 of 3 |
-| O | owl→búho, orange→naranja, octopus→pulpo | **0 of 3** |
-| P | pig→cerdo, pear→pera, panda, pizza, penguin→pingüino | 4 of 5 |
-| Q | queen→reina, quilt→colcha | **0 of 2** |
-| R | rabbit→conejo, rainbow→arcoíris, robot, rocket→cohete | 1 of 4 |
-| S | sun→sol, star→estrella, snake→serpiente, strawberry→fresa, socks→calcetines | 2 of 5 |
-| T | tree→árbol, tiger→tigre, train→tren, turtle→tortuga | 3 of 4 |
-| U | umbrella→paraguas, unicorn→unicornio | 1 of 2 |
-| V | van→furgoneta, violin→violín | 1 of 2 |
-| W | whale→ballena, watermelon→sandía, wagon→camioneta | **0 of 3** |
-| X | xylophone→xilófono | 1 of 1 |
-| Y | yarn→lana, yo-yo→yoyó | 1 of 2 |
-| Z | zebra→cebra, zipper→cremallera | **0 of 2** |
+Both use "findNumber", both are in Number Valley, both are Premium. On the same Fishing engine they would be **exact copies**, differing only in title. Two options:
+- **A (recommended): Change Number Fishing's content** to "catch the number that comes next" (pond shows 4, 5, _ → catch 6) or "catch the bigger number." This keeps the game count at 121 and adds a new skill.
+- B: Remove #39. This drops the catalog to 120 games and changes the free/Premium counts on the subscription page, sitemap text and store copy.
 
-The 15 spelling words (cat, dog, sun, hat, bus, pig, cow, bee, fox, cup, net, van, bed, key, egg) are all spelled in English even in Spanish mode.
+The same copy risk applies to Number Rain vs Falling Numbers (#121) and Number Monster vs Hungry for Numbers (#118). The plan above avoids both by giving each one a different task.
 
-## 3. Spanish alphabet handling today
+## Free vs Premium
 
-- The app uses the **English 26 letters only**. There is no Ñ anywhere in the letter games, alphabet order games, letter tracing or the word list.
-- CH and LL are not treated as letters (correct — the RAE dropped them in 2010).
-- Tricky letters for this kind of game:
-  - **H** is silent in Spanish, so "which letter makes this first sound?" doesn't work for H.
-  - **K, W, X** have very few words toddlers know, and they're mostly borrowed words.
-  - **Q** only appears as "que/qui", so the only toddler word is queso.
-  - **Ñ** is a real letter in Spanish but has almost no starting words a toddler would know.
-  - **C and G** have two sounds each (casa/cebra, gato/gemelo). Picking only hard-sound words keeps the sound games honest.
+- Free: Simple Jigsaw (#81) only.
+- Premium: the other 10.
+- Moving games to their real scenes doesn't change the 46/75 split.
 
-## 4. Proposed Spanish word list (27 letters, about 95 words)
+## Difficulty and levels
 
-Simple nouns a 2–6 year old knows: animals, food, toys, body, home. I avoided words that change by country (no coche/carro, plátano/banana, furgoneta).
+- Generic engines: answer choices grow with level (count(level)), numbers go up to maxNumber(level), and the order engine's sequence gets longer (3/5/7 numbers, 3/4/6 letters). Rounds are fixed at 5.
+- Fishing/Rain/Monster: same round content and level settings, 5 rounds, plus extra choices added so there are always at least 3. Difficulty stays about the same.
+- Rocket: sequence length follows the same order-engine tiers, so it stays the same.
+- Maze: 3/5/7/8/10 dots, 4–2 mazes per session. A letter maze would reuse these tiers.
+- Jigsaw: 2/4/6/9 pieces, 4–2 puzzles per session. This is a bigger change than the current 1-tap choice. Easier at levels 1–2, harder at 4–5. Level and session length lock when a session starts, the same protection as the animal jigsaw.
+- One thing that changes: these games go from tap to drag/trace. That raises the effort needed for the youngest Explorer mode (ages 2–3). Letter/Number Rocket and Number Fishing currently allow Explorer, so drag targets need the existing tap fallback (already built in).
 
-| Letter | Proposed words |
-|---|---|
-| A | abeja 🐝, avión ✈️, araña 🕷️, árbol 🌳 |
-| B | barco ⛵, ballena 🐳, bebé 👶, burro 🫏 |
-| C | casa 🏠, conejo 🐰, cama 🛏️, cohete 🚀 (hard C only) |
-| D | dedo ☝️, dado 🎲, dinosaurio 🦖, delfín 🐬 |
-| E | elefante 🐘, estrella ⭐, erizo 🦔, escoba 🧹 |
-| F | flor 🌻, fresa 🍓, foca 🦭, fuego 🔥 |
-| G | gato 🐱, gallina 🐔, globo 🎈, guitarra 🎸 (hard G only) |
-| H | helado 🍦, huevo 🥚, hoja 🍃, hormiga 🐜 — **judgment call:** H is silent, so use it for letter-recognition only, not "first sound" questions |
-| I | iglú 🧊, isla 🏝️, insecto 🐞, imán 🧲 |
-| J | jirafa 🦒, jugo 🧃, jabón 🧼, jaguar 🐆 |
-| K | koala 🐨, kiwi 🥝 — **judgment call:** only two realistic words |
-| L | luna 🌙, león 🦁, limón 🍋, leche 🥛 |
-| M | mono 🐵, manzana 🍎, mano ✋, mariposa 🦋 |
-| N | nube ☁️, nariz 👃, nido 🪹, naranja 🍊 |
-| Ñ | ñu — **judgment call:** the only common word, there's no emoji for it and it's unfamiliar. Recommend letter recognition and tracing for Ñ, with the reveal "¡Ñ, como en piña! 🍍" instead of "es de" |
-| O | oso 🐻, ojo 👁️, oveja 🐑, oreja 👂 |
-| P | pato 🦆, perro 🐶, pez 🐟, pelota ⚽, pera 🍐 |
-| Q | queso 🧀 — **judgment call:** the only toddler word |
-| R | ratón 🐭, rana 🐸, robot 🤖, reina 👑 |
-| S | sol ☀️, sandía 🍉, serpiente 🐍, sombrero 🎩 |
-| T | tortuga 🐢, tigre 🐯, tren 🚂, tambor 🥁 |
-| U | uvas 🍇, unicornio 🦄 |
-| V | vaca 🐄, vela 🕯️, violín 🎻, volcán 🌋 |
-| W | wafle 🧇 — **judgment call:** an accepted borrowed word; the alternative is to leave W out of Spanish sound games |
-| X | xilófono 🎹 — **judgment call:** only one word, and the X sound varies; letter recognition only |
-| Y | yoyó 🪀, yate 🛥️ |
-| Z | zorro 🦊, zapato 👟, zanahoria 🥕 |
+## Proposed batches
 
-Spanish spelling and missing-letter words would come from the short Spanish words already used in Spanish tracing (sol, oso, pez, pan, mar, luz, gato, casa, luna…), so tiles and voice match.
+**Batch 1 (small, low risk):** Letter Rocket, Number Rocket, Simple Jigsaw (fixed easy cut, animal set), Number Fishing changed to "what comes next."
 
-## 5. Blast radius
+**Batch 2 (medium, one shared change):** add a picture-clue area to Fishing/Monster/Rain. This unlocks Word Fishing and Number Monster (counting). Also in this batch: Number Rain "in order" mode and Letter Maze. The clue area also covers the counting interaction planned next.
 
-Games that depend on this word list (Spanish mode only):
-- Letter games that end with a "… is for …" line: Letter Pop, Feed the Letter Monster, Letter Bubbles, Letter Fishing, Letter Rocket, Letter Rain (6).
-- Sound games: What Starts With B?, Beginning Sound Train, Sound Match, Sound Detective, Same Sound (5).
-- Spelling: Missing Letter Word, Word Fishing, Word Builder, Word Puzzle, Word Train, First Word Builder, Word Rocket (7).
-- Also: Flash Cards (93 cards; Spanish would get its own ~95), the Letters/Sounds/Puzzles quick-play pages, and Daily Adventure.
-- Not affected: Spanish word tracing, picture-matching and memory games (they only show the picture and say the word, which is already correct).
+**Batch 3 (new pictures):** Alphabet Jigsaw and Number Jigsaw picture sets (generated, bundled, offline). Shape Train as a train skin on the sequence scene.
 
-Spanish lines: about **790 of the 2,177 missing Spanish lines** come from this list ("es de", "empieza con", "empiezan con", "¿Qué letra empieza…?", "empieza como", spelling prompts). The fix replaces them with roughly the same number of new correct lines (~20,000 credits, generated later with approval). A handful of wrong Spanish lines already in the library simply stop being used. Nothing is deleted.
+## Applies to all batches
 
-Fixing only the "es de" lines isn't enough. The sound and spelling games would still ask about the English first letter, so the word list itself has to change.
+- Spanish: new prompts use the authored Spanish word list and agreement templates. No translated letter words.
+- New spoken lines are added to the narration gap list. No audio is generated without approval.
+- Tests: each moved game opens its expected scene, and no two games share the same engine and content.
+- No changes to the gate, subscriptions, pricing or the free/Premium flags.
 
-Also needs a decision: should Ñ be added to Spanish letter games, alphabet order games and letter tracing? It's recommended, because it's part of the real Spanish alphabet. This changes Spanish alphabet order (N, Ñ, O).
+## Questions for you
 
-## If approved: what gets built
-
-1. Add an authored Spanish word list (the table above, after your edits). English stays exactly as it is.
-2. Spanish rounds pick letters and words from the Spanish list. "Starts with" answers come from the Spanish spelling.
-3. Spanish spelling games use the short Spanish word list, so tiles match the voice.
-4. Spanish Flash Cards use the Spanish list.
-5. Optional (your call): add Ñ to Spanish letter games, alphabet order and tracing.
-6. Tests: every Spanish word starts with its letter; English list unchanged; no "first sound" questions for H, Ñ or X.
-7. Re-run the narration scan to give the new Spanish line count and credit estimate. No audio is generated.
-
-## Technical details
-
-- New `WORDS_ES` in `content.ts` with `letter` set explicitly. Add `wordsFor(lang)` / `wordsForLetter(letter, lang)` and use them in `rounds.ts` (findUpper, startsWith, letterSound, sameSound, missingLetterWord, buildWord) and `games.ts` (letterRound, phonicsRound, puzzleRound).
-- Spanish rounds skip `translateRound` noun swapping for these words, since they're already Spanish. The sentence templates still apply.
-- `LETTERS_ES` (27 letters with Ñ) only if item 5 is approved.
-- `FLASH_CARD_COUNT` stays based on the English list unless you want counts per language. The displayed "93 flash cards" copy would be checked.
+1. Number Fishing: change its content (A) or remove it (B)?
+2. Simple Jigsaw: reuse the animal pictures, or a new picture set?
+3. Start with Batch 1 only, or Batches 1 and 2 together?

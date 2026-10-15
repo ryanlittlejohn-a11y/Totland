@@ -471,7 +471,7 @@ const TITLES: Record<string, string> = {
   "Word and picture pairs": "Parejas de palabra e imagen", "Odd one out": "El intruso",
   "Complete a sequence": "Completar una secuencia", "Sort by category": "Clasificar por categoría",
   "Compare size": "Comparar tamaños", "Compare length": "Comparar longitudes",
-  "Four-piece jigsaw": "Rompecabezas de cuatro piezas",
+  "Four-piece jigsaw": "Rompecabezas de cuatro piezas", "Easy jigsaw with big pieces": "Rompecabezas fácil con piezas grandes",
   "Build animal jigsaws": "Armar rompecabezas de animales", "Assemble letters": "Armar letras",
   "Assemble numbers": "Armar números", "Complete an image": "Completar una imagen",
   "Find letters in a grid": "Encontrar letras en la cuadrícula",

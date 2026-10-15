@@ -14,10 +14,13 @@ import { JigsawPuzzleScene, type JigsawPiece } from "./JigsawPuzzleScene";
  * Wrong drops and wrong taps are playful retries, never misses.
  */
 export function AnimalJigsawGame({
+  kind,
   skill,
   theme = NEUTRAL_GAME_THEME,
   onFinish,
 }: {
+  /** "jigsawEasy" (Simple Jigsaw) caps the cut at 2–4 big pieces. */
+  kind?: string;
   skill: SkillId;
   theme?: GameTheme;
   onFinish: (stars: number, accuracy: number) => void;
@@ -29,7 +32,7 @@ export function AnimalJigsawGame({
   const tierSet = useRef(false);
   if (hydrated && !tierSet.current) {
     tierSet.current = true;
-    setTier(jigsawTier(skillOf(profile, skill).level));
+    setTier(jigsawTier(skillOf(profile, skill).level, kind === "jigsawEasy"));
   }
   const total = tier.cols * tier.rows;
 

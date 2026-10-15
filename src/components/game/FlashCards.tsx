@@ -1,12 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
-import { WORDS, shuffle } from "@/lib/content";
+import { bankWords, shuffle } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
 import { recordGameComplete, useProfile } from "@/lib/profile";
 import { L, noun } from "@/lib/i18n";
 
 export function FlashCards({ onFinish }: { onFinish: (stars: number) => void }) {
   const { profile, update, hydrated } = useProfile();
-  const cards = useMemo(() => (hydrated ? shuffle(WORDS).slice(0, 8) : []), [hydrated]);
+  const cards = useMemo(() => (hydrated ? shuffle(bankWords()).slice(0, 8) : []), [hydrated]);
   const [i, setI] = useState(0);
   const [flipped, setFlipped] = useState(false);
 

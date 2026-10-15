@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { COLORS, LETTERS, PRAISE, SHAPES, pick, shuffle, type SkillId } from "@/lib/content";
+import { COLORS, PRAISE, SHAPES, alphabet, pick, shuffle, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
 import { roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
@@ -56,7 +56,7 @@ export function FeedTheLetterMonsterGame({
               label: String(index + 1),
               big: true,
             }))
-          : LETTERS.map((letter) => ({ id: letter, label: letter, big: true }));
+          : alphabet().map((letter) => ({ id: letter, label: letter, big: true }));
     const extras = shuffle(pool.filter((option) => !optionIds.has(option.id))).slice(0, needed);
     const r = { ...generated, options: shuffle([...generated.options, ...extras]) };
     setRound(r);

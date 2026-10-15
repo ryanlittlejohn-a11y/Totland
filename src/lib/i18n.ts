@@ -446,7 +446,7 @@ const TITLES: Record<string, string> = {
   "Count and choose the number": "Contar y elegir el número",
   "Numeral recognition": "Reconocer números", "Number order": "Orden de los números",
   "Numeral to quantity": "Número y cantidad", Counting: "Contar",
-  "Give the right amount": "Dar la cantidad correcta",
+  "Give the right amount": "Dar la cantidad correcta", "Load the letters in alphabet order": "Carga las letras en orden alfabético", "Load the numbers in counting order": "Carga los números en orden", "Catch the number that comes next": "Pesca el número que sigue", "Count, then feed the monster that number": "Cuenta y dale al monstruo ese número", "Trace the path in alphabet order": "Traza el camino en orden alfabético",
   "Plant that many flowers": "Plantar esa cantidad de flores",
   "Complete 1, 2, _, 4": "Completar 1, 2, _, 4",
   "Move through numbers in order": "Avanzar por los números en orden",

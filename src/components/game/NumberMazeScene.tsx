@@ -15,6 +15,7 @@ export function NumberMazeScene({
   onStart,
   onEnter,
   onTap,
+  labels,
 }: {
   points: TracePoint[];
   connected: number;
@@ -25,6 +26,8 @@ export function NumberMazeScene({
   onStart: (index: number | null) => boolean;
   onEnter: (index: number) => boolean;
   onTap: (index: number) => void;
+  /** stone labels (Letter Maze); defaults to 1, 2, 3… */
+  labels?: string[];
 }) {
   const { boardRef, livePos, boardProps } = usePathTrace({
     points,
@@ -73,7 +76,7 @@ export function NumberMazeScene({
           <button
             key={i}
             type="button"
-            data-maze-point={n}
+            data-maze-point={i + 1}
             aria-label={label}
             disabled={done}
             onClick={() => onTap(i)}

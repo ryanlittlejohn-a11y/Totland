@@ -7,6 +7,7 @@ import { chime, say, sayParts, setNarration, themeChime } from "@/lib/speech";
 import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
+import { RoundClue, needsClue } from "./RoundClue";
 import { LetterRainScene } from "./LetterRainScene";
 
 /** Letter Rain: slow, endlessly returning letters with no deadline or misses. */
@@ -37,7 +38,8 @@ export function LetterRainGame({
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
-  const prompt = (value: Round) => enginePrompt("catchPatient", skill, value.answerId);
+  const prompt = (value: Round) =>
+    needsClue(kind) ? value.spoken : enginePrompt("catchPatient", skill, value.answerId);
   const answerName = L(
     skill === "colors" ? "color" : skill === "shapes" ? "shape" : skill === "numbers" ? "number" : "letter",
     skill === "colors" ? "color" : skill === "shapes" ? "figura" : skill === "numbers" ? "número" : "letra",
@@ -119,6 +121,8 @@ export function LetterRainGame({
         <p className="pr-9 font-ui text-[22px] font-semibold leading-tight text-ink">{prompt(round)}</p>
         <span className="absolute bottom-2 right-2 grid size-9 place-items-center text-xl" aria-hidden>🔊</span>
       </button>
+
+      {needsClue(kind) ? <RoundClue round={round} /> : null}
 
       <LetterRainScene
         options={round.options}

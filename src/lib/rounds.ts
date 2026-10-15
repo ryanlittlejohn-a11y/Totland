@@ -47,7 +47,7 @@ function findUpper(level: number): Round {
     options: shuffle([target, ...others]).map((l) => ({ id: l, label: l, big: true })),
     answerId: target,
     hint: `Look for the letter ${target}.`,
-    reveal: w ? `${target} is for ${w.word}! ${w.emoji}` : `That's ${target}!`,
+    reveal: w ? `${target} is for ${w.word}! ${w.emoji}` : target === "Ñ" ? "Ñ, like in piña! 🍍" : `That's ${target}!`,
   });
 }
 

@@ -518,7 +518,8 @@ html[data-high-contrast="1"] .monster-mouth { outline: 4px solid var(--ink); box
 @keyframes rocket-launch { 40% { transform: translateY(-6px) rotate(-2deg); } 100% { transform: translateY(-22rem) rotate(4deg); } }
 @media (prefers-reduced-motion: reduce) {
   .rocket-tile, .rocket-tile.is-refused, .rocket-slot.is-filled,
-  .rocket-body.is-launched .rocket-ship, .rocket-flames { animation: none !important; }
+  .rocket-body.is-launched .rocket-ship, .rocket-flames,
+  .rocket-launch-scene[data-skin="train"] .rocket-body.is-launched { animation: none !important; }
   .rocket-tile { transition: none; }
 }
 html[data-reduced-motion="1"] .rocket-tile,

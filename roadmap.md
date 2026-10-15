@@ -271,4 +271,5 @@
 - [x] Tests: re-pointed scenes, no duplicate engine+content among bespoke games
 - [ ] Look at the 7 Premium re-pointed games with a Premium account (not checked in preview)
 - [ ] Record new lines (~190, ~6,500 credits) with the Oct 17+ batch, with approval
-- [ ] Batch 3: Alphabet/Number Jigsaw picture sets, Shape Train
+- [x] Batch 3: Alphabet Jigsaw (letter+picture cards, EN 26/ES 27), Number Jigsaw (1–20 counts), Shape Train (rocket scene, train skin)
+- [ ] Record Batch 3 lines (~250 EN+ES) with the Oct 17+ batch, with approval

@@ -167,7 +167,7 @@ const ROWS: Row[] = [
   [66, "Shape Memory", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
   [67, "Shape Hunt", "🔍", "hunt", "shapes", C, "shapes", "Find shapes in a scene", "elr", 1],
   [68, "Shape Puzzle", "🧩", "choice", "jigsawPiece", P, "puzzles", "Assemble a picture", "lr", 1],
-  [69, "Shape Train", "🚃", "choice", "patternNext", C, "shapes", "Continue a shape pattern", "lr", 1],
+  [69, "Shape Train", "🚃", "rocket", "shapeTrain", C, "shapes", "Continue a shape pattern", "lr", 1],
   [70, "What's Missing?", "❔", "choice", "shapeMissing", C, "shapes", "Spot the missing shape", "lr", 1],
 
   [71, "Animal Memory", "🐾", "memory", "animals", P, "memory", "Classic memory pairs", "elr"],
@@ -183,8 +183,8 @@ const ROWS: Row[] = [
 
   [81, "Simple Jigsaw", "🧩", "jigsaw", "jigsawEasy", P, "puzzles", "Easy jigsaw with big pieces", "elr"],
   [82, "Animal Jigsaw", "🐨", "jigsaw", "jigsawPiece", P, "puzzles", "Build animal jigsaws", "lr"],
-  [83, "Alphabet Jigsaw", "🔠", "choice", "letterPuzzle", P, "puzzles", "Assemble letters", "lr", 1],
-  [84, "Number Jigsaw", "🔢", "choice", "numberPuzzle", P, "puzzles", "Assemble numbers", "lr", 1],
+  [83, "Alphabet Jigsaw", "🔠", "jigsaw", "letterCards", P, "puzzles", "Assemble letters", "lr", 1],
+  [84, "Number Jigsaw", "🔢", "jigsaw", "numberCards", P, "puzzles", "Assemble numbers", "lr", 1],
   [85, "Picture Puzzle", "🖼️", "choice", "completePicture", P, "puzzles", "Complete an image", "lr", 1],
   [86, "Word Search: Letters", "🔎", "wordsearch", "letters", P, "wordsearch", "Find letters in a grid", "elr"],
   [87, "Word Search: Animals", "🔎", "wordsearch", "animals", P, "wordsearch", "Find animal words", "r", 1],

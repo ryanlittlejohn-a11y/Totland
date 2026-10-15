@@ -5,6 +5,9 @@ import { LETTERS_ES } from "./content";
 import { letterRun, mazeTier } from "./number-maze";
 import { JIGSAW_ANIMALS, jigsawTier } from "./jigsaw-animals";
 import { JIGSAW_VEHICLES } from "./jigsaw-vehicles";
+import { letterCardSpecs, numberCardSpecs, numberJigsawMax } from "./jigsaw-cards";
+import { shapeTrainSet } from "./shape-train";
+import { WORDS_ES } from "./content";
 import { setLang } from "./i18n";
 
 const byTitle = (t: string) => GAMES.find((g) => g.title === t)!;
@@ -89,5 +92,45 @@ describe("Group 1 re-pointed games", () => {
     const run = letterRun(LETTERS_ES, 3, () => 13 / 25);
     expect(run).toEqual(["N", "Ñ", "O"]);
     expect(letterRun(LETTERS_ES, 10, () => 0.999)).toHaveLength(10);
+  });
+
+  it("Batch 3 games open their real scenes, distinct from Animal Jigsaw and Pattern Parade", () => {
+    expect([byTitle("Alphabet Jigsaw").engine, byTitle("Alphabet Jigsaw").kind]).toEqual(["jigsaw", "letterCards"]);
+    expect([byTitle("Number Jigsaw").engine, byTitle("Number Jigsaw").kind]).toEqual(["jigsaw", "numberCards"]);
+    expect([byTitle("Shape Train").engine, byTitle("Shape Train").kind]).toEqual(["rocket", "shapeTrain"]);
+    const kinds = ["Animal Jigsaw", "Simple Jigsaw", "Alphabet Jigsaw", "Number Jigsaw"].map((t) => byTitle(t).kind);
+    expect(new Set(kinds).size).toBe(4);
+    expect(byTitle("Shape Train").engine).not.toBe(byTitle("Pattern Parade").engine);
+  });
+
+  it("Alphabet Jigsaw covers EN 26 / ES 27 letters, Spanish pictures from WORDS_ES", () => {
+    setLang("en");
+    expect(letterCardSpecs()).toHaveLength(26);
+    setLang("es");
+    const es = letterCardSpecs();
+    expect(es).toHaveLength(27);
+    expect(es.find((c) => c.letter === "Ñ")?.emoji).toBe("🍍");
+    for (const c of es.filter((x) => x.word)) {
+      expect(WORDS_ES.some((w) => w.word === c.word && w.letter === c.letter), c.word!).toBe(true);
+    }
+    setLang("en");
+  });
+
+  it("Number Jigsaw uses 1–20, capped by level like the numbers world", () => {
+    expect(numberCardSpecs(numberJigsawMax(1)).map((c) => c.n)).toEqual([1, 2, 3, 4, 5]);
+    expect(numberCardSpecs(numberJigsawMax(5))).toHaveLength(20);
+    expect(numberCardSpecs(numberJigsawMax(5))[0]!.n).toBe(1);
+  });
+
+  it("Shape Train cars follow a repeating pattern with the first cars given", () => {
+    for (let i = 0; i < 100; i++) {
+      for (const level of [1, 3, 5]) {
+        const t = shapeTrainSet(level);
+        const unit = level >= 5 ? 3 : 2;
+        t.cars.forEach((c, j) => expect(c.shape).toBe(t.cars[j % unit]!.shape));
+        expect(t.given).toBeLessThan(t.cars.length);
+        for (const d of t.decoys) expect(t.cars.some((c) => c.shape === d.shape)).toBe(false);
+      }
+    }
   });
 });

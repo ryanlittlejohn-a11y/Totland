@@ -5,6 +5,23 @@
  * Rules enforced globally: 2–4 options for young levels, spoken instruction on
  * every round, a hint always available, and never any negative language.
  */
+import {
+  CATEGORIES,
+  COLORS,
+  NUMBER_WORDS,
+  RHYMES,
+  RHYMES_ES,
+  RHYME_EMOJI,
+  SHAPES,
+  alphabet,
+  bankWords,
+  pick,
+  shuffle,
+  soundLetters,
+  soundWords,
+  spellingWords,
+  wordsForLetter,
+} from "./content";
 
 import type { Round, Option } from "./games";
 import { getLang, noun, sentence, translateRound } from "./i18n";
@@ -20,8 +37,8 @@ function base(partial: Omit<Round, "columns"> & { columns?: 2 | 3 }): Round {
 /* ---------------------------------------------------------------- letters */
 
 function findUpper(level: number): Round {
-  const target = pick(LETTERS);
-  const others = shuffle(LETTERS.filter((l) => l !== target)).slice(0, count(level) - 1);
+  const target = pick(alphabet());
+  const others = shuffle(alphabet().filter((l) => l !== target)).slice(0, count(level) - 1);
   const w = wordsForLetter(target)[0];
   return base({
     skill: "letters",
@@ -35,8 +52,8 @@ function findUpper(level: number): Round {
 }
 
 function caseMatch(level: number, upperPrompt: boolean): Round {
-  const target = pick(LETTERS);
-  const others = shuffle(LETTERS.filter((l) => l !== target)).slice(0, count(level) - 1);
+  const target = pick(alphabet());
+  const others = shuffle(alphabet().filter((l) => l !== target)).slice(0, count(level) - 1);
   const shown = upperPrompt ? target : target.toLowerCase();
   const opts = shuffle([target, ...others]).map((l) => ({
     id: l,
@@ -55,8 +72,8 @@ function caseMatch(level: number, upperPrompt: boolean): Round {
 }
 
 function letterShadow(level: number): Round {
-  const target = pick(LETTERS);
-  const others = shuffle(LETTERS.filter((l) => l !== target)).slice(0, count(level) - 1);
+  const target = pick(alphabet());
+  const others = shuffle(alphabet().filter((l) => l !== target)).slice(0, count(level) - 1);
   return base({
     skill: "letters",
     prompt: `Whose shadow is this?  ▐ ${target} ▌`,
@@ -69,24 +86,24 @@ function letterShadow(level: number): Round {
 }
 
 function missingLetter(level: number): Round {
-  const i = Math.floor(Math.random() * (LETTERS.length - 3)) + 1;
-  const target = LETTERS[i]!;
-  const seq = `${LETTERS[i - 1]}, ___, ${LETTERS[i + 1]}`;
-  const others = shuffle(LETTERS.filter((l) => l !== target)).slice(0, count(level) - 1);
+  const i = Math.floor(Math.random() * (alphabet().length - 3)) + 1;
+  const target = alphabet()[i]!;
+  const seq = `${alphabet()[i - 1]}, ___, ${alphabet()[i + 1]}`;
+  const others = shuffle(alphabet().filter((l) => l !== target)).slice(0, count(level) - 1);
   return base({
     skill: "letters",
     prompt: `${seq} — which letter is missing?`,
-    spoken: `${LETTERS[i - 1]}, what comes next, ${LETTERS[i + 1]}?`,
+    spoken: `${alphabet()[i - 1]}, what comes next, ${alphabet()[i + 1]}?`,
     options: shuffle([target, ...others]).map((l) => ({ id: l, label: l, big: true })),
     answerId: target,
-    hint: `Sing the alphabet from ${LETTERS[i - 1]}.`,
-    reveal: `${LETTERS[i - 1]}, ${target}, ${LETTERS[i + 1]}!`,
+    hint: `Sing the alphabet from ${alphabet()[i - 1]}.`,
+    reveal: `${alphabet()[i - 1]}, ${target}, ${alphabet()[i + 1]}!`,
   });
 }
 
 function letterPuzzle(level: number): Round {
-  const target = pick(LETTERS);
-  const others = shuffle(LETTERS.filter((l) => l !== target)).slice(0, count(level) - 1);
+  const target = pick(alphabet());
+  const others = shuffle(alphabet().filter((l) => l !== target)).slice(0, count(level) - 1);
   return base({
     skill: "puzzles",
     prompt: `Which piece finishes this letter?`,
@@ -116,8 +133,8 @@ function numberPuzzle(level: number): Round {
 /* ---------------------------------------------------------------- phonics */
 
 function startsWith(level: number): Round {
-  const target = pick(WORDS);
-  const others = shuffle(WORDS.filter((w) => w.letter !== target.letter)).slice(0, count(level) - 1);
+  const target = pick(bankWords());
+  const others = shuffle(bankWords().filter((w) => w.letter !== target.letter)).slice(0, count(level) - 1);
   return base({
     skill: "phonics",
     prompt: `Which one starts with ${target.letter}?`,
@@ -130,8 +147,8 @@ function startsWith(level: number): Round {
 }
 
 function letterSound(level: number): Round {
-  const target = pick(WORDS);
-  const others = shuffle(LETTERS.filter((l) => l !== target.letter)).slice(0, count(level) - 1);
+  const target = pick(bankWords());
+  const others = shuffle(alphabet().filter((l) => l !== target.letter)).slice(0, count(level) - 1);
   return base({
     skill: "phonics",
     prompt: `${target.emoji}  Which letter makes that first sound?`,
@@ -144,9 +161,9 @@ function letterSound(level: number): Round {
 }
 
 function sameSound(level: number): Round {
-  const target = pick(WORDS.filter((w) => wordsForLetter(w.letter).length > 1));
+  const target = pick(bankWords().filter((w) => wordsForLetter(w.letter).length > 1));
   const mate = pick(wordsForLetter(target.letter).filter((w) => w.word !== target.word));
-  const others = shuffle(WORDS.filter((w) => w.letter !== target.letter)).slice(0, count(level) - 1);
+  const others = shuffle(bankWords().filter((w) => w.letter !== target.letter)).slice(0, count(level) - 1);
   return base({
     skill: "phonics",
     prompt: `${target.emoji} ${target.word} — which one has the same first sound?`,
@@ -180,8 +197,8 @@ function rhyme(level: number): Round {
 /* ------------------------------------------------------------------ words */
 
 function pictureWord(level: number): Round {
-  const target = pick(WORDS);
-  const others = shuffle(WORDS.filter((w) => w.word !== target.word)).slice(0, count(level) - 1);
+  const target = pick(bankWords());
+  const others = shuffle(bankWords().filter((w) => w.word !== target.word)).slice(0, count(level) - 1);
   return base({
     skill: "words",
     prompt: `${target.emoji}  Which word says it?`,
@@ -194,8 +211,8 @@ function pictureWord(level: number): Round {
 }
 
 function wordPictureRound(level: number): Round {
-  const target = pick(WORDS);
-  const others = shuffle(WORDS.filter((w) => w.word !== target.word)).slice(0, count(level) - 1);
+  const target = pick(bankWords());
+  const others = shuffle(bankWords().filter((w) => w.word !== target.word)).slice(0, count(level) - 1);
   return base({
     skill: "words",
     prompt: `Which picture is the ${target.word}?`,
@@ -208,7 +225,7 @@ function wordPictureRound(level: number): Round {
 }
 
 function missingLetterWord(level: number): Round {
-  const target = pick(CVC_WORDS);
+  const target = pick(spellingWords());
   const idx = Math.floor(Math.random() * target.word.length);
   const shown = target.word
     .split("")
@@ -216,7 +233,7 @@ function missingLetterWord(level: number): Round {
     .join("")
     .toUpperCase();
   const answer = target.word.charAt(idx).toUpperCase();
-  const others = shuffle(LETTERS.filter((l) => l !== answer)).slice(0, count(level) - 1);
+  const others = shuffle(alphabet().filter((l) => l !== answer)).slice(0, count(level) - 1);
   return base({
     skill: "words",
     prompt: `${target.emoji}  ${shown}`,
@@ -443,8 +460,8 @@ function patternNext(level: number): Round {
 /* ------------------------------------------------------------------ logic */
 
 function whichDifferent(level: number): Round {
-  const same = pick(WORDS);
-  const odd = pick(WORDS.filter((w) => w.word !== same.word));
+  const same = pick(bankWords());
+  const odd = pick(bankWords().filter((w) => w.word !== same.word));
   const n = count(level) + 1;
   const opts: Option[] = shuffle([
     ...Array.from({ length: n - 1 }, (_, i) => ({ id: `same-${i}`, emoji: same.emoji, label: same.word })),
@@ -541,8 +558,8 @@ function longShort(): Round {
 }
 
 function jigsawPiece(level: number): Round {
-  const target = pick(WORDS);
-  const others = shuffle(WORDS.filter((w) => w.word !== target.word)).slice(0, count(level) - 1);
+  const target = pick(bankWords());
+  const others = shuffle(bankWords().filter((w) => w.word !== target.word)).slice(0, count(level) - 1);
   return base({
     skill: "puzzles",
     prompt: `🧩 Which piece completes the ${target.word} picture?`,
@@ -643,18 +660,18 @@ function huntSetEn(kind: string, level: number) {
     );
   }
   if (kind === "pictures") {
-    const w = pick(WORDS);
+    const w = pick(bankWords());
     return make(
       `every ${w.word}`,
       { id: "t", emoji: w.emoji, label: w.word },
-      WORDS.filter((o) => o.word !== w.word).map((o) => ({ id: "d", emoji: o.emoji, label: o.word })),
+      bankWords().filter((o) => o.word !== w.word).map((o) => ({ id: "d", emoji: o.emoji, label: o.word })),
     );
   }
-  const l = pick(LETTERS);
+  const l = pick(alphabet());
   return make(
     `the letter ${l}`,
     { id: "t", label: l, big: true },
-    LETTERS.filter((o) => o !== l).map((o) => ({ id: "d", label: o, big: true })),
+    alphabet().filter((o) => o !== l).map((o) => ({ id: "d", label: o, big: true })),
   );
 }
 
@@ -666,20 +683,20 @@ function orderSetEn(kind: string, level: number) {
     return { label: "Put the numbers in order, smallest first", spoken: "Tap the numbers in order, starting with the smallest.", seq };
   }
   if (kind === "buildWord") {
-    const w = pick(CVC_WORDS);
+    const w = pick(spellingWords());
     const seq = w.word.split("").map((c, i) => ({ id: `${c}-${i}`, label: c.toUpperCase(), big: true }));
     return { label: `Spell ${w.word.toUpperCase()} ${w.emoji}`, spoken: `Spell the word ${w.word}.`, seq };
   }
   const len = level <= 1 ? 3 : level <= 3 ? 4 : 6;
-  const start = Math.floor(Math.random() * (26 - len));
-  const seq = LETTERS.slice(start, start + len).map((l) => ({ id: l, label: l, big: true }));
+  const start = Math.floor(Math.random() * (alphabet().length - len));
+  const seq = alphabet().slice(start, start + len).map((l) => ({ id: l, label: l, big: true }));
   return { label: "Tap the letters in alphabet order", spoken: "Tap the letters in alphabet order.", seq };
 }
 
 function memorySetEn(kind: string, level: number) {
   const pairs = level <= 1 ? 3 : level <= 3 ? 4 : 6;
   if (kind === "letters") {
-    return shuffle(LETTERS).slice(0, pairs).flatMap((l, i) => [
+    return shuffle(alphabet()).slice(0, pairs).flatMap((l, i) => [
       { key: `${i}-a`, pairId: l, emoji: l, label: `letter ${l}` },
       { key: `${i}-b`, pairId: l, emoji: l, label: `letter ${l}` },
     ]);
@@ -703,12 +720,12 @@ function memorySetEn(kind: string, level: number) {
     ]);
   }
   if (kind === "wordPicture") {
-    return shuffle(WORDS).slice(0, pairs).flatMap((w, i) => [
+    return shuffle(bankWords()).slice(0, pairs).flatMap((w, i) => [
       { key: `${i}-a`, pairId: w.word, emoji: w.emoji, label: w.word },
       { key: `${i}-b`, pairId: w.word, emoji: w.word.toUpperCase(), label: w.word },
     ]);
   }
-  return shuffle(WORDS).slice(0, pairs).flatMap((w, i) => [
+  return shuffle(bankWords()).slice(0, pairs).flatMap((w, i) => [
     { key: `${i}-a`, pairId: w.word, emoji: w.emoji, label: w.word },
     { key: `${i}-b`, pairId: w.word, emoji: w.emoji, label: w.word },
   ]);

@@ -1,4 +1,16 @@
-
+import {
+  COLORS,
+  SHAPES,
+  alphabet,
+  bankWords,
+  pick,
+  shuffle,
+  soundLetters,
+  soundWords,
+  spellingWords,
+  wordsForLetter,
+  type SkillId,
+} from "./content";
 import { translateRound } from "./i18n";
 
 export interface Option {
@@ -27,8 +39,8 @@ export interface Round {
 const choiceCount = (level: number) => (level <= 1 ? 2 : level <= 3 ? 3 : 4);
 
 function letterRound(level: number): Round {
-  const target = pick(LETTERS);
-  const others = shuffle(LETTERS.filter((l) => l !== target)).slice(0, choiceCount(level) - 1);
+  const target = pick(alphabet());
+  const others = shuffle(alphabet().filter((l) => l !== target)).slice(0, choiceCount(level) - 1);
   const w = wordsForLetter(target)[0];
   return {
     skill: "letters",
@@ -43,8 +55,8 @@ function letterRound(level: number): Round {
 }
 
 function phonicsRound(level: number): Round {
-  const target = pick(WORDS);
-  const others = shuffle(WORDS.filter((w) => w.letter !== target.letter)).slice(0, choiceCount(level) - 1);
+  const target = pick(bankWords());
+  const others = shuffle(bankWords().filter((w) => w.letter !== target.letter)).slice(0, choiceCount(level) - 1);
   return {
     skill: "phonics",
     prompt: `Which one starts with ${target.letter}?`,
@@ -108,8 +120,8 @@ function shapeRound(level: number): Round {
 }
 
 function wordRound(level: number): Round {
-  const target = pick(WORDS);
-  const others = shuffle(WORDS.filter((w) => w.word !== target.word)).slice(0, choiceCount(level) - 1);
+  const target = pick(bankWords());
+  const others = shuffle(bankWords().filter((w) => w.word !== target.word)).slice(0, choiceCount(level) - 1);
   return {
     skill: "words",
     prompt: `Which picture is the ${target.word}?`,
@@ -123,14 +135,14 @@ function wordRound(level: number): Round {
 }
 
 function puzzleRound(level: number): Round {
-  const target = pick(WORDS);
+  const target = pick(bankWords());
   const missingIndex = Math.min(1, target.word.length - 1);
   const shown = target.word
     .split("")
     .map((ch, i) => (i === missingIndex ? "_" : ch))
     .join("");
   const answer = target.word.charAt(missingIndex).toUpperCase();
-  const others = shuffle(LETTERS.filter((l) => l !== answer)).slice(0, choiceCount(level) - 1);
+  const others = shuffle(alphabet().filter((l) => l !== answer)).slice(0, choiceCount(level) - 1);
   return {
     skill: "puzzles",
     prompt: `${target.emoji}  ${shown.toUpperCase()} — which piece fits?`,
@@ -144,9 +156,9 @@ function puzzleRound(level: number): Round {
 }
 
 function wordSearchRound(level: number): Round {
-  const target = pick(LETTERS);
+  const target = pick(alphabet());
   const size = level <= 2 ? 9 : 12;
-  const cells = Array.from({ length: size }, () => pick(LETTERS.filter((l) => l !== target)));
+  const cells = Array.from({ length: size }, () => pick(alphabet().filter((l) => l !== target)));
   const at = Math.floor(Math.random() * size);
   cells[at] = target;
   return {
@@ -191,7 +203,7 @@ export function adventurePlan(levels: Partial<Record<SkillId, number>>): SkillId
 /** Memory game deck. */
 export function memoryDeck(level: number) {
   const pairs = level <= 1 ? 3 : level <= 3 ? 4 : 6;
-  const chosen = shuffle(WORDS).slice(0, pairs);
+  const chosen = shuffle(bankWords()).slice(0, pairs);
   return shuffle(
     chosen.flatMap((w, i) => [
       { key: `${i}-a`, pairId: w.word, emoji: w.emoji },

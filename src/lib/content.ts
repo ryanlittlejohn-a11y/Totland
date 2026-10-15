@@ -1,4 +1,5 @@
 /**
+import { getLang } from "./i18n";
  * Bundled, offline-first learning content.
  * Everything here is original app content (no third-party assets),
  * so the whole child experience works with zero network access.

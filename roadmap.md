@@ -250,3 +250,9 @@
 - [x] Render real swatches/shapes/numbers in the nine new Fishing/Monster/Rain games with accurate accessibility names
 - [x] Keep beginner Monster decoys within the current color/shape/number skill instead of adding alphabet letters
 - [x] Verify representative new games in English/Spanish and free/locked states
+
+## Narration coverage scan (approved 2026-10-15)
+- [x] Scan every spoken line (EN/ES) against the voice library, no audio generated; report in Files /narration
+- [ ] On/after Oct 17 (credit renewal): approve and generate English gaps (~4,600 credits)
+- [ ] Fix Spanish letter/phonics word bank before generating Spanish gaps (~45,600 credits)
+- [ ] Next: re-point the 11 misnamed games to their real scenes, then the counting interaction

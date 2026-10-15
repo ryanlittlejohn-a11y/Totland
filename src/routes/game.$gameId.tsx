@@ -130,9 +130,9 @@ function GameHost() {
       ) : engine === "rocket" ? (
         <WordRocketGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "jigsaw" ? (
-        <AnimalJigsawGame key={key} skill={game.skill} theme={theme} onFinish={finish} />
+        <AnimalJigsawGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "maze" ? (
-        <NumberMazeGame key={key} skill={game.skill} theme={theme} onFinish={finish} />
+        <NumberMazeGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "rain" ? (
         <LetterRainGame key={key} kind={game.kind} skill={game.skill} rounds={game.rounds} theme={theme} onFinish={finish} />
       ) : engine === "hunt" ? (

@@ -310,6 +310,25 @@ function missingNumber(level: number): Round {
   });
 }
 
+/** "What comes next" — three numbers in a row, catch the fourth (Number Fishing). */
+function nextNumber(level: number): Round {
+  const max = Math.max(5, maxNumber(level));
+  const n = 4 + Math.floor(Math.random() * (max - 3));
+  const others = shuffle(range(max).filter((x) => x !== n)).slice(0, count(level) - 1);
+  return base({
+    skill: "numbers",
+    prompt: `${n - 3}  ${n - 2}  ${n - 1}  ___`,
+    spoken: `${n - 3}, ${n - 2}, ${n - 1}. What comes next?`,
+    options: shuffle([n, ...others]).map((x) => ({ id: String(x), label: String(x), big: true })),
+    answerId: String(n),
+    hint: `Count up from ${n - 1}.`,
+    reveal: `${n} comes next!`,
+  });
+}
+
+/** Kinds whose question needs a picture/text clue shown in the scene. */
+export const CLUE_KINDS = new Set(["missingLetterWord", "countObjects", "nextNumber"]);
+
 function moreOrLess(level: number): Round {
   const item = pick(["🍎", "🐟", "⭐"]);
   const a = 1 + Math.floor(Math.random() * maxNumber(level));
@@ -598,6 +617,7 @@ function roundForKindEn(kind: string, level: number): Round {
     case "findNumber": return findNumber(level);
     case "numberQuantity": return numberQuantity(level);
     case "missingNumber": return missingNumber(level);
+    case "nextNumber": return nextNumber(level);
     case "moreOrLess": return moreOrLess(level);
     case "biggerNumber": return biggerNumber(level);
     case "findColor": return findColor(level);

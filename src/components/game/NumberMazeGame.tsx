@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react";
-import { type SkillId } from "@/lib/content";
+import { alphabet, type SkillId } from "@/lib/content";
 import { L, getLang } from "@/lib/i18n";
 import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
 import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
-import { MAZE_REVEALS, makeMaze, mazeTier } from "@/lib/number-maze";
+import { LETTER_MAZE_REVEALS, MAZE_REVEALS, letterRun, makeMaze, mazeTier } from "@/lib/number-maze";
 import type { TracePoint } from "@/hooks/usePathTrace";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
@@ -14,10 +14,13 @@ import { NumberMazeScene } from "./NumberMazeScene";
  * each number in order). Wrong-order touches are playful retries, never misses.
  */
 export function NumberMazeGame({
+  kind,
   skill,
   theme = NEUTRAL_GAME_THEME,
   onFinish,
 }: {
+  /** "letters" = Letter Maze (A→B→C…); default numbers 1→2→3… */
+  kind?: string;
   skill: SkillId;
   theme?: GameTheme;
   onFinish: (stars: number, accuracy: number) => void;
@@ -44,15 +47,24 @@ export function NumberMazeGame({
   const lastWrong = useRef(0);
   const tally = useRef({ hits: 0, misses: 0 });
   const started = useRef(Date.now());
-  const reveal = MAZE_REVEALS[round % MAZE_REVEALS.length] ?? MAZE_REVEALS[0]!;
+  const letters = kind === "letters";
+  const [labels, setLabels] = useState<string[] | undefined>(undefined);
+  const reveals = letters ? LETTER_MAZE_REVEALS : MAZE_REVEALS;
+  const reveal = reveals[round % reveals.length] ?? reveals[0]!;
+  const nameAt = (i: number) => (labels ? labels[i] ?? "" : String(i + 1));
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
-  const prompt = () =>
-    L("Trace the path: start at 1 and follow the numbers!", "Traza el camino: ¡empieza en 1 y sigue los números!");
+  const promptFor = (first: string | undefined) =>
+    first
+      ? L(`Trace the path: start at ${first} and follow the alphabet!`, `Traza el camino: ¡empieza en la ${first} y sigue el abecedario!`)
+      : L("Trace the path: start at 1 and follow the numbers!", "Traza el camino: ¡empieza en 1 y sigue los números!");
+  const prompt = () => promptFor(labels?.[0]);
 
   useEffect(() => {
     if (!hydrated || !tierSet.current) return;
+    const run = letters ? letterRun(alphabet(), tier.points) : undefined;
+    setLabels(run);
     setPoints(makeMaze(tier.points));
     setConnected(0);
     connectedRef.current = 0;
@@ -60,8 +72,8 @@ export function NumberMazeGame({
     setDone(false);
     setMessage("");
     started.current = Date.now();
-    say(prompt());
-  }, [hydrated, tier.points, round]);
+    say(promptFor(run?.[0]));
+  }, [hydrated, tier.points, round, letters]);
 
   const connect = (i: number) => {
     const next = i + 1;
@@ -70,7 +82,7 @@ export function NumberMazeGame({
     setHintNext(false);
     tally.current.hits += 1;
     update((p) =>
-      recordAnswer(p, { skill, correct: true, responseMs: Date.now() - started.current, itemId: `maze-${i + 1}` }),
+      recordAnswer(p, { skill, correct: true, responseMs: Date.now() - started.current, itemId: letters ? `maze-${nameAt(i)}` : `maze-${i + 1}` }),
     );
     started.current = Date.now();
     themeChime(theme.motif, profile.sfx);
@@ -90,9 +102,11 @@ export function NumberMazeGame({
       }, 2400);
     } else {
       setMessage(
-        L(`${next} connected. Next: ${next + 1}.`, `${next} conectado. Siguiente: ${next + 1}.`),
+        letters
+          ? L(`${nameAt(i)} connected. Next: ${nameAt(next)}.`, `${nameAt(i)} conectada. Siguiente: ${nameAt(next)}.`)
+          : L(`${next} connected. Next: ${next + 1}.`, `${next} conectado. Siguiente: ${next + 1}.`),
       );
-      say(String(next));
+      say(nameAt(i));
     }
   };
 
@@ -107,7 +121,9 @@ export function NumberMazeGame({
     update((p) => recordParentMiss(p, skill));
     window.setTimeout(() => setWrongIndex(null), 600);
     const want = connectedRef.current + 1;
-    const retry = L(`Find ${want}!`, `¡Busca el ${want}!`);
+    const retry = letters
+      ? L(`Find ${nameAt(want - 1)}!`, `¡Busca la ${nameAt(want - 1)}!`)
+      : L(`Find ${want}!`, `¡Busca el ${want}!`);
     setMessage(retry);
     if (now - lastRetrySpeech.current > 2000) {
       lastRetrySpeech.current = now;
@@ -164,6 +180,7 @@ export function NumberMazeGame({
         onStart={onStart}
         onEnter={onEnter}
         onTap={onTap}
+        labels={labels}
       />
 
       <div
@@ -175,10 +192,13 @@ export function NumberMazeGame({
       >
         <span className="text-xl" aria-hidden>{done ? "🌟" : "🌀"}</span>
         <p className="font-ui font-semibold text-ink" data-maze-status>
-          {message || L(
+          {message || (letters ? L(
+            `Slide your finger from ${labels?.[0] ?? "A"} to the next letter — or tap the letters in order.`,
+            `Desliza el dedo de la ${labels?.[0] ?? "A"} a la siguiente letra — o toca las letras en orden.`,
+          ) : L(
             "Slide your finger from 1 to the next number — or tap the numbers in order.",
             "Desliza el dedo del 1 al siguiente número — o toca los números en orden.",
-          )}
+          ))}
         </p>
       </div>
     </GameThemeScene>

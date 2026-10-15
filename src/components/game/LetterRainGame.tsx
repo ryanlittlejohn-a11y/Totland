@@ -1,12 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { PRAISE, pick, type SkillId } from "@/lib/content";
+import { PRAISE, pick, shuffle, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
-import { roundForKind } from "@/lib/rounds";
+import { orderSet, roundForKind } from "@/lib/rounds";
 import type { Round } from "@/lib/games";
 import { chime, say, sayParts, setNarration, themeChime } from "@/lib/speech";
 import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
+import { RoundClue, needsClue } from "./RoundClue";
 import { LetterRainScene } from "./LetterRainScene";
 
 /** Letter Rain: slow, endlessly returning letters with no deadline or misses. */
@@ -37,13 +38,54 @@ export function LetterRainGame({
 
   useEffect(() => setNarration(profile.narration), [profile.narration]);
 
-  const prompt = (value: Round) => enginePrompt("catchPatient", skill, value.answerId);
+  const prompt = (value: Round) =>
+    inOrder || needsClue(kind) ? value.spoken : enginePrompt("catchPatient", skill, value.answerId);
   const answerName = L(
     skill === "colors" ? "color" : skill === "shapes" ? "shape" : skill === "numbers" ? "number" : "letter",
     skill === "colors" ? "color" : skill === "shapes" ? "figura" : skill === "numbers" ? "número" : "letra",
   );
 
+  // "In order" mode (Number Rain): the sequence is frozen for the session and
+  // each step asks for the next number — the target is never spoken aloud.
+  const inOrder = kind === "numbersInOrder";
+  const sequence = useRef<string[] | null>(null);
+  const stepIndex = useRef(0);
+  if (inOrder && hydrated && !sequence.current) {
+    sequence.current = orderSet("numbers", level).seq.map((s) => s.label);
+  }
+  const ROUND_COUNT = inOrder && sequence.current ? sequence.current.length : ROUNDS;
+
+  const orderStep = (step: number): Round => {
+    const seq = sequence.current!;
+    const target = seq[step]!;
+    const done = seq.slice(0, step);
+    return {
+      skill: "numbers",
+      columns: 3,
+      prompt: done.length ? `${done.join("  ")}  ___` : "___",
+      spoken: L(
+        "Catch the numbers in order, smallest first.",
+        "Atrapa los números en orden, del más pequeño al más grande.",
+      ),
+      options: shuffle(seq.slice(step)).map((n) => ({ id: n, label: n, big: true })),
+      answerId: target,
+      reveal: target,
+    } as Round;
+  };
+
   const nextRound = useCallback(() => {
+    if (inOrder) {
+      if (!sequence.current) return;
+      const step = orderStep(stepIndex.current);
+      stepIndex.current += 1;
+      setRound(step);
+      setCaughtId(null);
+      setSplashedId(null);
+      setMessage("");
+      started.current = Date.now();
+      if (stepIndex.current === 1) say(step.spoken);
+      return;
+    }
     const generated = roundForKind(kind, level);
     setRound(generated);
     setCaughtId(null);
@@ -92,9 +134,9 @@ export function LetterRainGame({
       itemId: round.answerId,
     }));
     themeChime(theme.motif, profile.sfx);
-    sayParts([praise, round.reveal ?? ""]);
+    if (inOrder) say(round.answerId); else sayParts([praise, round.reveal ?? ""]);
     window.setTimeout(() => {
-      if (index + 1 >= ROUNDS) {
+      if (index + 1 >= ROUND_COUNT) {
         const total = stars.current;
         update((current) => recordGameComplete(current, skill, total, 1));
         // Let this component persist its completion before the host records the
@@ -104,7 +146,7 @@ export function LetterRainGame({
         setIndex((current) => current + 1);
         nextRound();
       }
-    }, 2600);
+    }, inOrder ? 1300 : 2600);
   };
 
   if (!round) return <div className="h-64 rounded-3xl felt-panel" />;
@@ -119,6 +161,8 @@ export function LetterRainGame({
         <p className="pr-9 font-ui text-[22px] font-semibold leading-tight text-ink">{prompt(round)}</p>
         <span className="absolute bottom-2 right-2 grid size-9 place-items-center text-xl" aria-hidden>🔊</span>
       </button>
+
+      {needsClue(kind) || inOrder ? <RoundClue round={round} /> : null}
 
       <LetterRainScene
         options={round.options}

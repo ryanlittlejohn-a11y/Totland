@@ -57,3 +57,20 @@ export function makeMaze(count: number): TracePoint[] {
   const fy = Math.random() < 0.5;
   return base.map((p) => ({ x: fx ? 100 - p.x : p.x, y: fy ? 100 - p.y : p.y }));
 }
+
+/** Letter Maze rewards — its own picture set, separate from the number maze. */
+export const LETTER_MAZE_REVEALS: MazeReveal[] = [
+  { emoji: "🌻", en: "a sunflower", es: "un girasol" },
+  { emoji: "🚀", en: "a rocket", es: "un cohete" },
+  { emoji: "🐝", en: "a bee", es: "una abeja" },
+  { emoji: "🎈", en: "a balloon", es: "un globo" },
+  { emoji: "🌙", en: "a moon", es: "una luna" },
+  { emoji: "🐢", en: "a turtle", es: "una tortuga" },
+];
+
+/** A run of consecutive letters from the active alphabet (Spanish includes Ñ). */
+export function letterRun(alphabet: string[], length: number, rand = Math.random): string[] {
+  const len = Math.min(length, alphabet.length);
+  const start = Math.floor(rand() * (alphabet.length - len + 1));
+  return alphabet.slice(start, start + len);
+}

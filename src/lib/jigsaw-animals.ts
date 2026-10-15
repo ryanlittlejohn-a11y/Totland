@@ -33,7 +33,8 @@ export interface JigsawTier {
 }
 
 /** Piece count follows the shared 1–5 skill level. */
-export function jigsawTier(level: number): JigsawTier {
+export function jigsawTier(level: number, easy = false): JigsawTier {
+  if (easy) return level <= 2 ? { cols: 2, rows: 1, tabs: false, rounds: 4 } : { cols: 2, rows: 2, tabs: false, rounds: 3 };
   if (level <= 2) return { cols: 2, rows: 1, tabs: false, rounds: 4 };
   if (level === 3) return { cols: 2, rows: 2, tabs: false, rounds: 3 };
   if (level === 4) return { cols: 3, rows: 2, tabs: true, rounds: 3 };

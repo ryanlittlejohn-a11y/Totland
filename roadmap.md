@@ -261,3 +261,14 @@
 - [x] WORDS_ES (27 letters incl. Ñ) + Spanish rounds, spelling, flash cards, Ñ in letter/order/tracing games
 - [x] No first-sound questions for H/Ñ/X; tests; flash-card count copy; re-run narration scan
 - [ ] Generate Spanish gaps (~2,544 lines, ~51,000 credits) on/after Oct 17 with approval
+
+## Game rebuild group 1 — Batch 1 + 2 (approved 2026-10-15)
+- [x] Letter/Number Rocket on the rocket scene (alphabet / counting order)
+- [x] Simple Jigsaw on the jigsaw scene, fixed 2–4 pieces, animal pictures
+- [x] Number Fishing → "catch the number that comes next"
+- [x] Shared picture clue for Fishing/Monster/Rain; Word Fishing + Number Monster use it
+- [x] Number Rain "catch in order" mode; Letter Maze (EN 26 / ES 27 with Ñ) with own rewards
+- [x] Tests: re-pointed scenes, no duplicate engine+content among bespoke games
+- [ ] Look at the 7 Premium re-pointed games with a Premium account (not checked in preview)
+- [ ] Record new lines (~190, ~6,500 credits) with the Oct 17+ batch, with approval
+- [ ] Batch 3: Alphabet/Number Jigsaw picture sets, Shape Train

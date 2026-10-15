@@ -27,7 +27,7 @@ export function NumberMazeScene({
   onEnter: (index: number) => boolean;
   onTap: (index: number) => void;
   /** stone labels (Letter Maze); defaults to 1, 2, 3… */
-  labels?: string[];
+  labels?: string[] | undefined;
 }) {
   const { boardRef, livePos, boardProps } = usePathTrace({
     points,

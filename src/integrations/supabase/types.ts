@@ -80,6 +80,39 @@ export type Database = {
         }
         Relationships: []
       }
+      store_purchases_pending: {
+        Row: {
+          claimed_at: string | null
+          claimed_by: string | null
+          created_at: string
+          id: string
+          rc_app_user_id: string
+          row_data: Json
+          subscription_id: string
+          updated_at: string
+        }
+        Insert: {
+          claimed_at?: string | null
+          claimed_by?: string | null
+          created_at?: string
+          id?: string
+          rc_app_user_id: string
+          row_data: Json
+          subscription_id: string
+          updated_at?: string
+        }
+        Update: {
+          claimed_at?: string | null
+          claimed_by?: string | null
+          created_at?: string
+          id?: string
+          rc_app_user_id?: string
+          row_data?: Json
+          subscription_id?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       subscriptions: {
         Row: {
           cancel_at_period_end: boolean

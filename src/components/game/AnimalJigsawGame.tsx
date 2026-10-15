@@ -4,6 +4,7 @@ import { L, getLang } from "@/lib/i18n";
 import { chime, say, setNarration, stripEmoji, themeChime } from "@/lib/speech";
 import { recordAnswer, recordParentMiss, recordGameComplete, skillOf, useProfile } from "@/lib/profile";
 import { JIGSAW_VEHICLES } from "@/lib/jigsaw-vehicles";
+import { letterCard, letterCardSpecs, numberCard, numberCardSpecs, numberJigsawMax, type JigsawCard } from "@/lib/jigsaw-cards";
 import { JIGSAW_ANIMALS, jigsawTier, type JigsawAnimal } from "@/lib/jigsaw-animals";
 import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 import { GameThemeScene } from "./GameThemeScene";
@@ -53,13 +54,24 @@ export function AnimalJigsawGame({
 
   const prompt = useCallback(
     (a: JigsawAnimal) =>
-      getLang() === "es" ? `¡Arma el ${a.es}!` : `Put the ${a.en} back together!`,
+      "promptEn" in a
+        ? getLang() === "es" ? (a as JigsawCard).promptEs : (a as JigsawCard).promptEn
+        : getLang() === "es" ? `¡Arma el ${a.es}!` : `Put the ${a.en} back together!`,
     [],
   );
 
   useEffect(() => {
     if (!hydrated || animals.length) return;
-    setAnimals(shuffle(kind === "jigsawEasy" ? JIGSAW_VEHICLES : JIGSAW_ANIMALS).slice(0, tier.rounds));
+    // Each session draws tier.rounds cards at random from the full set,
+    // the same way Animal Jigsaw draws from its six animals.
+    if (kind === "letterCards") {
+      setAnimals(shuffle(letterCardSpecs()).slice(0, tier.rounds).map(letterCard));
+    } else if (kind === "numberCards") {
+      const level = skillOf(profile, skill).level;
+      setAnimals(shuffle(numberCardSpecs(numberJigsawMax(level))).slice(0, tier.rounds).map(numberCard));
+    } else {
+      setAnimals(shuffle(kind === "jigsawEasy" ? JIGSAW_VEHICLES : JIGSAW_ANIMALS).slice(0, tier.rounds));
+    }
   }, [hydrated, animals.length, tier.rounds]);
 
   useEffect(() => {
@@ -107,7 +119,10 @@ export function AnimalJigsawGame({
     themeChime(theme.motif, profile.sfx);
 
     if (next.every(Boolean)) {
-      const praise = getLang() === "es" ? `¡Hiciste un ${animal.es}! ` : `You made a ${animal.en}! `;
+      const card = "doneEn" in animal ? (animal as JigsawCard) : null;
+      const praise = card
+        ? `${getLang() === "es" ? card.doneEs : card.doneEn} `
+        : getLang() === "es" ? `¡Hiciste un ${animal.es}! ` : `You made a ${animal.en}! `;
       const text = `${praise}${animal.emoji}`;
       setDone(true);
       setMessage(text);

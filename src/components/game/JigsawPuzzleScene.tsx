@@ -153,7 +153,7 @@ export function JigsawPuzzleScene({
         {done && (
           <img
             src={animal.image}
-            alt={L(`A completed ${animal.en}`, `Un ${animal.es} completo`)}
+            alt={L(`The finished picture: ${animal.en}`, `La imagen terminada: ${animal.es}`)}
             width={816}
             height={816}
             className="jigsaw-complete absolute inset-0 h-full w-full"

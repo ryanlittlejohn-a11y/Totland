@@ -1,5 +1,4 @@
 import { alphabet, bankWords } from "./content";
-import { getLang } from "./i18n";
 import type { JigsawAnimal } from "./jigsaw-animals";
 
 /**
@@ -63,7 +62,6 @@ function inkColor(): string {
 }
 
 export function letterCard(spec: LetterCardSpec): JigsawCard {
-  const es = getLang() === "es";
   const image = canvas((ctx) => {
     ctx.fillStyle = inkColor();
     ctx.textAlign = "center";
@@ -85,7 +83,6 @@ export function letterCard(spec: LetterCardSpec): JigsawCard {
     doneEn: spec.word ? `${L} is for ${spec.word}!` : `${L}!`,
     doneEs: spec.word ? `¡${L} es de ${spec.word}!` : `¡${L}, como en piña!`,
   };
-  void es;
 }
 
 export function numberCard(spec: NumberCardSpec): JigsawCard {

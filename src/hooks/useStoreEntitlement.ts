@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from "react";
 
 import { isNativeApp } from "@/lib/native";
+import { setStorePremium } from "@/lib/profile";
 import { configurePurchases, getStoreEntitlementState, storePurchasesAvailable } from "@/lib/purchases";
 
 /**
@@ -22,6 +23,8 @@ export function useStoreEntitlement(userId?: string | null) {
       await configurePurchases(userId ?? undefined);
       const state = await getStoreEntitlementState();
       setStoreActive(state.active);
+      // Only a definite store answer updates the game flag.
+      setStorePremium(state.active);
       setManagementURL(state.managementURL);
       return state.active;
     } catch (e) {

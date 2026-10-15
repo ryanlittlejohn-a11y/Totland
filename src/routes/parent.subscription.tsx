@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { FREE_GAME_COUNT, FREE_WORD_FIND_COUNT, FREE_STORY_COUNT, premiumBenefits } from "@/lib/library-counts";
-import { setVerifiedPremium, useProfile } from "@/lib/profile";
+import { setAccountPremium, useProfile } from "@/lib/profile";
 import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
 import { useParentAuth } from "@/hooks/useParentAuth";
@@ -72,7 +72,7 @@ function Subscription() {
       const state = await fetchSubscription({ data: { environment: getPaddleEnvironment() } });
       setSub(state);
       // Cache the verified answer locally so the app keeps working offline.
-      setVerifiedPremium(state.active);
+      setAccountPremium(state.active);
       return state;
     } catch (e) {
       console.error(e);
@@ -185,7 +185,7 @@ function Subscription() {
         /* ignore */
       }
 
-      setVerifiedPremium(false);
+      setAccountPremium(false);
       setDeleted(true);
       setDeleting(false);
     } catch (e) {
@@ -407,7 +407,7 @@ function Subscription() {
                 onClick={async () => {
                   console.warn("[signout] source=user-button reason=tapped Sign out");
                   await supabase.auth.signOut();
-                  setVerifiedPremium(false);
+                  setAccountPremium(false);
                 }}
                 className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink"
               >

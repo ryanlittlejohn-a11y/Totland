@@ -186,10 +186,36 @@ let verifiedPremium = false;
  */
 let verifiedPremiumSettled = false;
 
-export function setVerifiedPremium(value: boolean) {
+/**
+ * Two independent verified sources. Games unlock when EITHER says yes, so a
+ * backend that hasn't recorded an App Store purchase can never re-lock games
+ * the store already unlocked.
+ */
+let storePremium = false;
+let accountPremium = false;
+
+function recomputePremium() {
+  const value = storePremium || accountPremium;
   if (verifiedPremium === value) return;
   verifiedPremium = value;
   if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("totland:profile"));
+}
+
+/** Apple / Google entitlement as reported on this device by RevenueCat. */
+export function setStorePremium(value: boolean) {
+  storePremium = value;
+  recomputePremium();
+}
+
+/** Server-verified subscription for the signed-in grown-up. */
+export function setAccountPremium(value: boolean) {
+  accountPremium = value;
+  recomputePremium();
+}
+
+/** @deprecated kept for callers that mean "the account's answer". */
+export function setVerifiedPremium(value: boolean) {
+  setAccountPremium(value);
 }
 
 export function setVerifiedPremiumSettled() {

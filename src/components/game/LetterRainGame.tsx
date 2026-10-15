@@ -134,7 +134,7 @@ export function LetterRainGame({
       itemId: round.answerId,
     }));
     themeChime(theme.motif, profile.sfx);
-    sayParts([praise, round.reveal ?? ""]);
+    if (inOrder) say(round.answerId); else sayParts([praise, round.reveal ?? ""]);
     window.setTimeout(() => {
       if (index + 1 >= ROUND_COUNT) {
         const total = stars.current;
@@ -146,7 +146,7 @@ export function LetterRainGame({
         setIndex((current) => current + 1);
         nextRound();
       }
-    }, 2600);
+    }, inOrder ? 1300 : 2600);
   };
 
   if (!round) return <div className="h-64 rounded-3xl felt-panel" />;

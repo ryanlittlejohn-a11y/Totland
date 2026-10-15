@@ -45,8 +45,8 @@ describe("RevenueCat webhook", () => {
     expect(subs.size).toBe(0);
     const row = pending.get("rc_2000001")!;
     expect(row.rc_app_user_id).toBe(ANON);
-    expect(row.row_data.status).toBe("active");
-    expect(row.row_data.source).toBe("apple");
+    expect(row.row_data["status"]).toBe("active");
+    expect(row.row_data["source"]).toBe("apple");
   });
 
   it("a TRANSFER event moves the anonymous purchase onto the account", async () => {
@@ -58,8 +58,8 @@ describe("RevenueCat webhook", () => {
     );
     expect(r).toEqual({ kind: "transferred", userId: ACCOUNT, claimed: 1 });
     const sub = subs.get("rc_2000001")!;
-    expect(sub.user_id).toBe(ACCOUNT);
-    expect(sub.status).toBe("active");
+    expect(sub["user_id"]).toBe(ACCOUNT);
+    expect(sub["status"]).toBe("active");
     expect(pending.get("rc_2000001")!.claimed_by).toBe(ACCOUNT);
   });
 
@@ -67,13 +67,13 @@ describe("RevenueCat webhook", () => {
     const { store, subs } = memStore();
     await handleRcEvent(purchase, store);
     await handleRcEvent({ ...purchase, type: "RENEWAL", app_user_id: ACCOUNT, aliases: [ANON, ACCOUNT] }, store);
-    expect(subs.get("rc_2000001")!.user_id).toBe(ACCOUNT);
+    expect(subs.get("rc_2000001")!["user_id"]).toBe(ACCOUNT);
   });
 
   it("signed-in purchases are recorded on the account directly", async () => {
     const { store, subs, pending } = memStore();
     await handleRcEvent({ ...purchase, app_user_id: ACCOUNT, aliases: [ACCOUNT] }, store);
-    expect(subs.get("rc_2000001")!.user_id).toBe(ACCOUNT);
+    expect(subs.get("rc_2000001")!["user_id"]).toBe(ACCOUNT);
     expect(pending.size).toBe(0);
   });
 

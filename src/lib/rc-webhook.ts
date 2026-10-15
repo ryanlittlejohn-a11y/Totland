@@ -109,7 +109,7 @@ export async function handleRcEvent(event: any, store: RcStore): Promise<RcResul
     return { kind: "recorded", userId: accountId, claimed };
   }
 
-  const rcId = appUserId || known[0];
+  const rcId: string = appUserId || known[0]!;
   await store.upsertPending({ rc_app_user_id: rcId, subscription_id: row.paddle_subscription_id, row_data: row });
   return { kind: "pending", rcId };
 }

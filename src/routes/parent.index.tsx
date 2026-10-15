@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { AREAS, LETTERS } from "@/lib/content";
-import { GAME_COUNT, STORY_COUNT, FLASH_CARD_COUNT } from "@/lib/library-counts";
+import { GAME_COUNT, STORY_COUNT, FLASH_CARD_COUNT, FLASH_CARD_COUNT_ES } from "@/lib/library-counts";
 import {
   masteryLabel,
   masteryScore,
@@ -389,7 +389,7 @@ function Dashboard() {
           <NarrationDiagnostics />
         </div>
         <p className="mt-4 text-xs text-inksoft">
-          {GAME_COUNT} games, {WORD_FIND_THEMES.length} word finds, {STORY_COUNT} storybooks and {FLASH_CARD_COUNT} flash cards are stored on this device. Progress stays on this device unless you sign in to sync
+          {GAME_COUNT} games, {WORD_FIND_THEMES.length} word finds, {STORY_COUNT} storybooks and {FLASH_CARD_COUNT} English / {FLASH_CARD_COUNT_ES} Spanish flash cards are stored on this device. Progress stays on this device unless you sign in to sync
           your family profiles — there is no child account, no ads and no tracking.
         </p>
       </section>

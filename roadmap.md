@@ -258,5 +258,6 @@
 - [ ] Next: re-point the 11 misnamed games to their real scenes, then the counting interaction
 
 ## Spanish word bank (approved 2026-10-15)
-- [ ] WORDS_ES (27 letters incl. Ñ) + Spanish rounds, spelling, flash cards, Ñ in letter/order/tracing games
-- [ ] No first-sound questions for H/Ñ/X; tests; flash-card count copy; re-run narration scan
+- [x] WORDS_ES (27 letters incl. Ñ) + Spanish rounds, spelling, flash cards, Ñ in letter/order/tracing games
+- [x] No first-sound questions for H/Ñ/X; tests; flash-card count copy; re-run narration scan
+- [ ] Generate Spanish gaps (~2,544 lines, ~51,000 credits) on/after Oct 17 with approval

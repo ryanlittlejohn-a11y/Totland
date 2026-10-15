@@ -5,21 +5,7 @@
  * Rules enforced globally: 2–4 options for young levels, spoken instruction on
  * every round, a hint always available, and never any negative language.
  */
-import {
-  CATEGORIES,
-  COLORS,
-  CVC_WORDS,
-  LETTERS,
-  NUMBER_WORDS,
-  RHYMES,
-  RHYMES_ES,
-  RHYME_EMOJI,
-  SHAPES,
-  WORDS,
-  pick,
-  shuffle,
-  wordsForLetter,
-} from "./content";
+
 import type { Round, Option } from "./games";
 import { getLang, noun, sentence, translateRound } from "./i18n";
 

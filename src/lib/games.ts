@@ -1,13 +1,4 @@
-import {
-  COLORS,
-  LETTERS,
-  SHAPES,
-  WORDS,
-  pick,
-  shuffle,
-  wordsForLetter,
-  type SkillId,
-} from "./content";
+
 import { translateRound } from "./i18n";
 
 export interface Option {

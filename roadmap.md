@@ -264,7 +264,7 @@
 
 ## Game rebuild group 1 — Batch 1 + 2 (approved 2026-10-15)
 - [x] Letter/Number Rocket on the rocket scene (alphabet / counting order)
-- [x] Simple Jigsaw on the jigsaw scene, fixed 2–4 pieces, animal pictures
+- [x] Simple Jigsaw on the jigsaw scene, fixed 2–4 pieces, own vehicle picture set
 - [x] Number Fishing → "catch the number that comes next"
 - [x] Shared picture clue for Fishing/Monster/Rain; Word Fishing + Number Monster use it
 - [x] Number Rain "catch in order" mode; Letter Maze (EN 26 / ES 27 with Ñ) with own rewards

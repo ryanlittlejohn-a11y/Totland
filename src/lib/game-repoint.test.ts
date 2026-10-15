@@ -3,7 +3,8 @@ import { GAMES } from "./catalog";
 import { roundForKind, CLUE_KINDS } from "./rounds";
 import { LETTERS_ES } from "./content";
 import { letterRun, mazeTier } from "./number-maze";
-import { jigsawTier } from "./jigsaw-animals";
+import { JIGSAW_ANIMALS, jigsawTier } from "./jigsaw-animals";
+import { JIGSAW_VEHICLES } from "./jigsaw-vehicles";
 import { setLang } from "./i18n";
 
 const byTitle = (t: string) => GAMES.find((g) => g.title === t)!;
@@ -67,6 +68,12 @@ describe("Group 1 re-pointed games", () => {
     expect(CLUE_KINDS.has("missingLetterWord")).toBe(true);
     const r = roundForKind("countObjects", 2);
     expect(Array.from(r.visual ?? "")).toHaveLength(Number(r.answerId));
+  });
+
+  it("Simple Jigsaw has its own 6-picture set, separate from the animals", () => {
+    expect(JIGSAW_VEHICLES).toHaveLength(6);
+    const animalIds = new Set(JIGSAW_ANIMALS.map((a) => a.id));
+    for (const v of JIGSAW_VEHICLES) expect(animalIds.has(v.id)).toBe(false);
   });
 
   it("Simple Jigsaw stays at 2–4 pieces at every level", () => {

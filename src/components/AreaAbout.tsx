@@ -139,7 +139,7 @@ export function AreaAbout({ area, title }: { area: string; title: string }) {
         {L(`For grown-ups: about ${title}`, `Para adultos: sobre ${title}`)}
       </h2>
       <div className="mt-2 space-y-2 font-ui text-sm leading-relaxed text-inksoft">
-        {L(copy.en, copy.es).map((p) => (
+        {(L("en", "es") === "es" ? copy.es : copy.en).map((p) => (
           <p key={p}>{p}</p>
         ))}
         {ageText && <p>{L(`Made for: ${ageText}.`, `Pensado para: ${ageText}.`)}</p>}

@@ -29,6 +29,7 @@ export const Route = createFileRoute("/parent/subscription")({
   head: () => ({
     meta: [
       { title: "Subscription — Totland" },
+      { name: "robots", content: "noindex, nofollow" },
       { name: "description", content: "Totland Premium: $2.99 a month or $19.99 a year for the full learning library. No ads, ever." },
       { property: "og:title", content: "Subscription — Totland" },
       { property: "og:description", content: "Affordable, ad-free premium access to the complete Totland learning library." },

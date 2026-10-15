@@ -133,7 +133,7 @@ function numberPuzzle(level: number): Round {
 /* ---------------------------------------------------------------- phonics */
 
 function startsWith(level: number): Round {
-  const target = pick(bankWords());
+  const target = pick(soundWords());
   const others = shuffle(bankWords().filter((w) => w.letter !== target.letter)).slice(0, count(level) - 1);
   return base({
     skill: "phonics",
@@ -147,8 +147,8 @@ function startsWith(level: number): Round {
 }
 
 function letterSound(level: number): Round {
-  const target = pick(bankWords());
-  const others = shuffle(alphabet().filter((l) => l !== target.letter)).slice(0, count(level) - 1);
+  const target = pick(soundWords());
+  const others = shuffle(soundLetters().filter((l) => l !== target.letter)).slice(0, count(level) - 1);
   return base({
     skill: "phonics",
     prompt: `${target.emoji}  Which letter makes that first sound?`,
@@ -161,7 +161,7 @@ function letterSound(level: number): Round {
 }
 
 function sameSound(level: number): Round {
-  const target = pick(bankWords().filter((w) => wordsForLetter(w.letter).length > 1));
+  const target = pick(soundWords().filter((w) => wordsForLetter(w.letter).length > 1));
   const mate = pick(wordsForLetter(target.letter).filter((w) => w.word !== target.word));
   const others = shuffle(bankWords().filter((w) => w.letter !== target.letter)).slice(0, count(level) - 1);
   return base({

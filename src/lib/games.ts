@@ -55,7 +55,7 @@ function letterRound(level: number): Round {
 }
 
 function phonicsRound(level: number): Round {
-  const target = pick(bankWords());
+  const target = pick(soundWords());
   const others = shuffle(bankWords().filter((w) => w.letter !== target.letter)).slice(0, choiceCount(level) - 1);
   return {
     skill: "phonics",

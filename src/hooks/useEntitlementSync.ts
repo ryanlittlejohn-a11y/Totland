@@ -4,10 +4,9 @@ import { useEffect } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { supabase } from "@/integrations/supabase/client";
-import { setVerifiedPremiumSettled } from "@/lib/profile";
+import { setAccountPremium, setStorePremium, setVerifiedPremiumSettled } from "@/lib/profile";
 import { getPaddleEnvironment } from "@/lib/paddle";
 import { getMySubscription } from "@/lib/subscription.functions";
-import { setVerifiedPremium } from "@/lib/profile";
 import { isNativeApp, withTimeout } from "@/lib/native";
 import {
   configurePurchases,
@@ -35,9 +34,11 @@ export function useEntitlementSync() {
     let cancelled = false;
     const native = isNativeApp();
 
+    // The backend only ever answers for the account; it can add Premium but
+    // never remove a "yes" the store already gave (they are combined).
     const setPremium = (value: boolean) => {
       if (cancelled) return;
-      setVerifiedPremium(value);
+      setAccountPremium(value);
     };
 
     /** Store entitlement, cached on the device — safe offline. */
@@ -58,7 +59,7 @@ export function useEntitlementSync() {
       // First answer is in: the offline gate may now decide.
       setVerifiedPremiumSettled();
       if (fromStore) {
-        setPremium(true);
+        if (!cancelled) setStorePremium(true);
         return;
       }
       // Offline: keep the last verified answer rather than revoking access.

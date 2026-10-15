@@ -11,6 +11,7 @@ import {
   type StoreOffer,
 } from "@/lib/purchases";
 import { isNativeApp, nativePlatform } from "@/lib/native";
+import { setStorePremium } from "@/lib/profile";
 
 interface Props {
   /**
@@ -58,7 +59,10 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
       setError(null);
       try {
         const active = await purchaseStorePackage(offer);
-        if (active) onEntitlementChanged();
+        if (active) {
+          setStorePremium(true);
+          onEntitlementChanged();
+        }
       } catch (e) {
         if (!isPurchaseCancelled(e)) {
           console.error(e);
@@ -76,6 +80,7 @@ export function StorePurchasePanel({ userId, onEntitlementChanged }: Props) {
     setError(null);
     try {
       const active = await restoreStorePurchases();
+      if (active) setStorePremium(true);
       onEntitlementChanged();
       if (!active) setError("We couldn't find a subscription on this account.");
     } catch (e) {

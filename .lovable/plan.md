@@ -1,70 +1,51 @@
-# Group 1 rebuild: 11 misnamed games — findings and proposal
+# Premium games locked despite an active subscription — root cause findings
 
-Investigation only. Nothing has been changed.
+Read-only investigation. Nothing changed. Fix proposal at the end needs approval (this is subscription code).
 
-## Key finding
+## 1. What the lock screen checks
 
-Changing the engine setting alone isn't enough for any of the 11 except one. There are two reasons:
+- Game screen, area lists, worlds, Word Finds and stories all use the same check: `game.premium && !profile.premium`.
+- `profile.premium` is never read from storage. It comes from one in-memory flag (`verifiedPremium` in profile.ts), set only by:
+  - **App launch check** (useEntitlementSync): asks RevenueCat on the device first; if yes, Premium. If not, asks our backend for the signed-in account. Runs again only when the device comes back online or someone signs in/out.
+  - **Subscription page** (parent.subscription.tsx): every time it opens with a signed-in, verified account, it sets the flag to **whatever the backend says**.
+  - Sign out / delete account: set to false.
 
-1. **The real scenes skip a game's picture clue.** Fishing, Rain and Monster only show the answer choices and speak the question. They never show the extra picture some games depend on: the objects to count, the word with a missing letter, or the shape pattern. If Number Monster, Word Fishing or Shape Train were moved over unchanged, they would have nothing to look at.
-2. **Rocket, Maze and Jigsaw are fixed to one kind of content.** Rocket only spells words, Maze only does numbers 1–10, and Jigsaw only uses the 6 animal pictures. The letter and number versions need their own content.
+## 2. Systemic, not caused by the game batches
 
-## Per-game breakdown
+- Batch 1/2/3 touched only which scene a game opens and the catalog's kind/engine fields. No premium flags changed (46/75 still), and the lock line in the game screen is unchanged.
+- Nothing in the Premium-check files (entitlement sync, purchases, profile, sign-in check, storage boot, offline gate, subscription functions, store webhook) has changed in the last 10 days. Letter Bubbles being locked confirms it's app-wide.
 
-| # | Game | Today | Real scene | What it needs | Effort |
-|---|---|---|---|---|---|
-| 55 | Number Rain | Tap-in-order engine | Rain | Rain only does "tap the number you hear." That would make it a copy of Falling Numbers (#121). It needs an "in order" mode in Rain: catch 1, then 2, then 3… | Medium |
-| 7 | Letter Rocket | Tap-the-letter | Rocket | Rocket builds a sequence. Rocket can already put letters in alphabet order (the order game has this), so it needs a small change to let Rocket use that set | Small |
-| 45 | Number Rocket | Tap-the-number | Rocket | Same as above, using the existing "numbers in order" set | Small |
-| 29 | Word Fishing | Missing-letter word | Fishing | Fishing must show the word with the gap and its picture (e.g. 🐱 C_T) above the pond | Medium |
-| 39 | Number Fishing | Tap-the-number | Fishing | Changing the engine setting alone would be enough, **but then it's a true copy of #115** (see below) | Small (but a copy) |
-| 43 | Number Monster | Count the objects | Monster | Monster must show the objects to count (e.g. 🍎🍎🍎) and accept the matching number. Otherwise it's a copy of Hungry for Numbers (#118) | Medium |
-| 15 | Letter Maze | Find-the-letters scene | Maze | Maze is numbers only. It needs a letter version (A→B→C…, English 26 / Spanish 27 with Ñ) plus letter rewards | Medium |
-| 83 | Alphabet Jigsaw | Tap-the-letter | Jigsaw | Jigsaw is fixed to the animal pictures. It needs a letter picture set, e.g. big letter + matching picture (A 🍎). In Spanish it must use the Spanish word list | Large (new pictures) |
-| 84 | Number Jigsaw | Tap-the-number | Jigsaw | Same, using a number picture set (e.g. "3" with three ducks) | Large (new pictures) |
-| 81 | Simple Jigsaw | Tap the right picture | Jigsaw | **Two-piece mode already exists** (level 1–2). Option: keep the 6 animals and always cut 2–4 pieces, or give it its own set (vehicles/fruit) so it doesn't repeat Animal Jigsaw | Small (fixed easy cut) / Large (new set) |
-| 69 | Shape Train | Pick the next shape in the pattern | Rocket/Order? | **There's no train scene.** Nearest real option: the Rocket sequence scene recolored as train cars, showing the pattern so far. In effect a new scene | Large |
+## 3. Root cause (two real bugs, both old, made visible now)
 
-## Number Fishing (#39) vs Catch the Number (#115)
+**Bug A — the subscription page overwrites the store answer.**
+The page's own display combines both sources (`account active OR store active`), so it shows "Premium active". But the flag the games read is set from the backend answer **only**. The backend has no record of App Store purchases (see below), so it says "not active" and the games lock — and stay locked until the app is fully closed and reopened.
+Sequence: Premium recognized at launch → grown-up opens parent area → subscription page → games locked.
 
-Both use "findNumber", both are in Number Valley, both are Premium. On the same Fishing engine they would be **exact copies**, differing only in title. Two options:
-- **A (recommended): Change Number Fishing's content** to "catch the number that comes next" (pond shows 4, 5, _ → catch 6) or "catch the bigger number." This keeps the game count at 121 and adds a new skill.
-- B: Remove #39. This drops the catalog to 120 games and changes the free/Premium counts on the subscription page, sitemap text and store copy.
+**Bug B — buying or restoring in the app never unlocks games right away.**
+After a store purchase or Restore Purchases succeeds, the panel refreshes only the subscription page's own display. Nobody sets the game flag to true. Games stay locked until the next launch (and then Bug A can re-lock them).
 
-The same copy risk applies to Number Rain vs Falling Numbers (#121) and Number Monster vs Hungry for Numbers (#118). The plan above avoids both by giving each one a different task.
+**Why the backend says "not active":** the subscriptions table has only 2 rows, both test web (Paddle) purchases from Sept 26. There are **zero App Store rows** — the store notification receiver has never recorded a purchase. So on a store-only subscriber, the backend is always "no", which turns Bug A into a lock.
 
-## Free vs Premium
+## 4. Cached/stale state?
 
-- Free: Simple Jigsaw (#81) only.
-- Premium: the other 10.
-- Moving games to their real scenes doesn't change the 46/75 split.
+- Not a stale-cache issue in RevenueCat; the device check at launch is fine if RevenueCat reports the entitlement.
+- The "settled" flag only affects the offline screen, not the lock.
+- One thing I can't rule out from here: RevenueCat itself not reporting the entitlement on Ryan's device (e.g. entitlement named something other than premium / totland_pro / pro). If so, games would be locked even right after a fresh launch.
 
-## Difficulty and levels
+## 5. Reproducible here?
 
-- Generic engines: answer choices grow with level (count(level)), numbers go up to maxNumber(level), and the order engine's sequence gets longer (3/5/7 numbers, 3/4/6 letters). Rounds are fixed at 5.
-- Fishing/Rain/Monster: same round content and level settings, 5 rounds, plus extra choices added so there are always at least 3. Difficulty stays about the same.
-- Rocket: sequence length follows the same order-engine tiers, so it stays the same.
-- Maze: 3/5/7/8/10 dots, 4–2 mazes per session. A letter maze would reuse these tiers.
-- Jigsaw: 2/4/6/9 pieces, 4–2 puzzles per session. This is a bigger change than the current 1-tap choice. Easier at levels 1–2, harder at 4–5. Level and session length lock when a session starts, the same protection as the animal jigsaw.
-- One thing that changes: these games go from tap to drag/trace. That raises the effort needed for the youngest Explorer mode (ages 2–3). Letter/Number Rocket and Number Fishing currently allow Explorer, so drag targets need the existing tap fallback (already built in).
+Not on the device — no RevenueCat in the browser preview. The logic path is confirmed by reading the code and the database. I need from Ryan:
+1. After **force-closing and reopening** the app (without visiting the parent area), are Premium games unlocked? Yes → Bugs A/B. No → RevenueCat entitlement problem as well.
+2. Was the subscription bought in TestFlight or restored? Was Restore Purchases tried?
+3. Signed into a grown-up account in the app, or not?
+4. The entitlement name in the RevenueCat dashboard.
 
-## Proposed batches
+## Proposed fix (needs approval — subscription code)
 
-**Batch 1 (small, low risk):** Letter Rocket, Number Rocket, Simple Jigsaw (fixed easy cut, animal set), Number Fishing changed to "what comes next."
+1. Subscription page sets the game flag to `account active OR store active`, never the backend answer alone.
+2. After a successful store purchase or restore, set the game flag to true immediately.
+3. App launch check: keep the store answer; the backend may only add Premium, never remove a store "yes".
+4. Tests: store yes + backend no → unlocked; purchase/restore → unlocked without relaunch; sign out with no store entitlement → locked.
+5. Separately investigate why App Store purchases never reach the backend (webhook setup in RevenueCat). Doesn't block the fix, since the device's store answer is enough.
 
-**Batch 2 (medium, one shared change):** add a picture-clue area to Fishing/Monster/Rain. This unlocks Word Fishing and Number Monster (counting). Also in this batch: Number Rain "in order" mode and Letter Maze. The clue area also covers the counting interaction planned next.
-
-**Batch 3 (new pictures):** Alphabet Jigsaw and Number Jigsaw picture sets (generated, bundled, offline). Shape Train as a train skin on the sequence scene.
-
-## Applies to all batches
-
-- Spanish: new prompts use the authored Spanish word list and agreement templates. No translated letter words.
-- New spoken lines are added to the narration gap list. No audio is generated without approval.
-- Tests: each moved game opens its expected scene, and no two games share the same engine and content.
-- No changes to the gate, subscriptions, pricing or the free/Premium flags.
-
-## Questions for you
-
-1. Number Fishing: change its content (A) or remove it (B)?
-2. Simple Jigsaw: reuse the animal pictures, or a new picture set?
-3. Start with Batch 1 only, or Batches 1 and 2 together?
+No changes to pricing, the parental gate, or free/Premium flags.

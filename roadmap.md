@@ -256,3 +256,7 @@
 - [ ] On/after Oct 17 (credit renewal): approve and generate English gaps (~4,600 credits)
 - [ ] Fix Spanish letter/phonics word bank before generating Spanish gaps (~45,600 credits)
 - [ ] Next: re-point the 11 misnamed games to their real scenes, then the counting interaction
+
+## Spanish word bank (approved 2026-10-15)
+- [ ] WORDS_ES (27 letters incl. Ñ) + Spanish rounds, spelling, flash cards, Ñ in letter/order/tracing games
+- [ ] No first-sound questions for H/Ñ/X; tests; flash-card count copy; re-run narration scan

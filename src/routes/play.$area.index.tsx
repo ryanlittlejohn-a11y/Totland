@@ -4,6 +4,7 @@ import { GAMES, type AgeMode } from "@/lib/catalog";
 import { AREAS } from "@/lib/content";
 import { useProfile } from "@/lib/profile";
 import { L, title as tTitle } from "@/lib/i18n";
+import { AreaAbout } from "@/components/AreaAbout";
 
 export const Route = createFileRoute("/play/$area/")({
   component: AreaGamesPage,
@@ -77,6 +78,7 @@ function AreaGamesPage() {
           {showAll ? L("Show games for my age", "Ver juegos para mi edad") : L(`Show all ages (+${hidden})`, `Ver todas las edades (+${hidden})`)}
         </button>
       )}
+      <AreaAbout area={meta.id} title={tTitle(meta.title)} />
     </main>
   );
 }

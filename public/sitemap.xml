@@ -5,15 +5,99 @@
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://totland.app/guides/toddler-learning-games</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/worlds</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/letters</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/numbers</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/colors</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/shapes</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/words</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/phonics</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/memory</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/puzzles</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/tracing</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/flashcards</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/wordsearch</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/play/stories</loc>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/world/alphabet-forest</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/world/number-valley</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/world/color-cove</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/world/puzzle-park</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/world/storybook-village</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/wordfinds</loc>
+    <priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/contact</loc>
+    <priority>0.4</priority>
+  </url>
+  <url>
     <loc>https://totland.app/terms</loc>
-    <priority>0.5</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://totland.app/privacy</loc>
-    <priority>0.5</priority>
+    <priority>0.3</priority>
   </url>
   <url>
     <loc>https://totland.app/refund</loc>
-    <priority>0.5</priority>
+    <priority>0.3</priority>
   </url>
 </urlset>

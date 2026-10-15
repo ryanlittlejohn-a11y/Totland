@@ -273,3 +273,10 @@
 - [ ] Record new lines (~190, ~6,500 credits) with the Oct 17+ batch, with approval
 - [x] Batch 3: Alphabet Jigsaw (letter+picture cards, EN 26/ES 27), Number Jigsaw (1–20 counts), Shape Train (rocket scene, train skin)
 - [ ] Record Batch 3 lines (~250 EN+ES) with the Oct 17+ batch, with approval
+
+## Premium locked despite active store subscription (approved 2026-10-15)
+- [x] Store and account answers combined; backend can only add Premium
+- [x] Purchase/Restore unlocks games immediately
+- [x] Tests (src/lib/premium-sources.test.ts)
+- [ ] RevenueCat webhook: anonymous purchases skipped + confirm webhook configured in RevenueCat
+- [ ] New Codemagic build + TestFlight check

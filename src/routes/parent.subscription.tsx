@@ -5,7 +5,7 @@ import { useCallback, useEffect, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 
 import { FREE_GAME_COUNT, FREE_WORD_FIND_COUNT, FREE_STORY_COUNT, premiumBenefits } from "@/lib/library-counts";
-import { setAccountPremium, setStorePremium, useProfile } from "@/lib/profile";
+import { setAccountPremium, useProfile } from "@/lib/profile";
 import { hasVerifiedSession } from "@/lib/verifiedSession";
 import { usePaddleCheckout, type PlanId } from "@/hooks/usePaddleCheckout";
 import { useParentAuth } from "@/hooks/useParentAuth";

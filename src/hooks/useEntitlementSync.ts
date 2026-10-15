@@ -90,6 +90,8 @@ export function useEntitlementSync() {
         if (native && id) void logInPurchases(id).finally(() => void verify());
         else void verify();
       } else if (event === "SIGNED_OUT") {
+        // Re-ask the store for the now-anonymous device; it re-adds Premium if still owned.
+        setStorePremium(false);
         if (native) void logOutPurchases().finally(() => void verify());
         else void verify();
       }

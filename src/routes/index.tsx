@@ -11,13 +11,13 @@ import { L, title as tTitle } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Totland — Ad-Free Toddler Learning Games for Ages 2–6" },
+      { title: "Ad-Free Learning Games for Toddlers, Ages 2–6 | Totland" },
       {
         name: "description",
         content:
-          "Toddler learning games for ages 2–6: ABCs, phonics games, letter tracing games, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+          `Short, playful learning games for ages 2–6 — ABCs, phonics, letter tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} games, no ads, no tracking. Free to start.`,
       },
-      { property: "og:title", content: "Totland — Ad-Free Toddler Learning Games for Ages 2–6" },
+      { property: "og:title", content: "Ad-Free Learning Games for Toddlers, Ages 2–6 | Totland" },
       {
         property: "og:description",
         content:
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/")({
           applicationSubCategory: "Early learning games",
           operatingSystem: "Web, iOS, Android",
           description:
-            "Toddler learning games for ages 2–6: ABCs, phonics games, letter tracing games, numbers, colors, shapes, first words, puzzles and storybooks. No ads, no tracking.",
+            `Short, playful learning games for ages 2–6 — ABCs, phonics, letter tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} games, no ads, no tracking. Free to start.`,
           isFamilyFriendly: true,
           inLanguage: ["en", "es"],
           audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },
@@ -78,11 +78,9 @@ function Home() {
             T
           </div>
           <div>
-            <h1 className="font-ui text-[15px] font-bold leading-none text-ink">
-              Totland
-              <span className="mt-0.5 block text-[11px] font-semibold text-inksoft">
-                {L("Ad-free learning games, ages 2–6", "Juegos educativos sin anuncios, de 2 a 6 años")}
-              </span>
+            <p className="font-ui text-[15px] font-bold leading-none text-ink">Totland</p>
+            <h1 className="mt-0.5 font-ui text-[11px] font-semibold text-inksoft">
+              {L("Ad-Free Learning Games for Ages 2–6", "Juegos educativos sin anuncios, de 2 a 6 años")}
             </h1>
             <p className="font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>
           </div>

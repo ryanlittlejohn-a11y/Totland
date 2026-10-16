@@ -99,6 +99,9 @@ function Guide() {
         <h2>Keep it playful</h2>
         <p>
           Play together when you can, and say the color, shape or number out loud with your child.
+          For younger
+          toddlers, see our{" "}
+          <Link to="/guides/learning-games-for-2-year-olds">guide to learning games for 2 year olds</Link>.
           When they're ready for more, see our{" "}
           <Link to="/guides/learning-games-for-4-year-olds">guide to learning games for 4 year olds</Link>{" "}
           or the broader{" "}

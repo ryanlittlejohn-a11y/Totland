@@ -293,5 +293,6 @@
 - [x] First-time English/Español popup; returning families never asked
 - [x] Tests (src/lib/language-choice.test.ts)
 - [x] Investigate Spanish home-screen music (reported)
-- [ ] Spanish home-screen song: use Ryan's upload, distinct filename, live language selection + offline bundle; verify
+- [x] Spanish home-screen song: separate little-steps-big-dreams-es.mp3, live language selection, offline bundle; 9 tests passed and browser requested hosted Spanish audio (200)
+- [ ] Spanish song on a real iPhone: new Codemagic build + device check
 - [ ] Check opening animation on a real iPhone (new build)

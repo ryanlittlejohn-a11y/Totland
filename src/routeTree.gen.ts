@@ -22,6 +22,7 @@ import { Route as WordfindsRouteImport } from './routes/wordfinds'
 import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as AuthNativeReturnRouteImport } from './routes/auth.native-return'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
+import { Route as GuidesLearningGamesFor3YearOldsRouteImport } from './routes/guides.learning-games-for-3-year-olds'
 import { Route as GuidesLearningGamesFor4YearOldsRouteImport } from './routes/guides.learning-games-for-4-year-olds'
 import { Route as GuidesToddlerLearningGamesRouteImport } from './routes/guides.toddler-learning-games'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
@@ -104,6 +105,12 @@ const GameGameIdRoute = GameGameIdRouteImport.update({
   path: '/game/$gameId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GuidesLearningGamesFor3YearOldsRoute =
+  GuidesLearningGamesFor3YearOldsRouteImport.update({
+    id: '/guides/learning-games-for-3-year-olds',
+    path: '/guides/learning-games-for-3-year-olds',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const GuidesLearningGamesFor4YearOldsRoute =
   GuidesLearningGamesFor4YearOldsRouteImport.update({
     id: '/guides/learning-games-for-4-year-olds',
@@ -203,6 +210,7 @@ export interface FileRoutesByFullPath {
   '/worlds': typeof WorldsRoute
   '/auth/native-return': typeof AuthNativeReturnRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
   '/guides/learning-games-for-4-year-olds': typeof GuidesLearningGamesFor4YearOldsRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -233,6 +241,7 @@ export interface FileRoutesByTo {
   '/worlds': typeof WorldsRoute
   '/auth/native-return': typeof AuthNativeReturnRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
   '/guides/learning-games-for-4-year-olds': typeof GuidesLearningGamesFor4YearOldsRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -264,6 +273,7 @@ export interface FileRoutesById {
   '/worlds': typeof WorldsRoute
   '/auth/native-return': typeof AuthNativeReturnRoute
   '/game/$gameId': typeof GameGameIdRoute
+  '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
   '/guides/learning-games-for-4-year-olds': typeof GuidesLearningGamesFor4YearOldsRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
@@ -297,6 +307,7 @@ export interface FileRouteTypes {
     | '/worlds'
     | '/auth/native-return'
     | '/game/$gameId'
+    | '/guides/learning-games-for-3-year-olds'
     | '/guides/learning-games-for-4-year-olds'
     | '/guides/toddler-learning-games'
     | '/parent/children'
@@ -327,6 +338,7 @@ export interface FileRouteTypes {
     | '/worlds'
     | '/auth/native-return'
     | '/game/$gameId'
+    | '/guides/learning-games-for-3-year-olds'
     | '/guides/learning-games-for-4-year-olds'
     | '/guides/toddler-learning-games'
     | '/parent/children'
@@ -357,6 +369,7 @@ export interface FileRouteTypes {
     | '/worlds'
     | '/auth/native-return'
     | '/game/$gameId'
+    | '/guides/learning-games-for-3-year-olds'
     | '/guides/learning-games-for-4-year-olds'
     | '/guides/toddler-learning-games'
     | '/parent/children'
@@ -389,6 +402,7 @@ export interface RootRouteChildren {
   WorldsRoute: typeof WorldsRoute
   AuthNativeReturnRoute: typeof AuthNativeReturnRoute
   GameGameIdRoute: typeof GameGameIdRoute
+  GuidesLearningGamesFor3YearOldsRoute: typeof GuidesLearningGamesFor3YearOldsRoute
   GuidesLearningGamesFor4YearOldsRoute: typeof GuidesLearningGamesFor4YearOldsRoute
   GuidesToddlerLearningGamesRoute: typeof GuidesToddlerLearningGamesRoute
   PlayAreaRoute: typeof PlayAreaRouteWithChildren
@@ -493,6 +507,13 @@ declare module '@tanstack/react-router' {
       path: '/game/$gameId'
       fullPath: '/game/$gameId'
       preLoaderRoute: typeof GameGameIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/guides/learning-games-for-3-year-olds': {
+      id: '/guides/learning-games-for-3-year-olds'
+      path: '/guides/learning-games-for-3-year-olds'
+      fullPath: '/guides/learning-games-for-3-year-olds'
+      preLoaderRoute: typeof GuidesLearningGamesFor3YearOldsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/guides/learning-games-for-4-year-olds': {
@@ -653,6 +674,7 @@ const rootRouteChildren: RootRouteChildren = {
   WorldsRoute: WorldsRoute,
   AuthNativeReturnRoute: AuthNativeReturnRoute,
   GameGameIdRoute: GameGameIdRoute,
+  GuidesLearningGamesFor3YearOldsRoute: GuidesLearningGamesFor3YearOldsRoute,
   GuidesLearningGamesFor4YearOldsRoute: GuidesLearningGamesFor4YearOldsRoute,
   GuidesToddlerLearningGamesRoute: GuidesToddlerLearningGamesRoute,
   PlayAreaRoute: PlayAreaRouteWithChildren,

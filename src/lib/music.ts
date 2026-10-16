@@ -166,19 +166,10 @@ export function stopMusic() {
   audio?.pause();
 }
 
-let previewCount = 0;
-
-/** Live preview from the parent dashboard (silent routes) while settings are shown. */
-export function previewMusic(on: boolean) {
-  previewCount = Math.max(0, previewCount + (on ? 1 : -1));
-  if (on || previewCount > 0) startMusic();
-  else stopMusic();
-}
-
-/** Apply the parent dashboard on/off switch. */
+/** Apply the kid-side on/off state. Grown-up pages never start music. */
 export function setMusic(on: boolean) {
   if (on) startMusic();
-  else if (previewCount === 0) stopMusic();
+  else stopMusic();
 }
 
 /** Set the music loudness (0–1; 0.5 is the default soft level). */

@@ -20,22 +20,22 @@ vi.mock("@tanstack/react-start", () => ({
 
 import { setLang } from "@/lib/i18n";
 
-async function screen(path: string): Promise<string> {
-  const mod = (await import(/* @vite-ignore */ path)) as Record<string, unknown>;
+async function screen(load: () => Promise<unknown>): Promise<string> {
+  const mod = (await load()) as Record<string, unknown>;
   const route = mod.Route as { component: ComponentType } | undefined;
   const Comp = route ? route.component : (Object.values(mod).find((v) => typeof v === "function") as ComponentType);
   return renderToString(createElement(Comp));
 }
 
-const SCREENS: [string, string, string][] = [
-  ["parental gate", "@/routes/parent", "Zona para adultos"],
-  ["dashboard", "@/routes/parent.index", "Panel para adultos"],
-  ["children", "@/routes/parent.children", "Añadir un peque"],
-  ["subscription", "@/routes/parent.subscription", "Gestionar suscripción"],
-  ["contact", "@/routes/contact", "Antes de escribirnos"],
-  ["sign-in card", "@/components/ParentAuthCard", "Continuar con Google"],
-  ["get the app", "@/components/GetTheAppCard", "Descarga la app"],
-  ["sign-in return", "@/routes/auth.native-return", "Volviendo a Totland"],
+const SCREENS: [string, () => Promise<unknown>, string][] = [
+  ["parental gate", () => import("@/routes/parent"), "Zona para adultos"],
+  ["dashboard", () => import("@/routes/parent.index"), "Panel para adultos"],
+  ["children", () => import("@/routes/parent.children"), "Añadir un peque"],
+  ["subscription", () => import("@/routes/parent.subscription"), "Gestionar suscripción"],
+  ["contact", () => import("@/routes/contact"), "Antes de escribirnos"],
+  ["sign-in card", () => import("@/components/ParentAuthCard"), "Continuar con Google"],
+  ["get the app", () => import("@/components/GetTheAppCard"), "Descarga la app"],
+  ["sign-in return", () => import("@/routes/auth.native-return"), "Volviendo a Totland"],
 ];
 
 describe("grown-up screens follow the Spanish setting", () => {
@@ -50,7 +50,7 @@ describe("grown-up screens follow the Spanish setting", () => {
   }
 
   it("legal pages keep English text but add the Spanish note", async () => {
-    const html = await screen("@/routes/terms");
+    const html = await screen(() => import("@/routes/terms"));
     expect(html).toContain("La versión en inglés es la que");
   });
 

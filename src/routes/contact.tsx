@@ -87,6 +87,7 @@ function ContactPage() {
   return (
     <LegalPage title={L("Contact Us", "Contacto")} updated="September 15, 2026">
       <section>
+        <h2 className="text-lg font-semibold">{L("How to reach us", "Cómo contactarnos")}</h2>
         <p>
           {L(
             "Have a question about Totland, need help with your subscription, or want to share feedback? Fill out the form below and we’ll get back to you as soon as we can — usually within two business days.",

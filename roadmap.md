@@ -289,7 +289,9 @@
 - [ ] Native Spanish speaker reviews wording before publish
 
 ## Opening animation + first-time language picker (approved 2026-10-16)
-- [ ] Entrance animation covering startup load, skippable, reduced-motion still
-- [ ] First-time English/Español popup; returning families never asked
-- [ ] Tests
-- [ ] Investigate Spanish home-screen music (read-only, report first)
+- [x] Entrance animation covering startup load, skippable, reduced-motion still
+- [x] First-time English/Español popup; returning families never asked
+- [x] Tests (src/lib/language-choice.test.ts)
+- [x] Investigate Spanish home-screen music (reported)
+- [ ] Spanish home-screen song: waiting on Ryan's approval of lyrics + credits
+- [ ] Check opening animation on a real iPhone (new build)

@@ -25,6 +25,7 @@ async function screen(load: () => Promise<unknown>): Promise<string> {
   const mod = (await load()) as Record<string, unknown>;
   const route = mod.Route as { component: ComponentType } | undefined;
   const Comp = route ? route.component : (Object.values(mod).find((v) => typeof v === "function") as ComponentType);
+  await (Comp as { preload?: () => Promise<unknown> }).preload?.();
   return renderToString(createElement(Comp));
 }
 

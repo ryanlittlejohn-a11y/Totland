@@ -296,3 +296,5 @@
 - [x] Spanish home-screen song: separate little-steps-big-dreams-es.mp3, live language selection, offline bundle; 9 tests passed and browser requested hosted Spanish audio (200)
 - [ ] Spanish song on a real iPhone: new Codemagic build + device check
 - [ ] Check opening animation on a real iPhone (new build)
+
+- [ ] Music: dashboard silent (no preview), home music survives leaving dashboard, ordering test EN/ES

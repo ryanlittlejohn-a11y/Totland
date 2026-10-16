@@ -4,6 +4,7 @@
  * the copy automatically — never hardcode these numbers in UI text.
  */
 import { GAMES } from "./catalog";
+import { L, title as tTitle } from "./i18n";
 import { AREAS, STORIES, WORDS, WORDS_ES, type Area } from "./content";
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "./wordfinds";
 
@@ -31,8 +32,6 @@ export interface Benefit {
 }
 
 /** What Premium honestly unlocks, computed live. */
-import { L, title as tTitle } from "@/lib/i18n";
-
 export function premiumBenefits(): Benefit[] {
   const perArea: Benefit[] = AREAS.flatMap((a) => {
     const n = gamesForArea(a.id).filter((g) => g.premium).length;

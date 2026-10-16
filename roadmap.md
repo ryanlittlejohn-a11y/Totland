@@ -280,3 +280,10 @@
 - [x] Tests (src/lib/premium-sources.test.ts)
 - [ ] RevenueCat webhook: anonymous purchases skipped + confirm webhook configured in RevenueCat
 - [ ] New Codemagic build + TestFlight check
+
+## Spanish for grown-up screens (approved 2026-10-16)
+- [x] Parents area, dashboard, family, subscription/deletion, sign-in, store panel, app cards, contact, sign-in return, error page in Spanish
+- [x] Language switch updates these screens immediately
+- [x] Terms/Privacy/Refund: Spanish note that English version applies
+- [x] Test: src/lib/parent-spanish.test.tsx
+- [ ] Native Spanish speaker reviews wording before publish

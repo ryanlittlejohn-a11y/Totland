@@ -59,7 +59,12 @@ function NarrationDiagnostics() {
   );
 }
 import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
-import { L, setLang, type Lang } from "@/lib/i18n";
+import { L, setLang, title as tTitle, type Lang } from "@/lib/i18n";
+
+const MASTERY_ES: Record<string, string> = { Mastered: "Dominado", Strong: "Muy bien", Progressing: "Avanzando", Practicing: "Practicando", Beginning: "Empezando" };
+const REASON_ES: Record<string, string> = { "A great first step": "Un gran primer paso", "Counting to 10": "Contar hasta 10", "Ready for new vocabulary": "Listo para palabras nuevas" };
+const reasonText = (r: string) => L(r, REASON_ES[r] ?? r.replace("% so far — more practice helps", "% hasta ahora: practicar más ayuda"));
+const areaName = (id: string) => tTitle(AREAS.find((a) => a.id === id)?.title ?? id);
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "@/lib/wordfinds";
 import { GetTheAppCard } from "@/components/GetTheAppCard";
 
@@ -205,12 +210,12 @@ function Dashboard() {
         <div className="mt-4 flex flex-wrap gap-1.5">
           {strengths(stats).map((s) => (
             <span key={s} className="rounded-full bg-moss/15 px-2.5 py-1 text-[11px] font-medium text-moss">
-              {L("Strength", "Punto fuerte")} · {s}
+              {L("Strength", "Punto fuerte")} · {areaName(s)}
             </span>
           ))}
           {recommendations(stats).map((r) => (
             <span key={r.skill} className="rounded-full bg-sky/15 px-2.5 py-1 text-[11px] font-medium text-sky">
-              {L("Practice", "Practicar")} · {r.skill}
+              {L("Practice", "Practicar")} · {areaName(r.skill)}
             </span>
           ))}
         </div>
@@ -224,7 +229,7 @@ function Dashboard() {
             className="mt-2 flex items-center justify-between rounded-xl bg-cream/5 px-3 py-2.5 ring-1 ring-cream/10"
           >
             <span className="text-[13px] font-medium text-cream/90">
-              {AREAS.find((a) => a.id === r.skill)?.title} — {r.reason}
+              {areaName(r.skill)} — {reasonText(r.reason)}
             </span>
             <span className="text-xs font-semibold text-sky">{L("Open", "Abrir")}</span>
           </Link>
@@ -244,7 +249,7 @@ function Dashboard() {
               return (
                 <div key={a.id} className="flex items-center gap-3">
                   <span className="w-40 shrink-0 text-sm font-medium text-ink">
-                    {a.emoji} {a.title}
+                    {a.emoji} {tTitle(a.title)}
                   </span>
                   <span className="flex-1 text-xs text-inksoft">{L("No right or wrong answers", "Sin respuestas correctas o incorrectas")}</span>
                   <span className="w-20 shrink-0 text-right text-xs font-semibold text-inksoft">
@@ -258,13 +263,13 @@ function Dashboard() {
             return (
               <div key={a.id} className="flex items-center gap-3">
                 <span className="w-40 shrink-0 text-sm font-medium text-ink">
-                  {a.emoji} {a.title}
+                  {a.emoji} {tTitle(a.title)}
                 </span>
                 <div className="h-2 flex-1 overflow-hidden rounded-full bg-felt">
                   <div className="h-full rounded-full bg-clay" style={{ width: `${mastery}%` }} />
                 </div>
                 <span className="w-20 shrink-0 text-right text-xs font-semibold text-inksoft">
-                  {masteryLabel(mastery)}
+                  {L(masteryLabel(mastery), MASTERY_ES[masteryLabel(mastery)] ?? masteryLabel(mastery))}
                 </span>
               </div>
             );

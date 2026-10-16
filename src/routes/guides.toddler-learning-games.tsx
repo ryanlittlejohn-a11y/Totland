@@ -1,9 +1,9 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { LegalPage } from "@/components/LegalPage";
 
-const TITLE = "Toddler Learning Games: A Parent's Guide for Ages 2–6";
+const TITLE = "Educational Games for Toddlers: A Parent's Guide for Ages 2–6";
 const DESCRIPTION =
-  "How to pick toddler learning games that actually teach: what to look for by age, how long a session should be, and how phonics games and letter tracing games fit in.";
+  "How to pick educational games for toddlers that actually teach: what to look for by age, how long a session should be, and how phonics and letter tracing games fit in.";
 const URL = "https://totland.app/guides/toddler-learning-games";
 
 export const Route = createFileRoute("/guides/toddler-learning-games")({
@@ -55,7 +55,7 @@ function Guide() {
       </section>
 
       <section>
-        <h2>What makes a good toddler learning game</h2>
+        <h2>What makes a good educational game for toddlers</h2>
         <ul>
           <li>
             <strong>One idea per round.</strong> "Find the letter B" beats a screen full of competing
@@ -82,7 +82,9 @@ function Guide() {
         <h2>Learning games by age</h2>
         <p>
           <strong>Ages 2–3:</strong> colors, shapes, counting to five, first picture words, and simple
-          matching. Tapping and dragging are the only skills needed.
+          matching. Tapping and dragging are the only skills needed. See{" "}
+          <Link to="/guides/learning-games-for-2-year-olds">learning games for 2 year olds</Link> and{" "}
+          <Link to="/guides/learning-games-for-3-year-olds">learning games for 3 year olds</Link>.
         </p>
         <p>
           <strong>Ages 3–4:</strong> letter recognition, counting to ten with countable objects,
@@ -145,7 +147,7 @@ function Guide() {
       <section>
         <h2>Try it</h2>
         <p>
-          Totland is an ad-free set of toddler learning games for ages 2–6 — ABCs, numbers, colors,
+          Totland is an ad-free set of educational games for toddlers for ages 2–6 — ABCs, numbers, colors,
           shapes, first words, phonics, letter tracing, word finds and storybooks.{" "}
           <Link to="/">Start playing</Link>, or read about{" "}
           <Link to="/privacy">how we handle your family's data</Link>.

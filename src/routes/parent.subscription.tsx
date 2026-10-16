@@ -19,6 +19,7 @@ import { StorePurchasePanel } from "@/components/StorePurchasePanel";
 import { useStoreEntitlement } from "@/hooks/useStoreEntitlement";
 import { storageRemove } from "@/lib/storage";
 import { openStoreSubscriptionManagement } from "@/lib/purchases";
+import { L } from "@/lib/i18n";
 
 
 
@@ -38,9 +39,9 @@ export const Route = createFileRoute("/parent/subscription")({
   component: Subscription,
 });
 
-const PLANS: { id: PlanId; price: string; cadence: string; best?: boolean }[] = [
-  { id: "premium_monthly", price: "$2.99", cadence: "per month" },
-  { id: "premium_yearly", price: "$19.99", cadence: "per year · best value", best: true },
+const PLANS: { id: PlanId; price: string; cadence: () => string; best?: boolean }[] = [
+  { id: "premium_monthly", price: "$2.99", cadence: () => L("per month", "al mes") },
+  { id: "premium_yearly", price: "$19.99", cadence: () => L("per year · best value", "al año · mejor precio"), best: true },
 ];
 
 function formatDate(iso: string | null) {
@@ -135,7 +136,12 @@ function Subscription() {
       await openStoreSubscriptionManagement(managementURL);
     } catch (e) {
       console.error("[manageSubscription]", e);
-      setManageError(`We couldn't open ${storeName} subscription settings. Please try again.`);
+      setManageError(
+        L(
+          `We couldn't open ${storeName} subscription settings. Please try again.`,
+          `No pudimos abrir los ajustes de suscripción de ${storeName}. Inténtalo de nuevo.`,
+        ),
+      );
     } finally {
       setManagingSubscription(false);
     }
@@ -152,11 +158,13 @@ function Subscription() {
   const doDelete = async () => {
     setDeleting(true);
     setDeleteError(null);
-    const signInAgain =
-      "Your sign-in has expired, so we couldn't confirm it's you. Please sign in again, then delete your account.";
+    const signInAgain = L(
+      "Your sign-in has expired, so we couldn't confirm it's you. Please sign in again, then delete your account.",
+      "Tu sesión ha caducado y no pudimos confirmar que eres tú. Vuelve a iniciar sesión y luego elimina tu cuenta.",
+    );
     try {
       if (typeof navigator !== "undefined" && navigator.onLine === false) {
-        setDeleteError("You're offline. Connect to the internet and try again.");
+        setDeleteError(L("You're offline. Connect to the internet and try again.", "No tienes conexión. Conéctate a internet e inténtalo de nuevo."));
         setDeleting(false);
         return;
       }
@@ -172,7 +180,10 @@ function Subscription() {
       const result = await removeAccount({ data: undefined });
       if (!result.ok) {
         setDeleteError(
-          `Something went wrong on our side and your account wasn't fully deleted. Please try again — nothing already removed will cause a problem. (Code: DEL-${result.step.toUpperCase()})`,
+          L(
+            `Something went wrong on our side and your account wasn't fully deleted. Please try again — nothing already removed will cause a problem. (Code: DEL-${result.step.toUpperCase()})`,
+            `Algo falló por nuestra parte y tu cuenta no se eliminó del todo. Inténtalo de nuevo; lo que ya se eliminó no causará problemas. (Código: DEL-${result.step.toUpperCase()})`,
+          ),
         );
         setDeleting(false);
         return;
@@ -203,9 +214,19 @@ function Subscription() {
       if (status === 401 || /unauthori[sz]ed/i.test(msg)) {
         setDeleteError(signInAgain);
       } else if (e instanceof TypeError || /failed to fetch|network|load failed/i.test(msg)) {
-        setDeleteError("We couldn't reach Totland. Check your internet connection and try again. (Code: DEL-NET)");
+        setDeleteError(
+          L(
+            "We couldn't reach Totland. Check your internet connection and try again. (Code: DEL-NET)",
+            "No pudimos conectar con Totland. Revisa tu conexión a internet e inténtalo de nuevo. (Código: DEL-NET)",
+          ),
+        );
       } else {
-        setDeleteError(`Something went wrong on our side. Please try again. (Code: DEL-${status ?? "ERR"})`);
+        setDeleteError(
+          L(
+            `Something went wrong on our side. Please try again. (Code: DEL-${status ?? "ERR"})`,
+            `Algo falló por nuestra parte. Inténtalo de nuevo. (Código: DEL-${status ?? "ERR"})`,
+          ),
+        );
       }
       setDeleting(false);
     }
@@ -213,7 +234,7 @@ function Subscription() {
 
   return (
     <div className="space-y-4">
-      <h1 className="px-1 font-ui text-2xl font-bold text-ink">Manage Subscription</h1>
+      <h1 className="px-1 font-ui text-2xl font-bold text-ink">{L("Manage Subscription", "Gestionar suscripción")}</h1>
       <section className="rounded-3xl bg-card p-5 wood-block">
         <div className="flex items-center justify-between">
           <h2 className="font-ui text-xl font-bold text-ink">Totland Premium</h2>
@@ -222,66 +243,81 @@ function Subscription() {
               active ? "bg-moss/20 text-moss" : "bg-felt text-inksoft"
             }`}
           >
-            {active ? "Active" : "Free plan"}
+            {active ? L("Active", "Activa") : L("Free plan", "Plan gratuito")}
           </span>
         </div>
         <p className="mt-2 text-sm text-inksoft">
-          Free includes {FREE_GAME_COUNT} games drawn from every world, plus {FREE_WORD_FIND_COUNT} Word Finds and {FREE_STORY_COUNT} storybooks.
-          Premium unlocks everything and every new release.
+          {L(
+            `Free includes ${FREE_GAME_COUNT} games drawn from every world, plus ${FREE_WORD_FIND_COUNT} Word Finds and ${FREE_STORY_COUNT} storybooks. Premium unlocks everything and every new release.`,
+            `La versión gratuita incluye ${FREE_GAME_COUNT} juegos de todos los mundos, ${FREE_WORD_FIND_COUNT} sopas de letras y ${FREE_STORY_COUNT} cuentos. Premium lo desbloquea todo, incluidas todas las novedades.`,
+          )}
         </p>
 
         {waitingForPayment && (
           <p className="mt-4 rounded-2xl bg-amber/20 p-4 text-sm text-ink">
-            Confirming your payment… this usually takes a few seconds.
+            {L("Confirming your payment… this usually takes a few seconds.", "Confirmando tu pago… suele tardar unos segundos.")}
           </p>
         )}
 
         {!ready ? (
-          <p className="mt-4 text-sm text-inksoft">Loading…</p>
+          <p className="mt-4 text-sm text-inksoft">{L("Loading…", "Cargando…")}</p>
         ) : active ? (
           <div className="mt-4 rounded-2xl bg-moss/15 p-4 text-sm text-ink">
-            <p className="font-semibold">🎉 Premium is active — the whole library is unlocked.</p>
+            <p className="font-semibold">🎉 {L("Premium is active — the whole library is unlocked.", "Premium está activo: toda la biblioteca está desbloqueada.")}</p>
             {renewalDate && !storeActive && (
               <p className="mt-2 text-inksoft">
                 {sub?.cancelAtPeriodEnd || sub?.status === "canceled"
-                  ? `Access ends ${renewalDate}.`
-                  : `Renews ${renewalDate}.`}
+                  ? L(`Access ends ${renewalDate}.`, `El acceso termina el ${renewalDate}.`)
+                  : L(`Renews ${renewalDate}.`, `Se renueva el ${renewalDate}.`)}
               </p>
             )}
             {sub?.status === "past_due" && !storeActive && (
               <p className="mt-2 text-clay">
-                Your last payment didn't go through. Please update your payment details to keep premium.
+                {L(
+                  "Your last payment didn't go through. Please update your payment details to keep premium.",
+                  "Tu último pago no se completó. Actualiza tus datos de pago para mantener Premium.",
+                )}
               </p>
             )}
             {native ? (
               <div className="mt-2 text-inksoft">
                 {managementURL ? (
                   <>
-                    <p>Switch or cancel your plan in the {storeName}. Canceling keeps premium until the end of your paid period.</p>
+                    <p>
+                      {L(
+                        `Switch or cancel your plan in the ${storeName}. Canceling keeps premium until the end of your paid period.`,
+                        `Cambia o cancela tu plan en ${storeName}. Si cancelas, mantienes Premium hasta el final del periodo pagado.`,
+                      )}
+                    </p>
                     <button
                       type="button"
                       onClick={() => void manageSubscription()}
                       disabled={managingSubscription}
                       className="mt-3 rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream disabled:opacity-60"
                     >
-                      {managingSubscription ? "Opening…" : "Manage subscription"}
+                      {managingSubscription ? L("Opening…", "Abriendo…") : L("Manage subscription", "Gestionar suscripción")}
                     </button>
                   </>
                 ) : (
                   <p>
-                    There isn't an active {storeName} subscription to manage on this device. If you subscribed on the
-                    website, manage it at paddle.net. Canceling keeps premium until the end of your paid period.
+                    {L(
+                      `There isn't an active ${storeName} subscription to manage on this device. If you subscribed on the website, manage it at paddle.net. Canceling keeps premium until the end of your paid period.`,
+                      `No hay ninguna suscripción activa de ${storeName} que gestionar en este dispositivo. Si te suscribiste en la web, gestiónala en paddle.net. Si cancelas, mantienes Premium hasta el final del periodo pagado.`,
+                    )}
                   </p>
                 )}
                 {manageError && <p className="mt-2 text-clay">{manageError}</p>}
               </div>
             ) : (
               <p className="mt-2 text-inksoft">
-                To switch plans, update your card, or cancel, visit{" "}
+                {L("To switch plans, update your card, or cancel, visit", "Para cambiar de plan, actualizar tu tarjeta o cancelar, entra en")}{" "}
                 <a href="https://paddle.net" target="_blank" rel="noopener noreferrer" className="underline">
                   paddle.net
                 </a>{" "}
-                with the email you used at checkout. Canceling keeps premium until the end of your paid period.
+                {L(
+                  "with the email you used at checkout. Canceling keeps premium until the end of your paid period.",
+                  "con el correo que usaste al pagar. Si cancelas, mantienes Premium hasta el final del periodo pagado.",
+                )}
               </p>
             )}
           </div>
@@ -295,14 +331,19 @@ function Subscription() {
           />
         ) : !user ? (
           <p className="mt-4 rounded-2xl bg-felt p-4 text-sm text-inksoft">
-            Sign in below to subscribe or to restore a subscription you already bought.
+            {L(
+              "Sign in below to subscribe or to restore a subscription you already bought.",
+              "Inicia sesión abajo para suscribirte o restaurar una suscripción que ya compraste.",
+            )}
           </p>
         ) : !emailVerified ? (
           <div className="mt-4 rounded-2xl bg-amber/20 p-4 text-sm text-ink">
-            <p className="font-semibold">Please verify your email address.</p>
+            <p className="font-semibold">{L("Please verify your email address.", "Verifica tu dirección de correo.")}</p>
             <p className="mt-2 text-inksoft">
-              We sent a confirmation link to {user.email}. Open it, then come back here — verified emails are required
-              before subscribing or restoring a purchase, so your account stays protected.
+              {L(
+                `We sent a confirmation link to ${user.email}. Open it, then come back here — verified emails are required before subscribing or restoring a purchase, so your account stays protected.`,
+                `Enviamos un enlace de confirmación a ${user.email}. Ábrelo y vuelve aquí: el correo debe estar verificado antes de suscribirte o restaurar una compra, para que tu cuenta esté protegida.`,
+              )}
             </p>
             <button
               type="button"
@@ -311,13 +352,13 @@ function Subscription() {
               className="mt-3 rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream disabled:opacity-60"
             >
               {resendState === "sending"
-                ? "Sending…"
+                ? L("Sending…", "Enviando…")
                 : resendState === "sent"
-                  ? "Email sent — check your inbox"
-                  : "Resend verification email"}
+                  ? L("Email sent — check your inbox", "Correo enviado: revisa tu bandeja de entrada")
+                  : L("Resend verification email", "Reenviar correo de verificación")}
             </button>
             {resendState === "error" && (
-              <p className="mt-2 text-clay">Couldn't send the email right now. Please try again in a minute.</p>
+              <p className="mt-2 text-clay">{L("Couldn't send the email right now. Please try again in a minute.", "No se pudo enviar el correo ahora. Inténtalo de nuevo en un minuto.")}</p>
             )}
           </div>
         ) : (
@@ -335,17 +376,19 @@ function Subscription() {
                   }`}
                 >
                   <p className="font-ui text-2xl font-bold text-ink">{plan.price}</p>
-                  <p className="text-xs text-inksoft">{plan.cadence}</p>
+                  <p className="text-xs text-inksoft">{plan.cadence()}</p>
                   <p className="mt-2 font-ui text-sm font-bold text-clay">
-                    {loading === plan.id ? "Opening…" : "Subscribe"}
+                    {loading === plan.id ? L("Opening…", "Abriendo…") : L("Subscribe", "Suscribirse")}
                   </p>
                 </button>
               ))}
             </div>
             {error && <p className="mt-3 text-sm text-clay">{error}</p>}
             <p className="mt-3 text-xs text-inksoft">
-              Secure checkout. Cancel anytime; premium stays active until the end of your paid period. Purchases are
-              only reachable behind this parental gate — never from the child experience.
+              {L(
+                "Secure checkout. Cancel anytime; premium stays active until the end of your paid period. Purchases are only reachable behind this parental gate — never from the child experience.",
+                "Pago seguro. Cancela cuando quieras; Premium sigue activo hasta el final del periodo pagado. Las compras solo están disponibles tras este control para adultos, nunca desde la zona infantil.",
+              )}
             </p>
           </>
         )}
@@ -356,32 +399,33 @@ function Subscription() {
               {b.emoji} {b.text}
             </li>
           ))}
-          <li>✈️ Play anywhere, even with no internet — offline play is part of Premium</li>
+          <li>✈️ {L("Play anywhere, even with no internet — offline play is part of Premium", "Juega en cualquier sitio, incluso sin internet: jugar sin conexión es parte de Premium")}</li>
         </ul>
       </section>
 
       {deleted ? (
         <section className="rounded-3xl bg-card p-5 wood-block">
-          <h2 className="font-ui text-lg font-bold text-ink">Your account has been deleted</h2>
+          <h2 className="font-ui text-lg font-bold text-ink">{L("Your account has been deleted", "Tu cuenta se ha eliminado")}</h2>
           <p className="mt-2 text-sm text-inksoft">
-            Your grown-up account, its saved child profiles, your subscription record with us and your signed-in support
-            messages have been permanently removed. Play progress and stars stored on this device remain here. Any App
-            Store or Google Play subscription must still be canceled in the store; Apple, Google and RevenueCat keep their
-            own purchase records under their own policies.
+            {L(
+              "Your grown-up account, its saved child profiles, your subscription record with us and your signed-in support messages have been permanently removed. Play progress and stars stored on this device remain here. Any App Store or Google Play subscription must still be canceled in the store; Apple, Google and RevenueCat keep their own purchase records under their own policies.",
+              "Tu cuenta de adulto, los perfiles infantiles guardados, tu registro de suscripción con nosotros y los mensajes de soporte que enviaste con la sesión iniciada se han eliminado para siempre. El progreso y las estrellas guardados en este dispositivo siguen aquí. Cualquier suscripción del App Store o Google Play debe cancelarse en la tienda; Apple, Google y RevenueCat conservan sus propios registros de compra según sus políticas.",
+            )}
           </p>
           <Link to="/" className="mt-3 inline-block rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream">
-            Back to play
+            {L("Back to play", "Volver a jugar")}
           </Link>
         </section>
       ) : ready && !user ? (
         <>
           {native && (
             <section className="rounded-3xl bg-card p-5 wood-block">
-              <h2 className="font-ui text-lg font-bold text-ink">An account is optional</h2>
+              <h2 className="font-ui text-lg font-bold text-ink">{L("An account is optional", "La cuenta es opcional")}</h2>
               <p className="mt-2 text-sm text-inksoft">
-                You don't need an account to subscribe or to play. Signing in only keeps your children's profiles and
-                progress in step across your family's devices — and it links a subscription you've already bought to
-                your account.
+                {L(
+                  "You don't need an account to subscribe or to play. Signing in only keeps your children's profiles and progress in step across your family's devices — and it links a subscription you've already bought to your account.",
+                  "No necesitas una cuenta para suscribirte ni para jugar. Iniciar sesión solo sincroniza los perfiles y el progreso de tus peques entre los dispositivos de la familia, y vincula a tu cuenta una suscripción que ya hayas comprado.",
+                )}
               </p>
             </section>
           )}
@@ -391,8 +435,8 @@ function Subscription() {
       ) : (
         user && (
           <section className="rounded-3xl bg-card p-5 wood-block">
-            <h2 className="font-ui text-lg font-bold text-ink">Your account</h2>
-            <p className="mt-2 text-sm text-inksoft">Signed in as {user.email}</p>
+            <h2 className="font-ui text-lg font-bold text-ink">{L("Your account", "Tu cuenta")}</h2>
+            <p className="mt-2 text-sm text-inksoft">{L(`Signed in as ${user.email}`, `Sesión iniciada como ${user.email}`)}</p>
             <div className="mt-3 flex gap-2">
               <button
                 type="button"
@@ -400,7 +444,7 @@ function Subscription() {
                 disabled={checking || !emailVerified}
                 className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink disabled:opacity-60"
               >
-                {checking ? "Checking…" : "Restore purchase"}
+                {checking ? L("Checking…", "Comprobando…") : L("Restore purchase", "Restaurar compra")}
               </button>
               <button
                 type="button"
@@ -411,31 +455,34 @@ function Subscription() {
                 }}
                 className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink"
               >
-                Sign out
+                {L("Sign out", "Cerrar sesión")}
               </button>
             </div>
             {profile.premium && (
               <p className="mt-3 text-xs text-inksoft">
-                Premium is saved on this device too, so games keep working with no internet.
+                {L(
+                  "Premium is saved on this device too, so games keep working with no internet.",
+                  "Premium también se guarda en este dispositivo, así que los juegos siguen funcionando sin internet.",
+                )}
               </p>
             )}
 
             <div className="mt-5 border-t border-border pt-4">
-              <h3 className="font-ui text-sm font-bold text-clay">Delete account</h3>
+              <h3 className="font-ui text-sm font-bold text-clay">{L("Delete account", "Eliminar cuenta")}</h3>
               <p className="mt-2 text-xs text-inksoft">
-                This permanently deletes your grown-up account, the child profiles saved to it, your subscription record
-                with us and any support messages you sent while signed in. It does not cancel an App Store or Google Play
-                subscription — Apple, Google and RevenueCat keep their own purchase records under their own policies — and
-                it does not erase play progress or stars stored on this device. This cannot be undone.
+                {L(
+                  "This permanently deletes your grown-up account, the child profiles saved to it, your subscription record with us and any support messages you sent while signed in. It does not cancel an App Store or Google Play subscription — Apple, Google and RevenueCat keep their own purchase records under their own policies — and it does not erase play progress or stars stored on this device. This cannot be undone.",
+                  "Esto elimina para siempre tu cuenta de adulto, los perfiles infantiles guardados en ella, tu registro de suscripción con nosotros y los mensajes de soporte que enviaste con la sesión iniciada. No cancela ninguna suscripción del App Store o Google Play (Apple, Google y RevenueCat conservan sus propios registros de compra según sus políticas) y no borra el progreso ni las estrellas guardados en este dispositivo. No se puede deshacer.",
+                )}
               </p>
               {active && (
                 <p className="mt-2 text-xs text-clay">
-                  You have an active subscription. Manage and cancel it before deleting
+                  {L("You have an active subscription. Manage and cancel it before deleting", "Tienes una suscripción activa. Gestiónala y cancélala antes de eliminar la cuenta")}
                   {native && managementURL
-                    ? ` using the Manage subscription button above`
+                    ? L(` using the Manage subscription button above`, ` con el botón Gestionar suscripción de arriba`)
                     : native
-                      ? ` in the ${storeName} from your device settings`
-                      : " at paddle.net with your checkout email"}.
+                      ? L(` in the ${storeName} from your device settings`, ` en ${storeName} desde los ajustes de tu dispositivo`)
+                      : L(" at paddle.net with your checkout email", " en paddle.net con el correo que usaste al pagar")}.
                 </p>
               )}
 
@@ -445,12 +492,12 @@ function Subscription() {
                   onClick={() => setConfirmOpen(true)}
                   className="mt-3 rounded-xl bg-clay/15 px-4 py-2 font-ui text-sm font-bold text-clay"
                 >
-                  Delete my account
+                  {L("Delete my account", "Eliminar mi cuenta")}
                 </button>
               ) : (
                 <div className="mt-3">
                   <label htmlFor="confirm-delete" className="block text-xs font-semibold text-ink">
-                    Type DELETE to confirm
+                    {L("Type DELETE to confirm", "Escribe DELETE para confirmar")}
                   </label>
                   <input
                     id="confirm-delete"
@@ -466,7 +513,7 @@ function Subscription() {
                       onClick={() => void doDelete()}
                       className="rounded-xl bg-clay px-4 py-2 font-ui text-sm font-bold text-primary-foreground disabled:opacity-50"
                     >
-                      {deleting ? "Deleting…" : "Permanently delete"}
+                      {deleting ? L("Deleting…", "Eliminando…") : L("Permanently delete", "Eliminar para siempre")}
                     </button>
                     <button
                       type="button"
@@ -478,7 +525,7 @@ function Subscription() {
                       }}
                       className="rounded-xl bg-felt px-4 py-2 font-ui text-sm font-semibold text-ink"
                     >
-                      Cancel
+                      {L("Cancel", "Cancelar")}
                     </button>
                   </div>
                   {deleteError && <p className="mt-2 text-xs text-clay">{deleteError}</p>}
@@ -490,21 +537,21 @@ function Subscription() {
       )}
 
       <section className="rounded-3xl bg-card p-5 wood-block">
-        <h2 className="font-ui text-lg font-bold text-ink">Privacy</h2>
+        <h2 className="font-ui text-lg font-bold text-ink">{L("Privacy", "Privacidad")}</h2>
         <ul className="mt-2 space-y-1.5 text-sm text-inksoft">
-          <li>· No child accounts, no chat, no social features, no external links in the child area.</li>
-          <li>· Learning data stays on this device unless you sign in to sync child profiles and progress.</li>
-          <li>· A signed-in grown-up account stores your email, synced child profiles and progress, and subscription record.</li>
-          <li>· No third-party advertising or behavioural profiling.</li>
-          <li>· Payment details are handled entirely by our payment provider — they never touch this app.</li>
-          <li>· Purchases, settings and links sit behind the parental gate.</li>
+          <li>· {L("No child accounts, no chat, no social features, no external links in the child area.", "Sin cuentas infantiles, sin chat, sin funciones sociales y sin enlaces externos en la zona infantil.")}</li>
+          <li>· {L("Learning data stays on this device unless you sign in to sync child profiles and progress.", "Los datos de aprendizaje se quedan en este dispositivo salvo que inicies sesión para sincronizar perfiles y progreso.")}</li>
+          <li>· {L("A signed-in grown-up account stores your email, synced child profiles and progress, and subscription record.", "Una cuenta de adulto con sesión iniciada guarda tu correo, los perfiles y el progreso sincronizados y el registro de suscripción.")}</li>
+          <li>· {L("No third-party advertising or behavioural profiling.", "Sin publicidad de terceros ni perfiles de comportamiento.")}</li>
+          <li>· {L("Payment details are handled entirely by our payment provider — they never touch this app.", "Los datos de pago los gestiona por completo nuestro proveedor de pagos; nunca pasan por esta app.")}</li>
+          <li>· {L("Purchases, settings and links sit behind the parental gate.", "Las compras, los ajustes y los enlaces están tras el control para adultos.")}</li>
         </ul>
       </section>
 
       <footer className="flex flex-wrap gap-4 pb-6 text-sm text-inksoft">
-        <Link to="/terms" className="underline hover:text-ink">Terms &amp; Conditions</Link>
-        <Link to="/refund" className="underline hover:text-ink">Refund Policy</Link>
-        <Link to="/privacy" className="underline hover:text-ink">Privacy Notice</Link>
+        <Link to="/terms" className="underline hover:text-ink">{L("Terms & Conditions", "Términos y condiciones")}</Link>
+        <Link to="/refund" className="underline hover:text-ink">{L("Refund Policy", "Política de reembolsos")}</Link>
+        <Link to="/privacy" className="underline hover:text-ink">{L("Privacy Notice", "Aviso de privacidad")}</Link>
       </footer>
     </div>
   );

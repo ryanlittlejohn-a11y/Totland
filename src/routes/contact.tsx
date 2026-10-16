@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { submitContactInquiry, type ContactInquiryInput } from "@/lib/contact.functions";
+import { L } from "@/lib/i18n";
+import { useProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/contact")({
   head: () => ({
@@ -38,6 +40,7 @@ function ContactPage() {
   const [submitting, setSubmitting] = useState(false);
   const [sent, setSent] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  useProfile(); // re-render once the saved language loads
 
   const validate = (): boolean => {
     const next: Partial<Record<keyof ContactInquiryInput, string>> = {};
@@ -45,15 +48,15 @@ function ContactPage() {
     const email = form.email.trim();
     const message = form.message.trim();
 
-    if (!name) next.name = "Please enter your name.";
-    else if (name.length > 100) next.name = "Name must be 100 characters or less.";
+    if (!name) next.name = L("Please enter your name.", "Escribe tu nombre.");
+    else if (name.length > 100) next.name = L("Name must be 100 characters or less.", "El nombre debe tener 100 caracteres o menos.");
 
-    if (!email) next.email = "Please enter your email address.";
-    else if (email.length > 255) next.email = "Email must be 255 characters or less.";
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next.email = "Please enter a valid email address.";
+    if (!email) next.email = L("Please enter your email address.", "Escribe tu correo electrónico.");
+    else if (email.length > 255) next.email = L("Email must be 255 characters or less.", "El correo debe tener 255 caracteres o menos.");
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) next.email = L("Please enter a valid email address.", "Escribe un correo electrónico válido.");
 
-    if (!message) next.message = "Please enter a message.";
-    else if (message.length > 1000) next.message = "Message must be 1000 characters or less.";
+    if (!message) next.message = L("Please enter a message.", "Escribe un mensaje.");
+    else if (message.length > 1000) next.message = L("Message must be 1000 characters or less.", "El mensaje debe tener 1000 caracteres o menos.");
 
     setErrors(next);
     return Object.keys(next).length === 0;
@@ -71,26 +74,27 @@ function ContactPage() {
         setSent(true);
         setForm({ name: "", email: "", message: "" });
       } else {
-        setServerError(result.error ?? "Something went wrong. Please try again.");
+        setServerError(result.error ?? L("Something went wrong. Please try again.", "Algo salió mal. Inténtalo de nuevo."));
       }
     } catch (err) {
       console.error("[contact] submit error:", err);
-      setServerError("We couldn't send your message right now. Please try again in a moment.");
+      setServerError(L("We couldn't send your message right now. Please try again in a moment.", "No pudimos enviar tu mensaje ahora. Inténtalo de nuevo en un momento."));
     } finally {
       setSubmitting(false);
     }
   };
 
   return (
-    <LegalPage title="Contact Us" updated="September 15, 2026">
+    <LegalPage title={L("Contact Us", "Contacto")} updated="September 15, 2026">
       <section>
         <p>
-          Have a question about Totland, need help with your subscription, or want to share
-          feedback? Fill out the form below and we&rsquo;ll get back to you as soon as we can &mdash;
-          usually within two business days.
+          {L(
+            "Have a question about Totland, need help with your subscription, or want to share feedback? Fill out the form below and we’ll get back to you as soon as we can — usually within two business days.",
+            "¿Tienes una pregunta sobre Totland, necesitas ayuda con tu suscripción o quieres darnos tu opinión? Rellena el formulario y te responderemos lo antes posible, normalmente en dos días hábiles.",
+          )}
         </p>
         <p className="mt-2">
-          You can also email us directly at{" "}
+          {L("You can also email us directly at", "También puedes escribirnos directamente a")}{" "}
           <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary underline">
             {SUPPORT_EMAIL}
           </a>
@@ -99,40 +103,48 @@ function ContactPage() {
       </section>
 
       <section className="rounded-2xl bg-muted/40 p-5">
-        <h2 className="text-lg font-semibold">Before you write</h2>
+        <h2 className="text-lg font-semibold">{L("Before you write", "Antes de escribirnos")}</h2>
         <ul>
           <li>
-            <strong>Refunds and billing:</strong> see the{" "}
-            <a href="/refund">Refund Policy</a> &mdash; website purchases are refunded by
-            Paddle at paddle.net, and App Store purchases by Apple at
-            reportaproblem.apple.com.
+            <strong>{L("Refunds and billing:", "Reembolsos y pagos:")}</strong> {L("see the", "consulta la")}{" "}
+            <a href="/refund">{L("Refund Policy", "Política de reembolsos")}</a>{" "}
+            {L(
+              "— website purchases are refunded by Paddle at paddle.net, and App Store purchases by Apple at reportaproblem.apple.com.",
+              "(en inglés): las compras en la web las reembolsa Paddle en paddle.net y las del App Store, Apple en reportaproblem.apple.com.",
+            )}
           </li>
           <li>
-            <strong>Cancelling Premium:</strong> use Paddle&rsquo;s portal for website
-            subscriptions, or Settings &rarr; Subscriptions on your iPhone or iPad.
+            <strong>{L("Cancelling Premium:", "Cancelar Premium:")}</strong>{" "}
+            {L(
+              "use Paddle’s portal for website subscriptions, or Settings → Subscriptions on your iPhone or iPad.",
+              "usa el portal de Paddle para las suscripciones de la web, o Ajustes → Suscripciones en tu iPhone o iPad.",
+            )}
           </li>
           <li>
-            <strong>Premium not showing up:</strong> open Parents &rarr; Subscription and tap
-            Restore purchases while signed in with the email you bought with.
+            <strong>{L("Premium not showing up:", "Premium no aparece:")}</strong>{" "}
+            {L(
+              "open Parents → Subscription and tap Restore purchases while signed in with the email you bought with.",
+              "abre Adultos → Suscripción y toca Restaurar compras con la sesión iniciada con el correo con el que compraste.",
+            )}
           </li>
           <li>
-            <strong>Deleting your account:</strong> Parents &rarr; Subscription &rarr; Your
-            account, or ask us here.
+            <strong>{L("Deleting your account:", "Eliminar tu cuenta:")}</strong>{" "}
+            {L("Parents → Subscription → Your account, or ask us here.", "Adultos → Suscripción → Tu cuenta, o pídenoslo aquí.")}
           </li>
         </ul>
       </section>
 
       {sent ? (
         <section className="rounded-2xl bg-moss/10 p-5 text-moss">
-          <h2 className="text-lg font-semibold">Message sent</h2>
+          <h2 className="text-lg font-semibold">{L("Message sent", "Mensaje enviado")}</h2>
           <p className="mt-1">
-            Thanks for reaching out! We&rsquo;ll reply to you at the email you provided.
+            {L("Thanks for reaching out! We’ll reply to you at the email you provided.", "¡Gracias por escribirnos! Te responderemos al correo que nos diste.")}
           </p>
         </section>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-5" noValidate>
           <div className="space-y-2">
-            <Label htmlFor="name">Name</Label>
+            <Label htmlFor="name">{L("Name", "Nombre")}</Label>
             <Input
               id="name"
               name="name"
@@ -153,7 +165,7 @@ function ContactPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
+            <Label htmlFor="email">{L("Email", "Correo electrónico")}</Label>
             <Input
               id="email"
               name="email"
@@ -174,7 +186,7 @@ function ContactPage() {
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="message">Message</Label>
+            <Label htmlFor="message">{L("Message", "Mensaje")}</Label>
             <Textarea
               id="message"
               name="message"
@@ -209,7 +221,7 @@ function ContactPage() {
             disabled={submitting}
             className="w-full rounded-xl bg-primary py-3 font-semibold"
           >
-            {submitting ? "Sending..." : "Send message"}
+            {submitting ? L("Sending...", "Enviando...") : L("Send message", "Enviar mensaje")}
           </Button>
         </form>
       )}

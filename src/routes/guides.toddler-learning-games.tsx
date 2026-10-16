@@ -87,7 +87,8 @@ function Guide() {
         </p>
         <p>
           <strong>Ages 4–6:</strong> letter tracing games, first spelling, word finds, and read-along
-          storybooks that build early reading confidence.
+          storybooks that build early reading confidence. More in our{" "}
+          <Link to="/guides/learning-games-for-4-year-olds">guide to learning games for 4 year olds</Link>.
         </p>
       </section>
 

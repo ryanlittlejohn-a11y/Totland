@@ -287,3 +287,9 @@
 - [x] Terms/Privacy/Refund: Spanish note that English version applies
 - [x] Test: src/lib/parent-spanish.test.tsx
 - [ ] Native Spanish speaker reviews wording before publish
+
+## Opening animation + first-time language picker (approved 2026-10-16)
+- [ ] Entrance animation covering startup load, skippable, reduced-motion still
+- [ ] First-time English/Español popup; returning families never asked
+- [ ] Tests
+- [ ] Investigate Spanish home-screen music (read-only, report first)

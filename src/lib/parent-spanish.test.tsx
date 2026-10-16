@@ -8,7 +8,12 @@ vi.mock("@tanstack/react-router", async (orig) => ({
   Link: ({ children }: { children?: unknown }) => createElement("a", null, children as never),
   Outlet: () => null,
 }));
-vi.mock("@tanstack/react-start", () => ({
+vi.mock("@/lib/profile", async (orig) => ({
+  ...((await orig()) as object),
+  useFamily: () => ({ children: [], activeId: null, hydrated: true }),
+}));
+vi.mock("@tanstack/react-start", async (orig) => ({
+  ...((await orig()) as object),
   useServerFn: () => async () => ({}),
   createServerFn: () => {
     const chain: Record<string, unknown> = {};

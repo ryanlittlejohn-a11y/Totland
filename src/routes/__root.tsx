@@ -95,15 +95,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1, viewport-fit=cover" },
-      { title: "Totland — Learning That Feels Like Play" },
-      {
-        name: "description",
-        content: "Offline-first early-learning games for ages 2–6. Ad-free, privacy-first, with a parent dashboard.",
-      },
       { name: "author", content: "Totland Studio" },
       { name: "google-site-verification", content: "oEVg6fBbYX-CCVOB1XIVIfGh1Em7r04sqC1_MfAXPkE" },
-      { property: "og:title", content: "Totland — Learning That Feels Like Play" },
-      { property: "og:description", content: "Offline-first early-learning games for ages 2–6. Ad-free and privacy-first." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "theme-color", content: "#F7EEDF" },

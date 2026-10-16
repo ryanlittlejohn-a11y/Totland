@@ -2,7 +2,8 @@ import { afterAll, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderToString } from "react-dom/server";
 import { createElement, type ComponentType } from "react";
 
-vi.mock("@tanstack/react-router", () => ({
+vi.mock("@tanstack/react-router", async (orig) => ({
+  ...((await orig()) as object),
   createFileRoute: () => (opts: Record<string, unknown>) => ({ ...opts, options: opts, useSearch: () => ({}) }),
   Link: ({ children }: { children?: unknown }) => createElement("a", null, children as never),
   Outlet: () => null,

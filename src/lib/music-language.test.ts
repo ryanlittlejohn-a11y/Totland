@@ -65,3 +65,38 @@ describe("language-matched home music", () => {
     music.stopMusic();
   });
 });
+
+describe("leaving the parent dashboard", () => {
+  for (const [lang, file] of [["en", "little-steps-big-dreams.mp3"], ["es", "little-steps-big-dreams-es.mp3"]] as const) {
+    it(`keeps home music playing after the dashboard closes (${lang})`, async () => {
+      const music = await import("./music");
+      music.setMusicLanguage(lang);
+      // On the dashboard: silent.
+      music.setMusicRoute("/parent");
+      music.setMusic(false);
+      // Back home: kid side says "on", then the dashboard finishes closing.
+      music.setMusicRoute("/");
+      music.setMusic(true);
+      const el = FakeAudio.latest;
+      await Promise.resolve();
+      expect(el.src).toBe(`/music/${file}`);
+      expect(el.paused).toBe(false);
+      music.stopMusic();
+    });
+  }
+
+  it("dashboard does not start or preview music", async () => {
+    const src = await import("node:fs").then((fs) => fs.readFileSync("src/routes/parent.index.tsx", "utf8"));
+    expect(src).not.toMatch(/previewMusic|startMusic|setMusic\(/);
+  });
+
+  it("volume set on the dashboard applies when the kid side plays", async () => {
+    const music = await import("./music");
+    music.setMusicVolume(1);
+    music.setMusic(true);
+    expect(FakeAudio.latest.volume).toBeCloseTo(0.25);
+    music.setMusicVolume(0.5);
+    expect(FakeAudio.latest.volume).toBeLessThanOrEqual(0.25);
+    music.stopMusic();
+  });
+});

@@ -58,7 +58,7 @@ function NarrationDiagnostics() {
     </details>
   );
 }
-import { previewMusic, setMusic, setMusicVolume } from "@/lib/music";
+import { setMusicVolume } from "@/lib/music";
 import { L, setLang, title as tTitle, type Lang } from "@/lib/i18n";
 
 const MASTERY_ES: Record<string, string> = { Mastered: "Dominado", Strong: "Muy bien", Progressing: "Avanzando", Practicing: "Practicando", Beginning: "Empezando" };
@@ -109,11 +109,6 @@ function Dashboard() {
   const traced = tracingProgressOf(stats);
 
 
-  // Live music preview so the volume slider is audible while adjusting it.
-  useEffect(() => {
-    if (profile.music) previewMusic(true);
-    return () => previewMusic(false);
-  }, [profile.music]);
 
   return (
     <div className="space-y-4">
@@ -371,7 +366,7 @@ function Dashboard() {
                   const on = e.target.checked;
                   update((p) => ({ ...p, [key]: on }));
                   if (key === "narration") setNarration(on);
-                  if (key === "music") setMusic(on);
+                  // Music follows the saved switch on kid screens only (MusicPlayer).
                 }}
                 className="size-6 accent-[oklch(0.68_0.148_32)]"
               />

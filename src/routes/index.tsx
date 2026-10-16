@@ -11,13 +11,13 @@ import { L, title as tTitle } from "@/lib/i18n";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Ad-Free Learning Games for Toddlers, Ages 2–6 | Totland" },
+      { title: "Totland: Ad-Free Learning Games for Ages 2–6" },
       {
         name: "description",
         content:
-          `Short, playful learning games for ages 2–6 — ABCs, phonics, letter tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} games, no ads, no tracking. Free to start.`,
+          `Ad-free, privacy-first learning games for ages 2–6: ABCs, phonics, tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} short games, free to start.`,
       },
-      { property: "og:title", content: "Ad-Free Learning Games for Toddlers, Ages 2–6 | Totland" },
+      { property: "og:title", content: "Totland: Ad-Free Learning Games for Ages 2–6" },
       {
         property: "og:description",
         content:
@@ -42,7 +42,7 @@ export const Route = createFileRoute("/")({
           applicationSubCategory: "Early learning games",
           operatingSystem: "Web, iOS, Android",
           description:
-            `Short, playful learning games for ages 2–6 — ABCs, phonics, letter tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} games, no ads, no tracking. Free to start.`,
+            `Ad-free, privacy-first learning games for ages 2–6: ABCs, phonics, tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} short games, free to start.`,
           isFamilyFriendly: true,
           inLanguage: ["en", "es"],
           audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },
@@ -79,7 +79,7 @@ function Home() {
           </div>
           <div>
             <p className="font-ui text-[15px] font-bold leading-none text-ink">Totland</p>
-            <h1 className="mt-0.5 font-ui text-[11px] font-semibold text-inksoft">
+            <h1 className="mt-1 font-ui text-sm font-bold leading-tight text-ink">
               {L("Ad-Free Learning Games for Ages 2–6", "Juegos educativos sin anuncios, de 2 a 6 años")}
             </h1>
             <p className="font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>

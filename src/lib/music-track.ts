@@ -1,6 +1,8 @@
 import menuTrack from "@/assets/little-steps-big-dreams.mp3.asset.json";
 import activityTrack from "@/assets/curious-steps.mp3.asset.json";
 import storyTrack from "@/assets/forest-of-wonder.mp3.asset.json";
+import spanishMenuTrack from "@/assets/little-steps-big-dreams-es.mp3.asset.json";
+import type { Lang } from "./i18n";
 
 import { apiOrigin, isNativeApp } from "./native";
 
@@ -34,6 +36,12 @@ function track(url: string, filename: string): Track {
 
 /** Soundtrack for the main screens (home, worlds, adventure, rewards). */
 export const MENU_TRACK: Track = track(menuTrack.url, "little-steps-big-dreams.mp3");
+
+export const MENU_TRACK_ES: Track = track(spanishMenuTrack.url, "little-steps-big-dreams-es.mp3");
+
+export function menuTrackFor(language: Lang): Track {
+  return language === "es" ? MENU_TRACK_ES : MENU_TRACK;
+}
 
 /** Soundtrack for activities (games, flash cards, tracing). */
 export const ACTIVITY_TRACK: Track = track(activityTrack.url, "curious-steps.mp3");

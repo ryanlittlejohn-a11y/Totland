@@ -41,8 +41,9 @@ export function prewarmCommonNarration() {
   if (started || typeof window === "undefined") return;
   started = true;
   if (isNativeApp()) return;
-  const lang = getLang();
   window.setTimeout(() => {
+    // Read the language when the download starts, after any first-time choice.
+    const lang = getLang();
     void prewarmVoice(commonLines(lang), lang);
   }, 15000);
 }

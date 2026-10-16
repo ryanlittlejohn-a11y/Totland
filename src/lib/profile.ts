@@ -51,6 +51,8 @@ export interface Profile {
   outfit: string;
   avatarBg: string;
   onboarded: boolean;
+  /** true once a grown-up has picked English or Spanish (first-launch popup) */
+  languageChosen: boolean;
   narration: boolean;
   sfx: boolean;
   music: boolean;
@@ -143,6 +145,7 @@ export const defaultProfile = (): Profile => ({
   outfit: "🎒",
   avatarBg: "moss",
   onboarded: false,
+  languageChosen: false,
   narration: true,
   sfx: true,
   music: true,
@@ -256,6 +259,7 @@ const SHARED_KEYS = [
   "highContrast",
   "premium",
   "onboarded",
+  "languageChosen",
 ] as const;
 
 type SharedKey = (typeof SHARED_KEYS)[number];
@@ -304,6 +308,21 @@ function emptyFamily(): Family {
   };
 }
 
+/**
+ * Families saved before the language popup existed never get asked: anyone
+ * already set up, already in Spanish, or with any play history counts as chosen.
+ */
+export function resolveLanguageChosen(
+  settings: Partial<SharedSettings> | undefined,
+  children: Pick<ChildRecord, "profile">[],
+): boolean {
+  if (typeof settings?.languageChosen === "boolean") return settings.languageChosen;
+  if (settings?.onboarded || settings?.language === "es") return true;
+  return children.some(
+    (c) => c.profile.onboarded || c.profile.gamesCompleted > 0 || c.profile.stars > 0 || c.profile.days.length > 0,
+  );
+}
+
 export function loadFamily(): Family {
   if (typeof window === "undefined") return emptyFamily();
   try {
@@ -311,7 +330,8 @@ export function loadFamily(): Family {
     if (raw) {
       const f = JSON.parse(raw) as Family;
       if (f && Array.isArray(f.children) && f.children.length) {
-        f.settings = { ...sharedOf(defaultProfile()), ...f.settings, premium: verifiedPremium };
+        const chosen = resolveLanguageChosen(f.settings, f.children);
+        f.settings = { ...sharedOf(defaultProfile()), ...f.settings, languageChosen: chosen, premium: verifiedPremium };
         if (!f.children.some((c) => c.id === f.activeChildId)) f.activeChildId = f.children[0]!.id;
         return f;
       }
@@ -324,7 +344,11 @@ export function loadFamily(): Family {
       const family: Family = {
         activeChildId: child.id,
         children: [child],
-        settings: { ...sharedOf(p), premium: verifiedPremium },
+        settings: {
+          ...sharedOf(p),
+          languageChosen: resolveLanguageChosen(JSON.parse(legacy) as Partial<SharedSettings>, [child]),
+          premium: verifiedPremium,
+        },
       };
       saveFamily(family);
       return family;

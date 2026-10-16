@@ -297,4 +297,4 @@
 - [ ] Spanish song on a real iPhone: new Codemagic build + device check
 - [ ] Check opening animation on a real iPhone (new build)
 
-- [ ] Music: dashboard silent (no preview), home music survives leaving dashboard, ordering test EN/ES
+- [x] Music: dashboard silent (no preview), home music survives leaving dashboard, ordering test EN/ES

@@ -17,3 +17,4 @@
 - The parental gate state lives only in the /parent layout component memory, never in storage, and child-facing screens never link to pages with external links — Apple Kids 1.3 requires a fresh gate on every entry.
 - Letter/word games read language-aware banks (alphabet(), bankWords(), soundWords(), spellingWords() in content.ts); Spanish uses authored WORDS_ES/LETTERS_ES with Ñ, never translated English words — translation broke letter–word matches.
 - Bespoke scenes (Fishing/Monster/Rain) show question clues via the shared RoundClue panel keyed by CLUE_KINDS in rounds.ts; never per-game clue markup — keeps clue games consistent.
+- Menu music selection is explicit language state passed by MusicPlayer to the singleton player; every menu variant has hosted and packaged sources — enables immediate language changes without disturbing activity/story tracks or offline playback.

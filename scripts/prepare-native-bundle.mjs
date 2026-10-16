@@ -33,6 +33,7 @@ await access(path.join(target, "index.html")).catch(() => {
 const musicSource = "native-assets/music";
 const musicTracks = [
   "little-steps-big-dreams.mp3",
+  "little-steps-big-dreams-es.mp3",
   "curious-steps.mp3",
   "forest-of-wonder.mp3",
 ];

@@ -2,7 +2,8 @@
  *  One track for the main screens, another inside activities. Both sit well
  *  under narration: volume is low and ducks further while Hannah is speaking.
  *  Autoplay blocks are handled by retrying on first tap. */
-import { ACTIVITY_TRACK, MENU_TRACK, STORY_TRACK, type Track } from "./music-track";
+import { ACTIVITY_TRACK, menuTrackFor, STORY_TRACK, type Track } from "./music-track";
+import type { Lang } from "./i18n";
 import { onGesture, onUnlock } from "./audio-unlock";
 import { reportIssue } from "./crash-report";
 import { apiOrigin } from "./native";
@@ -22,7 +23,7 @@ let storyOverride = 0; // >0 while a storybook is open
 
 function trackFor(pathname: string): Track | null {
   if (storyOverride > 0) return STORY_TRACK;
-  return isActivityRoute(pathname) ? ACTIVITY_TRACK : MENU_TRACK;
+  return isActivityRoute(pathname) ? ACTIVITY_TRACK : menuTrackFor(language);
 }
 
 let audio: HTMLAudioElement | null = null;
@@ -31,6 +32,7 @@ let wanted = false;
 let ducked = false;
 let level = DEFAULT_LEVEL; // parent-set loudness, 0–1
 let route = "/";
+let language: Lang = "en";
 let gestureHooked = false;
 let fadeTimer: ReturnType<typeof setInterval> | null = null;
 
@@ -130,6 +132,13 @@ async function tryPlay() {
   }
 }
 
+
+/** Point the player at a new screen so the right soundtrack is selected. */
+export function setMusicLanguage(value: Lang) {
+  if (language === value) return;
+  language = value;
+  if (wanted && audio && trackFor(route) !== currentTrack) void tryPlay();
+}
 
 /** Point the player at a new screen so the right soundtrack is selected. */
 export function setMusicRoute(pathname: string) {

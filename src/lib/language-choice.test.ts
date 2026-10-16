@@ -9,7 +9,7 @@ describe("first-time language popup", () => {
     expect(resolveLanguageChosen(undefined, [child()])).toBe(false);
   });
   it("a family already set up is never asked", () => {
-    expect(resolveLanguageChosen({ onboarded: true }, [child()])).toBe(false || true);
+    expect(resolveLanguageChosen({ onboarded: true }, [child()])).toBe(true);
     expect(resolveLanguageChosen({}, [child({ onboarded: true })])).toBe(true);
   });
   it("a family with play history is never asked", () => {

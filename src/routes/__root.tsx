@@ -24,6 +24,7 @@ import { installCrashReporting } from "../lib/crash-report";
 
 import { OfflineGate } from "../components/OfflineGate";
 import { StorageBoot } from "../components/StorageBoot";
+import { AppEntrance } from "../components/AppEntrance";
 
 import { MusicPlayer } from "../components/MusicPlayer";
 import { useProfile } from "../lib/profile";
@@ -167,6 +168,7 @@ function RootComponent() {
         <OfflineGate>
           <Outlet />
         </OfflineGate>
+        <AppEntrance />
       </StorageBoot>
     </QueryClientProvider>
   );

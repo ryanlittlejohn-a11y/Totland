@@ -344,7 +344,11 @@ export function loadFamily(): Family {
       const family: Family = {
         activeChildId: child.id,
         children: [child],
-        settings: { ...sharedOf(p), premium: verifiedPremium },
+        settings: {
+          ...sharedOf(p),
+          languageChosen: resolveLanguageChosen(JSON.parse(legacy) as Partial<SharedSettings>, [child]),
+          premium: verifiedPremium,
+        },
       };
       saveFamily(family);
       return family;

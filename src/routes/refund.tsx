@@ -26,7 +26,7 @@ export const Route = createFileRoute("/refund")({
 
 function RefundPage() {
   return (
-    <LegalPage title="Refund Policy" updated="September 15, 2026">
+    <LegalPage title="Refund Policy" updated="September 15, 2026" spanishNote>
       <section>
         <h2>Which path applies to you</h2>
         <p>

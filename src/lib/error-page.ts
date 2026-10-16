@@ -18,13 +18,24 @@ export function renderErrorPage(): string {
   </head>
   <body>
     <div class="card">
-      <h1>This page didn't load</h1>
-      <p>Something went wrong on our end. You can try refreshing or head back home.</p>
+      <h1 data-es="Esta página no se cargó">This page didn't load</h1>
+      <p data-es="Algo falló por nuestra parte. Prueba a recargar o vuelve al inicio.">Something went wrong on our end. You can try refreshing or head back home.</p>
       <div class="actions">
-        <button class="primary" onclick="location.reload()">Try again</button>
-        <a class="secondary" href="/">Go home</a>
+        <button class="primary" onclick="location.reload()" data-es="Intentar de nuevo">Try again</button>
+        <a class="secondary" href="/" data-es="Ir al inicio">Go home</a>
       </div>
     </div>
+    <script>
+      (function () {
+        try {
+          var es = /"language":"es"/.test(localStorage.getItem("totland.family.v1") || "");
+          if (!es) return;
+          document.documentElement.lang = "es";
+          document.title = "Esta página no se cargó";
+          document.querySelectorAll("[data-es]").forEach(function (el) { el.textContent = el.getAttribute("data-es"); });
+        } catch (e) {}
+      })();
+    </script>
   </body>
 </html>`;
 }

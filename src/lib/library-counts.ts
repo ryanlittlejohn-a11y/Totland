@@ -4,6 +4,7 @@
  * the copy automatically — never hardcode these numbers in UI text.
  */
 import { GAMES } from "./catalog";
+import { L, title as tTitle } from "./i18n";
 import { AREAS, STORIES, WORDS, WORDS_ES, type Area } from "./content";
 import { FREE_WORD_FINDS, WORD_FIND_THEMES } from "./wordfinds";
 
@@ -36,12 +37,12 @@ export function premiumBenefits(): Benefit[] {
     const n = gamesForArea(a.id).filter((g) => g.premium).length;
     if (areaWholeLocked(a)) {
       const count = a.id === "flashcards" ? FLASH_CARD_COUNT : 0;
-      return [{ key: a.id, emoji: a.emoji, text: `${a.title} — ${count} picture cards` }];
+      return [{ key: a.id, emoji: a.emoji, text: L(`${a.title} — ${count} picture cards`, `${tTitle(a.title)}: ${a.id === "flashcards" ? FLASH_CARD_COUNT_ES : count} tarjetas con imagen`) }];
     }
     // The tracing area mixes Letter/Number Tracing (free) with Word Tracing
     // tiers (Premium) — name the Premium ones specifically, not the area title.
-    const label = a.id === "tracing" ? "Word Tracing (3–5 letters)" : a.title;
-    return n > 0 ? [{ key: a.id, emoji: a.emoji, text: `${label} — ${n} more ${n === 1 ? "game" : "games"}` }] : [];
+    const label = a.id === "tracing" ? L("Word Tracing (3–5 letters)", "Trazar palabras (3–5 letras)") : tTitle(a.title);
+    return n > 0 ? [{ key: a.id, emoji: a.emoji, text: L(`${label} — ${n} more ${n === 1 ? "game" : "games"}`, `${label}: ${n} ${n === 1 ? "juego más" : "juegos más"}`) }] : [];
   });
   return [
     ...perArea,
@@ -49,13 +50,16 @@ export function premiumBenefits(): Benefit[] {
       ? [{
           key: "storybooks",
           emoji: "📚",
-          text: `Storybooks — ${PREMIUM_STORY_COUNT} more ${PREMIUM_STORY_COUNT === 1 ? "story" : "stories"} (all ${STORY_COUNT})`,
+          text: L(
+            `Storybooks — ${PREMIUM_STORY_COUNT} more ${PREMIUM_STORY_COUNT === 1 ? "story" : "stories"} (all ${STORY_COUNT})`,
+            `Cuentos: ${PREMIUM_STORY_COUNT} ${PREMIUM_STORY_COUNT === 1 ? "cuento más" : "cuentos más"} (los ${STORY_COUNT})`,
+          ),
         }]
       : []),
     {
       key: "wordfinds",
       emoji: "🔎",
-      text: `Word Finds — ${PREMIUM_WORD_FIND_COUNT} more puzzles (all ${WORD_FIND_COUNT})`,
+      text: L(`Word Finds — ${PREMIUM_WORD_FIND_COUNT} more puzzles (all ${WORD_FIND_COUNT})`, `Sopas de letras: ${PREMIUM_WORD_FIND_COUNT} más (las ${WORD_FIND_COUNT})`),
     },
   ];
 }

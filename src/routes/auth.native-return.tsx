@@ -2,6 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { L } from "@/lib/i18n";
+import { useProfile } from "@/lib/profile";
 
 /**
  * Website page that hands a finished sign-in back to the Totland phone app.
@@ -49,6 +51,7 @@ function clearSheetSession(): void {
 function NativeReturn() {
   const [link, setLink] = useState<string | null>(null);
   const [failed, setFailed] = useState(false);
+  useProfile(); // re-render once the saved language loads
 
   useEffect(() => {
     const n = new URLSearchParams(window.location.search).get("n");
@@ -94,14 +97,16 @@ function NativeReturn() {
     <main className="flex min-h-screen items-center justify-center bg-background px-6">
       <div className="max-w-sm text-center">
         <h1 className="font-ui text-xl font-bold text-foreground">
-          {failed ? "Sign-in didn't finish" : "Returning to Totland…"}
+          {failed ? L("Sign-in didn't finish", "No se completó el inicio de sesión") : L("Returning to Totland…", "Volviendo a Totland…")}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          {failed ? "Please close this window and try again in the app." : "One moment."}
+          {failed
+            ? L("Please close this window and try again in the app.", "Cierra esta ventana e inténtalo de nuevo en la app.")
+            : L("One moment.", "Un momento.")}
         </p>
         {link && (
           <a href={link} className="mt-6 inline-block rounded-xl bg-primary px-5 py-3 font-bold text-primary-foreground">
-            Return to Totland
+            {L("Return to Totland", "Volver a Totland")}
           </a>
         )}
       </div>

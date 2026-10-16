@@ -1,5 +1,7 @@
 import { createFileRoute, Link, Outlet } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
+import { L } from "@/lib/i18n";
+import { useProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/parent")({
   head: () => ({
@@ -26,6 +28,8 @@ function ParentLayout() {
   const [b, setB] = useState(2);
   const [value, setValue] = useState("");
   const [error, setError] = useState(false);
+  // Re-render (and remount the open screen) the moment the language changes.
+  const lang = useProfile().profile.language;
 
   useEffect(() => {
     try {
@@ -43,13 +47,16 @@ function ParentLayout() {
         <div className="rounded-[2rem] bg-night p-6 text-cream wood-block">
           <div className="flex items-center gap-2">
             <span className="grid size-8 place-items-center rounded-lg bg-cream/10">🔒</span>
-            <h1 className="text-lg font-semibold text-cream">Parental Area</h1>
+            <h1 className="text-lg font-semibold text-cream">{L("Parental Area", "Zona para adultos")}</h1>
           </div>
           <p className="mt-3 text-sm leading-snug text-cream/70">
-            For grown-ups. Answer the question below to open the dashboard, settings and subscription.
+            {L(
+              "For grown-ups. Answer the question below to open the dashboard, settings and subscription.",
+              "Solo para adultos. Responde la pregunta para abrir el panel, los ajustes y la suscripción.",
+            )}
           </p>
           <label htmlFor="gate" className="mt-5 block text-sm font-semibold text-cream">
-            What is {a} × {b}?
+            {L(`What is ${a} × ${b}?`, `¿Cuánto es ${a} × ${b}?`)}
           </label>
           <input
             id="gate"
@@ -57,9 +64,9 @@ function ParentLayout() {
             value={value}
             onChange={(e) => setValue(e.target.value)}
             className="mt-2 w-full rounded-xl bg-cream/10 px-4 py-3 text-cream outline-none ring-1 ring-cream/15 focus:ring-cream/40"
-            placeholder="Type the answer"
+            placeholder={L("Type the answer", "Escribe la respuesta")}
           />
-          {error && <p className="mt-2 text-sm text-amber">Not quite — please try again.</p>}
+          {error && <p className="mt-2 text-sm text-amber">{L("Not quite — please try again.", "No es correcto. Inténtalo de nuevo.")}</p>}
           <button
             type="button"
             onClick={() => {
@@ -69,10 +76,10 @@ function ParentLayout() {
             }}
             className="mt-4 w-full rounded-xl bg-cream py-3 font-ui font-bold text-night"
           >
-            Open dashboard
+            {L("Open dashboard", "Abrir el panel")}
           </button>
           <Link to="/" className="mt-3 block text-center text-sm text-cream/60">
-            Back to play
+            {L("Back to play", "Volver a jugar")}
           </Link>
         </div>
       </main>
@@ -82,17 +89,17 @@ function ParentLayout() {
   return (
     <main className="mx-auto min-h-screen w-full max-w-[560px] px-4 pb-12 pt-5">
       <div className="flex items-center justify-between">
-        <h1 className="font-ui text-2xl font-bold text-ink">Parents</h1>
+        <h1 className="font-ui text-2xl font-bold text-ink">{L("Parents", "Adultos")}</h1>
         <Link to="/" className="rounded-xl bg-card px-4 py-2 font-ui font-semibold wood-block">
-          Back to play
+          {L("Back to play", "Volver a jugar")}
         </Link>
       </div>
       <nav className="mt-4 flex gap-2 overflow-x-auto pb-1">
         {[
-          { to: "/parent", label: "Dashboard", exact: true },
-          { to: "/parent/children", label: "Children" },
-          { to: "/parent/subscription", label: "Subscription" },
-          { to: "/contact", label: "Contact" },
+          { to: "/parent", label: L("Dashboard", "Panel"), exact: true },
+          { to: "/parent/children", label: L("Children", "Peques") },
+          { to: "/parent/subscription", label: L("Subscription", "Suscripción") },
+          { to: "/contact", label: L("Contact", "Contacto") },
 
         ].map((t) => (
           <Link
@@ -108,14 +115,14 @@ function ParentLayout() {
         ))}
       </nav>
       <div className="mt-5">
-        <Outlet />
+        <Outlet key={lang} />
       </div>
       <footer className="mt-8 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-xs text-inksoft">
-        <Link to="/guides/toddler-learning-games" className="underline">Guide</Link>
-        <Link to="/terms" className="underline">Terms of Use</Link>
-        <Link to="/privacy" className="underline">Privacy</Link>
-        <Link to="/refund" className="underline">Refunds</Link>
-        <Link to="/contact" className="underline">Contact</Link>
+        <Link to="/guides/toddler-learning-games" className="underline">{L("Guide", "Guía")}</Link>
+        <Link to="/terms" className="underline">{L("Terms of Use", "Condiciones de uso")}</Link>
+        <Link to="/privacy" className="underline">{L("Privacy", "Privacidad")}</Link>
+        <Link to="/refund" className="underline">{L("Refunds", "Reembolsos")}</Link>
+        <Link to="/contact" className="underline">{L("Contact", "Contacto")}</Link>
       </footer>
     </main>
   );

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { L } from "@/lib/i18n";
 
 interface BeforeInstallPromptEvent extends Event {
   readonly platforms: string[];
@@ -44,18 +45,18 @@ export function InstallPrompt() {
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl bg-clay text-2xl">🏠</span>
         <div className="min-w-0 flex-1">
-          <p className="font-ui text-sm font-bold text-ink">Add Totland to your home screen</p>
-          <p className="font-ui text-xs text-inksoft">Tap here to install like a regular app.</p>
+          <p className="font-ui text-sm font-bold text-ink">{L("Add Totland to your home screen", "Añade Totland a tu pantalla de inicio")}</p>
+          <p className="font-ui text-xs text-inksoft">{L("Tap here to install like a regular app.", "Toca aquí para instalarla como una app normal.")}</p>
         </div>
         <button
           onClick={handleInstall}
           className="rounded-2xl bg-clay px-4 py-2 font-ui text-sm font-bold text-primary-foreground wood-block active:translate-y-1"
         >
-          Install
+          {L("Install", "Instalar")}
         </button>
         <button
           onClick={() => setDismissed(true)}
-          aria-label="Dismiss install prompt"
+          aria-label={L("Dismiss install prompt", "Cerrar aviso de instalación")}
           className="grid size-9 place-items-center rounded-full bg-felt font-ui text-sm font-bold text-inksoft"
         >
           ✕

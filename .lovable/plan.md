@@ -1,51 +1,34 @@
-# Premium games locked despite an active subscription — root cause findings
+# Narration batch: English (Hannah) + Spanish (Lucy)
 
-Read-only investigation. Nothing changed. Fix proposal at the end needs approval (this is subscription code).
+## Step 1 — Fresh coverage scan (no audio generated)
+- Re-run the full scan across all 121 games, 10 storybooks, Flash Cards, Word Finds and quick-play pages, in English and Spanish, checking each line against the shared voice library in lookup-only mode.
+- Includes the new lines from the rebuilt games (rockets, number fishing "what comes next", word fishing clues, number monster counting, number rain, letter maze incl. Ñ, vehicle jigsaw names).
+- Output: exact missing line count and character-based credit cost per language, saved as `missing-lines_v3.tsv` and an updated coverage report in Files.
 
-## 1. What the lock screen checks
+## Step 2 — Real credit balance
+- Read the current ElevenLabs subscription balance (characters used / limit, reset date) through the linked account. Read-only.
 
-- Game screen, area lists, worlds, Word Finds and stories all use the same check: `game.premium && !profile.premium`.
-- `profile.premium` is never read from storage. It comes from one in-memory flag (`verifiedPremium` in profile.ts), set only by:
-  - **App launch check** (useEntitlementSync): asks RevenueCat on the device first; if yes, Premium. If not, asks our backend for the signed-in account. Runs again only when the device comes back online or someone signs in/out.
-  - **Subscription page** (parent.subscription.tsx): every time it opens with a signed-in, verified account, it sets the flag to **whatever the backend says**.
-  - Sign out / delete account: set to false.
+## Step 3 — Go / stop check
+Generate only if all of these hold:
+- English gap within roughly 2x of the ~368 lines / ~12,500 credit estimate.
+- Spanish gap within roughly 1.3x of the ~2,780 lines / ~59,000 credit estimate.
+- Combined cost uses no more than 70% of the real remaining balance.
+Otherwise stop and report the numbers before generating anything.
 
-## 2. Systemic, not caused by the game batches
+Before generating Spanish, drop any line that still uses an old translated letter pairing (e.g. "U es de paraguas") — only lines the current app can actually say get recorded.
 
-- Batch 1/2/3 touched only which scene a game opens and the catalog's kind/engine fields. No premium flags changed (46/75 still), and the lock line in the game screen is unchanged.
-- Nothing in the Premium-check files (entitlement sync, purchases, profile, sign-in check, storage boot, offline gate, subscription functions, store webhook) has changed in the last 10 days. Letter Bubbles being locked confirms it's app-wide.
+## Step 4 — Generate
+- English first with Hannah, then Spanish with Lucy, same voice settings as today, saved into the shared library so every device reuses them.
+- Small batches with limited concurrency; stop immediately on any quota or rate-limit reply and report where it stopped.
+- No pruning or deletion of existing clips.
 
-## 3. Root cause (two real bugs, both old, made visible now)
+## Step 5 — Verify and report
+- Re-run the scan; expect zero gaps (or list any remaining).
+- Spot-check playback of: a Number Fishing "what comes next" prompt, a Letter Maze prompt, a Simple Jigsaw vehicle name, a Premium storybook page, Spanish "¡Ñ, como en piña!", "¡H es de helado!", "¡W es de wafle!", "¡Escribe SOL…!".
+- Report exact credits spent (balance before vs after) and remaining balance.
 
-**Bug A — the subscription page overwrites the store answer.**
-The page's own display combines both sources (`account active OR store active`), so it shows "Premium active". But the flag the games read is set from the backend answer **only**. The backend has no record of App Store purchases (see below), so it says "not active" and the games lock — and stay locked until the app is fully closed and reopened.
-Sequence: Premium recognized at launch → grown-up opens parent area → subscription page → games locked.
+Nothing is published; app code is unchanged.
 
-**Bug B — buying or restoring in the app never unlocks games right away.**
-After a store purchase or Restore Purchases succeeds, the panel refreshes only the subscription page's own display. Nobody sets the game flag to true. Games stay locked until the next launch (and then Bug A can re-lock them).
-
-**Why the backend says "not active":** the subscriptions table has only 2 rows, both test web (Paddle) purchases from Sept 26. There are **zero App Store rows** — the store notification receiver has never recorded a purchase. So on a store-only subscriber, the backend is always "no", which turns Bug A into a lock.
-
-## 4. Cached/stale state?
-
-- Not a stale-cache issue in RevenueCat; the device check at launch is fine if RevenueCat reports the entitlement.
-- The "settled" flag only affects the offline screen, not the lock.
-- One thing I can't rule out from here: RevenueCat itself not reporting the entitlement on Ryan's device (e.g. entitlement named something other than premium / totland_pro / pro). If so, games would be locked even right after a fresh launch.
-
-## 5. Reproducible here?
-
-Not on the device — no RevenueCat in the browser preview. The logic path is confirmed by reading the code and the database. I need from Ryan:
-1. After **force-closing and reopening** the app (without visiting the parent area), are Premium games unlocked? Yes → Bugs A/B. No → RevenueCat entitlement problem as well.
-2. Was the subscription bought in TestFlight or restored? Was Restore Purchases tried?
-3. Signed into a grown-up account in the app, or not?
-4. The entitlement name in the RevenueCat dashboard.
-
-## Proposed fix (needs approval — subscription code)
-
-1. Subscription page sets the game flag to `account active OR store active`, never the backend answer alone.
-2. After a successful store purchase or restore, set the game flag to true immediately.
-3. App launch check: keep the store answer; the backend may only add Premium, never remove a store "yes".
-4. Tests: store yes + backend no → unlocked; purchase/restore → unlocked without relaunch; sign out with no store entitlement → locked.
-5. Separately investigate why App Store purchases never reach the backend (webhook setup in RevenueCat). Doesn't block the fix, since the device's store answer is enough.
-
-No changes to pricing, the parental gate, or free/Premium flags.
+## Technical details
+- Scan reuses the previous enumeration script with `allowGenerate:false`; generation calls ElevenLabs with `ELEVENLABS_API_KEY` server-side via a one-off script that uploads to the `voice-clips` bucket using the same sha256(`lang:text`) key as `tts.functions.ts`.
+- Balance via `GET https://api.elevenlabs.io/v1/user/subscription` (`character_count`, `character_limit`).

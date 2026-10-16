@@ -133,6 +133,7 @@ function Guide() {
           Short and regular beats long and rare. One game a day, played alongside a grown-up who
           repeats the sound or number out loud, does more than an hour once a week. For younger
           siblings, see our{" "}
+          <Link to="/guides/learning-games-for-3-year-olds">guide to educational games for 3 year olds</Link> or the{" "}
           <Link to="/guides/toddler-learning-games">guide to toddler learning games for ages 2–6</Link>.
         </p>
       </section>

@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AdventureRouteImport } from './routes/adventure'
 import { Route as ContactRouteImport } from './routes/contact'
+import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as ParentRouteImport } from './routes/parent'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
@@ -55,6 +56,11 @@ const AdventureRoute = AdventureRouteImport.update({
 const ContactRoute = ContactRouteImport.update({
   id: '/contact',
   path: '/contact',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DeleteAccountRoute = DeleteAccountRouteImport.update({
+  id: '/delete-account',
+  path: '/delete-account',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ParentRoute = ParentRouteImport.update({
@@ -214,6 +220,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/contact': typeof ContactRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/parent': typeof ParentRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -248,6 +255,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/contact': typeof ContactRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
@@ -281,6 +289,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/adventure': typeof AdventureRoute
   '/contact': typeof ContactRoute
+  '/delete-account': typeof DeleteAccountRoute
   '/parent': typeof ParentRouteWithChildren
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
@@ -317,6 +326,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/contact'
+    | '/delete-account'
     | '/parent'
     | '/privacy'
     | '/refund'
@@ -351,6 +361,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/contact'
+    | '/delete-account'
     | '/privacy'
     | '/refund'
     | '/rewards'
@@ -383,6 +394,7 @@ export interface FileRouteTypes {
     | '/'
     | '/adventure'
     | '/contact'
+    | '/delete-account'
     | '/parent'
     | '/privacy'
     | '/refund'
@@ -418,6 +430,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdventureRoute: typeof AdventureRoute
   ContactRoute: typeof ContactRoute
+  DeleteAccountRoute: typeof DeleteAccountRoute
   ParentRoute: typeof ParentRouteWithChildren
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
@@ -465,6 +478,13 @@ declare module '@tanstack/react-router' {
       path: '/contact'
       fullPath: '/contact'
       preLoaderRoute: typeof ContactRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/delete-account': {
+      id: '/delete-account'
+      path: '/delete-account'
+      fullPath: '/delete-account'
+      preLoaderRoute: typeof DeleteAccountRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/parent': {
@@ -706,6 +726,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdventureRoute: AdventureRoute,
   ContactRoute: ContactRoute,
+  DeleteAccountRoute: DeleteAccountRoute,
   ParentRoute: ParentRouteWithChildren,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,

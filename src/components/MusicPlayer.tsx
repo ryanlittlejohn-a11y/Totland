@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { setMusic, setMusicLanguage, setMusicRoute, setMusicVolume, stopMusic } from "@/lib/music";
 import { useProfile } from "@/lib/profile";
 
-const SILENT_PREFIXES = ["/parent", "/terms", "/privacy", "/refund"];
+const SILENT_PREFIXES = ["/parent", "/terms", "/privacy", "/refund", "/delete-account"];
 
 /** Runs the looping soundtracks on kid-facing screens only. */
 export function MusicPlayer() {

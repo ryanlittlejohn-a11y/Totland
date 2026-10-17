@@ -8,7 +8,7 @@ import { useProfile } from "@/lib/profile";
 import { storageSettled } from "@/lib/storage";
 
 /** Grown-up, legal and guide pages open straight away — no intro, no popup. */
-const NO_INTRO = ["/terms", "/privacy", "/refund", "/contact", "/guides", "/auth", "/parent", "/lovable", "/api"];
+const NO_INTRO = ["/terms", "/privacy", "/refund", "/delete-account", "/contact", "/guides", "/auth", "/parent", "/lovable", "/api"];
 export const skipsIntro = (path: string) => NO_INTRO.some((p) => path.startsWith(p));
 
 const MIN_MS = 1500;

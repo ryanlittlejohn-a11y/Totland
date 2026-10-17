@@ -116,4 +116,8 @@
     <loc>https://totland.app/refund</loc>
     <priority>0.3</priority>
   </url>
+  <url>
+    <loc>https://totland.app/delete-account</loc>
+    <priority>0.3</priority>
+  </url>
 </urlset>

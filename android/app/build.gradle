@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+// Codemagic sets BUILD_NUMBER per run; fall back to the UTC Unix timestamp
+// (same rule as the iOS build) so every uploaded bundle is newer.
+def totlandVersionCode = {
+    def n = System.getenv("BUILD_NUMBER")
+    (n != null && n.isInteger() && n.toInteger() > 0) ? n.toInteger() : (int) (System.currentTimeMillis() / 1000L)
+}()
+def releaseKeystore = System.getenv("CM_KEYSTORE_PATH")
+
 android {
     namespace "app.totland.kids"
     compileSdk rootProject.ext.compileSdkVersion
@@ -7,7 +15,7 @@ android {
         applicationId "app.totland.kids"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        versionCode totlandVersionCode
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
@@ -16,8 +24,19 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    signingConfigs {
+        if (releaseKeystore) {
+            release {
+                storeFile file(releaseKeystore)
+                storePassword System.getenv("CM_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("CM_KEY_ALIAS")
+                keyPassword System.getenv("CM_KEY_PASSWORD")
+            }
+        }
+    }
     buildTypes {
         release {
+            if (releaseKeystore) signingConfig signingConfigs.release
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }

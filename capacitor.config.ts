@@ -19,6 +19,9 @@ const config: CapacitorConfig = {
   },
   android: {
     backgroundColor: "#fff7ed",
+    // Android 15 draws edge-to-edge; keep the game screens clear of the
+    // status bar and gesture/navigation bar.
+    adjustMarginsForEdgeToEdge: "force",
   },
   plugins: {
     SplashScreen: {

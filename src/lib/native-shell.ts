@@ -33,11 +33,10 @@ export function initNativeShell(router: Router<any, any>): void {
     try {
       const { App } = await import("@capacitor/app");
       await App.addListener("backButton", ({ canGoBack }) => {
-        if (canGoBack) {
-          window.history.back();
-        } else {
-          void App.exitApp();
-        }
+        const action = androidBackAction(window.location.pathname, canGoBack);
+        if (action === "back") window.history.back();
+        else if (action === "home") void router.navigate({ to: "/", replace: true });
+        else void App.exitApp();
       });
 
       await App.addListener("appUrlOpen", ({ url }) => {
@@ -47,6 +46,17 @@ export function initNativeShell(router: Router<any, any>): void {
       console.error(e);
     }
   })();
+}
+
+/**
+ * Android hardware back: step back a screen when there is history; with no
+ * history (e.g. opened from a deep link) go to the home screen; only the home
+ * screen exits the app. Leaving /parent drops the gate's in-memory unlock.
+ */
+export function androidBackAction(pathname: string, canGoBack: boolean): "back" | "home" | "exit" {
+  const atHome = pathname === "/" || pathname === "";
+  if (atHome) return "exit";
+  return canGoBack ? "back" : "home";
 }
 
 function handleDeepLink(url: string, router: Router<any, any>): void {

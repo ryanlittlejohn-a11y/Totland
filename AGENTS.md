@@ -18,3 +18,4 @@
 - Letter/word games read language-aware banks (alphabet(), bankWords(), soundWords(), spellingWords() in content.ts); Spanish uses authored WORDS_ES/LETTERS_ES with Ñ, never translated English words — translation broke letter–word matches.
 - Bespoke scenes (Fishing/Monster/Rain) show question clues via the shared RoundClue panel keyed by CLUE_KINDS in rounds.ts; never per-game clue markup — keeps clue games consistent.
 - Menu music selection is explicit language state passed by MusicPlayer to the singleton player; every menu variant has hosted and packaged sources — enables immediate language changes without disturbing activity/story tracks or offline playback.
+- Android release signing and versionCode come only from Codemagic env (CM_KEYSTORE_* and BUILD_NUMBER, timestamp fallback) — keystore never lives in the repo.

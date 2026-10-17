@@ -1,5 +1,10 @@
 # Roadmap
 
+## Google Play submission materials (2026-10-17)
+- [ ] Verify Android Data Safety disclosures, including SDK identifiers and narration traffic
+- [ ] Draft short/full listing from approved iOS copy with accurate narration wording
+- [ ] Create and inspect 1024×500 feature graphic using existing Totland branding
+
 ## Voice pause still plays recorded lines (approved 2026-09-28)
 - [x] While paused, look up shared library with allowGenerate:false; device voice only for unrecorded lines
 - [ ] New Codemagic build + TestFlight check

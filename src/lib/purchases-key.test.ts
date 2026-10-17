@@ -19,8 +19,8 @@ describe("production store key selection", () => {
     vi.resetModules();
     bridge.configure.mockReset();
     const env = loadEnv("production", process.cwd(), "VITE_");
-    vi.stubEnv("VITE_REVENUECAT_ANDROID_KEY", env.VITE_REVENUECAT_ANDROID_KEY);
-    vi.stubEnv("VITE_REVENUECAT_IOS_KEY", env.VITE_REVENUECAT_IOS_KEY);
+    vi.stubEnv("VITE_REVENUECAT_ANDROID_KEY", env["VITE_REVENUECAT_ANDROID_KEY"]);
+    vi.stubEnv("VITE_REVENUECAT_IOS_KEY", env["VITE_REVENUECAT_IOS_KEY"]);
   });
   afterEach(() => vi.unstubAllEnvs());
 

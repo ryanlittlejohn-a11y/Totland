@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { memorySet } from "@/lib/rounds";
 import { shuffle } from "@/lib/content";
 import { say, themeChime } from "@/lib/speech";
@@ -18,7 +18,12 @@ export function MemoryGame({
 }) {
   const { profile, update, hydrated } = useProfile();
   const level = skillOf(profile, "memory").level;
-  const deck = useMemo(() => (hydrated ? shuffle(memorySet(kind, level)) : []), [hydrated, kind, level]);
+  // Freeze the deck once dealt: a level-up from recordAnswer mid-game used to
+  // re-deal it, cancelling the pending match and stranding the finished game.
+  const [deck, setDeck] = useState<ReturnType<typeof memorySet>>([]);
+  useEffect(() => {
+    if (hydrated && deck.length === 0) setDeck(shuffle(memorySet(kind, level)));
+  }, [hydrated, deck.length, kind, level]);
 
   const [flipped, setFlipped] = useState<string[]>([]);
   const [found, setFound] = useState<string[]>([]);
@@ -28,12 +33,20 @@ export function MemoryGame({
     if (hydrated) say(L("Find the matching pairs.", "Encuentra las parejas."));
   }, [hydrated]);
 
+  const onFinishRef = useRef(onFinish);
+  onFinishRef.current = onFinish;
+  const doneRef = useRef(false);
+  const finishTimer = useRef<number | undefined>(undefined);
+  const triesRef = useRef(0);
+  useEffect(() => () => window.clearTimeout(finishTimer.current), []);
+
   useEffect(() => {
     if (flipped.length !== 2) return undefined;
     const a = deck.find((c) => c.key === flipped[0])!;
     const b = deck.find((c) => c.key === flipped[1])!;
     const match = a.pairId === b.pairId;
-    setTries((t) => t + 1);
+    triesRef.current += 1;
+    setTries(triesRef.current);
     update((p) => recordAnswer(p, { skill: "memory", correct: match, responseMs: 2000, itemId: a.pairId }));
     const timer = window.setTimeout(() => {
       if (match) {
@@ -44,17 +57,18 @@ export function MemoryGame({
       setFlipped([]);
     }, 700);
     return () => window.clearTimeout(timer);
-  }, [flipped, deck, update, profile.sfx]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [flipped]);
 
   useEffect(() => {
-    if (!deck.length || found.length !== deck.length / 2) return undefined;
+    if (doneRef.current || !deck.length || found.length !== deck.length / 2) return;
+    doneRef.current = true;
     const pairs = deck.length / 2;
-    const accuracy = pairs / Math.max(1, tries);
-    const stars = tries <= pairs + 1 ? 3 : 2;
+    const accuracy = pairs / Math.max(1, triesRef.current);
+    const stars = triesRef.current <= pairs + 1 ? 3 : 2;
     update((p) => recordGameComplete(p, "memory", stars, 2));
-    const t = window.setTimeout(() => onFinish(stars, accuracy), 900);
-    return () => window.clearTimeout(t);
-  }, [found, deck.length, tries, onFinish, update]);
+    finishTimer.current = window.setTimeout(() => onFinishRef.current(stars, accuracy), 900);
+  }, [found, deck.length, update]);
 
   return (
     <GameThemeScene theme={theme}>

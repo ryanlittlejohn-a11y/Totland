@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 const store = new Map<string, string>();
-(globalThis as Record<string, unknown>).window = Object.assign(new EventTarget(), {
+(globalThis as Record<string, unknown>)["window"] = Object.assign(new EventTarget(), {
   localStorage: {
     getItem: (k: string) => store.get(k) ?? null,
     setItem: (k: string, v: string) => void store.set(k, v),

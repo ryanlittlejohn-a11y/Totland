@@ -325,3 +325,9 @@
 - [x] Shape Match → toy shape-sorter box; Shape Shadow (shapes) / Match the Shadows (objects) → drag onto shadow
 - [x] Recorded combined Part 1+2 narration (137 lines)
 - [x] Part 2: Color Match paint-the-picture, Paint Match dip-the-brush, Count the Animals tap-to-count, Big or Small size boxes, Long or Short ribbon order
+
+## Android vitals fixes (approved 2026-10-18)
+- [x] R8 shrinking + keep-list + mapping file artifact
+- [x] Native edge-to-edge in MainActivity, cream bars, StatusBar color call removed
+- [ ] Ryan: internal-testing check of bars + real purchase/restore on minified build
+- [ ] Later: scope Capacitor 8 upgrade to clear plugin deprecated-API warning (before Feb 2027)

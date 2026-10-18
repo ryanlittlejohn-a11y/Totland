@@ -27,7 +27,7 @@ export function MemoryGame({
 
   const [flipped, setFlipped] = useState<string[]>([]);
   const [found, setFound] = useState<string[]>([]);
-  const [tries, setTries] = useState(0);
+  const [, setTries] = useState(0);
 
   useEffect(() => {
     if (hydrated) say(L("Find the matching pairs.", "Encuentra las parejas."));

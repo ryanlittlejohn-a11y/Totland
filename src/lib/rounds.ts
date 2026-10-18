@@ -24,7 +24,7 @@ import {
 } from "./content";
 
 import type { Round, Option } from "./games";
-import { getLang, noun, sentence, translateRound } from "./i18n";
+import { L, getLang, noun, sentence, translateRound } from "./i18n";
 
 const count = (level: number) => (level <= 1 ? 2 : level <= 3 ? 3 : 4);
 const range = (n: number, from = 1) => Array.from({ length: n }, (_, i) => i + from);

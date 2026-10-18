@@ -1,35 +1,75 @@
-# Hermes changes since 4ad0c538 — audit report (read-only, nothing fixed)
+# Totland on the Amazon Appstore (Fire tablets) — scoping
 
-## 1. Commits (2 total)
+Read-only scoping. Nothing is changed until Ryan approves a build step.
 
-1. **fd1e905c** — 2026-10-17 21:32:48 (UTC-5) — "Wire up Google Play download button (gated, in review like Apple)"
-   - `src/lib/app-links.ts`: Play Store link changed from empty to `https://play.google.com/store/apps/details?id=app.totland.kids`. Added `PLAY_STORE_PACKAGE`. `PLAY_STORE_LIVE` is still `false`.
-   - `src/components/GetTheAppCard.tsx`: the "in review" note now names Apple and Google, and shows two chips ("Apple App Store — in review", "Google Play — in review"). Spanish text is provided too.
-2. **8b03628a** — 2026-10-17 21:34:33 (UTC-5) — "Patch vitest 4.0.8 -> 5.0.5"
-   - `package.json` + `bun.lock` only. This updates the test tool to fix two security warnings. The test tool is not part of the app people download.
+## Short answer
 
-## 2. Gate / subscriptions / catalog / deletion / external links
+A small-to-medium follow-on, not a second Android project. The same Android app code works on Fire tablets. Purchases need one extra Amazon billing module, one switch to tell RevenueCat "this is the Amazon build", and a separate Amazon build in Codemagic. Estimated build work: roughly half a day to a day on my side, plus Ryan's store setup and device testing (the larger share of elapsed time).
 
-- **Gate, subscriptions, purchases, entitlements, free/Premium split, account deletion: not touched.** Neither commit changes any of those files.
-- **External link (needs your confirmation):** the Google Play address is new and points outside the app. It is still **not clickable**: the button only appears when `PLAY_STORE_LIVE` is true, and it is false. The card appears only on the grown-up dashboard, behind the gate. No child-facing screen uses it. The address matches the real app id. Once the listing goes public, this link will match how the Apple link already works.
+## 1. Does the installed purchase plugin support Amazon?
 
-## 3. Android config
+Checked in the installed code (@revenuecat/purchases-capacitor 12.3.2):
 
-- **Not touched.** Signing, manifest, minSdk/targetSdk, versionCode and the RevenueCat Android key are unchanged since your verified commit.
+- **Yes, the plugin wraps Amazon.** Its setup accepts a `useAmazon: true` option (Android only). Its Android code reads that option and switches the store from Google Play to Amazon.
+- **The gap:** the plugin does not include Amazon's billing library by default. Its Android build only pulls in the shared RevenueCat core (purchases-hybrid-common 17.55.1). RevenueCat's Amazon support lives in a separate module (`purchases-store-amazon`) that must be added to the app's Android build, version-matched to the core. Without it, `useAmazon: true` fails at launch.
+- So: same plugin, no new plugin, one added Android dependency.
+- Not verified here: the exact matching Amazon module version for core 17.55.1 — confirm against RevenueCat's release notes during the build step.
 
-## 4. Risky or inconsistent items
+## 2. Can the same Android build go to Amazon for free content?
 
-- **Dashboard wording is now ahead of reality:** it says Google Play is "in review". That's only true once Ryan has actually submitted to Google for review. Internal testing doesn't count. Minor, but it's what parents see.
-- **The test-tool version is no longer pinned.** It changed from the exact `4.0.8` to `^5.0.5`, so future installs can pick up newer 5.x versions. Every other build tool in the project is pinned to an exact version. This is a major-version jump; I re-ran the checks here.
-- **The "Spanish needs review" rule applies:** the new Spanish sentence ("está en revisión con Apple y Google") uses the same style as the rest of the app and should go into the pending native-speaker review.
-- **Leftover:** the condition `PLAY_STORE_LIVE && PLAY_STORE_URL` still checks whether the Play address exists, but now it always does. Harmless, but it no longer does anything.
+Mostly yes, but it should be a **separate build**, not the identical Google file:
 
-## 5. Verification done
+- **Same code, same minimum/target Android version, same app id** (app.totland.kids) are fine. Fire OS 7/8 are based on Android 9/11, above the Android 7.0 minimum.
+- **No Google Play Services dependency in app code** — nothing in the app needs it, so Fire tablets (which lack Google services) are OK. The google-services build plugin is declared but should be confirmed unused before submission.
+- **File format:** Amazon has historically required an APK rather than the Google .aab; whether Amazon currently accepts .aab for this account must be checked in the Amazon developer console. Planning assumes an APK (`assembleRelease`).
+- **Signing:** Amazon re-signs apps itself. The same Codemagic keystore can sign the upload; no new keystore needed.
+- **Why a separate build anyway:** the Amazon build must turn on Amazon billing and say "Amazon Appstore" instead of "Google Play" in the subscription screens. A Google build uploaded to Amazon would show Google wording and fail to buy.
+- Free content alone would work from the Google build, but shipping it would mean a broken "Subscribe" button — not recommended.
 
-- The checks Hermes claimed pass do pass: the installed test tool is 5.0.5, and **all 58 checks pass across 9 test files**. That includes the Spanish grown-up screen check covering this card.
-- Nothing has been published or changed by me.
+## 3. What changes for Premium (additive or invasive?)
 
-## Proposed follow-ups (only if you approve)
+Additive, the same shape as adding Android next to iPhone:
 
-1. Pin the test tool to exactly `5.0.5` so it matches the rest of the project.
-2. Optionally show "Google Play — coming soon" until Ryan actually submits it for Google's review.
+- **Store detection:** Fire tablets report "android", so the app cannot tell Amazon apart at runtime reliably. Use a build-time flag (e.g. `VITE_APP_STORE=amazon`) set only in the Amazon Codemagic build.
+- **purchases.ts:** pick an Amazon RevenueCat public key (`VITE_REVENUECAT_AMAZON_KEY`, starts with `amzn_`) and pass `useAmazon: true` when the flag is set. Everything else (buy, restore, entitlement check, sign-in linking, anonymous purchases) is unchanged.
+- **Product matching:** Amazon product ids come back as SKUs without Google's `id:baseplan` format. The existing matcher already falls back to RevenueCat's package type (monthly/annual), so it should work — to be confirmed with a test.
+- **Wording:** StorePurchasePanel, parent.subscription and GetTheAppCard say "Google Play" on Android; add "Amazon Appstore" (English and Spanish) when the Amazon flag is set.
+- **Server webhook (rc-webhook.ts):** currently records Google as "google", Apple as "apple", anything else as generic "store". Amazon purchases would still grant Premium but be labelled "store". Add an explicit "amazon" label plus a test.
+- **Store links:** app-links.ts / GetTheAppCard would gain an Amazon listing link only once one exists.
+- These touch subscription/purchase code, so each needs Ryan's approval before building (per the project rule).
+
+## 4. Amazon kids policy vs what's already built
+
+Amazon's kids rules largely mirror Apple Kids and Google Families, which Totland already meets: parental gate before purchases/settings/links, no ads, no third-party tracking, no advertising ID, optional grown-up account, public deletion page.
+
+Items specific to Amazon:
+
+- **"Directed to children under 13" declaration** in the submission form (COPPA) — answer Yes; Amazon then forbids ad/analytics SDKs and interest-based ads (none present).
+- **Content rating questionnaire** — Amazon's own form, not reusable from IARC automatically.
+- **Privacy policy URL** — existing totland.app/privacy works.
+- **Amazon Kids+ (the paid kids catalog) is a separate, invitation/partner programme**, not an Appstore checkbox. Being in the regular Appstore with a kids rating makes the app installable on Fire Kids profiles via parent approval; Kids+ inclusion is a later business conversation, not a build task. Kids+ titles usually must not show in-app purchases inside the Kids+ experience — check before applying.
+- **Note:** Amazon closed its Appstore on non-Amazon Android phones in August 2025; Fire tablets remain fully supported, which is Ryan's target.
+- Nothing found that requires changing the gate, deletion flow or privacy practices. Final policy wording should be checked in Amazon's console at submission time.
+
+## 5. Effort estimate
+
+- My build work: ~0.5–1 day (billing module, build flag, key selection, wording, webhook label, tests, Codemagic Amazon workflow, real compile check).
+- Ryan's work: Amazon developer account, app listing, subscriptions created in Amazon (same ids: totland_premium_monthly / totland_premium_yearly), RevenueCat Amazon app + shared key, device testing on a Fire tablet, review (typically a few days).
+- Much smaller than the original Android effort: no new platform folder, signing, icons, edge-to-edge or back-button work.
+
+## Recommended order of operations
+
+1. Ryan: create the Amazon developer account and the app entry; confirm whether .aab or APK is accepted.
+2. Ryan: create the two subscriptions in Amazon with the same ids; add an Amazon app in RevenueCat (needs Amazon's shared key), attach products to the existing `premium` entitlement and offering; send me the `amzn_` public key.
+3. Me (approval needed — purchase code): add the Amazon billing module, the build flag, key selection with `useAmazon`, Amazon wording (EN/ES), webhook "amazon" label, tests.
+4. Me: add a "Totland Amazon" Codemagic workflow producing a signed APK with the same keystore and auto build number; compile it here to prove it builds.
+5. Ryan: install on a real Fire tablet via Amazon's Live App Testing; check purchase, restore, gate, back button, music, Spanish, offline.
+6. Ryan: kids declaration, content rating, store listing (reuse the Google text, icon, feature graphic and screenshots, swapping "Google Play" wording for Amazon), submit.
+7. Later, optional: approach Amazon about Kids+.
+
+## Uncertainties to resolve before building
+
+- Exact `purchases-store-amazon` version matching the installed core.
+- Whether Amazon currently accepts .aab for Ryan's account.
+- Whether the Amazon product SKUs map cleanly through the existing monthly/yearly matcher (test with real offerings).
+- Amazon Kids+ IAP restrictions, if Ryan pursues Kids+.

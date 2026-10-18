@@ -31,9 +31,10 @@ const config: CapacitorConfig = {
       androidScaleType: "CENTER_CROP",
       splashImmersive: false,
     },
+    // No backgroundColor: on Android it triggers the deprecated
+    // setStatusBarColor(); the native shell paints the bars cream instead.
     StatusBar: {
       style: "LIGHT",
-      backgroundColor: "#fff7ed",
     },
   },
 };

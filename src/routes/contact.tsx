@@ -85,7 +85,10 @@ function ContactPage() {
   };
 
   return (
-    <LegalPage title={L("Contact Us", "Contacto")} updated="September 15, 2026">
+    <LegalPage
+      title={L("Contact Totland: Support, Feedback and Billing Questions", "Contacta con Totland: ayuda, opiniones y preguntas de pago")}
+      updated="September 15, 2026"
+    >
       <section>
         <h2 className="text-lg font-semibold">{L("How to reach us", "Cómo contactarnos")}</h2>
         <p>

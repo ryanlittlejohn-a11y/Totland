@@ -78,11 +78,13 @@ function Home() {
             T
           </div>
           <div>
-            <p className="font-ui text-[15px] font-bold leading-none text-ink">Totland</p>
-            <h1 className="mt-1 font-ui text-sm font-bold leading-tight text-ink">
+            <h1 className="font-ui text-[15px] font-bold leading-tight text-ink">
               {L("Ad-Free Learning Games for Ages 2–6", "Juegos educativos sin anuncios, de 2 a 6 años")}
             </h1>
-            <p className="font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>
+            <p className="mt-0.5 font-ui text-[11px] font-semibold uppercase leading-none tracking-[0.14em] text-inksoft">
+              Totland
+            </p>
+            <p className="mt-1 font-ui text-[11px] text-inksoft">{L("Learning that feels like play", "Aprender jugando")}</p>
           </div>
         </div>
         <div className="flex items-center gap-2">

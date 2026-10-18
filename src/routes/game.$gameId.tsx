@@ -148,7 +148,7 @@ function GameHost() {
       ) : engine === "sort" || engine === "assemble" || (engine === "train" && game.kind === "trainSound") ? (
         <PlaceGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "train" || engine === "garden" ? (
-        <CountBuildGame key={key} scene={engine === "garden" ? "garden" : "train"} skill={game.skill} theme={theme} onFinish={finish} />
+        <CountBuildGame key={key} scene={engine === "train" ? "train" : game.kind === "fillJar" ? "jar" : game.kind === "fillBasket" ? "basket" : "garden"} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "hunt" ? (
         <HuntGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "order" ? (

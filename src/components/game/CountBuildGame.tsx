@@ -9,6 +9,15 @@ import { NEUTRAL_GAME_THEME, type GameTheme } from "@/lib/game-themes";
 
 const ROUNDS = 3;
 
+export type CountScene = "garden" | "train" | "jar" | "basket";
+
+/** Fill-a-spot scenes (everything except the train). */
+const FILL = {
+  garden: { item: "🌻", empty: "🟫", frame: "rounded-3xl bg-moss/20", cls: "garden-plot rounded-2xl" },
+  jar: { item: "⭐", empty: "·", frame: "count-jar", cls: "count-spot rounded-full" },
+  basket: { item: "🍎", empty: "·", frame: "count-basket", cls: "count-spot rounded-2xl" },
+} as const;
+
 /**
  * Build-that-many scenes: plant N flowers in the garden, or hook N
  * carriages to the train, then press the button to check.
@@ -19,7 +28,7 @@ export function CountBuildGame({
   theme = NEUTRAL_GAME_THEME,
   onFinish,
 }: {
-  scene: "garden" | "train";
+  scene: CountScene;
   skill: SkillId;
   theme?: GameTheme;
   onFinish: (stars: number, accuracy: number) => void;
@@ -56,7 +65,17 @@ export function CountBuildGame({
           `Plant ${set.target} flowers, then press Done.`,
           `Planta ${set.target} flores y pulsa Listo.`,
         )
-      : L(
+      : scene === "jar"
+        ? L(
+            `Put ${set.target} stars in the jar, then press Done.`,
+            `Pon ${set.target} estrellas en el bote y pulsa Listo.`,
+          )
+        : scene === "basket"
+          ? L(
+              `Put ${set.target} apples in the basket, then press Done.`,
+              `Pon ${set.target} manzanas en la cesta y pulsa Listo.`,
+            )
+          : L(
           `Hook ${set.target} carriages to the train, then press Go.`,
           `Engancha ${set.target} vagones al tren y pulsa Vamos.`,
         )
@@ -68,7 +87,7 @@ export function CountBuildGame({
 
   if (!set) return <div className="h-64 rounded-3xl felt-panel" />;
 
-  const have = scene === "garden" ? planted.filter(Boolean).length : cars;
+  const have = scene !== "train" ? planted.filter(Boolean).length : cars;
 
   const check = () => {
     if (doneRef.current) return;
@@ -92,7 +111,11 @@ export function CountBuildGame({
     const msg =
       scene === "garden"
         ? L(`${set.target} flowers! Lovely garden!`, `¡${set.target} flores! ¡Qué jardín!`)
-        : L(`${set.target} carriages! Toot toot!`, `¡${set.target} vagones! ¡Chu chu!`);
+        : scene === "jar"
+          ? L(`${set.target} stars! The jar is shining!`, `¡${set.target} estrellas! ¡El bote brilla!`)
+          : scene === "basket"
+            ? L(`${set.target} apples! Yummy basket!`, `¡${set.target} manzanas! ¡Qué rica cesta!`)
+            : L(`${set.target} carriages! Toot toot!`, `¡${set.target} vagones! ¡Chu chu!`);
     setMessage(msg);
     say(msg);
     timer.current = window.setTimeout(() => {
@@ -129,24 +152,28 @@ export function CountBuildGame({
         {set.target}
       </p>
 
-      {scene === "garden" ? (
-        <div className="mt-3 grid grid-cols-5 gap-2 rounded-3xl bg-moss/20 p-3">
+      {scene !== "train" ? (
+        <div className={`mt-3 grid grid-cols-5 gap-2 p-3 ${FILL[scene].frame}`}>
           {planted.map((on, i) => (
             <button
               key={i}
               type="button"
               disabled={state === "done"}
               aria-label={
-                on
-                  ? L(`Flower ${i + 1}, tap to remove`, `Flor ${i + 1}, toca para quitarla`)
-                  : L(`Empty plot ${i + 1}`, `Hueco ${i + 1} vacío`)
+                scene === "garden"
+                  ? on
+                    ? L(`Flower ${i + 1}, tap to remove`, `Flor ${i + 1}, toca para quitarla`)
+                    : L(`Empty plot ${i + 1}`, `Hueco ${i + 1} vacío`)
+                  : on
+                    ? L(`Spot ${i + 1} filled, tap to remove`, `Sitio ${i + 1} lleno, toca para quitar`)
+                    : L(`Empty spot ${i + 1}`, `Sitio ${i + 1} vacío`)
               }
               aria-pressed={on}
               onClick={() => setPlanted((p) => p.map((v, j) => (j === i ? !v : v)))}
-              className="garden-plot grid aspect-square place-items-center rounded-2xl"
+              className={`grid aspect-square place-items-center ${FILL[scene].cls}`}
             >
               <span className={on ? "anim-pop text-4xl" : "text-xl opacity-40"} aria-hidden>
-                {on ? "🌻" : "🟫"}
+                {on ? FILL[scene].item : FILL[scene].empty}
               </span>
             </button>
           ))}
@@ -198,7 +225,7 @@ export function CountBuildGame({
           onClick={check}
           className="rounded-3xl bg-amber px-8 py-3 font-ui text-xl font-bold text-ink wood-block disabled:opacity-60"
         >
-          {scene === "garden" ? L("Done!", "¡Listo!") : L("Go!", "¡Vamos!")}
+          {scene !== "train" ? L("Done!", "¡Listo!") : L("Go!", "¡Vamos!")}
         </button>
       </div>
       <p className="mt-3 min-h-6 text-center font-ui font-semibold text-ink" role="status">

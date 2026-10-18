@@ -155,6 +155,10 @@ export function PlaceGame({
         <span className="opacity-20">
           <TileView tile={slot.tile} cell={CELL - 8} />
         </span>
+      ) : slot.ghost && slot.shadow ? (
+        <span className="place-shadow" aria-hidden>
+          <VisualView v={slot.ghost} size={CELL - 18} />
+        </span>
       ) : slot.ghost ? (
         <VisualView v={slot.ghost} size={CELL - 26} faint={!slot.ghost.swatch} />
       ) : (
@@ -224,6 +228,20 @@ export function PlaceGame({
             <span className="font-ui text-3xl font-bold text-ink">{set.header?.label}</span>
           </span>
           {set.slots.map((s) => slotButton(s, "place-slot--car"))}
+        </div>
+      );
+    }
+    if (set.scene === "sorter") {
+      return (
+        <div className="sorter-box mx-auto flex w-fit flex-wrap justify-center gap-3 p-4">
+          {set.slots.map((s) => slotButton(s, "place-slot--hole"))}
+        </div>
+      );
+    }
+    if (set.scene === "shadow") {
+      return (
+        <div className="flex flex-wrap justify-center gap-3 rounded-3xl felt-panel p-3">
+          {set.slots.map((s) => slotButton(s, "place-slot--shadow"))}
         </div>
       );
     }

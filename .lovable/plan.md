@@ -1,59 +1,51 @@
-# Flat tap-a-card games: full sweep (Premium included) and fix plan
+# Google Play Android vitals: shrinking and edge-to-edge (findings and fix plan)
 
-All 121 games checked from the game list itself, so locked Premium games count the same as free ones. **30 games** still use the plain tap-a-card screen. Everything else already has its own scene (pop, sort, fishing, monster, rain, trace, maze, memory, jigsaw, train and others).
+Read-only investigation. Nothing has been changed.
 
-## Biggest problem: exact duplicates
+## Findings
 
-Several games are not just similar. They run the **same round with the same content** under different names:
+### 1. Code shrinking / obfuscation: confirmed off
+- The release build has `minifyEnabled false` (android/app/build.gradle). No R8 shrinking or obfuscation runs, so there is no deobfuscation (mapping) file to upload. That explains the earlier deferred warning too.
+- The app's own Android code is a single empty MainActivity. Almost everything is the web game bundle, which R8 never touches. Size savings come only from the native libraries (Capacitor, AndroidX, RevenueCat, plugins), typically a few MB. The games and audio don't shrink.
+- **Risk:** Capacitor finds plugins by reflection. Capacitor core ships its own keep-rules, which cover all plugins and the web bridge. RevenueCat publishes keep-rules inside its library. Not yet confirmed: the exact rules bundled with the installed RevenueCat Android version. The real compile and a device purchase/restore test would confirm it.
+- **Build time:** adds roughly 30–90 seconds to a Codemagic release build. Debug builds are unaffected.
 
-| Same round | Games | Free/Premium |
-|---|---|---|
-| Find the identical shape | Shape Match (#62), Twin Shapes (#111) | both Free |
-| Shape silhouette | Shape Shadow (#65), Match the Shadows (#93) | Free / Premium |
-| Same colour | Color Match (#57), Paint Match (#107) | both Free |
-| Count and pick the number | Count the Animals (#36), Count the Stars (#42), Count the Fruit (#53) | Free / Prem / Prem |
+### 2. Edge-to-edge: only half done
+Both layers exist, but they are not aligned:
+- **Web layer (done):** safe-area padding in styles.css, plus `adjustMarginsForEdgeToEdge: "force"` in capacitor.config.ts. That setting makes Capacitor shrink the web view inside the system bars using the modern insets API, so content is never hidden under the bars. This is what the readiness batch did, and why the app looks right.
+- **Native shell (never done):** MainActivity is Capacitor's empty default (`class MainActivity extends BridgeActivity {}`). It never calls `EdgeToEdge.enable()`, and styles.xml has no edge-to-edge setup. Play's check looks for exactly that call, so the warning is accurate: the shell relies on Android 15 forcing edge-to-edge instead of opting in. Older Android versions (7–14) get no edge-to-edge at all.
 
-Big or Small (#79) and Long or Short (#80) are a near-pair too: "compare two things, tap one."
+### 3. Deprecated APIs: coming from plugins, not our code
+Our code makes none of these calls. They come from two installed Capacitor 7 plugins:
+- **Status bar plugin:** because the config sets `StatusBar.backgroundColor`, the plugin calls `window.setStatusBarColor()` at launch. That call is deprecated and does nothing on Android 15+. It also contains `setSystemUiVisibility` for its overlay feature, which we don't use.
+- **Splash screen plugin:** contains `SYSTEM_UI_FLAG_*` / `setSystemUiVisibility` in its immersive mode. We have that mode off, but Play scans the code, not runtime use.
+- Play reports these by scanning the code inside the app, so removing our config value stops the runtime call but won't make the warning disappear. Fully clearing it needs plugin versions that drop these APIs (the Capacitor 8 line), which is a larger, separate upgrade.
 
-## Findings by area
+## Proposed fixes
 
-**Shapes and colours (Ryan's screenshots).** Shape Match, Shape Shadow, Twin Shapes, Big or Small, Color Match and Paint Match all play as "look at cards, tap one." This area is the flattest. What's Missing? (#70) and Pattern Parade (#112) are fine as quick-check rounds.
+**A. Turn on R8 for release (small effort, low-to-medium risk).**
+- Set `minifyEnabled true` and `shrinkResources true` for release, and use `proguard-android-optimize.txt`.
+- Add a short safety keep-list in proguard-rules.pro for Capacitor plugin classes, the web bridge (`@JavascriptInterface`) and RevenueCat models. These are a backstop if the bundled rules turn out to be incomplete.
+- Keep the mapping file as a Codemagic artifact, so you can upload the deobfuscation file and crash reports become readable. Optional: automatic upload to Play.
+- Prove it compiles here with a real release build (the sandbox has the Android SDK). Then you install it from internal testing and check: launch, a game, music, narration, the grown-up gate, subscribe screen loads prices, restore, back button.
 
-**Numbers.** The three Count games are interchangeable. Number Match (#41), More or Less (#48) and Bigger Number (#49) are fine quick checks. Missing Number (#46) is fine.
+**B. Opt into edge-to-edge in the native shell (small effort, low risk).**
+- MainActivity: override `onCreate` and call `EdgeToEdge.enable(this)` (AndroidX Activity 1.9.2 is already installed) before `super.onCreate`.
+- styles.xml: give the app theme a cream window background (#fff7ed) so the area behind the transparent bars matches the app. Set the bar icons dark to suit the light background.
+- Keep `adjustMarginsForEdgeToEdge: "force"` and the CSS safe-area padding as they are. Content positioning stays exactly as today, now on Android 7–14 too.
+- Remove `StatusBar.backgroundColor` from the config so the deprecated colour call no longer runs. Keep the dark-icon style call.
+- iOS is untouched: the config value removed is Android-only in effect, and iOS uses its own content inset.
 
-**Puzzles.** What's Different? (#76) and Which Comes Next? (#77) are fine as quick logic checks. Big or Small and Long or Short are flat. Complete the Picture (#94) is fine.
+**C. Deprecated-API warning: accept for now, track.**
+- After B, our app makes no deprecated calls at runtime. The remaining warning comes from library code. Upgrading to Capacitor 8 (which has its own system-bars handling) would clear it. That is a medium-sized job touching every plugin, iOS included, so I recommend scoping it separately before the Feb 2027 deadline rather than bundling it here.
 
-**Letters, phonics, words.** Missing Letter, Upper→Lower, Lower→Upper, Letter Shadow, What Starts With B?, Sound Match, Picture Word Match, Missing Letter Word, Rhyming Pairs and Same Sound. Each one checks a different skill, and this area already has many bespoke scenes (fishing, monster, rain, pop, train, tracing, word finds). **Leave them all as they are.** They give the area a calm pace.
+## What stays the same
+iOS, gate, purchases/subscriptions code, pricing, free/Premium split, signing, version numbering, back-button behaviour.
 
-## Proposal: 9 games get a real interaction, 21 stay simple
+## Verification
+- Real release compile in the sandbox (minified), confirming the mapping file is produced.
+- Existing tests (69) plus the Android back-button tests.
+- Not verifiable here: how the bars look on a real device and purchase/restore under R8. Ryan checks these from an internal-testing build.
 
-1. **Shape Match → "Shape Sorter box" (drag).** Drag the shape into the matching hole in a toy sorter box. It drops in with a thunk; the wrong hole bounces it back. Uses the existing drag helper and place-pieces engine.
-2. **Twin Shapes → flip-to-find-twins (memory engine).** A shape-pair memory deck, using the memory engine that was just fixed. It is no longer a copy of Shape Match.
-3. **Shape Shadow → "Fit the shadow" (drag).** Drag a coloured shape onto its matching dark outline. It snaps in and fills with colour.
-4. **Match the Shadows → object shadows.** Same drag scene, but with everyday objects (animals, toys) instead of geometric shapes, which is what the title says. This ends the duplicate.
-5. **Color Match → "Paint the picture" (tap paint pot, then tap shape).** A picture outline (fish, balloon) shows one tinted area. The child picks the matching paint pot and the colour pours in.
-6. **Paint Match → colour-mixing-free "dip the brush" drag.** Drag the brush to the pot that matches the swatch; the brush stroke paints across the canvas. Different motion from Color Match.
-7. **Count the Animals → "Tap to count" (tap-many).** Tap each animal, which hops and shows its number (1, 2, 3...), then pick the total. Real counting, one by one.
-8. **Count the Stars / Count the Fruit → "Fill the basket / jar" (count-build engine).** The basket shows a number; drag or tap that many fruit or stars in. Reuses the Number Garden and Counting Train engine. Stars and Fruit get different containers so they don't match each other.
-9. **Big or Small + Long or Short → "Seesaw / measuring stick" (drag).** Big or Small: drop the named item (big/small) into the right-sized box. Long or Short: drag a ribbon or snake next to the ruler and pick. They stay two games with two different motions.
-
-**Staying simple (21):** all 10 letter, phonics and word games above, plus Number Match, Missing Number, More or Less, Bigger Number, What's Missing?, Pattern Parade, What's Different?, Which Comes Next?, Complete the Picture, Letter Shadow, Missing Letter Word. Each is a distinct skill check, not a reskin.
-
-## What I would build first (small and safe)
-
-- **#2 Twin Shapes → memory deck.** Only the game list and a shape-card set change; the engine is already tested.
-- **#8 Count the Stars / Fruit → count-build.** The engine already exists and only needs a container option.
-- **#1 and #3/#4 shape drag scenes.** These reuse the place-pieces engine (from Sort/Assemble) with new visuals.
-
-**Bigger (new visuals):** #5 Paint the picture, #6 dip the brush, #7 tap-to-count, #9 size/length scenes.
-
-## Guardrails (unchanged)
-
-Game names, numbers, emojis, free/Premium flags (46/75), parental gate, pricing, subscriptions and the Spanish word banks all stay the same. Spanish uses the existing colour and shape names. After building, I'll run a narration catalog (English and Spanish, check only, no audio generated) with missing-line counts and credit cost. Nothing gets recorded until you approve and the balance is checked.
-
-## Technical details
-
-- Catalog rows #36, 42, 53, 57, 62, 65, 79, 80, 93, 107, 111 are re-pointed: `memory` (kind `shapes`), `garden`/count-build with a `container` option, and new `place` sets in `scenes.ts` (`shapeSorter`, `shadowFit`, `objectShadow`, `sizeBox`, `lengthRuler`, `brushPot`). Two small new scenes: `PaintPictureGame` (tap-pot-then-region) and a tap-to-count mode in `HuntGame`.
-- Every scene follows the project rules: `useDragToTarget` plus `DragTarget` tap fallback, frozen rounds, a ref-guarded finish, and CSS-only motion with a reduced-motion path.
-- Tests are added to `misnamed-games.test.ts`: no two games share the same engine and content; each re-pointed game opens its new scene; the free/Premium count stays 46/75; the total stays 121; pure generators are checked for correct answers.
-- Browser check of each rebuilt game in English and Spanish before reporting.
+## Effort
+A + B: about 1–2 hours including the compile check. C: a separate scoping task.

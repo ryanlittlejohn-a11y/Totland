@@ -43,6 +43,37 @@ describe("misnamed games open their real scenes", () => {
     for (const [t, e] of Object.entries(expected)) expect(byTitle(t).engine, t).toBe(e);
   });
 
+  it("flat shape/count games get their own scenes (Part 1)", () => {
+    expect(byTitle("Twin Shapes").engine).toBe("memory");
+    expect(byTitle("Twin Shapes").kind).toBe("shapes");
+    expect(byTitle("Count the Stars").kind).toBe("fillJar");
+    expect(byTitle("Count the Fruit").kind).toBe("fillBasket");
+    expect(byTitle("Count the Animals").engine).toBe("choice");
+    expect(byTitle("Shape Match").kind).toBe("shapeSorter");
+    expect(byTitle("Shape Shadow").kind).toBe("shadowShape");
+    expect(byTitle("Match the Shadows").kind).toBe("shadowObject");
+    const sig = (t: string) => `${byTitle(t).engine}:${byTitle(t).kind}`;
+    const titles = ["Twin Shapes", "Shape Match", "Shape Shadow", "Match the Shadows", "Count the Stars", "Count the Fruit", "Count the Animals"];
+    expect(new Set(titles.map(sig)).size).toBe(titles.length);
+  });
+
+  it("shadow and sorter rounds: every piece fits exactly one slot", () => {
+    for (const lang of ["en", "es"] as const) {
+      setLang(lang);
+      for (const kind of ["shapeSorter", "shadowShape", "shadowObject"])
+        for (let i = 0; i < 60; i++)
+          for (const level of [1, 3, 5]) {
+            const set = placeSet(kind, level);
+            for (const p of set.pieces) {
+              const n = set.slots.filter((s) => fits(s, p)).length;
+              expect(n, kind).toBe(isDecoy(set, p) ? 0 : 1);
+            }
+            expect(neededCount(set)).toBe(set.slots.length);
+            expect(set.slots.every((s) => s.shadow)).toBe(true);
+          }
+    }
+  });
+
   it("free/Premium split is unchanged: 121 games, 46 free", () => {
     expect(GAMES).toHaveLength(121);
     expect(GAMES.filter((g) => !g.premium)).toHaveLength(46);

@@ -1,51 +1,48 @@
-# Google Play Android vitals: shrinking and edge-to-edge (findings and fix plan)
+# Capacitor 8 upgrade — findings and estimate (nothing changed)
 
-Read-only investigation. Nothing has been changed.
+## 1. What's installed now vs latest
+| Piece | Now | Latest (needs Capacitor 8) |
+|---|---|---|
+| core / cli / android / ios | 7.6.9 | 8.5.3 |
+| app | 7.1.2 | 8.1.2 |
+| browser | 7.0.5 | 8.0.5 |
+| network | 7.0.4 | 8.0.1 |
+| preferences | 7.0.4 | 8.0.1 |
+| splash-screen | 7.0.5 | 8.0.2 |
+| status-bar | 7.0.6 | 8.0.4 |
+| RevenueCat | 12.3.2 | 13.7.4 |
 
-## Findings
+Android build today: minSdk 24, target/compile 36, build plugin 8.9.1, Gradle 8.11.1. iPhone minimum: iOS 15.0. Codemagic uses "latest" Xcode.
 
-### 1. Code shrinking / obfuscation: confirmed off
-- The release build has `minifyEnabled false` (android/app/build.gradle). No R8 shrinking or obfuscation runs, so there is no deobfuscation (mapping) file to upload. That explains the earlier deferred warning too.
-- The app's own Android code is a single empty MainActivity. Almost everything is the web game bundle, which R8 never touches. Size savings come only from the native libraries (Capacitor, AndroidX, RevenueCat, plugins), typically a few MB. The games and audio don't shrink.
-- **Risk:** Capacitor finds plugins by reflection. Capacitor core ships its own keep-rules, which cover all plugins and the web bridge. RevenueCat publishes keep-rules inside its library. Not yet confirmed: the exact rules bundled with the installed RevenueCat Android version. The real compile and a device purchase/restore test would confirm it.
-- **Build time:** adds roughly 30–90 seconds to a Codemagic release build. Debug builds are unaffected.
+## 2. What actually changes (from Capacitor's official guide)
+- **Edge-to-edge setting removed.** `adjustMarginsForEdgeToEdge` (what keeps content clear of the bars today) no longer exists. Capacitor 8 replaces it with a new built-in "System Bars" feature plus the web safe-area padding. This is the only real redesign: our layout must rely on the CSS safe-area work (already present) and be re-checked on screen.
+- **Android tooling:** build plugin 8.9.1 -> 8.13.0, Gradle 8.11.1 -> 8.14.3, splash library 1.0.1 -> 1.2.0, small `=` syntax tidy-ups in build files. Our SDK levels (24/36) already meet the new minimums.
+- **Node 22+** needed for the build tools (Codemagic setting check).
+- **Plugins:** for the ones we use, the changes are version/library bumps; no function signatures we call change. Status bar and splash are the ones tied to the deprecated warning.
+- **Not confirmed:** whether status-bar 8 fully drops the old window-colour code Play flags. The guide doesn't say so explicitly; this must be checked in the built app before promising the warning clears.
 
-### 2. Edge-to-edge: only half done
-Both layers exist, but they are not aligned:
-- **Web layer (done):** safe-area padding in styles.css, plus `adjustMarginsForEdgeToEdge: "force"` in capacitor.config.ts. That setting makes Capacitor shrink the web view inside the system bars using the modern insets API, so content is never hidden under the bars. This is what the readiness batch did, and why the app looks right.
-- **Native shell (never done):** MainActivity is Capacitor's empty default (`class MainActivity extends BridgeActivity {}`). It never calls `EdgeToEdge.enable()`, and styles.xml has no edge-to-edge setup. Play's check looks for exactly that call, so the warning is accurate: the shell relies on Android 15 forcing edge-to-edge instead of opting in. Older Android versions (7–14) get no edge-to-edge at all.
+## 3. RevenueCat (business-critical)
+- A Capacitor 8 version **is available** (13.x, latest 13.7.4), so the upgrade doesn't need to wait.
+- It's a major version jump with real changes: newer Google Play Billing library (8.3), new underlying RevenueCat SDKs on both phones, and removal of an old trick for restoring "consumed" one-time products.
+- Totland sells subscriptions, so the consumable warning likely doesn't apply, but the RevenueCat product settings should be confirmed.
+- Our purchase code calls must be re-checked against 13.x; I haven't confirmed every function is unchanged.
 
-### 3. Deprecated APIs: coming from plugins, not our code
-Our code makes none of these calls. They come from two installed Capacitor 7 plugins:
-- **Status bar plugin:** because the config sets `StatusBar.backgroundColor`, the plugin calls `window.setStatusBarColor()` at launch. That call is deprecated and does nothing on Android 15+. It also contains `setSystemUiVisibility` for its overlay feature, which we don't use.
-- **Splash screen plugin:** contains `SYSTEM_UI_FLAG_*` / `setSystemUiVisibility` in its immersive mode. We have that mode off, but Play scans the code, not runtime use.
-- Play reports these by scanning the code inside the app, so removing our config value stops the runtime call but won't make the warning disappear. Fully clearing it needs plugin versions that drop these APIs (the Capacitor 8 line), which is a larger, separate upgrade.
+## 4. iPhone / Xcode
+- **Xcode 26+ required.** Codemagic's "latest" should satisfy it; worth pinning so builds don't surprise us.
+- iOS minimum stays **15.0** (we're already there). No App Store minimum change for families.
+- The iPhone app must be rebuilt and re-tested too, because core and RevenueCat change on both platforms. You can't upgrade Android alone.
 
-## Proposed fixes
+## 5. Effort and risk
+**Effort:** about 3–5 hours of work here (1–2 sessions), including real Android release compiles and tests. Then a Codemagic build for each platform and Ryan's device testing (about half a day on his side).
 
-**A. Turn on R8 for release (small effort, low-to-medium risk).**
-- Set `minifyEnabled true` and `shrinkResources true` for release, and use `proguard-android-optimize.txt`.
-- Add a short safety keep-list in proguard-rules.pro for Capacitor plugin classes, the web bridge (`@JavascriptInterface`) and RevenueCat models. These are a backstop if the bundled rules turn out to be incomplete.
-- Keep the mapping file as a Codemagic artifact, so you can upload the deobfuscation file and crash reports become readable. Optional: automatic upload to Play.
-- Prove it compiles here with a real release build (the sandbox has the Android SDK). Then you install it from internal testing and check: launch, a game, music, narration, the grown-up gate, subscribe screen loads prices, restore, back button.
+**Most likely to break (needs real devices, not just a compile):**
+1. **Purchases and restore on both stores** (RevenueCat 13 + new billing library): prices load, buy, Premium unlocks, reinstall + restore, webhooks still match.
+2. **Bars and screen edges on Android** after the margins setting goes away: content under the status bar or the gesture bar, in games and the grown-up area.
+3. **Splash/entrance animation timing** with the new splash library.
+4. **Back button and app resume** (app plugin bump).
+5. **R8 shrinking** with new plugin code — keep-rules re-verified from the mapping file.
+6. **iPhone build** on Xcode 26 (signing, pods).
 
-**B. Opt into edge-to-edge in the native shell (small effort, low risk).**
-- MainActivity: override `onCreate` and call `EdgeToEdge.enable(this)` (AndroidX Activity 1.9.2 is already installed) before `super.onCreate`.
-- styles.xml: give the app theme a cream window background (#fff7ed) so the area behind the transparent bars matches the app. Set the bar icons dark to suit the light background.
-- Keep `adjustMarginsForEdgeToEdge: "force"` and the CSS safe-area padding as they are. Content positioning stays exactly as today, now on Android 7–14 too.
-- Remove `StatusBar.backgroundColor` from the config so the deprecated colour call no longer runs. Keep the dark-icon style call.
-- iOS is untouched: the config value removed is Android-only in effect, and iOS uses its own content inset.
+**Recommendation:** worth doing, but as its own release after the current Android build is stable, not mixed with other changes. Deadline is Feb 2027, so there's no rush. Wait to do it until Ryan has device time for a full purchase/restore pass on both phones.
 
-**C. Deprecated-API warning: accept for now, track.**
-- After B, our app makes no deprecated calls at runtime. The remaining warning comes from library code. Upgrading to Capacitor 8 (which has its own system-bars handling) would clear it. That is a medium-sized job touching every plugin, iOS included, so I recommend scoping it separately before the Feb 2027 deadline rather than bundling it here.
-
-## What stays the same
-iOS, gate, purchases/subscriptions code, pricing, free/Premium split, signing, version numbering, back-button behaviour.
-
-## Verification
-- Real release compile in the sandbox (minified), confirming the mapping file is produced.
-- Existing tests (69) plus the Android back-button tests.
-- Not verifiable here: how the bars look on a real device and purchase/restore under R8. Ryan checks these from an internal-testing build.
-
-## Effort
-A + B: about 1–2 hours including the compile check. C: a separate scoping task.
+No changes made. Gate, pricing, free/Premium split and purchase code were not touched.

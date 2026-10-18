@@ -13,12 +13,17 @@ export function GetTheAppCard() {
         <h2 className="font-ui text-lg font-bold text-ink">{L("Get the app", "Descarga la app")}</h2>
         <p className="mt-1 text-sm text-inksoft">
           {L(
-            "Totland's iOS app is in Apple's review queue right now. We'll light this button up the moment it's live — no action needed, just check back here.",
-            "La app de Totland para iOS está ahora en revisión por Apple. Activaremos este botón en cuanto esté disponible; no tienes que hacer nada, solo vuelve a mirar aquí.",
+            "Totland's app is in review with Apple and Google right now. We'll light up each button the moment it's live — no action needed, just check back here.",
+            "La app de Totland está en revisión con Apple y Google. Activaremos cada botón en cuanto esté disponible; no tienes que hacer nada, solo vuelve a mirar aquí.",
           )}
         </p>
-        <div className="mt-3 inline-flex items-center gap-2 rounded-xl bg-felt px-3 py-2 text-xs font-semibold text-inksoft ring-1 ring-border">
-          🍎 Apple App Store — {L("in review", "en revisión")}
+        <div className="mt-3 flex flex-wrap gap-2">
+          <div className="inline-flex items-center gap-2 rounded-xl bg-felt px-3 py-2 text-xs font-semibold text-inksoft ring-1 ring-border">
+            🍎 Apple App Store — {L("in review", "en revisión")}
+          </div>
+          <div className="inline-flex items-center gap-2 rounded-xl bg-felt px-3 py-2 text-xs font-semibold text-inksoft ring-1 ring-border">
+            ▶️ Google Play — {L("in review", "en revisión")}
+          </div>
         </div>
       </section>
     );

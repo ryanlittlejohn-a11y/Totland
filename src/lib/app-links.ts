@@ -15,6 +15,9 @@ export const APP_STORE_URL = `https://apps.apple.com/app/id${APP_STORE_ID}`;
 /** Flip to true once the Kids-category review clears and the listing is public. */
 export const APP_STORE_LIVE = false;
 
-/** Google Play isn't set up yet — fill in once the developer account/app listing exists. */
-export const PLAY_STORE_URL: string | null = null;
+/** Google Play's package name (same `appId` as capacitor.config.ts / android/app/build.gradle). */
+export const PLAY_STORE_PACKAGE = "app.totland.kids";
+export const PLAY_STORE_URL = `https://play.google.com/store/apps/details?id=${PLAY_STORE_PACKAGE}`;
+
+/** Flip to true once Google's review clears and the Play listing is public. */
 export const PLAY_STORE_LIVE = false;

@@ -318,3 +318,10 @@
 - [x] Matching-pairs (memory) games freeze fixed: deck frozen, done guarded once
 - [ ] Ryan plays the new scenes on a real phone; record new spoken prompts (needs credit approval)
 - [ ] Amazon Appstore scoping (plan drafted, awaiting review)
+
+## Flat tap-a-card games, Part 1 (approved 2026-10-18)
+- [x] Twin Shapes → flip-to-find shape pairs
+- [x] Count the Stars → fill the jar; Count the Fruit → fill the basket
+- [x] Shape Match → toy shape-sorter box; Shape Shadow (shapes) / Match the Shadows (objects) → drag onto shadow
+- [ ] Record new Part 1 narration (needs credit approval)
+- [ ] Part 2 on hold for Ryan's review: Color Match, Paint Match, Count the Animals, Big or Small, Long or Short

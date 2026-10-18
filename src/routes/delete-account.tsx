@@ -25,7 +25,11 @@ export const Route = createFileRoute("/delete-account")({
 
 function DeleteAccountPage() {
   return (
-    <LegalPage title="Delete Your Account" updated="October 17, 2026" spanishNote>
+    <LegalPage
+      title="How to Delete Your Totland Account and Saved Child Profiles"
+      updated="October 17, 2026"
+      spanishNote
+    >
       <section>
         <h2>If you have the app</h2>
         <p>

@@ -26,7 +26,11 @@ export const Route = createFileRoute("/privacy")({
 
 function PrivacyPage() {
   return (
-    <LegalPage title="Privacy Notice" updated="September 15, 2026" spanishNote>
+    <LegalPage
+      title="Totland Privacy Notice: How We Collect, Use and Protect Data"
+      updated="September 15, 2026"
+      spanishNote
+    >
       <section>
         <h2>1. Who we are</h2>
         <p>

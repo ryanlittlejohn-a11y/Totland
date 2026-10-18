@@ -46,10 +46,12 @@ export interface Slot {
   name: string;
   /** faint guide drawn in the empty slot (shape ghost, basket swatch…) */
   ghost?: Visual;
+  /** draw the ghost as a dark silhouette (shadow-matching scenes) */
+  shadow?: boolean;
   tile?: Tile;
 }
 
-export type PlaceScene = "baskets" | "assemble" | "house" | "pattern" | "train";
+export type PlaceScene = "baskets" | "assemble" | "house" | "pattern" | "train" | "sorter" | "shadow";
 
 export interface PlaceSet {
   scene: PlaceScene;
@@ -316,8 +318,73 @@ function soundTrain(level: number): PlaceSet {
   };
 }
 
+/* ------------------------------------------------ sorter box and shadows */
+
+/** Toy shape-sorter: each hole only takes its own shape. */
+function shapeSorter(level: number): PlaceSet {
+  const holes = shuffle(SHAPES).slice(0, level <= 1 ? 2 : level <= 3 ? 3 : 4);
+  const decoys = level >= 3 ? shuffle(SHAPES.filter((s) => !holes.includes(s))).slice(0, 1) : [];
+  return {
+    scene: "sorter",
+    prompt: L(
+      "Drop each shape into its hole in the box.",
+      "Mete cada forma en su agujero de la caja.",
+    ),
+    slots: holes.map((s) => ({
+      id: s.name,
+      accepts: s.name,
+      capacity: 1,
+      name: L(`${s.name} hole`, `agujero de ${shapeName(s.name)}`),
+      ghost: { clip: s.clip },
+      shadow: true,
+    })),
+    pieces: shuffle([
+      ...holes.map((s) => ({ id: `p-${s.name}`, value: s.name, visual: { clip: s.clip }, name: shapeName(s.name) })),
+      ...decoys.map((s) => ({ id: `d-${s.name}`, value: `x-${s.name}`, visual: { clip: s.clip }, name: shapeName(s.name) })),
+    ]),
+  };
+}
+
+function shadowMatch(items: { key: string; visual: Visual; name: string }[], level: number, prompt: string): PlaceSet {
+  const chosen = shuffle(items).slice(0, level <= 1 ? 2 : level <= 3 ? 3 : 4);
+  return {
+    scene: "shadow",
+    prompt,
+    slots: shuffle(chosen).map((it) => ({
+      id: it.key,
+      accepts: it.key,
+      capacity: 1,
+      name: L(`shadow of ${it.name}`, `sombra de ${it.name}`),
+      ghost: it.visual,
+      shadow: true,
+    })),
+    pieces: shuffle(chosen.map((it) => ({ id: `p-${it.key}`, value: it.key, visual: it.visual, name: it.name }))),
+  };
+}
+
+const shadowShapes = (level: number) =>
+  shadowMatch(
+    SHAPES.map((s) => ({ key: s.name, visual: { clip: s.clip }, name: shapeName(s.name) })),
+    level,
+    L("Drag each shape onto its shadow.", "Arrastra cada forma a su sombra."),
+  );
+
+const shadowObjects = (level: number) => {
+  const seen = new Set<string>();
+  const items = CATEGORIES.flatMap((c) => c.items)
+    .filter((it) => !seen.has(it.label) && seen.add(it.label))
+    .map((it) => ({ key: it.label, visual: { emoji: it.emoji }, name: noun(it.label) }));
+  return shadowMatch(items, level, L("Drag each picture onto its shadow.", "Arrastra cada dibujo a su sombra."));
+};
+
 export function placeSet(kind: string, level: number): PlaceSet {
   switch (kind) {
+    case "shapeSorter":
+      return shapeSorter(level);
+    case "shadowShape":
+      return shadowShapes(level);
+    case "shadowObject":
+      return shadowObjects(level);
     case "sortColor":
       return sortColors(level, 2);
     case "sortColor3":

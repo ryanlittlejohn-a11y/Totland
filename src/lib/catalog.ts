@@ -144,7 +144,7 @@ const ROWS: Row[] = [
   [39, "Number Fishing", "🎣", "fishing", "nextNumber", N, "numbers", "Catch the number that comes next", "elr", 1],
   [40, "Number Train", "🚂", "order", "numbers", N, "numbers", "Number order", "lr"],
   [41, "Number Match", "🔗", "choice", "numberQuantity", N, "numbers", "Numeral to quantity", "lr"],
-  [42, "Count the Stars", "⭐", "choice", "countObjects", N, "numbers", "Counting", "elr", 1],
+  [42, "Count the Stars", "⭐", "garden", "fillJar", N, "numbers", "Counting", "elr", 1],
   [43, "Number Monster", "👹", "monster", "countObjects", N, "numbers", "Count, then feed the monster that number", "elr", 1],
   [44, "Number Garden", "🌻", "garden", "plantCount", N, "numbers", "Plant that many flowers", "elr", 1],
   [45, "Number Rocket", "🚀", "rocket", "numbers", N, "numbers", "Load the numbers in counting order", "elr", 1],
@@ -155,7 +155,7 @@ const ROWS: Row[] = [
   [50, "Number Memory", "🧠", "memory", "numbers", N, "memory", "Match numeral pairs", "elr", 1],
   [51, "Counting Train", "🚋", "train", "trainCount", N, "numbers", "Count the carriages", "elr", 1],
   [52, "Number Puzzle", "🧩", "assemble", "assembleNumber", P, "puzzles", "Assemble a numeral", "lr", 1],
-  [53, "Count the Fruit", "🍏", "choice", "countObjects", N, "numbers", "Counting to twenty", "lr", 1],
+  [53, "Count the Fruit", "🍏", "garden", "fillBasket", N, "numbers", "Counting to twenty", "lr", 1],
   [54, "Number Hunt", "🔍", "hunt", "numbers", N, "numbers", "Find every copy of a number", "elr"],
   [55, "Number Rain", "🌧️", "rain", "numbersInOrder", N, "numbers", "Catch numbers in order", "lr", 1],
 
@@ -165,10 +165,10 @@ const ROWS: Row[] = [
   [59, "Color Detective", "🕵️", "hunt", "colors", C, "colors", "Find every object of a colour", "elr"],
   [60, "Color Memory", "🧠", "memory", "colors", C, "memory", "Match colour pairs", "elr"],
   [61, "Shape Pop", "🔷", "pop", "findShape", C, "shapes", "Shape recognition", "elr"],
-  [62, "Shape Match", "🔶", "choice", "shapeMatch", C, "shapes", "Match identical shapes", "elr"],
+  [62, "Shape Match", "🔶", "sort", "shapeSorter", C, "shapes", "Match identical shapes", "elr"],
   [63, "Shape Builder", "🏗️", "assemble", "shapeBuild", C, "shapes", "Build with shapes", "lr", 1],
   [64, "Shape Sort", "🗃️", "sort", "sortShape", C, "shapes", "Sort shapes into groups", "elr"],
-  [65, "Shape Shadow", "🌑", "choice", "shapeShadow", C, "shapes", "Match shape to silhouette", "elr"],
+  [65, "Shape Shadow", "🌑", "sort", "shadowShape", C, "shapes", "Match shape to silhouette", "elr"],
   [66, "Shape Memory", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
   [67, "Shape Hunt", "🔍", "hunt", "shapes", C, "shapes", "Find shapes in a scene", "elr", 1],
   [68, "Shape Puzzle", "🧩", "assemble", "assembleShape", P, "puzzles", "Assemble a picture", "lr", 1],
@@ -198,7 +198,7 @@ const ROWS: Row[] = [
   [90, "Word Search: Food", "🔎", "wordsearch", "food", P, "wordsearch", "Find food words", "r", 1],
   [91, "Hidden Objects", "🫣", "hunt", "pictures", P, "puzzles", "Find requested objects", "elr"],
   [92, "Picture Path", "🛤️", "order", "numbers", P, "puzzles", "Follow the right sequence", "lr", 1],
-  [93, "Match the Shadows", "🌒", "choice", "shapeShadow", P, "puzzles", "Object to shadow", "elr", 1],
+  [93, "Match the Shadows", "🌒", "sort", "shadowObject", P, "puzzles", "Object to shadow", "elr", 1],
   [94, "Complete the Picture", "🎨", "choice", "completePicture", P, "puzzles", "Choose the missing piece", "lr", 1],
   [95, "Pattern Builder", "🔁", "assemble", "patternBuild", P, "puzzles", "Recreate a pattern", "lr", 1],
 
@@ -221,7 +221,7 @@ const ROWS: Row[] = [
   [108, "Color Carousel", "🎠", "sort", "sortColor3", C, "colors", "Sort by color", "elr", 1],
   [109, "Shape Safari", "🦓", "hunt", "shapes", C, "shapes", "Find shapes in a scene", "elr", 1],
   [110, "Shape Twins", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
-  [111, "Twin Shapes", "🔷", "choice", "shapeMatch", C, "shapes", "Match identical shapes", "elr"],
+  [111, "Twin Shapes", "🔷", "memory", "shapes", C, "shapes", "Match identical shapes", "elr"],
   [112, "Pattern Parade", "🔁", "choice", "patternNext", C, "shapes", "Continue a shape pattern", "lr", 1],
 
   // Generalized engine-flavor batch — Fishing/Monster/Rain now speak

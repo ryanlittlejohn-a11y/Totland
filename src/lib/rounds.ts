@@ -788,5 +788,7 @@ export function orderSet(kind: string, level: number) {
 export function memorySet(kind: string, level: number) {
   const deck = memorySetEn(kind, level);
   if (getLang() === "en") return deck;
-  return deck.map((c) => ({ ...c, label: sentence(c.label) }));
+  // Bare shape/colour names need the noun table; sentence() leaves them English.
+  const name = kind === "shapes" || kind === "colors" ? noun : sentence;
+  return deck.map((c) => ({ ...c, label: name(c.label) }));
 }

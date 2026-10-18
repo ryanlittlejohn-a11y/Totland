@@ -3,7 +3,7 @@
  * Nothing here ever leaves the device: it is stored on the device only
  * (localStorage on the web, native storage in the packaged app).
  */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { SkillId } from "./content";
 import { setLang, type Lang } from "./i18n";
 import { storageGet, storageSet } from "./storage";
@@ -416,11 +416,11 @@ export function updateStoredProfile(fn: (p: Profile) => Profile): Profile {
  * overwrites play that happened mid-sync. Settings also come from the latest copy.
  */
 export function mergeSyncedFamily(snapshot: Family, synced: Family, latest: Family): Family {
-  const before = new Map(snapshot.children.map((c) => [c.id, c.updatedAt]));
+  const before = new Map(snapshot.children.map((c) => [c.id, `${c.updatedAt}|${JSON.stringify(c.profile)}`]));
   const latestById = new Map(latest.children.map((c) => [c.id, c]));
   const children = synced.children.map((c) => {
     const now = latestById.get(c.id);
-    return now && before.has(c.id) && now.updatedAt !== before.get(c.id) ? now : c;
+    return now && before.has(c.id) && `${now.updatedAt}|${JSON.stringify(now.profile)}` !== before.get(c.id) ? now : c;
   });
   // Children created locally during the sync.
   for (const c of latest.children) if (!before.has(c.id) && !children.some((x) => x.id === c.id)) children.push(c);

@@ -231,6 +231,35 @@ export function PlaceGame({
         </div>
       );
     }
+    if (set.scene === "sizes") {
+      return (
+        <div className="flex items-end justify-center gap-4">
+          {set.slots.map((s) => (
+            <div key={s.id} className="flex flex-col items-center gap-1">
+              {slotButton(s, s.id === "big" ? "place-slot--bigbox" : "place-slot--smallbox")}
+              <span className="font-ui text-sm font-semibold text-ink">{s.name}</span>
+            </div>
+          ))}
+        </div>
+      );
+    }
+    if (set.scene === "ruler") {
+      return (
+        <div className="ruler-board flex flex-col gap-2 rounded-3xl p-3">
+          {set.slots.map((s, i) => (
+            <div key={s.id} className="flex items-center gap-2">
+              <span className="w-6 text-center font-ui text-sm font-bold text-inksoft" aria-hidden>
+                {i + 1}
+              </span>
+              {slotButton(s, "place-slot--lane")}
+            </div>
+          ))}
+          <p className="text-center font-ui text-xs text-inksoft" aria-hidden>
+            {L("shortest ↓ longest", "más corta ↓ más larga")}
+          </p>
+        </div>
+      );
+    }
     if (set.scene === "sorter") {
       return (
         <div className="sorter-box mx-auto flex w-fit flex-wrap justify-center gap-3 p-4">
@@ -303,7 +332,10 @@ export function PlaceGame({
                 selected === p.id ? "ring-4 ring-amber" : ""
               } ${wrong === p.id ? "anim-wiggle" : ""}`}
             >
-              <span className="grid place-items-center" style={{ width: CELL, height: CELL }}>
+              <span
+                className="grid place-items-center"
+                style={{ width: p.visual?.bar !== undefined ? 160 : CELL, height: CELL }}
+              >
                 {pieceBody(p)}
               </span>
             </button>

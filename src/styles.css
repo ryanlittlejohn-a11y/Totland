@@ -824,6 +824,17 @@ html[data-away="1"] .app-entrance * { animation-play-state: paused; }
 .count-basket { border-radius: 0.8rem 0.8rem 2.5rem 2.5rem; background: repeating-linear-gradient(45deg, color-mix(in oklch, var(--wood) 55%, var(--card)) 0 8px, color-mix(in oklch, var(--wood) 35%, var(--card)) 8px 16px); }
 .count-spot { background: color-mix(in oklch, var(--card) 70%, transparent); }
 html[data-high-contrast="1"] .place-shadow { filter: brightness(0) opacity(0.6); }
+.place-slot--bigbox { width: 150px; height: 130px; border-style: solid; background: color-mix(in oklch, var(--wood) 30%, var(--card)); }
+.place-slot--smallbox { width: 84px; height: 72px; border-style: solid; background: color-mix(in oklch, var(--wood) 30%, var(--card)); }
+.place-slot--lane { flex: 1; min-height: 44px; border-radius: 999px; justify-items: start; padding-inline: 8px; }
+.ruler-board { background: repeating-linear-gradient(90deg, color-mix(in oklch, var(--amber) 35%, var(--card)) 0 18px, color-mix(in oklch, var(--amber) 22%, var(--card)) 18px 20px); }
+.paint-region { transition: background-color 300ms, opacity 300ms; }
+.paint-stroke { height: 22px; border-radius: 999px; transform-origin: left center; animation: paint-swish 700ms ease-out both; }
+@keyframes paint-swish { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.count-hop { animation: count-hop 450ms cubic-bezier(0.34, 1.56, 0.64, 1); }
+@keyframes count-hop { 40% { transform: translateY(-14px); } }
+html[data-reduced-motion="1"] .paint-stroke, html[data-reduced-motion="1"] .count-hop { animation: none; }
+@media (prefers-reduced-motion: reduce) { .paint-stroke, .count-hop { animation: none; } }
 .place-slot--car { min-width: 64px; min-height: 56px; border-radius: 0.6rem; border-style: solid; background: color-mix(in oklch, var(--clay) 25%, var(--card)); }
 .train-track { border-bottom: 6px solid var(--wood); }
 .train-engine { min-width: 76px; min-height: 76px; border-radius: 1rem 1.6rem 0.6rem 0.6rem; background: color-mix(in oklch, var(--amber) 40%, var(--card)); }

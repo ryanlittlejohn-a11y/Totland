@@ -29,7 +29,9 @@ export type EngineId =
   | "sort"
   | "assemble"
   | "train"
-  | "garden";
+  | "garden"
+  | "paint"
+  | "tapcount";
 
 export type WorldId =
   | "alphabet-forest"
@@ -138,7 +140,7 @@ const ROWS: Row[] = [
   [34, "Word Train", "🚃", "order", "buildWord", S, "words", "Letters in the right order", "r", 1],
   [35, "First Word Builder", "🅰️", "order", "buildWord", S, "words", "Very first spelling", "lr"],
 
-  [36, "Count the Animals", "🐑", "choice", "countObjects", N, "numbers", "Count and choose the number", "elr"],
+  [36, "Count the Animals", "🐑", "tapcount", "tapCount", N, "numbers", "Count and choose the number", "elr"],
   [37, "Number Pop", "🎈", "pop", "findNumber", N, "numbers", "Numeral recognition", "elr"],
   [38, "Number Bubbles", "🫧", "pop", "bubbleNumbers", N, "numbers", "Numeral recognition", "elr", 1],
   [39, "Number Fishing", "🎣", "fishing", "nextNumber", N, "numbers", "Catch the number that comes next", "elr", 1],
@@ -160,7 +162,7 @@ const ROWS: Row[] = [
   [55, "Number Rain", "🌧️", "rain", "numbersInOrder", N, "numbers", "Catch numbers in order", "lr", 1],
 
   [56, "Color Pop", "🎈", "pop", "findColor", C, "colors", "Colour recognition", "elr"],
-  [57, "Color Match", "🎨", "choice", "colorMatch", C, "colors", "Match same colour", "elr"],
+  [57, "Color Match", "🎨", "paint", "paintPicture", C, "colors", "Match same colour", "elr"],
   [58, "Rainbow Sort", "🌈", "sort", "sortColor", C, "colors", "Sort by colour", "elr"],
   [59, "Color Detective", "🕵️", "hunt", "colors", C, "colors", "Find every object of a colour", "elr"],
   [60, "Color Memory", "🧠", "memory", "colors", C, "memory", "Match colour pairs", "elr"],
@@ -183,8 +185,8 @@ const ROWS: Row[] = [
   [76, "What's Different?", "🙃", "choice", "whichDifferent", P, "puzzles", "Odd one out", "elr"],
   [77, "Which Comes Next?", "➡️", "choice", "whichNext", P, "puzzles", "Complete a sequence", "lr", 1],
   [78, "Sort the Toys", "🧸", "sort", "sortRule", P, "puzzles", "Sort by category", "elr", 1],
-  [79, "Big or Small", "🐘", "choice", "bigSmall", P, "puzzles", "Compare size", "elr"],
-  [80, "Long or Short", "📏", "choice", "longShort", P, "puzzles", "Compare length", "elr", 1],
+  [79, "Big or Small", "🐘", "sort", "sizeBoxes", P, "puzzles", "Compare size", "elr"],
+  [80, "Long or Short", "📏", "sort", "lengthOrder", P, "puzzles", "Compare length", "elr", 1],
 
   [81, "Simple Jigsaw", "🧩", "jigsaw", "jigsawEasy", P, "puzzles", "Easy jigsaw with big pieces", "elr"],
   [82, "Animal Jigsaw", "🐨", "jigsaw", "jigsawPiece", P, "puzzles", "Build animal jigsaws", "lr"],
@@ -217,7 +219,7 @@ const ROWS: Row[] = [
   // skill areas (colors/shapes) and the Explorer (ages 2-3) age-mode tag.
   [105, "Rainbow Hunt", "🌈", "hunt", "colors", C, "colors", "Find every object of a color", "elr"],
   [106, "Color Twins", "🧠", "memory", "colors", C, "memory", "Match color pairs", "elr", 1],
-  [107, "Paint Match", "🖌️", "choice", "colorMatch", C, "colors", "Match the same color", "elr"],
+  [107, "Paint Match", "🖌️", "paint", "dipBrush", C, "colors", "Match the same color", "elr"],
   [108, "Color Carousel", "🎠", "sort", "sortColor3", C, "colors", "Sort by color", "elr", 1],
   [109, "Shape Safari", "🦓", "hunt", "shapes", C, "shapes", "Find shapes in a scene", "elr", 1],
   [110, "Shape Twins", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
@@ -261,8 +263,8 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
     difficultyMin: 1,
     difficultyMax: 5,
     interaction:
-      engine === "hunt" || engine === "garden" ? "tap-many"
-      : engine === "fishing" || engine === "monster" || engine === "rocket" || engine === "jigsaw" || engine === "sort" || engine === "assemble" || engine === "train" ? "drag"
+      engine === "hunt" || engine === "garden" || engine === "tapcount" ? "tap-many"
+      : engine === "fishing" || engine === "monster" || engine === "rocket" || engine === "jigsaw" || engine === "sort" || engine === "assemble" || engine === "train" || engine === "paint" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
       : engine === "tracing" || engine === "maze" ? "trace"

@@ -11,6 +11,15 @@ export function VisualView({
   faint?: boolean;
 }) {
   const op = faint ? 0.22 : 1;
+  if (v.bar !== undefined)
+    return (
+      <span
+        className="block h-5 rounded-full"
+        style={{ width: Math.round(150 * v.bar), background: v.swatch, opacity: op }}
+      />
+    );
+  if (v.scale !== undefined && v.emoji)
+    return <span style={{ fontSize: size * 0.85 * v.scale, lineHeight: 1, opacity: op }}>{v.emoji}</span>;
   if (v.swatch)
     return (
       <span

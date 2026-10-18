@@ -21,6 +21,8 @@ import { StoryBuilder } from "@/components/game/StoryBuilder";
 import { PopGame } from "@/components/game/PopGame";
 import { PlaceGame } from "@/components/game/PlaceGame";
 import { CountBuildGame } from "@/components/game/CountBuildGame";
+import { PaintGame } from "@/components/game/PaintGame";
+import { TapCountGame } from "@/components/game/TapCountGame";
 import { RewardScreen } from "@/components/game/RewardScreen";
 import { GAMES, gameById } from "@/lib/catalog";
 import { themeForGame } from "@/lib/game-themes";
@@ -149,6 +151,10 @@ function GameHost() {
         <PlaceGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "train" || engine === "garden" ? (
         <CountBuildGame key={key} scene={engine === "train" ? "train" : game.kind === "fillJar" ? "jar" : game.kind === "fillBasket" ? "basket" : "garden"} skill={game.skill} theme={theme} onFinish={finish} />
+      ) : engine === "paint" ? (
+        <PaintGame key={key} mode={game.kind === "dipBrush" ? "brush" : "picture"} skill={game.skill} theme={theme} onFinish={finish} />
+      ) : engine === "tapcount" ? (
+        <TapCountGame key={key} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "hunt" ? (
         <HuntGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "order" ? (

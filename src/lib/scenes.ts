@@ -20,6 +20,10 @@ export interface Visual {
   emoji?: string;
   swatch?: string;
   clip?: string;
+  /** draw the picture at this fraction of normal size (size games) */
+  scale?: number;
+  /** draw a ribbon this fraction of full length (length games) */
+  bar?: number;
 }
 
 /** Window into a whole picture, used by assembled puzzles. */
@@ -51,7 +55,7 @@ export interface Slot {
   tile?: Tile;
 }
 
-export type PlaceScene = "baskets" | "assemble" | "house" | "pattern" | "train" | "sorter" | "shadow";
+export type PlaceScene = "baskets" | "assemble" | "house" | "pattern" | "train" | "sorter" | "shadow" | "sizes" | "ruler";
 
 export interface PlaceSet {
   scene: PlaceScene;
@@ -377,8 +381,84 @@ const shadowObjects = (level: number) => {
   return shadowMatch(items, level, L("Drag each picture onto its shadow.", "Arrastra cada dibujo a su sombra."));
 };
 
+/* ------------------------------------------------- size boxes and ribbons */
+
+const SIZE_THINGS = [
+  { en: "apple", es: "manzana", f: true, emoji: "🍎" },
+  { en: "bear", es: "oso", f: false, emoji: "🐻" },
+  { en: "ball", es: "pelota", f: true, emoji: "⚽" },
+  { en: "car", es: "coche", f: false, emoji: "🚗" },
+  { en: "fish", es: "pez", f: false, emoji: "🐟" },
+  { en: "star", es: "estrella", f: true, emoji: "⭐" },
+  { en: "duck", es: "pato", f: false, emoji: "🦆" },
+  { en: "flower", es: "flor", f: true, emoji: "🌸" },
+];
+
+/** Same thing drawn big and small: drop each into the box of its size. */
+function sizeBoxes(level: number): PlaceSet {
+  const things = shuffle(SIZE_THINGS).slice(0, level <= 1 ? 1 : level <= 3 ? 2 : 3);
+  const pieces: Piece[] = things.flatMap((t) => [
+    { id: `b-${t.en}`, value: "big", visual: { emoji: t.emoji, scale: 1 }, name: L(`big ${t.en}`, `${t.es} grande`) },
+    {
+      id: `s-${t.en}`,
+      value: "small",
+      visual: { emoji: t.emoji, scale: 0.45 },
+      name: L(`small ${t.en}`, `${t.es} ${t.f ? "pequeña" : "pequeño"}`),
+    },
+  ]);
+  return {
+    scene: "sizes",
+    prompt: L(
+      "Put the big things in the big box and the small things in the small box.",
+      "Pon las cosas grandes en la caja grande y las pequeñas en la caja pequeña.",
+    ),
+    slots: [
+      { id: "big", accepts: "big", capacity: things.length, name: L("big box", "caja grande") },
+      { id: "small", accepts: "small", capacity: things.length, name: L("small box", "caja pequeña") },
+    ],
+    pieces: shuffle(pieces),
+  };
+}
+
+/** Ribbons of different lengths: line them up shortest to longest. */
+function lengthOrder(level: number): PlaceSet {
+  const n = level <= 1 ? 2 : level <= 3 ? 3 : 4;
+  const cols = shuffle(COLORS).slice(0, n);
+  const lens = Array.from({ length: n }, (_, i) => 0.3 + (0.7 * i) / Math.max(1, n - 1));
+  return {
+    scene: "ruler",
+    prompt: L(
+      "Line up the ribbons from shortest to longest.",
+      "Ordena las cintas de la más corta a la más larga.",
+    ),
+    slots: lens.map((_, i) => ({
+      id: `r${i}`,
+      accepts: `r${i}`,
+      capacity: 1,
+      name:
+        i === 0
+          ? L("shortest place", "sitio más corto")
+          : i === n - 1
+            ? L("longest place", "sitio más largo")
+            : L(`place ${i + 1}`, `sitio ${i + 1}`),
+    })),
+    pieces: shuffle(
+      lens.map((len, i) => ({
+        id: `p${i}`,
+        value: `r${i}`,
+        visual: { bar: len, swatch: cols[i]!.swatch },
+        name: L(`${cols[i]!.name} ribbon`, `cinta ${colorName(cols[i]!.name)}`),
+      })),
+    ),
+  };
+}
+
 export function placeSet(kind: string, level: number): PlaceSet {
   switch (kind) {
+    case "sizeBoxes":
+      return sizeBoxes(level);
+    case "lengthOrder":
+      return lengthOrder(level);
     case "shapeSorter":
       return shapeSorter(level);
     case "shadowShape":
@@ -431,4 +511,66 @@ export interface CountSet {
 export function countSet(level: number): CountSet {
   const max = level <= 1 ? 5 : level <= 3 ? 8 : 10;
   return { target: 1 + Math.floor(Math.random() * max), max };
+}
+
+/* --------------------------------------------------------------- painting */
+
+export interface PaintRegion {
+  id: string;
+  clip: string;
+  color: string;
+  swatch: string;
+}
+
+export interface PaintSet {
+  regions: PaintRegion[];
+  pots: { name: string; swatch: string }[];
+}
+
+/** Picture of shapes, each faintly tinted with the colour it should be. */
+export function paintPicture(level: number): PaintSet {
+  const n = level <= 1 ? 2 : level <= 3 ? 3 : 4;
+  const shapes = shuffle(SHAPES).slice(0, n);
+  const cols = shuffle(COLORS);
+  const regions = shapes.map((sh, i) => ({ id: sh.name, clip: sh.clip, color: cols[i]!.name, swatch: cols[i]!.swatch }));
+  const decoys = level >= 3 ? cols.slice(n, n + 1) : [];
+  return {
+    regions,
+    pots: shuffle([...cols.slice(0, n), ...decoys]).map((c) => ({ name: c.name, swatch: c.swatch })),
+  };
+}
+
+export interface BrushSet {
+  target: string;
+  swatch: string;
+  pots: { name: string; swatch: string }[];
+}
+
+/** One stroke: dip the brush in the pot that matches the colour dab. */
+export function dipBrush(level: number): BrushSet {
+  const cols = shuffle(COLORS).slice(0, level <= 1 ? 2 : level <= 3 ? 3 : 4);
+  const t = pick(cols);
+  return { target: t.name, swatch: t.swatch, pots: cols.map((c) => ({ name: c.name, swatch: c.swatch })) };
+}
+
+/* --------------------------------------------------------- tap-to-count */
+
+export interface TapCountSet {
+  emoji: string;
+  count: number;
+  options: number[];
+}
+
+export function tapCountSet(level: number): TapCountSet {
+  const max = level <= 1 ? 5 : level <= 3 ? 8 : 10;
+  const count = 1 + Math.floor(Math.random() * max);
+  const k = level <= 1 ? 2 : level <= 3 ? 3 : 4;
+  const others = shuffle(
+    Array.from({ length: Math.max(max, k + 1) }, (_, i) => i + 1).filter((n) => n !== count),
+  ).slice(0, k - 1);
+  return {
+    emoji: pick(["🐑", "🐤", "🐸", "🐞", "🐰", "🐢"]),
+    count,
+    options: shuffle([count, ...others]),
+  };
 }

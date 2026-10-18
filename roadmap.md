@@ -323,5 +323,5 @@
 - [x] Twin Shapes → flip-to-find shape pairs
 - [x] Count the Stars → fill the jar; Count the Fruit → fill the basket
 - [x] Shape Match → toy shape-sorter box; Shape Shadow (shapes) / Match the Shadows (objects) → drag onto shadow
-- [ ] Record new Part 1 narration (needs credit approval)
-- [ ] Part 2 on hold for Ryan's review: Color Match, Paint Match, Count the Animals, Big or Small, Long or Short
+- [ ] Record combined Part 1+2 narration: 137 lines, ~4,477 credits (needs approval + balance check)
+- [x] Part 2: Color Match paint-the-picture, Paint Match dip-the-brush, Count the Animals tap-to-count, Big or Small size boxes, Long or Short ribbon order

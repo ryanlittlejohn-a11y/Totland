@@ -43,6 +43,9 @@ export function WordTracingGame({ length, onFinish }: { length: 2 | 3 | 4 | 5; o
 
   if (!wordTracingUnlocked(profile, length)) {
     const needed = { 2: 10, 3: 14, 4: 18, 5: 22 }[length];
+    const done = tracingProgressOf(profile);
+    const big = Math.min(done.uppercase.length, needed);
+    const small = Math.min(done.lowercase.length, needed);
     return (
       <div className="rounded-3xl bg-card p-6 text-center wood-block">
         <p className="text-5xl" aria-hidden>✏️</p>

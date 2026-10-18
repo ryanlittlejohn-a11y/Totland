@@ -3,7 +3,7 @@
  * Pure data (no React) so the rules can be tested.
  */
 import { CATEGORIES, COLORS, SHAPES, alphabet, bankWords, pick, shuffle, soundWords } from "./content";
-import { L, noun, sentence } from "./i18n";
+import { L, noun } from "./i18n";
 
 /** Something drawable: a letter/number, a picture, a colour or a shape. */
 export interface Visual {
@@ -101,13 +101,13 @@ function sortCategories(level: number): PlaceSet {
   const pieces: Piece[] = [];
   cats.forEach((c) => {
     shuffle(c.items).slice(0, per).forEach((it, i) => {
-      pieces.push({ id: `${c.id}-${i}`, value: c.id, visual: { emoji: it.emoji }, name: sentence(it.label) });
+      pieces.push({ id: `${c.id}-${i}`, value: c.id, visual: { emoji: it.emoji }, name: noun(it.label) });
     });
   });
   return {
     scene: "baskets",
     prompt: L("Sort the toys: put each one in the right group.", "Ordena: pon cada cosa en su grupo."),
-    slots: cats.map((c) => ({ id: c.id, accepts: c.id, capacity: per, name: sentence(c.title), ghost: { emoji: c.items[0]!.emoji } })),
+    slots: cats.map((c) => ({ id: c.id, accepts: c.id, capacity: per, name: noun(c.title), ghost: { emoji: c.items[0]!.emoji } })),
     pieces: shuffle(pieces),
   };
 }

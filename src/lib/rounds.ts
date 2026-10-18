@@ -689,7 +689,7 @@ function huntSetEn(kind: string, level: number) {
         return { id: `d-${i}`, emoji: o.emoji, label: o.word };
       }),
     ]);
-    return { label: `every picture that starts with ${t.letter}`, cells, targetIds: cells.filter((c) => c.id.startsWith("t")).map((c) => c.id) };
+    return { label: L(`every picture that starts with ${t.letter}`, `cada dibujo que empieza por ${t.letter}`), cells, targetIds: cells.filter((c) => c.id.startsWith("t")).map((c) => c.id) };
   }
   if (kind === "pictures") {
     const w = pick(bankWords());

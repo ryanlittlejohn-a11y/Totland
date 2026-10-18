@@ -1,4 +1,66 @@
-# Totland on the Amazon Appstore (Fire tablets) — scoping
+# Part 1 — "Pop" games and other misnamed games: audit and fix plan
+
+Read-only audit of all 121 games. Nothing built yet.
+
+## Findings: the Pop / Bubbles family
+
+All six run the shared tap-a-card screen. None has a real pop or bubble-burst interaction.
+
+| # | Game | Today | Free/Premium |
+|---|------|-------|--------------|
+| 1 | Letter Pop | Tap-a-card; correct card plays a small "popped" animation | Free |
+| 4 | Letter Bubbles | Tap-a-card (same content as Letter Pop), round "bubble" card shape | Premium |
+| 37 | Number Pop | Tap-a-card; same small "popped" animation | Free |
+| 38 | Number Bubbles | Tap-a-card (same content as Number Pop) | Premium |
+| 56 | Color Pop | Plain tap-a-card, no pop at all | Free |
+| 61 | Shape Pop | Plain tap-a-card, no pop at all | Free |
+
+The small "popped" effect only exists for letters and numbers. That is why Color Pop and Shape Pop feel completely flat. Letter Pop / Letter Bubbles and Number Pop / Number Bubbles are also identical pairs under different names.
+
+## Findings: other games whose name promises a scene they don't have
+
+Same class of problem, all on the tap-a-card screen:
+
+- **Train names:** Beginning Sound Train (#23), Counting Train (#51) — no train.
+- **Garden:** Number Garden (#44, "plant that many flowers") — nothing is planted.
+- **Sorting names:** Rainbow Sort (#58), Shape Sort (#64), Sort the Toys (#78), Color Carousel (#108) — nothing is sorted into groups; it's pick-one.
+- **Builder/Puzzle names:** Shape Builder (#63), Letter Puzzle (#19), Number Puzzle (#52), Shape Puzzle (#68), Picture Puzzle (#85) — nothing is assembled.
+- **Detective:** Sound Detective (#24) — pick-one, unlike Letter/Color Detective which really are hunts.
+- **Pattern Builder** (#95) — picks the next item, doesn't build a pattern.
+
+Not flagged (name honestly describes a pick-one game): Missing Letter, Upper/Lower case, Letter/Shape Shadow, Sound Match, Picture Word Match, Rhyming Pairs, Same Sound, Missing Letter Word, Count the Animals/Stars/Fruit, Number Match, Missing Number, More or Less, Bigger Number, Color/Paint/Shape Match, Twin Shapes, What's Different/Missing, Which Comes Next, Big or Small, Long or Short, Complete the Picture, Match the Shadows, Pattern Parade. Order-type "Train/Garden/Bridge/Race" letter and number games do use a sequence mechanic, so they're acceptable.
+
+## Proposed real interactions
+
+1. **Bubble Pop scene (shared) — fixes 6 games:** floating bubbles drift gently upward (calm, no timer, slow wobble). Each bubble holds a letter, number, colour or shape. Tapping the right one bursts it (stretch, burst into droplets, soft pop sound); wrong bubbles wobble and stay. Same picture-clue panel as Fishing/Monster/Rain. Reduced-motion and screen-reader users get still bubbles that are real buttons. Built the same way as Letter Rain (light animation, no per-frame work).
+   - To keep the pairs distinct: **Pop** games = a few big bubbles, find the one named; **Bubbles** games = a bubble cloud, pop *every* bubble holding the named letter/number (more like a hunt).
+2. **Sort into baskets (shared) — fixes 4 games:** drag each item into the matching basket (colour or category), with tap-to-place fallback. Uses the existing drag helper.
+3. **Train scene (shared, reuse Shape Train look) — fixes 2:** Beginning Sound Train loads picture cars that start with the sound; Counting Train adds that many carriages.
+4. **Assemble pieces (reuse jigsaw scene) — fixes up to 5 "Puzzle/Builder" games:** drag 2–4 pieces into place to form the letter, number, shape or picture.
+5. **Individual:** Number Garden (tap to plant N flowers), Sound Detective (hunt-style), Pattern Builder (drag shapes to complete the row). Alternatively these three can be honestly renamed instead of rebuilt.
+
+## Ranking (most games fixed per build)
+
+1. Bubble Pop scene — 6 games (all four free ones are prominent). Recommended first.
+2. Assemble pieces — up to 5.
+3. Sort into baskets — 4.
+4. Train scene — 2.
+5. Individual builds or renames — 3.
+
+## What stays the same
+
+Game names, numbers, the free/Premium split (46/75), the parental gate, subscriptions, Spanish word banks (with Ñ). No new narration audio unless approved; new prompt lines would be listed with credit cost first.
+
+## Technical details
+
+- New `engine: "pop"` added to the engine switch in `game.$gameId.tsx`; catalog rows 1, 4, 37, 38, 56, 61 re-pointed; existing round generators (`findUpper`, `findNumber`, `findColor`, `findShape`) reused; "Bubbles" uses a find-all variant.
+- Bubble motion: CSS transform/opacity loops with a static reduced-motion path, per the existing moving-target rule.
+- Tests added to `game-repoint.test.ts`: each Pop/Bubbles game opens the pop scene, no two share engine+content, free/Premium counts unchanged.
+- Later batches: `sort` engine on the drag helper; train and assemble reuse existing scenes.
+
+---
+
+# Part 2 — Totland on the Amazon Appstore (Fire tablets) — scoping
 
 Read-only scoping. Nothing is changed until Ryan approves a build step.
 

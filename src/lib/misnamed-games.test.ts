@@ -48,7 +48,7 @@ describe("misnamed games open their real scenes", () => {
     expect(byTitle("Twin Shapes").kind).toBe("shapes");
     expect(byTitle("Count the Stars").kind).toBe("fillJar");
     expect(byTitle("Count the Fruit").kind).toBe("fillBasket");
-    expect(byTitle("Count the Animals").engine).toBe("choice");
+    expect(byTitle("Count the Animals").engine).toBe("tapcount");
     expect(byTitle("Shape Match").kind).toBe("shapeSorter");
     expect(byTitle("Shape Shadow").kind).toBe("shadowShape");
     expect(byTitle("Match the Shadows").kind).toBe("shadowObject");

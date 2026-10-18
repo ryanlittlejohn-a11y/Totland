@@ -679,6 +679,18 @@ function huntSetEn(kind: string, level: number) {
       SHAPES.filter((o) => o.name !== s.name).map((o) => ({ id: "d", clip: o.clip, label: o.name })),
     );
   }
+  if (kind === "sounds") {
+    const t = pick(soundWords());
+    const same = bankWords().filter((o) => o.letter === t.letter);
+    const cells: Option[] = shuffle([
+      ...shuffle(same).slice(0, Math.min(targets, same.length)).map((o, i) => ({ id: `t-${i}`, emoji: o.emoji, label: o.word })),
+      ...Array.from({ length: size - Math.min(targets, same.length) }, (_, i) => {
+        const o = pick(bankWords().filter((x) => x.letter !== t.letter));
+        return { id: `d-${i}`, emoji: o.emoji, label: o.word };
+      }),
+    ]);
+    return { label: `every picture that starts with ${t.letter}`, cells, targetIds: cells.filter((c) => c.id.startsWith("t")).map((c) => c.id) };
+  }
   if (kind === "pictures") {
     const w = pick(bankWords());
     return make(

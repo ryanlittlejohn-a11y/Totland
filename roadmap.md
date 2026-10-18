@@ -330,4 +330,5 @@
 - [x] R8 shrinking + keep-list + mapping file artifact
 - [x] Native edge-to-edge in MainActivity, cream bars, StatusBar color call removed
 - [ ] Ryan: internal-testing check of bars + real purchase/restore on minified build
-- [ ] Later: scope Capacitor 8 upgrade to clear plugin deprecated-API warning (before Feb 2027)
+- [x] Scope Capacitor 8 upgrade (findings + estimate delivered 2026-10-18)
+- [ ] Capacitor 8 upgrade: deliberately on hold, scheduled for Thanksgiving week (week of Nov 23, 2026) — don't start before then (Play deadline Feb 2027)

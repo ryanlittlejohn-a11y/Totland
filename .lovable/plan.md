@@ -1,137 +1,59 @@
-# Part 1 — "Pop" games and other misnamed games: audit and fix plan
+# Flat tap-a-card games: full sweep (Premium included) and fix plan
 
-Read-only audit of all 121 games. Nothing built yet.
+All 121 games checked from the game list itself, so locked Premium games count the same as free ones. **30 games** still use the plain tap-a-card screen. Everything else already has its own scene (pop, sort, fishing, monster, rain, trace, maze, memory, jigsaw, train and others).
 
-## Findings: the Pop / Bubbles family
+## Biggest problem: exact duplicates
 
-All six run the shared tap-a-card screen. None has a real pop or bubble-burst interaction.
+Several games are not just similar. They run the **same round with the same content** under different names:
 
-| # | Game | Today | Free/Premium |
-|---|------|-------|--------------|
-| 1 | Letter Pop | Tap-a-card; correct card plays a small "popped" animation | Free |
-| 4 | Letter Bubbles | Tap-a-card (same content as Letter Pop), round "bubble" card shape | Premium |
-| 37 | Number Pop | Tap-a-card; same small "popped" animation | Free |
-| 38 | Number Bubbles | Tap-a-card (same content as Number Pop) | Premium |
-| 56 | Color Pop | Plain tap-a-card, no pop at all | Free |
-| 61 | Shape Pop | Plain tap-a-card, no pop at all | Free |
+| Same round | Games | Free/Premium |
+|---|---|---|
+| Find the identical shape | Shape Match (#62), Twin Shapes (#111) | both Free |
+| Shape silhouette | Shape Shadow (#65), Match the Shadows (#93) | Free / Premium |
+| Same colour | Color Match (#57), Paint Match (#107) | both Free |
+| Count and pick the number | Count the Animals (#36), Count the Stars (#42), Count the Fruit (#53) | Free / Prem / Prem |
 
-The small "popped" effect only exists for letters and numbers. That is why Color Pop and Shape Pop feel completely flat. Letter Pop / Letter Bubbles and Number Pop / Number Bubbles are also identical pairs under different names.
+Big or Small (#79) and Long or Short (#80) are a near-pair too: "compare two things, tap one."
 
-## Findings: other games whose name promises a scene they don't have
+## Findings by area
 
-Same class of problem, all on the tap-a-card screen:
+**Shapes and colours (Ryan's screenshots).** Shape Match, Shape Shadow, Twin Shapes, Big or Small, Color Match and Paint Match all play as "look at cards, tap one." This area is the flattest. What's Missing? (#70) and Pattern Parade (#112) are fine as quick-check rounds.
 
-- **Train names:** Beginning Sound Train (#23), Counting Train (#51) — no train.
-- **Garden:** Number Garden (#44, "plant that many flowers") — nothing is planted.
-- **Sorting names:** Rainbow Sort (#58), Shape Sort (#64), Sort the Toys (#78), Color Carousel (#108) — nothing is sorted into groups; it's pick-one.
-- **Builder/Puzzle names:** Shape Builder (#63), Letter Puzzle (#19), Number Puzzle (#52), Shape Puzzle (#68), Picture Puzzle (#85) — nothing is assembled.
-- **Detective:** Sound Detective (#24) — pick-one, unlike Letter/Color Detective which really are hunts.
-- **Pattern Builder** (#95) — picks the next item, doesn't build a pattern.
+**Numbers.** The three Count games are interchangeable. Number Match (#41), More or Less (#48) and Bigger Number (#49) are fine quick checks. Missing Number (#46) is fine.
 
-Not flagged (name honestly describes a pick-one game): Missing Letter, Upper/Lower case, Letter/Shape Shadow, Sound Match, Picture Word Match, Rhyming Pairs, Same Sound, Missing Letter Word, Count the Animals/Stars/Fruit, Number Match, Missing Number, More or Less, Bigger Number, Color/Paint/Shape Match, Twin Shapes, What's Different/Missing, Which Comes Next, Big or Small, Long or Short, Complete the Picture, Match the Shadows, Pattern Parade. Order-type "Train/Garden/Bridge/Race" letter and number games do use a sequence mechanic, so they're acceptable.
+**Puzzles.** What's Different? (#76) and Which Comes Next? (#77) are fine as quick logic checks. Big or Small and Long or Short are flat. Complete the Picture (#94) is fine.
 
-## Proposed real interactions
+**Letters, phonics, words.** Missing Letter, Upper→Lower, Lower→Upper, Letter Shadow, What Starts With B?, Sound Match, Picture Word Match, Missing Letter Word, Rhyming Pairs and Same Sound. Each one checks a different skill, and this area already has many bespoke scenes (fishing, monster, rain, pop, train, tracing, word finds). **Leave them all as they are.** They give the area a calm pace.
 
-1. **Bubble Pop scene (shared) — fixes 6 games:** floating bubbles drift gently upward (calm, no timer, slow wobble). Each bubble holds a letter, number, colour or shape. Tapping the right one bursts it (stretch, burst into droplets, soft pop sound); wrong bubbles wobble and stay. Same picture-clue panel as Fishing/Monster/Rain. Reduced-motion and screen-reader users get still bubbles that are real buttons. Built the same way as Letter Rain (light animation, no per-frame work).
-   - To keep the pairs distinct: **Pop** games = a few big bubbles, find the one named; **Bubbles** games = a bubble cloud, pop *every* bubble holding the named letter/number (more like a hunt).
-2. **Sort into baskets (shared) — fixes 4 games:** drag each item into the matching basket (colour or category), with tap-to-place fallback. Uses the existing drag helper.
-3. **Train scene (shared, reuse Shape Train look) — fixes 2:** Beginning Sound Train loads picture cars that start with the sound; Counting Train adds that many carriages.
-4. **Assemble pieces (reuse jigsaw scene) — fixes up to 5 "Puzzle/Builder" games:** drag 2–4 pieces into place to form the letter, number, shape or picture.
-5. **Individual:** Number Garden (tap to plant N flowers), Sound Detective (hunt-style), Pattern Builder (drag shapes to complete the row). Alternatively these three can be honestly renamed instead of rebuilt.
+## Proposal: 9 games get a real interaction, 21 stay simple
 
-## Ranking (most games fixed per build)
+1. **Shape Match → "Shape Sorter box" (drag).** Drag the shape into the matching hole in a toy sorter box. It drops in with a thunk; the wrong hole bounces it back. Uses the existing drag helper and place-pieces engine.
+2. **Twin Shapes → flip-to-find-twins (memory engine).** A shape-pair memory deck, using the memory engine that was just fixed. It is no longer a copy of Shape Match.
+3. **Shape Shadow → "Fit the shadow" (drag).** Drag a coloured shape onto its matching dark outline. It snaps in and fills with colour.
+4. **Match the Shadows → object shadows.** Same drag scene, but with everyday objects (animals, toys) instead of geometric shapes, which is what the title says. This ends the duplicate.
+5. **Color Match → "Paint the picture" (tap paint pot, then tap shape).** A picture outline (fish, balloon) shows one tinted area. The child picks the matching paint pot and the colour pours in.
+6. **Paint Match → colour-mixing-free "dip the brush" drag.** Drag the brush to the pot that matches the swatch; the brush stroke paints across the canvas. Different motion from Color Match.
+7. **Count the Animals → "Tap to count" (tap-many).** Tap each animal, which hops and shows its number (1, 2, 3...), then pick the total. Real counting, one by one.
+8. **Count the Stars / Count the Fruit → "Fill the basket / jar" (count-build engine).** The basket shows a number; drag or tap that many fruit or stars in. Reuses the Number Garden and Counting Train engine. Stars and Fruit get different containers so they don't match each other.
+9. **Big or Small + Long or Short → "Seesaw / measuring stick" (drag).** Big or Small: drop the named item (big/small) into the right-sized box. Long or Short: drag a ribbon or snake next to the ruler and pick. They stay two games with two different motions.
 
-1. Bubble Pop scene — 6 games (all four free ones are prominent). Recommended first.
-2. Assemble pieces — up to 5.
-3. Sort into baskets — 4.
-4. Train scene — 2.
-5. Individual builds or renames — 3.
+**Staying simple (21):** all 10 letter, phonics and word games above, plus Number Match, Missing Number, More or Less, Bigger Number, What's Missing?, Pattern Parade, What's Different?, Which Comes Next?, Complete the Picture, Letter Shadow, Missing Letter Word. Each is a distinct skill check, not a reskin.
 
-## What stays the same
+## What I would build first (small and safe)
 
-Game names, numbers, the free/Premium split (46/75), the parental gate, subscriptions, Spanish word banks (with Ñ). No new narration audio unless approved; new prompt lines would be listed with credit cost first.
+- **#2 Twin Shapes → memory deck.** Only the game list and a shape-card set change; the engine is already tested.
+- **#8 Count the Stars / Fruit → count-build.** The engine already exists and only needs a container option.
+- **#1 and #3/#4 shape drag scenes.** These reuse the place-pieces engine (from Sort/Assemble) with new visuals.
+
+**Bigger (new visuals):** #5 Paint the picture, #6 dip the brush, #7 tap-to-count, #9 size/length scenes.
+
+## Guardrails (unchanged)
+
+Game names, numbers, emojis, free/Premium flags (46/75), parental gate, pricing, subscriptions and the Spanish word banks all stay the same. Spanish uses the existing colour and shape names. After building, I'll run a narration catalog (English and Spanish, check only, no audio generated) with missing-line counts and credit cost. Nothing gets recorded until you approve and the balance is checked.
 
 ## Technical details
 
-- New `engine: "pop"` added to the engine switch in `game.$gameId.tsx`; catalog rows 1, 4, 37, 38, 56, 61 re-pointed; existing round generators (`findUpper`, `findNumber`, `findColor`, `findShape`) reused; "Bubbles" uses a find-all variant.
-- Bubble motion: CSS transform/opacity loops with a static reduced-motion path, per the existing moving-target rule.
-- Tests added to `game-repoint.test.ts`: each Pop/Bubbles game opens the pop scene, no two share engine+content, free/Premium counts unchanged.
-- Later batches: `sort` engine on the drag helper; train and assemble reuse existing scenes.
-
----
-
-# Part 2 — Totland on the Amazon Appstore (Fire tablets) — scoping
-
-Read-only scoping. Nothing is changed until Ryan approves a build step.
-
-## Short answer
-
-A small-to-medium follow-on, not a second Android project. The same Android app code works on Fire tablets. Purchases need one extra Amazon billing module, one switch to tell RevenueCat "this is the Amazon build", and a separate Amazon build in Codemagic. Estimated build work: roughly half a day to a day on my side, plus Ryan's store setup and device testing (the larger share of elapsed time).
-
-## 1. Does the installed purchase plugin support Amazon?
-
-Checked in the installed code (@revenuecat/purchases-capacitor 12.3.2):
-
-- **Yes, the plugin wraps Amazon.** Its setup accepts a `useAmazon: true` option (Android only). Its Android code reads that option and switches the store from Google Play to Amazon.
-- **The gap:** the plugin does not include Amazon's billing library by default. Its Android build only pulls in the shared RevenueCat core (purchases-hybrid-common 17.55.1). RevenueCat's Amazon support lives in a separate module (`purchases-store-amazon`) that must be added to the app's Android build, version-matched to the core. Without it, `useAmazon: true` fails at launch.
-- So: same plugin, no new plugin, one added Android dependency.
-- Not verified here: the exact matching Amazon module version for core 17.55.1 — confirm against RevenueCat's release notes during the build step.
-
-## 2. Can the same Android build go to Amazon for free content?
-
-Mostly yes, but it should be a **separate build**, not the identical Google file:
-
-- **Same code, same minimum/target Android version, same app id** (app.totland.kids) are fine. Fire OS 7/8 are based on Android 9/11, above the Android 7.0 minimum.
-- **No Google Play Services dependency in app code** — nothing in the app needs it, so Fire tablets (which lack Google services) are OK. The google-services build plugin is declared but should be confirmed unused before submission.
-- **File format:** Amazon has historically required an APK rather than the Google .aab; whether Amazon currently accepts .aab for this account must be checked in the Amazon developer console. Planning assumes an APK (`assembleRelease`).
-- **Signing:** Amazon re-signs apps itself. The same Codemagic keystore can sign the upload; no new keystore needed.
-- **Why a separate build anyway:** the Amazon build must turn on Amazon billing and say "Amazon Appstore" instead of "Google Play" in the subscription screens. A Google build uploaded to Amazon would show Google wording and fail to buy.
-- Free content alone would work from the Google build, but shipping it would mean a broken "Subscribe" button — not recommended.
-
-## 3. What changes for Premium (additive or invasive?)
-
-Additive, the same shape as adding Android next to iPhone:
-
-- **Store detection:** Fire tablets report "android", so the app cannot tell Amazon apart at runtime reliably. Use a build-time flag (e.g. `VITE_APP_STORE=amazon`) set only in the Amazon Codemagic build.
-- **purchases.ts:** pick an Amazon RevenueCat public key (`VITE_REVENUECAT_AMAZON_KEY`, starts with `amzn_`) and pass `useAmazon: true` when the flag is set. Everything else (buy, restore, entitlement check, sign-in linking, anonymous purchases) is unchanged.
-- **Product matching:** Amazon product ids come back as SKUs without Google's `id:baseplan` format. The existing matcher already falls back to RevenueCat's package type (monthly/annual), so it should work — to be confirmed with a test.
-- **Wording:** StorePurchasePanel, parent.subscription and GetTheAppCard say "Google Play" on Android; add "Amazon Appstore" (English and Spanish) when the Amazon flag is set.
-- **Server webhook (rc-webhook.ts):** currently records Google as "google", Apple as "apple", anything else as generic "store". Amazon purchases would still grant Premium but be labelled "store". Add an explicit "amazon" label plus a test.
-- **Store links:** app-links.ts / GetTheAppCard would gain an Amazon listing link only once one exists.
-- These touch subscription/purchase code, so each needs Ryan's approval before building (per the project rule).
-
-## 4. Amazon kids policy vs what's already built
-
-Amazon's kids rules largely mirror Apple Kids and Google Families, which Totland already meets: parental gate before purchases/settings/links, no ads, no third-party tracking, no advertising ID, optional grown-up account, public deletion page.
-
-Items specific to Amazon:
-
-- **"Directed to children under 13" declaration** in the submission form (COPPA) — answer Yes; Amazon then forbids ad/analytics SDKs and interest-based ads (none present).
-- **Content rating questionnaire** — Amazon's own form, not reusable from IARC automatically.
-- **Privacy policy URL** — existing totland.app/privacy works.
-- **Amazon Kids+ (the paid kids catalog) is a separate, invitation/partner programme**, not an Appstore checkbox. Being in the regular Appstore with a kids rating makes the app installable on Fire Kids profiles via parent approval; Kids+ inclusion is a later business conversation, not a build task. Kids+ titles usually must not show in-app purchases inside the Kids+ experience — check before applying.
-- **Note:** Amazon closed its Appstore on non-Amazon Android phones in August 2025; Fire tablets remain fully supported, which is Ryan's target.
-- Nothing found that requires changing the gate, deletion flow or privacy practices. Final policy wording should be checked in Amazon's console at submission time.
-
-## 5. Effort estimate
-
-- My build work: ~0.5–1 day (billing module, build flag, key selection, wording, webhook label, tests, Codemagic Amazon workflow, real compile check).
-- Ryan's work: Amazon developer account, app listing, subscriptions created in Amazon (same ids: totland_premium_monthly / totland_premium_yearly), RevenueCat Amazon app + shared key, device testing on a Fire tablet, review (typically a few days).
-- Much smaller than the original Android effort: no new platform folder, signing, icons, edge-to-edge or back-button work.
-
-## Recommended order of operations
-
-1. Ryan: create the Amazon developer account and the app entry; confirm whether .aab or APK is accepted.
-2. Ryan: create the two subscriptions in Amazon with the same ids; add an Amazon app in RevenueCat (needs Amazon's shared key), attach products to the existing `premium` entitlement and offering; send me the `amzn_` public key.
-3. Me (approval needed — purchase code): add the Amazon billing module, the build flag, key selection with `useAmazon`, Amazon wording (EN/ES), webhook "amazon" label, tests.
-4. Me: add a "Totland Amazon" Codemagic workflow producing a signed APK with the same keystore and auto build number; compile it here to prove it builds.
-5. Ryan: install on a real Fire tablet via Amazon's Live App Testing; check purchase, restore, gate, back button, music, Spanish, offline.
-6. Ryan: kids declaration, content rating, store listing (reuse the Google text, icon, feature graphic and screenshots, swapping "Google Play" wording for Amazon), submit.
-7. Later, optional: approach Amazon about Kids+.
-
-## Uncertainties to resolve before building
-
-- Exact `purchases-store-amazon` version matching the installed core.
-- Whether Amazon currently accepts .aab for Ryan's account.
-- Whether the Amazon product SKUs map cleanly through the existing monthly/yearly matcher (test with real offerings).
-- Amazon Kids+ IAP restrictions, if Ryan pursues Kids+.
+- Catalog rows #36, 42, 53, 57, 62, 65, 79, 80, 93, 107, 111 are re-pointed: `memory` (kind `shapes`), `garden`/count-build with a `container` option, and new `place` sets in `scenes.ts` (`shapeSorter`, `shadowFit`, `objectShadow`, `sizeBox`, `lengthRuler`, `brushPot`). Two small new scenes: `PaintPictureGame` (tap-pot-then-region) and a tap-to-count mode in `HuntGame`.
+- Every scene follows the project rules: `useDragToTarget` plus `DragTarget` tap fallback, frozen rounds, a ref-guarded finish, and CSS-only motion with a reduced-motion path.
+- Tests are added to `misnamed-games.test.ts`: no two games share the same engine and content; each re-pointed game opens its new scene; the free/Premium count stays 46/75; the total stays 121; pure generators are checked for correct answers.
+- Browser check of each rebuilt game in English and Spanish before reporting.

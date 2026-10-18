@@ -52,8 +52,14 @@ export function CountBuildGame({
 
   const prompt = set
     ? scene === "garden"
-      ? L(`Plant ${set.target} flowers, then press Done.`, `Planta ${set.target} flores y pulsa Listo.`)
-      : L(`Hook ${set.target} carriages to the train, then press Go.`, `Engancha ${set.target} vagones al tren y pulsa Vamos.`)
+      ? L(
+          `Plant ${set.target} flowers, then press Done.`,
+          `Planta ${set.target} flores y pulsa Listo.`,
+        )
+      : L(
+          `Hook ${set.target} carriages to the train, then press Go.`,
+          `Engancha ${set.target} vagones al tren y pulsa Vamos.`,
+        )
     : "";
   useEffect(() => {
     if (set) say(prompt);
@@ -71,7 +77,10 @@ export function CountBuildGame({
     update((p) => recordAnswer(p, { skill: "numbers", correct: ok, responseMs: 4000 }));
     if (!ok) {
       chime("retry", profile.sfx);
-      const msg = L(`You have ${have}. We need ${set.target}. Count again!`, `Tienes ${have}. Necesitamos ${set.target}. ¡Cuenta otra vez!`);
+      const msg = L(
+        `You have ${have}. We need ${set.target}. Count again!`,
+        `Tienes ${have}. Necesitamos ${set.target}. ¡Cuenta otra vez!`,
+      );
       setMessage(msg);
       say(msg);
       return;
@@ -80,7 +89,10 @@ export function CountBuildGame({
     doneRef.current = true;
     setState("done");
     themeChime(theme.motif, profile.sfx);
-    const msg = scene === "garden" ? L(`${set.target} flowers! Lovely garden!`, `¡${set.target} flores! ¡Qué jardín!`) : L(`${set.target} carriages! Toot toot!`, `¡${set.target} vagones! ¡Chu chu!`);
+    const msg =
+      scene === "garden"
+        ? L(`${set.target} flowers! Lovely garden!`, `¡${set.target} flores! ¡Qué jardín!`)
+        : L(`${set.target} carriages! Toot toot!`, `¡${set.target} vagones! ¡Chu chu!`);
     setMessage(msg);
     say(msg);
     timer.current = window.setTimeout(() => {
@@ -104,10 +116,18 @@ export function CountBuildGame({
 
   return (
     <GameThemeScene theme={theme}>
-      <button type="button" onClick={() => say(prompt)} className="w-full rounded-3xl felt-panel px-4 py-3 text-left">
-        <p className="font-ui text-[22px] font-semibold leading-tight text-ink">{prompt} <span aria-hidden>🔊</span></p>
+      <button
+        type="button"
+        onClick={() => say(prompt)}
+        className="w-full rounded-3xl felt-panel px-4 py-3 text-left"
+      >
+        <p className="font-ui text-[22px] font-semibold leading-tight text-ink">
+          {prompt} <span aria-hidden>🔊</span>
+        </p>
       </button>
-      <p className="mt-2 text-center font-ui text-6xl font-bold text-clay" aria-hidden>{set.target}</p>
+      <p className="mt-2 text-center font-ui text-6xl font-bold text-clay" aria-hidden>
+        {set.target}
+      </p>
 
       {scene === "garden" ? (
         <div className="mt-3 grid grid-cols-5 gap-2 rounded-3xl bg-moss/20 p-3">
@@ -116,30 +136,55 @@ export function CountBuildGame({
               key={i}
               type="button"
               disabled={state === "done"}
-              aria-label={on ? L(`Flower ${i + 1}, tap to remove`, `Flor ${i + 1}, toca para quitarla`) : L(`Empty plot ${i + 1}`, `Hueco ${i + 1} vacío`)}
+              aria-label={
+                on
+                  ? L(`Flower ${i + 1}, tap to remove`, `Flor ${i + 1}, toca para quitarla`)
+                  : L(`Empty plot ${i + 1}`, `Hueco ${i + 1} vacío`)
+              }
               aria-pressed={on}
               onClick={() => setPlanted((p) => p.map((v, j) => (j === i ? !v : v)))}
               className="garden-plot grid aspect-square place-items-center rounded-2xl"
             >
-              <span className={on ? "anim-pop text-4xl" : "text-xl opacity-40"} aria-hidden>{on ? "🌻" : "🟫"}</span>
+              <span className={on ? "anim-pop text-4xl" : "text-xl opacity-40"} aria-hidden>
+                {on ? "🌻" : "🟫"}
+              </span>
             </button>
           ))}
         </div>
       ) : (
         <>
-          <div className={`train-track mt-3 flex items-end gap-1 overflow-x-auto pb-3 ${state === "done" ? "train-depart" : ""}`} aria-label={L(`${cars} carriages`, `${cars} vagones`)}>
-            <span className="train-engine grid place-items-center text-4xl" aria-hidden>🚂</span>
+          <div
+            className={`train-track mt-3 flex items-end gap-1 overflow-x-auto pb-3 ${state === "done" ? "train-depart" : ""}`}
+            aria-label={L(`${cars} carriages`, `${cars} vagones`)}
+          >
+            <span className="train-engine grid place-items-center text-4xl" aria-hidden>
+              🚂
+            </span>
             {Array.from({ length: cars }, (_, i) => (
-              <span key={i} className="place-slot place-slot--car anim-pop grid place-items-center font-ui text-lg font-bold text-ink" aria-hidden>
+              <span
+                key={i}
+                className="place-slot place-slot--car anim-pop grid place-items-center font-ui text-lg font-bold text-ink"
+                aria-hidden
+              >
                 {i + 1}
               </span>
             ))}
           </div>
           <div className="mt-2 flex justify-center gap-3">
-            <button type="button" disabled={state === "done" || cars === 0} onClick={() => setCars((c) => c - 1)} className="rounded-2xl bg-card px-5 py-3 font-ui text-lg font-bold text-ink wood-block disabled:opacity-50">
+            <button
+              type="button"
+              disabled={state === "done" || cars === 0}
+              onClick={() => setCars((c) => c - 1)}
+              className="rounded-2xl bg-card px-5 py-3 font-ui text-lg font-bold text-ink wood-block disabled:opacity-50"
+            >
               {L("− Remove", "− Quitar")}
             </button>
-            <button type="button" disabled={state === "done" || cars >= set.max} onClick={() => setCars((c) => c + 1)} className="rounded-2xl bg-card px-5 py-3 font-ui text-lg font-bold text-ink wood-block disabled:opacity-50">
+            <button
+              type="button"
+              disabled={state === "done" || cars >= set.max}
+              onClick={() => setCars((c) => c + 1)}
+              className="rounded-2xl bg-card px-5 py-3 font-ui text-lg font-bold text-ink wood-block disabled:opacity-50"
+            >
               {L("+ Add carriage", "+ Añadir vagón")}
             </button>
           </div>
@@ -147,12 +192,21 @@ export function CountBuildGame({
       )}
 
       <div className="mt-4 flex justify-center">
-        <button type="button" disabled={state === "done"} onClick={check} className="rounded-3xl bg-amber px-8 py-3 font-ui text-xl font-bold text-ink wood-block disabled:opacity-60">
+        <button
+          type="button"
+          disabled={state === "done"}
+          onClick={check}
+          className="rounded-3xl bg-amber px-8 py-3 font-ui text-xl font-bold text-ink wood-block disabled:opacity-60"
+        >
           {scene === "garden" ? L("Done!", "¡Listo!") : L("Go!", "¡Vamos!")}
         </button>
       </div>
-      <p className="mt-3 min-h-6 text-center font-ui font-semibold text-ink" role="status">{message}</p>
-      <p className="text-center font-ui text-xs text-inksoft">{L(`Round ${round + 1} of ${ROUNDS}`, `Ronda ${round + 1} de ${ROUNDS}`)}</p>
+      <p className="mt-3 min-h-6 text-center font-ui font-semibold text-ink" role="status">
+        {message}
+      </p>
+      <p className="text-center font-ui text-xs text-inksoft">
+        {L(`Round ${round + 1} of ${ROUNDS}`, `Ronda ${round + 1} de ${ROUNDS}`)}
+      </p>
     </GameThemeScene>
   );
 }

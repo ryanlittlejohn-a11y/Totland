@@ -13,7 +13,7 @@ interface PopRound {
   spoken: string;
   bubbles: Option[];
   targets: string[];
-  reveal?: string;
+  reveal?: string | undefined;
 }
 
 const ALL_KINDS: Record<string, string> = { bubbleLetters: "letters", bubbleNumbers: "numbers" };
@@ -32,7 +32,13 @@ function makeRound(kind: string, level: number): PopRound {
     };
   }
   const r = roundForKind(kind, level);
-  return { prompt: r.prompt, spoken: r.spoken, bubbles: r.options, targets: [r.answerId], reveal: r.reveal };
+  return {
+    prompt: r.prompt,
+    spoken: r.spoken,
+    bubbles: r.options,
+    targets: [r.answerId],
+    reveal: r.reveal,
+  };
 }
 
 /**
@@ -97,7 +103,12 @@ export function PopGame({
     setPopped(next);
     // Computed "done" for this cloud — no dependency on later state updates.
     if (next.length < round.targets.length) {
-      setMessage(L(`Pop! ${next.length} of ${round.targets.length}.`, `¡Pum! ${next.length} de ${round.targets.length}.`));
+      setMessage(
+        L(
+          `Pop! ${next.length} of ${round.targets.length}.`,
+          `¡Pum! ${next.length} de ${round.targets.length}.`,
+        ),
+      );
       return;
     }
     doneRef.current = true;
@@ -124,8 +135,14 @@ export function PopGame({
 
   return (
     <GameThemeScene theme={theme}>
-      <button type="button" onClick={() => say(round.spoken)} className="w-full rounded-3xl felt-panel px-4 py-3 text-left">
-        <p className="font-ui text-[22px] font-semibold leading-tight text-ink">{round.prompt} <span aria-hidden>🔊</span></p>
+      <button
+        type="button"
+        onClick={() => say(round.spoken)}
+        className="w-full rounded-3xl felt-panel px-4 py-3 text-left"
+      >
+        <p className="font-ui text-[22px] font-semibold leading-tight text-ink">
+          {round.prompt} <span aria-hidden>🔊</span>
+        </p>
       </button>
 
       <div className="bubble-sky mt-4 flex flex-wrap items-center justify-center gap-3 rounded-3xl p-4">
@@ -139,16 +156,29 @@ export function PopGame({
               onClick={() => tap(b)}
               aria-label={b.label ?? b.id}
               className={`bubble grid place-items-center ${gone ? "bubble--popped" : ""} ${wobble === b.id ? "anim-wiggle" : ""}`}
-              style={{ width: size, height: size, animationDelay: `${(i % 5) * -0.9}s`, animationDuration: `${4 + (i % 3)}s` }}
+              style={{
+                width: size,
+                height: size,
+                animationDelay: `${(i % 5) * -0.9}s`,
+                animationDuration: `${4 + (i % 3)}s`,
+              }}
             >
               {b.swatch ? (
-                <span className="rounded-full" style={{ width: size * 0.55, height: size * 0.55, background: b.swatch }} />
+                <span
+                  className="rounded-full"
+                  style={{ width: size * 0.55, height: size * 0.55, background: b.swatch }}
+                />
               ) : b.clip ? (
-                <span className="bg-clay" style={{ width: size * 0.55, height: size * 0.55, clipPath: b.clip }} />
+                <span
+                  className="bg-clay"
+                  style={{ width: size * 0.55, height: size * 0.55, clipPath: b.clip }}
+                />
               ) : b.emoji ? (
                 <span style={{ fontSize: size * 0.5 }}>{b.emoji}</span>
               ) : (
-                <span className="font-ui font-bold text-ink" style={{ fontSize: size * 0.45 }}>{b.label}</span>
+                <span className="font-ui font-bold text-ink" style={{ fontSize: size * 0.45 }}>
+                  {b.label}
+                </span>
               )}
               {gone && <span className="bubble__drops" aria-hidden />}
             </button>
@@ -157,9 +187,12 @@ export function PopGame({
       </div>
 
       <p className="mt-3 min-h-6 text-center font-ui font-semibold text-ink" role="status">
-        {message || L("Tap the right bubble to pop it.", "Toca la burbuja correcta para reventarla.")}
+        {message ||
+          L("Tap the right bubble to pop it.", "Toca la burbuja correcta para reventarla.")}
       </p>
-      <p className="text-center font-ui text-xs text-inksoft">{L(`Round ${index + 1} of ${rounds}`, `Ronda ${index + 1} de ${rounds}`)}</p>
+      <p className="text-center font-ui text-xs text-inksoft">
+        {L(`Round ${index + 1} of ${rounds}`, `Ronda ${index + 1} de ${rounds}`)}
+      </p>
     </GameThemeScene>
   );
 }

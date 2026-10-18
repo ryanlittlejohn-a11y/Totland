@@ -47,7 +47,9 @@ export function MemoryGame({
     const match = a.pairId === b.pairId;
     triesRef.current += 1;
     setTries(triesRef.current);
-    update((p) => recordAnswer(p, { skill: "memory", correct: match, responseMs: 2000, itemId: a.pairId }));
+    update((p) =>
+      recordAnswer(p, { skill: "memory", correct: match, responseMs: 2000, itemId: a.pairId }),
+    );
     const timer = window.setTimeout(() => {
       if (match) {
         setFound((f) => [...f, a.pairId]);
@@ -72,7 +74,9 @@ export function MemoryGame({
 
   return (
     <GameThemeScene theme={theme}>
-      <p className="font-ui text-[22px] font-semibold text-ink">{L("Find the matching pairs!", "¡Encuentra las parejas!")}</p>
+      <p className="font-ui text-[22px] font-semibold text-ink">
+        {L("Find the matching pairs!", "¡Encuentra las parejas!")}
+      </p>
       <div className="mt-4 grid grid-cols-3 gap-3">
         {deck.map((card) => {
           const open = flipped.includes(card.key) || found.includes(card.pairId);
@@ -89,7 +93,11 @@ export function MemoryGame({
                 open ? "bg-card" : "bg-wood"
               }`}
             >
-              <span className={card.emoji.length > 2 ? "font-ui text-2xl font-bold text-ink" : "text-5xl"}>
+              <span
+                className={
+                  card.emoji.length > 2 ? "font-ui text-2xl font-bold text-ink" : "text-5xl"
+                }
+              >
                 {open ? card.emoji : "❔"}
               </span>
             </button>

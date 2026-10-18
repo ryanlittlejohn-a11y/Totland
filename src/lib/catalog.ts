@@ -24,7 +24,12 @@ export type EngineId =
   | "flashcards"
   | "story"
   | "storybuilder"
-  | "adventure";
+  | "adventure"
+  | "pop"
+  | "sort"
+  | "assemble"
+  | "train"
+  | "garden";
 
 export type WorldId =
   | "alphabet-forest"
@@ -96,10 +101,10 @@ const S: WorldId = "storybook-village";
 
 // modes: e=explorer l=learner r=reader
 const ROWS: Row[] = [
-  [1, "Letter Pop", "🎈", "choice", "findUpper", A, "letters", "Recognise uppercase letters", "elr"],
+  [1, "Letter Pop", "🎈", "pop", "findUpper", A, "letters", "Recognise uppercase letters", "elr"],
   [2, "Alphabet Safari", "🦒", "hunt", "letters", A, "letters", "Spot letters in a busy scene", "elr"],
   [3, "Feed the Letter Monster", "👾", "monster", "findUpper", A, "letters", "Match a spoken letter name", "elr"],
-  [4, "Letter Bubbles", "🫧", "choice", "findUpper", A, "letters", "Letter recognition under choice", "elr", 1],
+  [4, "Letter Bubbles", "🫧", "pop", "bubbleLetters", A, "letters", "Letter recognition under choice", "elr", 1],
   [5, "Alphabet Train", "🚂", "order", "letters", A, "letters", "Alphabetical order", "lr"],
   [6, "Letter Fishing", "🎣", "fishing", "findUpper", A, "letters", "Letter recognition", "elr"],
   [7, "Letter Rocket", "🚀", "rocket", "letters", A, "letters", "Load the letters in alphabet order", "elr", 1],
@@ -114,13 +119,13 @@ const ROWS: Row[] = [
   [16, "Letter Detective", "🔍", "hunt", "letters", A, "letters", "Find every copy of a letter", "elr", 1],
   [17, "Letter Rain", "🌧️", "rain", "findUpper", A, "letters", "Relaxed letter recognition with no timer", "lr"],
   [18, "Letter Memory", "🧠", "memory", "letters", A, "memory", "Remember letter pairs", "elr", 1],
-  [19, "Letter Puzzle", "🧩", "choice", "letterPuzzle", P, "puzzles", "Assemble a letter", "lr", 1],
+  [19, "Letter Puzzle", "🧩", "assemble", "assembleLetter", P, "puzzles", "Assemble a letter", "lr", 1],
   [20, "Alphabet Race", "🏁", "order", "letters", A, "letters", "Race through the alphabet", "lr", 1],
 
   [21, "What Starts With B?", "🅱️", "choice", "startsWith", A, "phonics", "Beginning sounds", "lr"],
   [22, "Sound Match", "👂", "choice", "letterSound", A, "phonics", "Match sound to letter", "lr"],
-  [23, "Beginning Sound Train", "🚋", "choice", "startsWith", A, "phonics", "Sort by beginning sound", "lr", 1],
-  [24, "Sound Detective", "🕵️", "choice", "letterSound", A, "phonics", "Identify a beginning sound", "lr", 1],
+  [23, "Beginning Sound Train", "🚋", "train", "trainSound", A, "phonics", "Sort by beginning sound", "lr", 1],
+  [24, "Sound Detective", "🕵️", "hunt", "sounds", A, "phonics", "Identify a beginning sound", "lr", 1],
   [25, "Word Builder", "🧱", "order", "buildWord", S, "words", "Spell a simple word", "r", 1],
   [26, "Picture Word Match", "🖼️", "choice", "pictureWord", S, "words", "Match picture to word", "lr"],
   [27, "Word Puzzle", "🪄", "order", "buildWord", S, "words", "Assemble letters into a word", "r", 1],
@@ -134,39 +139,39 @@ const ROWS: Row[] = [
   [35, "First Word Builder", "🅰️", "order", "buildWord", S, "words", "Very first spelling", "lr"],
 
   [36, "Count the Animals", "🐑", "choice", "countObjects", N, "numbers", "Count and choose the number", "elr"],
-  [37, "Number Pop", "🎈", "choice", "findNumber", N, "numbers", "Numeral recognition", "elr"],
-  [38, "Number Bubbles", "🫧", "choice", "findNumber", N, "numbers", "Numeral recognition", "elr", 1],
+  [37, "Number Pop", "🎈", "pop", "findNumber", N, "numbers", "Numeral recognition", "elr"],
+  [38, "Number Bubbles", "🫧", "pop", "bubbleNumbers", N, "numbers", "Numeral recognition", "elr", 1],
   [39, "Number Fishing", "🎣", "fishing", "nextNumber", N, "numbers", "Catch the number that comes next", "elr", 1],
   [40, "Number Train", "🚂", "order", "numbers", N, "numbers", "Number order", "lr"],
   [41, "Number Match", "🔗", "choice", "numberQuantity", N, "numbers", "Numeral to quantity", "lr"],
   [42, "Count the Stars", "⭐", "choice", "countObjects", N, "numbers", "Counting", "elr", 1],
   [43, "Number Monster", "👹", "monster", "countObjects", N, "numbers", "Count, then feed the monster that number", "elr", 1],
-  [44, "Number Garden", "🌻", "choice", "numberQuantity", N, "numbers", "Plant that many flowers", "elr", 1],
+  [44, "Number Garden", "🌻", "garden", "plantCount", N, "numbers", "Plant that many flowers", "elr", 1],
   [45, "Number Rocket", "🚀", "rocket", "numbers", N, "numbers", "Load the numbers in counting order", "elr", 1],
   [46, "Missing Number", "➖", "choice", "missingNumber", N, "numbers", "Complete 1, 2, _, 4", "lr", 1],
   [47, "Number Maze", "🌀", "maze", "numbers", N, "numbers", "Move through numbers in order", "lr"],
   [48, "More or Less", "⚖️", "choice", "moreOrLess", N, "numbers", "Compare quantities", "lr", 1],
   [49, "Bigger Number", "🔝", "choice", "biggerNumber", N, "numbers", "Compare numerals", "lr", 1],
   [50, "Number Memory", "🧠", "memory", "numbers", N, "memory", "Match numeral pairs", "elr", 1],
-  [51, "Counting Train", "🚋", "choice", "countObjects", N, "numbers", "Count the carriages", "elr", 1],
-  [52, "Number Puzzle", "🧩", "choice", "numberPuzzle", P, "puzzles", "Assemble a numeral", "lr", 1],
+  [51, "Counting Train", "🚋", "train", "trainCount", N, "numbers", "Count the carriages", "elr", 1],
+  [52, "Number Puzzle", "🧩", "assemble", "assembleNumber", P, "puzzles", "Assemble a numeral", "lr", 1],
   [53, "Count the Fruit", "🍏", "choice", "countObjects", N, "numbers", "Counting to twenty", "lr", 1],
   [54, "Number Hunt", "🔍", "hunt", "numbers", N, "numbers", "Find every copy of a number", "elr"],
   [55, "Number Rain", "🌧️", "rain", "numbersInOrder", N, "numbers", "Catch numbers in order", "lr", 1],
 
-  [56, "Color Pop", "🎈", "choice", "findColor", C, "colors", "Colour recognition", "elr"],
+  [56, "Color Pop", "🎈", "pop", "findColor", C, "colors", "Colour recognition", "elr"],
   [57, "Color Match", "🎨", "choice", "colorMatch", C, "colors", "Match same colour", "elr"],
-  [58, "Rainbow Sort", "🌈", "choice", "sortColor", C, "colors", "Sort by colour", "elr"],
+  [58, "Rainbow Sort", "🌈", "sort", "sortColor", C, "colors", "Sort by colour", "elr"],
   [59, "Color Detective", "🕵️", "hunt", "colors", C, "colors", "Find every object of a colour", "elr"],
   [60, "Color Memory", "🧠", "memory", "colors", C, "memory", "Match colour pairs", "elr"],
-  [61, "Shape Pop", "🔷", "choice", "findShape", C, "shapes", "Shape recognition", "elr"],
+  [61, "Shape Pop", "🔷", "pop", "findShape", C, "shapes", "Shape recognition", "elr"],
   [62, "Shape Match", "🔶", "choice", "shapeMatch", C, "shapes", "Match identical shapes", "elr"],
-  [63, "Shape Builder", "🏗️", "choice", "shapeMissing", C, "shapes", "Build with shapes", "lr", 1],
-  [64, "Shape Sort", "🗃️", "choice", "sortShape", C, "shapes", "Sort shapes into groups", "elr"],
+  [63, "Shape Builder", "🏗️", "assemble", "shapeBuild", C, "shapes", "Build with shapes", "lr", 1],
+  [64, "Shape Sort", "🗃️", "sort", "sortShape", C, "shapes", "Sort shapes into groups", "elr"],
   [65, "Shape Shadow", "🌑", "choice", "shapeShadow", C, "shapes", "Match shape to silhouette", "elr"],
   [66, "Shape Memory", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
   [67, "Shape Hunt", "🔍", "hunt", "shapes", C, "shapes", "Find shapes in a scene", "elr", 1],
-  [68, "Shape Puzzle", "🧩", "choice", "jigsawPiece", P, "puzzles", "Assemble a picture", "lr", 1],
+  [68, "Shape Puzzle", "🧩", "assemble", "assembleShape", P, "puzzles", "Assemble a picture", "lr", 1],
   [69, "Shape Train", "🚃", "rocket", "shapeTrain", C, "shapes", "Continue a shape pattern", "lr", 1],
   [70, "What's Missing?", "❔", "choice", "shapeMissing", C, "shapes", "Spot the missing shape", "lr", 1],
 
@@ -177,7 +182,7 @@ const ROWS: Row[] = [
   [75, "Picture to Word", "🔤", "memory", "wordPicture", P, "memory", "Word and picture pairs", "r", 1],
   [76, "What's Different?", "🙃", "choice", "whichDifferent", P, "puzzles", "Odd one out", "elr"],
   [77, "Which Comes Next?", "➡️", "choice", "whichNext", P, "puzzles", "Complete a sequence", "lr", 1],
-  [78, "Sort the Toys", "🧸", "choice", "sortRule", P, "puzzles", "Sort by category", "elr", 1],
+  [78, "Sort the Toys", "🧸", "sort", "sortRule", P, "puzzles", "Sort by category", "elr", 1],
   [79, "Big or Small", "🐘", "choice", "bigSmall", P, "puzzles", "Compare size", "elr"],
   [80, "Long or Short", "📏", "choice", "longShort", P, "puzzles", "Compare length", "elr", 1],
 
@@ -185,7 +190,7 @@ const ROWS: Row[] = [
   [82, "Animal Jigsaw", "🐨", "jigsaw", "jigsawPiece", P, "puzzles", "Build animal jigsaws", "lr"],
   [83, "Alphabet Jigsaw", "🔠", "jigsaw", "letterCards", P, "puzzles", "Assemble letters", "lr", 1],
   [84, "Number Jigsaw", "🔢", "jigsaw", "numberCards", P, "puzzles", "Assemble numbers", "lr", 1],
-  [85, "Picture Puzzle", "🖼️", "choice", "completePicture", P, "puzzles", "Complete an image", "lr", 1],
+  [85, "Picture Puzzle", "🖼️", "assemble", "assemblePicture", P, "puzzles", "Complete an image", "lr", 1],
   [86, "Word Search: Letters", "🔎", "wordsearch", "letters", P, "wordsearch", "Find letters in a grid", "elr"],
   [87, "Word Search: Animals", "🔎", "wordsearch", "animals", P, "wordsearch", "Find animal words", "r", 1],
   [88, "Word Search: Colors", "🔎", "wordsearch", "colors", P, "wordsearch", "Find colour words", "r", 1],
@@ -195,7 +200,7 @@ const ROWS: Row[] = [
   [92, "Picture Path", "🛤️", "order", "numbers", P, "puzzles", "Follow the right sequence", "lr", 1],
   [93, "Match the Shadows", "🌒", "choice", "shapeShadow", P, "puzzles", "Object to shadow", "elr", 1],
   [94, "Complete the Picture", "🎨", "choice", "completePicture", P, "puzzles", "Choose the missing piece", "lr", 1],
-  [95, "Pattern Builder", "🔁", "choice", "patternNext", P, "puzzles", "Recreate a pattern", "lr", 1],
+  [95, "Pattern Builder", "🔁", "assemble", "patternBuild", P, "puzzles", "Recreate a pattern", "lr", 1],
 
   [96, "Letter Tracing", "✏️", "tracing", "letters", A, "tracing", "Trace upper and lowercase letters", "elr"],
   [97, "Number Tracing", "🖊️", "tracing", "numbers", N, "tracing", "Trace numbers 1 to 20", "lr"],
@@ -213,7 +218,7 @@ const ROWS: Row[] = [
   [105, "Rainbow Hunt", "🌈", "hunt", "colors", C, "colors", "Find every object of a color", "elr"],
   [106, "Color Twins", "🧠", "memory", "colors", C, "memory", "Match color pairs", "elr", 1],
   [107, "Paint Match", "🖌️", "choice", "colorMatch", C, "colors", "Match the same color", "elr"],
-  [108, "Color Carousel", "🎠", "choice", "sortColor", C, "colors", "Sort by color", "elr", 1],
+  [108, "Color Carousel", "🎠", "sort", "sortColor3", C, "colors", "Sort by color", "elr", 1],
   [109, "Shape Safari", "🦓", "hunt", "shapes", C, "shapes", "Find shapes in a scene", "elr", 1],
   [110, "Shape Twins", "🧠", "memory", "shapes", C, "memory", "Match shape pairs", "elr", 1],
   [111, "Twin Shapes", "🔷", "choice", "shapeMatch", C, "shapes", "Match identical shapes", "elr"],
@@ -256,15 +261,15 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
     difficultyMin: 1,
     difficultyMax: 5,
     interaction:
-      engine === "hunt" ? "tap-many"
-      : engine === "fishing" || engine === "monster" || engine === "rocket" || engine === "jigsaw" ? "drag"
+      engine === "hunt" || engine === "garden" ? "tap-many"
+      : engine === "fishing" || engine === "monster" || engine === "rocket" || engine === "jigsaw" || engine === "sort" || engine === "assemble" || engine === "train" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
       : engine === "tracing" || engine === "maze" ? "trace"
       : engine === "story" || engine === "storybuilder" ? "read"
       : "tap",
     minutes: engine === "adventure" ? 8 : 2,
-    rounds: engine === "choice" || engine === "fishing" || engine === "monster" || engine === "rain" ? 5 : 1,
+    rounds: engine === "pop" ? 5 : engine === "choice" || engine === "fishing" || engine === "monster" || engine === "rain" ? 5 : 1,
     rewardStars: 3,
     // Word Search rows follow their Word Finds puzzle tier (single source of truth).
     premium: engine === "wordsearch" ? wordSearchIsPremium(kind) : premium === 1,

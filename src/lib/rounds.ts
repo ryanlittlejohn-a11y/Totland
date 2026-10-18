@@ -24,7 +24,7 @@ import {
 } from "./content";
 
 import type { Round, Option } from "./games";
-import { getLang, noun, sentence, translateRound } from "./i18n";
+import { L, getLang, noun, sentence, translateRound } from "./i18n";
 
 const count = (level: number) => (level <= 1 ? 2 : level <= 3 ? 3 : 4);
 const range = (n: number, from = 1) => Array.from({ length: n }, (_, i) => i + from);
@@ -678,6 +678,18 @@ function huntSetEn(kind: string, level: number) {
       { id: "t", clip: s.clip, label: s.name },
       SHAPES.filter((o) => o.name !== s.name).map((o) => ({ id: "d", clip: o.clip, label: o.name })),
     );
+  }
+  if (kind === "sounds") {
+    const t = pick(soundWords());
+    const same = bankWords().filter((o) => o.letter === t.letter);
+    const cells: Option[] = shuffle([
+      ...shuffle(same).slice(0, Math.min(targets, same.length)).map((o, i) => ({ id: `t-${i}`, emoji: o.emoji, label: o.word })),
+      ...Array.from({ length: size - Math.min(targets, same.length) }, (_, i) => {
+        const o = pick(bankWords().filter((x) => x.letter !== t.letter));
+        return { id: `d-${i}`, emoji: o.emoji, label: o.word };
+      }),
+    ]);
+    return { label: L(`every picture that starts with ${t.letter}`, `cada dibujo que empieza por ${t.letter}`), cells, targetIds: cells.filter((c) => c.id.startsWith("t")).map((c) => c.id) };
   }
   if (kind === "pictures") {
     const w = pick(bankWords());

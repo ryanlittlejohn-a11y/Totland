@@ -308,3 +308,13 @@
 - [x] Music: dashboard silent (no preview), home music survives leaving dashboard, ordering test EN/ES
 
 - [x] Pin vitest to exactly 5.0.5
+
+## Misnamed games rebuild + matching-game freeze (approved 2026-10-18)
+- [x] Bubble Pop scene: Letter/Number/Color/Shape Pop, Letter/Number Bubbles
+- [x] Sort into baskets: Rainbow Sort, Shape Sort, Sort the Toys, Color Carousel
+- [x] Assemble pieces: Letter/Number/Shape/Picture Puzzle, Shape Builder, Pattern Builder
+- [x] Train: Beginning Sound Train (load pictures), Counting Train (hook N carriages)
+- [x] Number Garden (plant N flowers); Sound Detective now a find-every hunt
+- [x] Matching-pairs (memory) games freeze fixed: deck frozen, done guarded once
+- [ ] Ryan plays the new scenes on a real phone; record new spoken prompts (needs credit approval)
+- [ ] Amazon Appstore scoping (plan drafted, awaiting review)

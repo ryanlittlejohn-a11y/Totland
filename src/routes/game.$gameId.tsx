@@ -18,6 +18,9 @@ import { WordTracingGame } from "@/components/game/WordTracingGame";
 import { FlashCards } from "@/components/game/FlashCards";
 import { StoryReader } from "@/components/game/StoryReader";
 import { StoryBuilder } from "@/components/game/StoryBuilder";
+import { PopGame } from "@/components/game/PopGame";
+import { PlaceGame } from "@/components/game/PlaceGame";
+import { CountBuildGame } from "@/components/game/CountBuildGame";
 import { RewardScreen } from "@/components/game/RewardScreen";
 import { GAMES, gameById } from "@/lib/catalog";
 import { themeForGame } from "@/lib/game-themes";
@@ -140,6 +143,12 @@ function GameHost() {
         <NumberMazeGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "rain" ? (
         <LetterRainGame key={key} kind={game.kind} skill={game.skill} rounds={game.rounds} theme={theme} onFinish={finish} />
+      ) : engine === "pop" ? (
+        <PopGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
+      ) : engine === "sort" || engine === "assemble" || (engine === "train" && game.kind === "trainSound") ? (
+        <PlaceGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
+      ) : engine === "train" || engine === "garden" ? (
+        <CountBuildGame key={key} scene={engine === "garden" ? "garden" : "train"} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "hunt" ? (
         <HuntGame key={key} kind={game.kind} skill={game.skill} theme={theme} onFinish={finish} />
       ) : engine === "order" ? (

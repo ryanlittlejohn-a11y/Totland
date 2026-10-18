@@ -19,3 +19,5 @@
 - Bespoke scenes (Fishing/Monster/Rain) show question clues via the shared RoundClue panel keyed by CLUE_KINDS in rounds.ts; never per-game clue markup — keeps clue games consistent.
 - Menu music selection is explicit language state passed by MusicPlayer to the singleton player; every menu variant has hosted and packaged sources — enables immediate language changes without disturbing activity/story tracks or offline playback.
 - Android release signing and versionCode come only from Codemagic env (CM_KEYSTORE_* and BUILD_NUMBER, timestamp fallback) — keystore never lives in the repo.
+- Place-pieces games (sort, assemble, pattern, sound train) share `PlaceGame` + pure `placeSet` in scenes.ts; pop games share `PopGame` — one engine per interaction keeps rules testable.
+- Game rounds are frozen in state once dealt and completion is guarded by a ref with onFinish held in a ref — profile/level updates must never re-deal or cancel the reward timer.

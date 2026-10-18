@@ -3,7 +3,7 @@
  * Nothing here ever leaves the device: it is stored on the device only
  * (localStorage on the web, native storage in the packaged app).
  */
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { SkillId } from "./content";
 import { setLang, type Lang } from "./i18n";
 import { storageGet, storageSet } from "./storage";
@@ -403,6 +403,34 @@ export function saveProfile(p: Profile) {
   saveFamily(next);
 }
 
+/** Apply one change to the freshest saved progress and save it straight away. */
+export function updateStoredProfile(fn: (p: Profile) => Profile): Profile {
+  const next = fn(loadProfile());
+  saveProfile(next);
+  return next;
+}
+
+/**
+ * After a sync's network calls finish, keep any child changed on this device
+ * while the sync was waiting (its updatedAt moved), so a stale snapshot never
+ * overwrites play that happened mid-sync. Settings also come from the latest copy.
+ */
+export function mergeSyncedFamily(snapshot: Family, synced: Family, latest: Family): Family {
+  const before = new Map(snapshot.children.map((c) => [c.id, `${c.updatedAt}|${JSON.stringify(c.profile)}`]));
+  const latestById = new Map(latest.children.map((c) => [c.id, c]));
+  const children = synced.children.map((c) => {
+    const now = latestById.get(c.id);
+    return now && before.has(c.id) && `${now.updatedAt}|${JSON.stringify(now.profile)}` !== before.get(c.id) ? now : c;
+  });
+  // Children created locally during the sync.
+  for (const c of latest.children) if (!before.has(c.id) && !children.some((x) => x.id === c.id)) children.push(c);
+  return {
+    ...latest,
+    children,
+    activeChildId: children.some((c) => c.id === latest.activeChildId) ? latest.activeChildId : synced.activeChildId,
+  };
+}
+
 
 const today = () => new Date().toISOString().slice(0, 10);
 
@@ -518,23 +546,11 @@ export function useProfile() {
     return () => window.removeEventListener("totland:profile", sync);
   }, []);
 
-  // Saving broadcasts to every other screen, so it must happen after the render
-  // that produced the new profile — never inside the state updater.
-  const pending = useRef<Profile | null>(null);
-
-  useEffect(() => {
-    if (!pending.current) return;
-    const next = pending.current;
-    pending.current = null;
-    saveProfile(next);
-  });
-
+  // Every change applies to the freshest saved progress, never to this screen's
+  // own copy. A game screen and the game inside it each hold a copy; saving a
+  // whole stale copy used to erase what the other had just recorded.
   const update = useCallback((fn: (p: Profile) => Profile) => {
-    setProfile((prev) => {
-      const next = fn(prev);
-      pending.current = next;
-      return next;
-    });
+    setProfile(updateStoredProfile(fn));
   }, []);
 
   return { profile, update, hydrated };

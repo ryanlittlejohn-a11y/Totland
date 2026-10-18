@@ -8,6 +8,7 @@ import { hasVerifiedSession } from "@/lib/verifiedSession";
 import {
   defaultProfile,
   loadFamily,
+  mergeSyncedFamily,
   saveFamily,
   type ChildRecord,
   type Family,
@@ -89,7 +90,8 @@ export function useChildSync() {
           children: next,
           activeChildId: next.some((c) => c.id === local.activeChildId) ? local.activeChildId : next[0]!.id,
         };
-        saveFamily(family);
+        // Play may have happened while we waited on the network: keep it.
+        saveFamily(mergeSyncedFamily(local, family, loadFamily()));
       } catch (err) {
         // A rejected session on the backend: clear it so the error stops repeating.
         if (err instanceof Error && /unauthorized|invalid token/i.test(err.message)) {

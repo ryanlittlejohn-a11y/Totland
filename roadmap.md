@@ -332,3 +332,7 @@
 - [ ] Ryan: internal-testing check of bars + real purchase/restore on minified build
 - [x] Scope Capacitor 8 upgrade (findings + estimate delivered 2026-10-18)
 - [ ] Capacitor 8 upgrade: deliberately on hold, scheduled for Thanksgiving week (week of Nov 23, 2026) — don't start before then (Play deadline Feb 2027)
+
+## Progress-saving fixes (approved 2026-10-18)
+- [x] Saves apply to freshest progress (no stale-copy overwrite); sync keeps mid-sync play; Words lock shows live count
+- [ ] Ryan: new build + TestFlight check of explored counter and Words unlock; confirm "10 different letters" rule

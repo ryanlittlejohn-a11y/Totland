@@ -306,3 +306,5 @@
 - [ ] Check opening animation on a real iPhone (new build)
 
 - [x] Music: dashboard silent (no preview), home music survives leaving dashboard, ordering test EN/ES
+
+- [x] Pin vitest to exactly 5.0.5

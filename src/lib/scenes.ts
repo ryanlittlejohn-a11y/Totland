@@ -69,14 +69,14 @@ function sortColors(level: number, baskets: number): PlaceSet {
   const pieces: Piece[] = [];
   cols.forEach((c, ci) => {
     for (let i = 0; i < per; i++) {
-      pieces.push({ id: `p${ci}-${i}`, value: c.name, visual: { emoji: c.emoji, swatch: i ? c.swatch : undefined }, name: colorName(c.name) });
+      pieces.push({ id: `p${ci}-${i}`, value: c.name, visual: { emoji: c.emoji }, name: colorName(c.name) });
     }
   });
   return {
     scene: "baskets",
     prompt: L("Put each thing in the basket of its colour.", "Pon cada cosa en la cesta de su color."),
     slots: cols.map((c) => ({ id: c.name, accepts: c.name, capacity: per, name: colorName(c.name), ghost: { swatch: c.swatch } })),
-    pieces: shuffle(pieces).map((p) => (p.visual?.swatch ? { ...p, visual: { emoji: p.visual.emoji } } : p)),
+    pieces: shuffle(pieces),
   };
 }
 
@@ -128,7 +128,7 @@ function tiles(whole: Visual, level: number, name: string): PlaceSet {
   }
   return {
     scene: "assemble",
-    prompt: L(`Put the pieces together to make ${name}.`, `Junta las piezas para formar ${name}.`),
+    prompt: L(`Put the pieces together to make ${name}.`, `Junta las piezas: ${name}.`),
     header: whole,
     slots,
     pieces: shuffle(pieces),
@@ -212,7 +212,7 @@ export function placeSet(kind: string, level: number): PlaceSet {
     }
     case "assembleShape": {
       const s = pick(SHAPES);
-      return tiles({ clip: s.clip }, level, L(`a ${s.name}`, `un ${shapeName(s.name)}`));
+      return tiles({ clip: s.clip }, level, L(`a ${s.name}`, shapeName(s.name)));
     }
     case "assemblePicture": {
       const w = pick(bankWords());

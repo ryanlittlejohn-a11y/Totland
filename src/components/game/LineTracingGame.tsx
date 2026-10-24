@@ -183,7 +183,7 @@ export function LineTracingGame({ onFinish }: { onFinish: (stars: number, accura
           )}
         </svg>
         {showPicture && (
-          <div className={`pointer-events-none absolute inset-0 grid place-items-center bg-card/80 ${profile.reducedMotion ? "" : "animate-in fade-in duration-700"}`}>
+          <div className="pointer-events-none absolute inset-0 grid place-items-center bg-card/80">
             <svg viewBox="-16 -14 32 22" className="h-1/2 w-1/2" aria-hidden>
               <g transform="translate(6 0)"><Goal theme={pattern.theme} /></g>
               <g transform="translate(-6 0)"><Traveler theme={pattern.theme === "dot" ? "dot" : pattern.theme} /></g>

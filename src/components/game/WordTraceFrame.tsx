@@ -115,8 +115,8 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
     letters.forEach((glyph, i) => {
       const done = i < trace.active || trace.finished;
       const active = i === trace.active && !trace.finished;
-      ctx.globalAlpha = active ? 1 : done ? 0.9 : 0.35;
-      ctx.fillStyle = active ? felt : done ? felt : felt;
+      ctx.globalAlpha = active || done ? 1 : 0.22;
+      ctx.fillStyle = active || done ? felt : soft;
       ctx.fillText(glyph, offsetX + layout.slot * (i + 0.5), baseline);
       if (active) {
         ctx.globalAlpha = 0.5;

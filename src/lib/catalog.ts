@@ -238,6 +238,8 @@ const ROWS: Row[] = [
   [119, "Color Rain", "🌧️", "rain", "findColor", C, "colors", "Relaxed color recognition with no timer", "lr"],
   [120, "Shape Rain", "🌧️", "rain", "findShape", C, "shapes", "Relaxed shape recognition with no timer", "lr", 1],
   [121, "Falling Numbers", "🌧️", "rain", "findNumber", N, "numbers", "Relaxed numeral recognition with no timer", "lr", 1],
+  // Pre-writing strokes: follow a dashed path from the green start dot.
+  [122, "Line Tracing", "〰️", "tracing", "lines", A, "tracing", "Follow dashed lines and curves", "elr"],
 ];
 
 const MODE_MAP: Record<string, AgeMode> = { e: "explorer", l: "learner", r: "reader" };

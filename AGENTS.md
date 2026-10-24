@@ -22,3 +22,4 @@
 - Place-pieces games (sort, assemble, pattern, sound train) share `PlaceGame` + pure `placeSet` in scenes.ts; pop games share `PopGame` — one engine per interaction keeps rules testable.
 - Game rounds are frozen in state once dealt and completion is guarded by a ref with onFinish held in a ref — profile/level updates must never re-deal or cancel the reward timer.
 - Word tracing draws the whole word in one frame via pure rules in src/lib/word-trace.ts (layout, per-letter ink-cell coverage, auto-advance) — keeps tracing rules testable without a DOM.
+- Pre-writing Line Tracing keeps its path rules pure in src/lib/line-trace.ts (samples, forward-only progress with a short lookahead) and uses usePathTrace for the pointer — progress can only move along the path, so scribbling can't pass.

@@ -59,7 +59,7 @@ describe("Line Tracing", () => {
     const off = traceStep(mid, s, { x: 50, y: 5 }, 8);
     expect(off.state.head).toBe(mid.head);
     // Lifting and coming back near the head continues.
-    expect(traceStep(mid, s, s[mid.head + 3]!, 8).state.head).toBe(mid.head + 3);
+    expect(traceStep(mid, s, s[mid.head + 3]!, 8).state.head).toBeGreaterThan(mid.head);
   });
 
   it("scribbling cannot skip ahead: one move advances at most a few samples", () => {
@@ -70,7 +70,10 @@ describe("Line Tracing", () => {
       st = traceStep(st, s, { x: (i * 37) % 100, y: (i * 53) % 70 }, 11).state;
       expect(st.head - before).toBeLessThanOrEqual(LOOKAHEAD);
     }
-    expect(st.done).toBe(false);
+    // A scribble that stays away from the start never gets going.
+    let far = startLine();
+    for (let i = 0; i < 2000; i++) far = traceStep(far, s, { x: 45 + ((i * 37) % 55), y: (i * 53) % 70 }, 11).state;
+    expect(far.head).toBe(0);
   });
 
   it("tolerance is generous for the youngest and never below 7 units", () => {

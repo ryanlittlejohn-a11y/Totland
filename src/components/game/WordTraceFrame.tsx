@@ -29,6 +29,7 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
   const traceRef = useRef(trace);
   const inkCells = useRef<Set<number>[]>([]);
   const drawing = useRef(false);
+  const last = useRef<{ x: number; y: number } | null>(null);
   const handlers = useRef({ onLetter, onWord });
   handlers.current = { onLetter, onWord };
 
@@ -147,13 +148,25 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
     const y = ((event.clientY - rect.top) / rect.height) * layout.height;
     const radius = Math.max(10, layout.slot * 0.09);
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
-    ctx.fillStyle = cssVar("--clay", "#d9714f");
+    const colour = cssVar("--clay", "#d9714f");
+    const from = last.current ?? { x, y };
+    last.current = { x, y };
+    ctx.strokeStyle = colour;
+    ctx.fillStyle = colour;
+    ctx.lineCap = "round";
+    ctx.lineWidth = radius * 2;
     ctx.beginPath();
-    ctx.arc(x, y, radius, 0, Math.PI * 2);
-    ctx.fill();
+    ctx.moveTo(from.x, from.y);
+    ctx.lineTo(x, y);
+    ctx.stroke();
     const cell = layout.slot / CELLS_PER_SLOT;
     const cols = Math.ceil(layout.width / cell);
-    const { state, completedLetter } = paintCells(traceRef.current, cellsInBrush(x, y, radius, cell, cols), inkCells.current);
+    // Sample along the stroke so a fast finger leaves no gaps.
+    const steps = Math.max(1, Math.ceil(Math.hypot(x - from.x, y - from.y) / (cell * 0.5)));
+    const cells: number[] = [];
+    for (let i = 1; i <= steps; i++)
+      cells.push(...cellsInBrush(from.x + ((x - from.x) * i) / steps, from.y + ((y - from.y) * i) / steps, radius, cell, cols));
+    const { state, completedLetter } = paintCells(traceRef.current, cells, inkCells.current);
     if (state === traceRef.current) return;
     traceRef.current = state;
     setProgress(state.finished ? 100 : Math.round(letterCoverage(state, inkCells.current[state.active]!) * 100));
@@ -163,6 +176,8 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
       if (state.finished) {
         drawing.current = false;
         handlers.current.onWord();
+      } else {
+        last.current = null;
       }
     }
   };
@@ -191,11 +206,12 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
                 onPointerDown={(event) => {
                   if (traceRef.current.finished) return;
                   drawing.current = true;
+                  last.current = null;
                   event.currentTarget.setPointerCapture(event.pointerId);
                   paint(event);
                 }}
                 onPointerMove={paint}
-                onPointerUp={() => { drawing.current = false; }}
+                onPointerUp={() => { drawing.current = false; last.current = null; }}
                 onPointerCancel={() => { drawing.current = false; }}
               />
             </div>

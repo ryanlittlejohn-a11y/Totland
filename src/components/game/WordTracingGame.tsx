@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { TRACING_WORDS, type TracingWord } from "@/lib/content";
 import { L } from "@/lib/i18n";
 import {
   recordAnswer,
   recordGameComplete,
+  recordTracedLetter,
   recordTracedWord,
   tracingProgressOf,
   useProfile,
   wordTracingUnlocked,
 } from "@/lib/profile";
 import { chime, say } from "@/lib/speech";
-import { TracingCanvas } from "./TracingCanvas";
+import { unlockLetter, wordLetters } from "@/lib/word-trace";
+import { WordTraceFrame } from "./WordTraceFrame";
 
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
 
@@ -23,20 +25,24 @@ export function WordTracingGame({ length, onFinish }: { length: 2 | 3 | 4 | 5; o
   const { profile, update, hydrated } = useProfile();
   const [wordIndex, setWordIndex] = useState(0);
   const [letterIndex, setLetterIndex] = useState(0);
-  const [attempt, setAttempt] = useState(0);
   const [words, setWords] = useState<TracingWord[]>([]);
+  const finished = useRef(false);
+  const finishRef = useRef(onFinish);
+  finishRef.current = onFinish;
+
+  // Round is dealt once and frozen for the game's lifetime.
   useEffect(() => {
     if (!hydrated || words.length) return;
     const progress = tracingProgressOf(profile);
     setWords(wordTracingQueue(TRACING_WORDS[profile.language][length], progress.words[String(length) as "2" | "3" | "4" | "5"] ?? []));
   }, [hydrated, length, profile, words.length]);
   const item = words[wordIndex];
-  const letters = item ? Array.from(item.word) : [];
+  const letters = item ? wordLetters(item.word) : [];
   const glyph = letters[letterIndex] ?? "";
 
   useEffect(() => {
-    if (!item || !glyph) return;
-    say(L(`Trace the word ${item.word}. Start with ${glyph}.`, `Traza la palabra ${item.word}. Empieza con ${glyph}.`));
+    if (!item || !letters[0]) return;
+    say(L(`Trace the word ${item.word}. Start with ${letters[0]}.`, `Traza la palabra ${item.word}. Empieza con ${letters[0]}.`));
   }, [item?.word]);
 
   if (!hydrated || !item || !glyph) return null;
@@ -51,39 +57,43 @@ export function WordTracingGame({ length, onFinish }: { length: 2 | 3 | 4 | 5; o
         <p className="text-5xl" aria-hidden>✏️</p>
         <p className="mt-3 font-ui text-xl font-bold text-ink">{L("Keep tracing letters", "Sigue trazando letras")}</p>
         <p className="mt-2 font-ui text-sm text-inksoft">
-          {L(`Trace ${needed} big and ${needed} small letters to open these words.`, `Traza ${needed} letras grandes y ${needed} pequeñas para abrir estas palabras.`)}
+          {L(`Trace ${needed} different big and ${needed} different small letters to open these words.`, `Traza ${needed} letras grandes y ${needed} pequeñas diferentes para abrir estas palabras.`)}
+        </p>
+        <p className="mt-3 font-ui text-base font-semibold text-ink">
+          {L(`Big: ${big} of ${needed} · Small: ${small} of ${needed}`, `Grandes: ${big} de ${needed} · Pequeñas: ${small} de ${needed}`)}
         </p>
       </div>
     );
   }
 
-  const finishGlyph = (good: boolean) => {
-    update((current) => recordAnswer(current, { skill: "tracing", correct: good, responseMs: 4000, itemId: `${length}:${item.word}:${letterIndex}` }));
-    chime(good ? "correct" : "retry", profile.sfx);
-    if (!good) {
-      say(L("Great try! Let's trace it again.", "¡Buen intento! Vamos a trazarla otra vez."));
-      setAttempt((value) => value + 1);
-      return;
+  const letterDone = (index: number, traced: string) => {
+    update((current) => recordTracedLetter(
+      recordAnswer(current, { skill: "tracing", correct: true, responseMs: 4000, itemId: `${length}:${item.word}:${index}` }),
+      unlockLetter(traced),
+    ));
+    chime("correct", profile.sfx);
+    const next = letters[index + 1];
+    if (next) {
+      setLetterIndex(index + 1);
+      say(L(`Now trace ${next}.`, `Ahora traza la ${next}.`));
     }
-    const nextLetter = letterIndex + 1;
-    if (nextLetter < letters.length) {
-      const nextGlyph = letters[nextLetter];
-      setLetterIndex(nextLetter);
-      setAttempt(0);
-      if (nextGlyph) say(L(`Now trace ${nextGlyph}.`, `Ahora traza la ${nextGlyph}.`));
-      return;
-    }
+  };
+
+  const wordDone = () => {
     update((current) => recordTracedWord(current, item.word));
     say(L(`You traced ${item.word}!`, `¡Trazaste ${item.word}!`));
     const nextWord = wordIndex + 1;
-    if (nextWord >= 3) {
+    if (nextWord >= words.length) {
+      if (finished.current) return;
+      finished.current = true;
       update((current) => recordGameComplete(current, "tracing", 3, 2));
-      onFinish(3, 1);
+      finishRef.current(3, 1);
       return;
     }
-    setWordIndex(nextWord);
-    setLetterIndex(0);
-    setAttempt(0);
+    window.setTimeout(() => {
+      setWordIndex(nextWord);
+      setLetterIndex(0);
+    }, profile.reducedMotion ? 300 : 900);
   };
 
   return (
@@ -100,7 +110,7 @@ export function WordTracingGame({ length, onFinish }: { length: 2 | 3 | 4 | 5; o
         ))}
       </div>
       <p className="mt-2 text-center font-ui text-sm text-inksoft">{L(`Word ${wordIndex + 1} of 3`, `Palabra ${wordIndex + 1} de 3`)}</p>
-      <TracingCanvas key={`${item.word}-${letterIndex}-${attempt}`} glyph={glyph} onDone={finishGlyph} />
+      <WordTraceFrame key={`${wordIndex}-${item.word}`} letters={letters} reducedMotion={profile.reducedMotion} onLetter={letterDone} onWord={wordDone} />
     </div>
   );
 }

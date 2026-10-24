@@ -336,3 +336,7 @@
 ## Progress-saving fixes (approved 2026-10-18)
 - [x] Saves apply to freshest progress (no stale-copy overwrite); sync keeps mid-sync play; Words lock shows live count
 - [ ] Ryan: new build + TestFlight check of explored counter and Words unlock; confirm "10 different letters" rule
+
+## One-frame word tracing (approved 2026-10-24)
+- [x] Whole word on one baseline with guides; per-letter auto-advance; coverage only in active letter; word letters count toward unlocks
+- [ ] Ryan: device check of word frame on phone + iPad (finger tracing feel, 5-letter scroll, Spanish accents); not published

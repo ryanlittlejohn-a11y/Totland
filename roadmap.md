@@ -340,3 +340,9 @@
 ## One-frame word tracing (approved 2026-10-24)
 - [x] Whole word on one baseline with guides; per-letter auto-advance; coverage only in active letter; word letters count toward unlocks
 - [ ] Ryan: device check of word frame on phone + iPad (finger tracing feel, 5-letter scroll, Spanish accents); not published
+
+## Line Tracing pre-writing game (approved 2026-10-24)
+- [x] Game #122 "Line Tracing" (free): 30 code-made dashed paths, 5 levels, follow-in-order rules, calm finish
+- [ ] Record 4 new narration lines (2 EN / 2 ES, 141 characters) — awaiting approval; play signed out until then
+- [ ] Update hand-written counts (now 122 games, 47 free / 75 Premium) in store listing, review notes and marketing docs
+- [ ] Ryan: real-device finger check on phone + iPad; not published

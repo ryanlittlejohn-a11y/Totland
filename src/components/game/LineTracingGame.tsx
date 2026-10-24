@@ -120,7 +120,6 @@ export function LineTracingGame({ onFinish }: { onFinish: (stars: number, accura
     if (!livePos || !pattern) return;
     // The hook reports 0–100 on both axes; the board is 100 × 70.
     const finger = { x: (livePos.x / 100) * BOARD_W, y: (livePos.y / 100) * BOARD_H };
-    console.log("LT", JSON.stringify(finger), JSON.stringify(samples[0]), tolerance, traceRef.current.head);
     const { state, completed } = traceStep(traceRef.current, samples, finger, tolerance);
     if (state === traceRef.current) return;
     traceRef.current = state;

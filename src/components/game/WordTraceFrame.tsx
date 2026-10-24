@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  CELLS_PER_SLOT, cellsInBrush, letterCoverage, paintCells, startTrace, wordFrameLayout,
+  CELLS_PER_SLOT, cellsInBrush, letterCoverage, nearLetterInk, paintCells, startTrace, wordBrushRadius, wordFrameLayout,
   type TraceState, type WordFrameLayout,
 } from "@/lib/word-trace";
 import { L } from "@/lib/i18n";
@@ -28,7 +28,10 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
   const [progress, setProgress] = useState(0);
   const traceRef = useRef(trace);
   const inkCells = useRef<Set<number>[]>([]);
+  const glyphMasks = useRef<HTMLCanvasElement[]>([]);
+  const strokeCanvas = useRef<HTMLCanvasElement | null>(null);
   const drawing = useRef(false);
+  const pointer = useRef<number | null>(null);
   const last = useRef<{ x: number; y: number } | null>(null);
   const handlers = useRef({ onLetter, onWord });
   handlers.current = { onLetter, onWord };
@@ -74,15 +77,33 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
     const offsetX = (layout.width - layout.slot * letters.length) / 2;
     inkCells.current = letters.map((glyph, i) => {
       ctx.clearRect(0, 0, off.width, off.height);
-      ctx.fillStyle = "#000";
+      ctx.fillStyle = cssVar("--ink", "#4a3a2c");
       ctx.fillText(glyph, offsetX + layout.slot * (i + 0.5), baseline);
       const data = ctx.getImageData(0, 0, off.width, off.height).data;
       const set = new Set<number>();
       for (let y = 0; y < off.height; y += 2)
         for (let x = 0; x < off.width; x += 2)
-          if (data[(y * off.width + x) * 4 + 3]! > 128) set.add(Math.floor(y / cell) * cols + Math.floor(x / cell));
+          if ((data[(y * off.width + x) * 4 + 3] ?? 0) > 128) set.add(Math.floor(y / cell) * cols + Math.floor(x / cell));
       return set;
     });
+    glyphMasks.current = letters.map((glyph, i) => {
+      const mask = document.createElement("canvas");
+      mask.width = layout.width * DPR;
+      mask.height = layout.height * DPR;
+      const maskCtx = mask.getContext("2d");
+      if (maskCtx) {
+        maskCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+        maskCtx.font = font;
+        maskCtx.textAlign = "center";
+        maskCtx.textBaseline = "alphabetic";
+        maskCtx.fillText(glyph, offsetX + layout.slot * (i + 0.5), baseline);
+      }
+      return mask;
+    });
+    const stroke = document.createElement("canvas");
+    stroke.width = layout.width * DPR;
+    stroke.height = layout.height * DPR;
+    strokeCanvas.current = stroke;
   }, [layout?.width, layout?.slot, layout?.height, fontReady, font, baseline, letters]);
 
   // Guides and letters (redrawn as the active letter changes).
@@ -118,13 +139,16 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
       const active = i === trace.active && !trace.finished;
       ctx.globalAlpha = active || done ? 1 : 0.22;
       ctx.fillStyle = active || done ? felt : soft;
-      ctx.fillText(glyph, offsetX + layout.slot * (i + 0.5), baseline);
       if (active) {
         ctx.globalAlpha = 0.5;
         ctx.lineWidth = 2;
+        ctx.lineJoin = "round";
         ctx.strokeStyle = ink;
         ctx.strokeText(glyph, offsetX + layout.slot * (i + 0.5), baseline);
       }
+      // The opaque fill hides the font's overlapping internal stroke contours.
+      ctx.globalAlpha = active || done ? 1 : 0.22;
+      ctx.fillText(glyph, offsetX + layout.slot * (i + 0.5), baseline);
     });
     ctx.globalAlpha = 1;
   }, [layout?.width, layout?.height, layout?.slot, fontReady, font, fontSize, baseline, letters, trace.active, trace.finished]);
@@ -139,40 +163,59 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
   }, [trace.active, layout?.scrolls, layout?.width, layout?.slot, letters.length, reducedMotion]);
 
   const paint = (event: React.PointerEvent<HTMLCanvasElement>) => {
-    if (!drawing.current || !layout || !inkCells.current.length) return;
+    if (!drawing.current || pointer.current !== event.pointerId || !layout || !inkCells.current.length) return;
     const canvas = inkRef.current;
     const ctx = canvas?.getContext("2d");
-    if (!canvas || !ctx) return;
+    const activeInk = inkCells.current[traceRef.current.active];
+    const mask = glyphMasks.current[traceRef.current.active];
+    const stroke = strokeCanvas.current;
+    const strokeCtx = stroke?.getContext("2d");
+    if (!canvas || !ctx || !activeInk || !mask || !stroke || !strokeCtx) return;
     const rect = canvas.getBoundingClientRect();
     const x = ((event.clientX - rect.left) / rect.width) * layout.width;
     const y = ((event.clientY - rect.top) / rect.height) * layout.height;
-    const radius = Math.max(10, layout.slot * 0.09);
-    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    const radius = wordBrushRadius(layout.slot);
+    const cell = layout.slot / CELLS_PER_SLOT;
+    const cols = Math.ceil(layout.width / cell);
+    const margin = layout.slot * 0.025;
+    if (!nearLetterInk(x, y, activeInk, cell, cols, margin)) {
+      last.current = null;
+      return;
+    }
     const colour = cssVar("--clay", "#d9714f");
     const from = last.current ?? { x, y };
     last.current = { x, y };
-    ctx.strokeStyle = colour;
-    ctx.fillStyle = colour;
-    ctx.lineCap = "round";
-    ctx.lineWidth = radius * 2;
-    ctx.beginPath();
-    ctx.moveTo(from.x, from.y);
-    ctx.lineTo(x, y);
-    ctx.stroke();
-    const cell = layout.slot / CELLS_PER_SLOT;
-    const cols = Math.ceil(layout.width / cell);
+    strokeCtx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    strokeCtx.globalCompositeOperation = "source-over";
+    strokeCtx.clearRect(0, 0, layout.width, layout.height);
+    strokeCtx.fillStyle = colour;
     // Sample along the stroke so a fast finger leaves no gaps.
     const steps = Math.max(1, Math.ceil(Math.hypot(x - from.x, y - from.y) / (cell * 0.5)));
     const cells: number[] = [];
-    for (let i = 1; i <= steps; i++)
-      cells.push(...cellsInBrush(from.x + ((x - from.x) * i) / steps, from.y + ((y - from.y) * i) / steps, radius, cell, cols));
+    for (let i = 0; i <= steps; i++) {
+      const px = from.x + ((x - from.x) * i) / steps;
+      const py = from.y + ((y - from.y) * i) / steps;
+      if (!nearLetterInk(px, py, activeInk, cell, cols, margin)) continue;
+      strokeCtx.beginPath();
+      strokeCtx.arc(px, py, radius, 0, Math.PI * 2);
+      strokeCtx.fill();
+      cells.push(...cellsInBrush(px, py, radius, cell, cols));
+    }
+    // Mask only this stroke, not the persistent canvas: finished letters keep their ink.
+    strokeCtx.setTransform(1, 0, 0, 1, 0, 0);
+    strokeCtx.globalCompositeOperation = "destination-in";
+    strokeCtx.drawImage(mask, 0, 0);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
+    ctx.drawImage(stroke, 0, 0);
     const { state, completedLetter } = paintCells(traceRef.current, cells, inkCells.current);
     if (state === traceRef.current) return;
     traceRef.current = state;
-    setProgress(state.finished ? 100 : Math.round(letterCoverage(state, inkCells.current[state.active]!) * 100));
+    const nextInk = inkCells.current[state.active];
+    setProgress(state.finished ? 100 : nextInk ? Math.round(letterCoverage(state, nextInk) * 100) : 0);
     if (completedLetter !== null) {
       setTrace(state);
-      handlers.current.onLetter(completedLetter, letters[completedLetter]!);
+      const glyph = letters[completedLetter];
+      if (glyph) handlers.current.onLetter(completedLetter, glyph);
       if (state.finished) {
         drawing.current = false;
         handlers.current.onWord();
@@ -204,15 +247,17 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
                 aria-label={L(`Trace ${letters.join("")}`, `Traza ${letters.join("")}`)}
                 className="absolute inset-0 h-full w-full touch-none"
                 onPointerDown={(event) => {
-                  if (traceRef.current.finished) return;
+                  if (traceRef.current.finished || pointer.current !== null) return;
+                  pointer.current = event.pointerId;
                   drawing.current = true;
                   last.current = null;
                   event.currentTarget.setPointerCapture(event.pointerId);
                   paint(event);
                 }}
                 onPointerMove={paint}
-                onPointerUp={() => { drawing.current = false; last.current = null; }}
-                onPointerCancel={() => { drawing.current = false; }}
+                onPointerUp={(event) => { if (pointer.current !== event.pointerId) return; drawing.current = false; pointer.current = null; last.current = null; }}
+                onPointerCancel={(event) => { if (pointer.current !== event.pointerId) return; drawing.current = false; pointer.current = null; last.current = null; }}
+                onLostPointerCapture={() => { drawing.current = false; pointer.current = null; last.current = null; }}
               />
             </div>
             <div className="flex pb-2" style={{ paddingLeft: offsetX }} aria-hidden>

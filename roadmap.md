@@ -339,6 +339,8 @@
 
 ## One-frame word tracing (approved 2026-10-24)
 - [x] Whole word on one baseline with guides; per-letter auto-advance; coverage only in active letter; word letters count toward unlocks
+- [x] iPhone ink fix: glyph-clipped narrow brush, 70% fine-grid coverage, clean highlight, 90px minimum slots; 91 tests pass; actual-font d/o swipe resistance, zero outside-glyph ink, ordered one-time finish checked at 360px and 1024px; real free-game session saved 3 words and reached reward
+- [ ] Ryan: new TestFlight build, re-check panda/donut finger tracing, 70% completion feel, scroll and Spanish accents; five-letter canvas checked in isolated browser fixture (no Premium bypass), not a verified entitled session
 - [ ] Ryan: device check of word frame on phone + iPad (finger tracing feel, 5-letter scroll, Spanish accents); not published
 
 ## Line Tracing pre-writing game (approved 2026-10-24)

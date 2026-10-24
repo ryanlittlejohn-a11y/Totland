@@ -343,6 +343,6 @@
 
 ## Line Tracing pre-writing game (approved 2026-10-24)
 - [x] Game #122 "Line Tracing" (free): 30 code-made dashed paths, 5 levels, follow-in-order rules, calm finish
-- [ ] Record 4 new narration lines (2 EN / 2 ES, 141 characters) — awaiting approval; play signed out until then
+- [x] Recorded 4 new narration lines (2 EN Hannah / 2 ES Lucy, 141 characters) — 2026-10-24, scan confirms all present
 - [ ] Update hand-written counts (now 122 games, 47 free / 75 Premium) in store listing, review notes and marketing docs
 - [ ] Ryan: real-device finger check on phone + iPad; not published

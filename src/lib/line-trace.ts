@@ -37,12 +37,11 @@ const wave = (x0: number, x1: number, y: number, amp: number, cycles: number) =>
 const zigzag = (x0: number, x1: number, top: number, bottom: number, peaks: number) =>
   Array.from({ length: peaks * 2 + 1 }, (_, i) => ({ x: x0 + ((x1 - x0) * i) / (peaks * 2), y: i % 2 ? top : bottom }));
 /** Cursive "eee" loops moving right (prolate cycloid). */
-const loops = (x0: number, x1: number, y: number, r: number, count: number) =>
+const loops = (x0: number, x1: number, y: number, r: number, count: number): Pt[] =>
   range(70 * count, (t) => {
     const a = t * count * Math.PI * 2;
-    const base = x0 + (x1 - x0 - 2 * r) * t;
-    return { x: base + r - Math.cos(a) * r * -1 + 0, y: y - Math.sin(a) * r };
-  }).map((p, i, all) => (i === 0 ? p : p)).map((p) => p) as Pt[];
+    return { x: x0 + (x1 - x0) * t + r * 1.2 * Math.sin(a), y: y + r - r * (1 - Math.cos(a)) * 1 - r };
+  });
 const spiral = (cx: number, cy: number, r0: number, r1: number, turns: number) =>
   range(90 * turns, (t) => {
     const a = t * turns * Math.PI * 2;
@@ -62,7 +61,7 @@ export const LINE_PATTERNS: LinePattern[] = [
   // Level 2 — gentle curves
   { id: "rainbow", level: 2, theme: "dot", family: "curve", points: arc(50, 55, 36, Math.PI, Math.PI * 2, 40) },
   { id: "smile", level: 2, theme: "dot", family: "curve", points: arc(50, 18, 36, Math.PI, 0, 38) },
-  { id: "c-curve", level: 2, theme: "dot", family: "curve", points: arc(55, 35, 24, -Math.PI / 4, -Math.PI * 1.75 + Math.PI * 2 - Math.PI * 2, 26) },
+  { id: "c-curve", level: 2, theme: "dot", family: "curve", points: arc(55, 35, 24, -Math.PI / 4, -Math.PI * 1.75, 26) },
   { id: "hill-road", level: 2, theme: "car", family: "curve", points: arc(50, 62, 40, Math.PI, Math.PI * 2, 34) },
   { id: "gentle-wave", level: 2, theme: "fish", family: "wave", points: wave(10, 90, 35, 9, 1) },
   { id: "bee-swoop", level: 2, theme: "bee", family: "curve", points: arc(50, 10, 38, Math.PI * 0.95, Math.PI * 0.05, 44) },

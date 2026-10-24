@@ -339,6 +339,7 @@
 
 ## One-frame word tracing (approved 2026-10-24)
 - [x] Whole word on one baseline with guides; per-letter auto-advance; coverage only in active letter; word letters count toward unlocks
+- [ ] iPhone ink fix: glyph-clipped narrow brush, 70% fine-grid coverage, clean highlight, 90px minimum slots; regression tests and phone/iPad verification
 - [ ] Ryan: device check of word frame on phone + iPad (finger tracing feel, 5-letter scroll, Spanish accents); not published
 
 ## Line Tracing pre-writing game (approved 2026-10-24)

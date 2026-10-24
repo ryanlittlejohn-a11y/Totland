@@ -1,13 +1,27 @@
 /** Pure rules for tracing a whole word in one frame (no DOM). */
 
 /** Share of a letter's ink cells that must be painted before it finishes. */
-export const WORD_TRACE_THRESHOLD = 0.5;
+export const WORD_TRACE_THRESHOLD = 0.7;
 /** Smallest usable letter slot (CSS px) for ages 2–4; below this the frame scrolls. */
-export const MIN_SLOT = 72;
+export const MIN_SLOT = 90;
 /** Largest letter slot (CSS px) so iPad letters don't become huge. */
 export const MAX_SLOT = 170;
 /** Grid cells per letter slot width used for coverage. */
-export const CELLS_PER_SLOT = 12;
+export const CELLS_PER_SLOT = 36;
+
+/** A narrow brush, with only a small allowance outside the glyph for little fingers. */
+export const wordBrushRadius = (slot: number): number => slot * 0.05;
+
+export function nearLetterInk(x: number, y: number, ink: ReadonlySet<number>, cell: number, cols: number, margin: number): boolean {
+  const reach = margin + cell * Math.SQRT1_2;
+  for (const key of cellsInBrush(x, y, margin, cell, cols)) {
+    if (!ink.has(key)) continue;
+    const cx = (key % cols + 0.5) * cell;
+    const cy = (Math.floor(key / cols) + 0.5) * cell;
+    if (Math.hypot(cx - x, cy - y) <= reach) return true;
+  }
+  return false;
+}
 
 export interface WordFrameLayout {
   slot: number;

@@ -118,7 +118,9 @@ export function LineTracingGame({ onFinish }: { onFinish: (stars: number, accura
 
   useEffect(() => {
     if (!livePos || !pattern) return;
-    const { state, completed } = traceStep(traceRef.current, samples, livePos, tolerance);
+    // The hook reports 0–100 on both axes; the board is 100 × 70.
+    const finger = { x: (livePos.x / 100) * BOARD_W, y: (livePos.y / 100) * BOARD_H };
+    const { state, completed } = traceStep(traceRef.current, samples, finger, tolerance);
     if (state === traceRef.current) return;
     traceRef.current = state;
     setTrace(state);

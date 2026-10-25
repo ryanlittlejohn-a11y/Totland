@@ -70,7 +70,7 @@ export const DIGIT_CHARACTERS: StrokeCharacter[] = [
   { id: "digit-1", label: { en: "one", es: "el uno" }, level: 1, guides: true, strokes: [poly([50, 14], [50, 56])] },
   {
     id: "digit-2", label: { en: "two", es: "el dos" }, level: 2, guides: true,
-    strokes: [[...arc(50, 27, 14, Math.PI * 1.08, -Math.PI * 0.08, 13), ...poly([63.5, 28.5], [36, 56], [65, 56])]],
+    strokes: [[...arc(50, 27, 14, Math.PI * 1.08, Math.PI * 1.92, 13), ...poly([63.5, 24], [36, 56], [65, 56])]],
   },
   {
     id: "digit-3", label: { en: "three", es: "el tres" }, level: 2, guides: true,

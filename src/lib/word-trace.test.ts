@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  CELLS_PER_SLOT, MIN_SLOT, MAX_SLOT, WORD_TRACE_THRESHOLD, cellsInBrush, nearLetterInk, paintCells, startTrace, unlockLetter, wordBrushRadius, wordFrameLayout, wordLetters,
+  CELLS_PER_SLOT, MIN_SLOT, MAX_SLOT, WORD_TRACE_THRESHOLD, WORD_BRUSH_RADIUS_RATIO, WORD_TOUCH_ALLOWANCE_RATIO, cellsInBrush, nearLetterInk, paintCells, startTrace, unlockLetter, wordBrushRadius, wordTouchAllowance, wordFrameLayout, wordLetters,
 } from "./word-trace";
 
 const store = new Map<string, string>();
@@ -86,13 +86,16 @@ describe("one-frame word tracing", () => {
     expect(wordFrameLayout(5, 490)).toMatchObject({ slot: 98, scrolls: false });
   });
 
-  it("requires 70% fine-grid ink coverage with a 4.5px brush at the phone minimum", () => {
-    expect(WORD_TRACE_THRESHOLD).toBe(0.7);
+  it("requires 60% fine-grid ink coverage with a 6.3px brush and 9px allowance at the phone minimum", () => {
+    expect(WORD_TRACE_THRESHOLD).toBe(0.60);
+    expect(WORD_BRUSH_RADIUS_RATIO).toBe(0.07);
+    expect(WORD_TOUCH_ALLOWANCE_RATIO).toBe(0.10);
     expect(CELLS_PER_SLOT).toBe(36);
-    expect(wordBrushRadius(90)).toBe(4.5);
+    expect(wordBrushRadius(90)).toBeCloseTo(6.3);
+    expect(wordTouchAllowance(90)).toBe(9);
     const ten = [new Set(Array.from({ length: 10 }, (_, i) => i))];
-    expect(paintCells(startTrace(), [0, 1, 2, 3, 4, 5], ten).state.finished).toBe(false);
-    expect(paintCells(startTrace(), [0, 1, 2, 3, 4, 5, 6], ten).state.finished).toBe(true);
+    expect(paintCells(startTrace(), [0, 1, 2, 3, 4], ten).state.finished).toBe(false);
+    expect(paintCells(startTrace(), [0, 1, 2, 3, 4, 5], ten).state.finished).toBe(true);
   });
 
   it.each(["d", "o"])("a vertical swipe cannot complete %s but following its curved ink does", (glyph) => {
@@ -105,10 +108,22 @@ describe("one-frame word tracing", () => {
     if (glyph === "d") for (let y = 20; y <= 88; y++) outline.push({ x: 64, y });
     const letter = new Set(outline.flatMap(({ x, y }) => cellsInBrush(x, y, 3, cell, cols)));
     const brush = (points: { x: number; y: number }[]) => points.flatMap(({ x, y }) =>
-      nearLetterInk(x, y, letter, cell, cols, slot * 0.025) ? cellsInBrush(x, y, wordBrushRadius(slot), cell, cols) : []);
+      nearLetterInk(x, y, letter, cell, cols, wordTouchAllowance(slot)) ? cellsInBrush(x, y, wordBrushRadius(slot), cell, cols) : []);
     const vertical = Array.from({ length: 110 }, (_, y) => ({ x: 45, y }));
     expect(paintCells(startTrace(), brush(vertical), [letter]).state.finished).toBe(false);
     expect(paintCells(startTrace(), brush(outline), [letter]).state.finished).toBe(true);
-    expect(nearLetterInk(5, 5, letter, cell, cols, slot * 0.025)).toBe(false);
+    const offsetOutline = outline.map(({ x, y }) => ({ x: x + 6, y }));
+    expect(paintCells(startTrace(), brush(offsetOutline), [letter]).state.finished).toBe(true);
+    const farAway = outline.map(({ x, y }) => ({ x: x + 100, y }));
+    expect(brush(farAway)).toHaveLength(0);
+    expect(nearLetterInk(5, 5, letter, cell, cols, wordTouchAllowance(slot))).toBe(false);
+  });
+
+  it("accepts a centre 6px off the ink but ignores a finger 25px away", () => {
+    const cell = 90 / CELLS_PER_SLOT;
+    const stem = new Set(Array.from({ length: 30 }, (_, r) => r * CELLS_PER_SLOT + 10));
+    const x = 10.5 * cell, y = 15.5 * cell;
+    expect(nearLetterInk(x + 6, y, stem, cell, CELLS_PER_SLOT, wordTouchAllowance(90))).toBe(true);
+    expect(nearLetterInk(x + 25, y, stem, cell, CELLS_PER_SLOT, wordTouchAllowance(90))).toBe(false);
   });
 });

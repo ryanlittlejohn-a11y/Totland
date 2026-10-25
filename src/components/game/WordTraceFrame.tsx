@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import {
-  CELLS_PER_SLOT, cellsInBrush, letterCoverage, nearLetterInk, paintCells, startTrace, wordBrushRadius, wordFrameLayout,
+  CELLS_PER_SLOT, cellsInBrush, letterCoverage, nearLetterInk, paintCells, startTrace, wordBrushRadius, wordTouchAllowance, wordFrameLayout,
   type TraceState, type WordFrameLayout,
 } from "@/lib/word-trace";
 import { L } from "@/lib/i18n";
@@ -177,8 +177,9 @@ export function WordTraceFrame({ letters, reducedMotion, onLetter, onWord }: Pro
     const radius = wordBrushRadius(layout.slot);
     const cell = layout.slot / CELLS_PER_SLOT;
     const cols = Math.ceil(layout.width / cell);
-    const margin = layout.slot * 0.025;
+    const margin = wordTouchAllowance(layout.slot);
     if (!nearLetterInk(x, y, activeInk, cell, cols, margin)) {
+      // Break interpolation across the gap, not pointer capture: re-entry resumes without lifting.
       last.current = null;
       return;
     }

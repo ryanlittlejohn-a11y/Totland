@@ -338,6 +338,7 @@
 - [ ] Ryan: new build + TestFlight check of explored counter and Words unlock; confirm "10 different letters" rule
 
 ## One-frame word tracing (approved 2026-10-24)
+- [ ] Little-finger tuning (2026-10-25): named 10% touch allowance, 7% brush radius, 60% finish; retain glyph clipping and drift/re-entry; test offset outlines, swipe resistance and 25px rejection at phone/iPad widths; do not publish
 - [x] Whole word on one baseline with guides; per-letter auto-advance; coverage only in active letter; word letters count toward unlocks
 - [x] iPhone ink fix: glyph-clipped narrow brush, 70% fine-grid coverage, clean highlight, 90px minimum slots; 91 tests pass; actual-font d/o swipe resistance, zero outside-glyph ink, ordered one-time finish checked at 360px and 1024px; real free-game session saved 3 words and reached reward
 - [ ] Ryan: new TestFlight build, re-check panda/donut finger tracing, 70% completion feel, scroll and Spanish accents; five-letter canvas checked in isolated browser fixture (no Premium bypass), not a verified entitled session

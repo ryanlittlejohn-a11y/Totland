@@ -18,6 +18,7 @@ import { isNativeApp, nativePlatform } from "@/lib/native";
 import { StorePurchasePanel } from "@/components/StorePurchasePanel";
 import { useStoreEntitlement } from "@/hooks/useStoreEntitlement";
 import { storageRemove } from "@/lib/storage";
+import { clearAllDrawings } from "@/lib/free-draw";
 import { openStoreSubscriptionManagement } from "@/lib/purchases";
 import { L } from "@/lib/i18n";
 

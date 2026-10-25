@@ -153,9 +153,9 @@ describe("Catalog entries", () => {
     expect(gameById("line-tracing")!.kind).toBe("lines");
   });
 
-  it("totals are now 124 games, 48 free / 76 Premium", () => {
-    expect(GAMES).toHaveLength(124);
-    expect(GAMES.filter((g) => !g.premium)).toHaveLength(48);
+  it("totals are now 125 games, 49 free / 76 Premium", () => {
+    expect(GAMES).toHaveLength(125);
+    expect(GAMES.filter((g) => !g.premium)).toHaveLength(49);
     expect(GAMES.filter((g) => g.premium)).toHaveLength(76);
   });
 });

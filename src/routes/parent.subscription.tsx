@@ -192,6 +192,7 @@ function Subscription() {
       await signOutLocal("deletion", "account deleted");
       try {
         storageRemove("totland.family.v1");
+        clearAllDrawings();
       } catch {
         /* ignore */
       }

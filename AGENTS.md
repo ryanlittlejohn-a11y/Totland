@@ -23,3 +23,4 @@
 - Game rounds are frozen in state once dealt and completion is guarded by a ref with onFinish held in a ref — profile/level updates must never re-deal or cancel the reward timer.
 - Word tracing uses pure rules in src/lib/word-trace.ts for layout, fine-grid glyph coverage and auto-advance; each ink stroke is masked to the active runtime-rendered glyph before joining the persistent canvas — keeps rules testable and prevents spill or neighbour paint.
 - Pre-writing Line Tracing keeps its path rules pure in src/lib/line-trace.ts (samples, forward-only progress with a short lookahead) and uses usePathTrace for the pointer — progress can only move along the path, so scribbling can't pass.
+- Connect the Dots puzzles are typed point data in src/lib/connect-dots.ts with pure rules and a `puzzleSvg` renderer; the game and future printables both consume it — one source of truth for screen and print.

@@ -364,7 +364,7 @@
 - [x] Game #126 "Connect the Dots" / "Une los puntos" (FREE via no trailing flag, Number Valley/numbers, ages explorer/learner/reader), engine/kind `dots:connectDots`
 - [x] 30 original hand-authored puzzles in src/lib/connect-dots.ts (5 levels, 3→20 dots), strict numeric order, gentle nudge, hit radius 11, frozen deal of 3 per session, once-only completion; `puzzleSvg` helper for printables
 - [x] Tests: ordering, nudge, completion once, hit radius, sequential/in-bounds/non-overlapping dots, no line crossing over another dot; totals 126 / 50 free / 76 Premium
-- [ ] Narration: 59 missing lines (~1,125 chars) listed — awaiting Ryan's approval; record nothing yet
+- [x] Narration: recorded 59 missing lines (Hannah EN / Lucy ES, 1,125 chars, 492 credits) — 2026-10-25, lookup scan confirms all 62 present
 - [ ] Hand-written game-count quotes (store listing, review notes, marketing docs) → 126 / 50 free / 76 Premium
 - [ ] Ryan real-device check: 29px dots on phones at 20-dot level, drag feel, Spanish lines
 - [ ] Next: printable PDFs reusing puzzleSvg

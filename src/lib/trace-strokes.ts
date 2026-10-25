@@ -34,7 +34,7 @@ const heart = (cx: number, cy: number, s: number) =>
   range(96, (t) => {
     const a = t * Math.PI * 2;
     return {
-      x: cx + s * 1.35 * 16 * Math.pow(Math.sin(a), 3) * 0.1 * 10,
+      x: cx + s * 1.35 * 16 * Math.pow(Math.sin(a), 3),
       y: cy - s * 1.3 * (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)),
     };
   });

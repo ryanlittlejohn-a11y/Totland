@@ -130,6 +130,14 @@ function Dashboard() {
           ))}
         </div>
       )}
+      <Link to="/parent/printables" className="flex items-center gap-3 rounded-3xl bg-card p-4 wood-block">
+        <span className="text-2xl" aria-hidden>🖨️</span>
+        <span className="flex-1">
+          <span className="block font-ui font-bold text-ink">{L("Teachers & printables", "Docentes e imprimibles")}</span>
+          <span className="block text-xs text-inksoft">{L("Make black-and-white activity sheets on this device", "Crea hojas de actividades en blanco y negro en este dispositivo")}</span>
+        </span>
+        <span className="text-xs font-semibold text-ink">{L("Open", "Abrir")}</span>
+      </Link>
       <section className="rounded-3xl bg-night p-5 text-cream wood-block">
         <div className="flex items-baseline justify-between">
           <p className="font-semibold">{L("This week", "Esta semana")}</p>

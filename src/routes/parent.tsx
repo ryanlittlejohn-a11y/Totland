@@ -98,6 +98,7 @@ function ParentLayout() {
         {[
           { to: "/parent", label: L("Dashboard", "Panel"), exact: true },
           { to: "/parent/children", label: L("Children", "Peques") },
+          { to: "/parent/printables", label: L("Printables", "Imprimibles") },
           { to: "/parent/subscription", label: L("Subscription", "Suscripción") },
           { to: "/contact", label: L("Contact", "Contacto") },
 

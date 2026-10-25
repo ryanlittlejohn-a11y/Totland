@@ -146,6 +146,82 @@ export function traceStep(
   return { state: { head: best, done }, completed: done };
 }
 
+/* ------------------------------------------------------------------ *
+ * Multi-stroke tracing (shapes, numbers, later letters).
+ * A character is an ordered list of strokes; each stroke is its own
+ * sampled path. Strict order (default) only lets the current stroke
+ * move; free order lets any unfinished stroke move.
+ * ------------------------------------------------------------------ */
+
+/** Generous start-dot zone (board units) so 2–4 year olds can begin a stroke. */
+export const START_ZONE = 12;
+
+export interface MultiTraceState {
+  /** Furthest sample reached on each stroke (same order as the strokes). */
+  heads: number[];
+  done: boolean;
+}
+
+export const startMulti = (strokeCount: number): MultiTraceState => ({
+  heads: Array.from({ length: strokeCount }, () => 0),
+  done: false,
+});
+
+/** First unfinished stroke, or -1 when all are done. */
+export function currentStroke(state: MultiTraceState, strokes: Pt[][]): number {
+  return state.heads.findIndex((h, i) => h < (strokes[i]?.length ?? 1) - 1);
+}
+
+/** Advance one stroke from a finger at `p`; returns the new head or -1. */
+function advanceStroke(strokes: Pt[][], i: number, head: number, p: Pt, tolerance: number): number {
+  const samples = strokes[i]!;
+  // A fresh stroke only starts near its start dot; a started one resumes
+  // where the finger left it.
+  const gate = head === 0 ? START_ZONE : tolerance;
+  const anchor = samples[head]!;
+  if (Math.hypot(anchor.x - p.x, anchor.y - p.y) > gate) return -1;
+  let best = -1;
+  const end = Math.min(samples.length - 1, head + LOOKAHEAD);
+  for (let j = head; j <= end; j++) {
+    const s = samples[j]!;
+    if (Math.hypot(s.x - p.x, s.y - p.y) <= tolerance) best = j;
+  }
+  return best > head ? best : -1;
+}
+
+/**
+ * Move progress for a finger at `p` across an ordered list of strokes.
+ * Strict order: only the first unfinished stroke can move — later strokes
+ * cannot be skipped to. Free order: any unfinished stroke can move (the one
+ * with the most progress this move wins). Lifting the finger keeps progress;
+ * `completed` is true exactly once, when every stroke is finished.
+ */
+export function traceStepMulti(
+  state: MultiTraceState,
+  strokes: Pt[][],
+  p: Pt,
+  tolerance: number,
+  freeOrder = false,
+): { state: MultiTraceState; completed: boolean } {
+  if (state.done || strokes.length === 0) return { state, completed: false };
+  const candidates = freeOrder
+    ? state.heads.map((_, i) => i).filter((i) => state.heads[i]! < strokes[i]!.length - 1)
+    : [currentStroke(state, strokes)].filter((i) => i >= 0);
+  let pick = -1;
+  let pickHead = -1;
+  for (const i of candidates) {
+    const next = advanceStroke(strokes, i, state.heads[i]!, p, tolerance);
+    if (next > pickHead) {
+      pick = i;
+      pickHead = next;
+    }
+  }
+  if (pick < 0) return { state, completed: false };
+  const heads = state.heads.map((h, i) => (i === pick ? pickHead : h));
+  const done = heads.every((h, i) => h >= strokes[i]!.length - 1);
+  return { state: { heads, done }, completed: done };
+}
+
 /** Small direction arrows along the path. */
 export function arrowsAlong(samples: Pt[], every = 14): { x: number; y: number; angle: number }[] {
   const out: { x: number; y: number; angle: number }[] = [];

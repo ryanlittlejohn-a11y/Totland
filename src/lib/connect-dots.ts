@@ -37,7 +37,7 @@ export const PUZZLES: DotsPuzzle[] = [
   { id: "square", en: "a square", es: "un cuadrado", level: 1, closed: true, fill: "sky", points: P(22, 22, 78, 22, 78, 78, 22, 78) },
   { id: "house", en: "a house", es: "una casa", level: 1, closed: true, fill: "clay", points: P(50, 14, 82, 42, 82, 84, 18, 84, 18, 42) },
   { id: "diamond", en: "a diamond", es: "un rombo", level: 1, closed: true, fill: "plum", points: P(50, 12, 84, 50, 50, 88, 16, 50) },
-  { id: "flag", en: "a flag", es: "una bandera", level: 1, closed: false, fill: "moss", points: P(24, 86, 24, 14, 78, 30, 24, 46) },
+  { id: "flag", en: "a flag", es: "una bandera", level: 1, closed: false, fill: "moss", points: P(24, 14, 78, 30, 24, 46, 24, 86) },
   { id: "mountains", en: "mountains", es: "montañas", level: 1, closed: true, fill: "moss", points: P(10, 80, 36, 30, 54, 58, 70, 36, 92, 80) },
   // Level 2 — 6 to 7 dots
   { id: "tent", en: "a tent", es: "una tienda", level: 2, closed: true, fill: "amber", points: P(50, 14, 88, 80, 62, 80, 50, 56, 38, 80, 12, 80) },

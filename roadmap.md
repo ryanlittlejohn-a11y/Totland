@@ -348,7 +348,7 @@
 - [x] Game #122 "Line Tracing" (free): 30 code-made dashed paths, 5 levels, follow-in-order rules, calm finish
 - [x] Recorded 4 new narration lines (2 EN Hannah / 2 ES Lucy, 141 characters) — 2026-10-24, scan confirms all present
 - [x] Multi-stroke tracing engine + games #123 "Trace Shapes" (FREE) and #124 "Trace Numbers" (PREMIUM) — 2026-10-25: ordered strokes with numbered green start dots, generous start zone, lift keeps progress, strict order default with per-child "free order" toggle in the parent dashboard (profile.freeTraceOrder, optional field, old profiles unaffected); 8 shapes + digits 0-9 hand-authored (US school print, top-to-bottom, left-to-right) in src/lib/trace-strokes.ts; 106 tests pass; contact sheet + full playthrough verified at 360px and iPad widths; Trace Numbers lock screen confirmed. Free/Premium for Trace Numbers is the trailing 1 on its catalog row (src/lib/catalog.ts).
-- [ ] Narration for Trace Shapes/Numbers: 72 new lines (36 EN + 36 ES, 1,300 characters ≈ 1,300 credits) — library scan shows none present; awaiting Ryan's approval to record
+- [x] Narration for Trace Shapes/Numbers: recorded all 72 lines (36 EN Hannah / 36 ES Lucy, 1,300 characters) — 2026-10-25; library scan confirms all 72 present; 572 ElevenLabs credits used, 172,287 remaining
 - [ ] Update hand-written counts (now 124 games, 48 free / 76 Premium) in store listing, review notes and marketing docs
 - [ ] Later (after teachers pick a handwriting style): "Trace Big Letters" and "Trace Small Letters" plug into the same engine
 - [ ] Ryan: real-device finger check on phone + iPad (stroke order, start zones, free-order toggle, Spanish names); not published

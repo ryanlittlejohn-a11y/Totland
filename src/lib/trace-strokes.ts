@@ -34,8 +34,8 @@ const heart = (cx: number, cy: number, s: number) =>
   range(96, (t) => {
     const a = t * Math.PI * 2;
     return {
-      x: cx + s * 1.35 * 16 * Math.pow(Math.sin(a), 3) * 0.1,
-      y: cy - s * 1.5 * (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)) * 0.1,
+      x: cx + s * 1.35 * 16 * Math.pow(Math.sin(a), 3) * 0.1 * 10,
+      y: cy - s * 1.3 * (13 * Math.cos(a) - 5 * Math.cos(2 * a) - 2 * Math.cos(3 * a) - Math.cos(4 * a)),
     };
   });
 /** Classic 5-point star drawn without lifting, starting at the top point. */
@@ -66,7 +66,7 @@ export const SHAPE_CHARACTERS: StrokeCharacter[] = [
 export const DIGIT_GUIDES = [14, 35, 56];
 
 export const DIGIT_CHARACTERS: StrokeCharacter[] = [
-  { id: "digit-0", label: { en: "zero", es: "el cero" }, level: 2, guides: true, strokes: [arc(50, 35, 15, -Math.PI / 2, Math.PI * 1.5, 21)] },
+  { id: "digit-0", label: { en: "zero", es: "el cero" }, level: 1, guides: true, strokes: [arc(50, 35, 15, -Math.PI / 2, Math.PI * 1.5, 21)] },
   { id: "digit-1", label: { en: "one", es: "el uno" }, level: 1, guides: true, strokes: [poly([50, 14], [50, 56])] },
   {
     id: "digit-2", label: { en: "two", es: "el dos" }, level: 2, guides: true,

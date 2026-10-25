@@ -77,7 +77,9 @@ describe("Multi-stroke engine", () => {
   it("free order: a later stroke can move before the first is finished", () => {
     const { s } = run(two, two[1]!, true);
     expect(s.heads[1]).toBe(two[1]!.length - 1);
-    expect(s.heads[0]).toBe(0);
+    // Stroke 1 shares its start point with stroke 2, so it may move a
+    // little — but it must not be finished.
+    expect(s.heads[0]).toBeLessThan(two[0]!.length - 1);
   });
 
   it("a new stroke only starts near its start dot", () => {

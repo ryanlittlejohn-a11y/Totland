@@ -89,7 +89,7 @@ describe("pdf output", () => {
   it("has one PDF page per laid-out page and numbers 1..N for a dots puzzle", async () => {
     const puzzle = sheetItems("dots")[0]!;
     const pages = buildPages([puzzle, ...sheetItems("lines").slice(0, 2)], base("letter"));
-    const blob = await renderPdf(pages, "letter");
+    const blob = await renderPdf(pages, "letter", false);
     const text = new TextDecoder("latin1").decode(new Uint8Array(await blob.arrayBuffer()));
     expect((text.match(/\/Type \/Page\b/g) ?? []).length).toBe(3);
     const n = (puzzle as { puzzle: (typeof PUZZLES)[number] }).puzzle.points.length;

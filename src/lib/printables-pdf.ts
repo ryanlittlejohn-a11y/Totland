@@ -5,10 +5,10 @@
  */
 import { PAPERS, type Page, type PaperId } from "./printables";
 
-export async function renderPdf(pages: Page[], paper: PaperId): Promise<Blob> {
+export async function renderPdf(pages: Page[], paper: PaperId, compress = true): Promise<Blob> {
   const { jsPDF } = await import("jspdf");
   const size = PAPERS[paper];
-  const doc = new jsPDF({ unit: "pt", format: [size.w, size.h], orientation: "portrait", compress: true });
+  const doc = new jsPDF({ unit: "pt", format: [size.w, size.h], orientation: "portrait", compress });
   doc.setDrawColor(0);
   doc.setFillColor(0);
   doc.setTextColor(0);

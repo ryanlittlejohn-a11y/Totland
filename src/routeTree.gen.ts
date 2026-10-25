@@ -30,6 +30,7 @@ import { Route as GuidesLearningGamesFor5YearOldsRouteImport } from './routes/gu
 import { Route as GuidesToddlerLearningGamesRouteImport } from './routes/guides.toddler-learning-games'
 import { Route as ParentIndexRouteImport } from './routes/parent.index'
 import { Route as ParentChildrenRouteImport } from './routes/parent.children'
+import { Route as ParentPrintablesRouteImport } from './routes/parent.printables'
 import { Route as ParentSubscriptionRouteImport } from './routes/parent.subscription'
 import { Route as PlayAreaRouteImport } from './routes/play.$area'
 import { Route as WordfindThemeIdRouteImport } from './routes/wordfind.$themeId'
@@ -153,6 +154,11 @@ const ParentChildrenRoute = ParentChildrenRouteImport.update({
   path: '/children',
   getParentRoute: () => ParentRoute,
 } as any)
+const ParentPrintablesRoute = ParentPrintablesRouteImport.update({
+  id: '/printables',
+  path: '/printables',
+  getParentRoute: () => ParentRoute,
+} as any)
 const ParentSubscriptionRoute = ParentSubscriptionRouteImport.update({
   id: '/subscription',
   path: '/subscription',
@@ -237,6 +243,7 @@ export interface FileRoutesByFullPath {
   '/guides/learning-games-for-5-year-olds': typeof GuidesLearningGamesFor5YearOldsRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
+  '/parent/printables': typeof ParentPrintablesRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRouteWithChildren
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
@@ -271,6 +278,7 @@ export interface FileRoutesByTo {
   '/guides/learning-games-for-5-year-olds': typeof GuidesLearningGamesFor5YearOldsRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
+  '/parent/printables': typeof ParentPrintablesRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
@@ -306,6 +314,7 @@ export interface FileRoutesById {
   '/guides/learning-games-for-5-year-olds': typeof GuidesLearningGamesFor5YearOldsRoute
   '/guides/toddler-learning-games': typeof GuidesToddlerLearningGamesRoute
   '/parent/children': typeof ParentChildrenRoute
+  '/parent/printables': typeof ParentPrintablesRoute
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/play/$area': typeof PlayAreaRouteWithChildren
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
@@ -343,6 +352,7 @@ export interface FileRouteTypes {
     | '/guides/learning-games-for-5-year-olds'
     | '/guides/toddler-learning-games'
     | '/parent/children'
+    | '/parent/printables'
     | '/parent/subscription'
     | '/play/$area'
     | '/wordfind/$themeId'
@@ -377,6 +387,7 @@ export interface FileRouteTypes {
     | '/guides/learning-games-for-5-year-olds'
     | '/guides/toddler-learning-games'
     | '/parent/children'
+    | '/parent/printables'
     | '/parent/subscription'
     | '/wordfind/$themeId'
     | '/world/$worldId'
@@ -411,6 +422,7 @@ export interface FileRouteTypes {
     | '/guides/learning-games-for-5-year-olds'
     | '/guides/toddler-learning-games'
     | '/parent/children'
+    | '/parent/printables'
     | '/parent/subscription'
     | '/play/$area'
     | '/wordfind/$themeId'
@@ -606,6 +618,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ParentChildrenRouteImport
       parentRoute: typeof ParentRoute
     }
+    '/parent/printables': {
+      id: '/parent/printables'
+      path: '/printables'
+      fullPath: '/parent/printables'
+      preLoaderRoute: typeof ParentPrintablesRouteImport
+      parentRoute: typeof ParentRoute
+    }
     '/parent/subscription': {
       id: '/parent/subscription'
       path: '/subscription'
@@ -695,12 +714,14 @@ declare module '@tanstack/react-router' {
 
 interface ParentRouteChildren {
   ParentChildrenRoute: typeof ParentChildrenRoute
+  ParentPrintablesRoute: typeof ParentPrintablesRoute
   ParentSubscriptionRoute: typeof ParentSubscriptionRoute
   ParentIndexRoute: typeof ParentIndexRoute
 }
 
 const ParentRouteChildren: ParentRouteChildren = {
   ParentChildrenRoute: ParentChildrenRoute,
+  ParentPrintablesRoute: ParentPrintablesRoute,
   ParentSubscriptionRoute: ParentSubscriptionRoute,
   ParentIndexRoute: ParentIndexRoute,
 }

@@ -63,6 +63,17 @@ describe("Connect the Dots rules", () => {
           expect(Math.hypot(a.x - b.x, a.y - b.y), `${p.id} ${i + 1}/${j + 1}`).toBeGreaterThanOrEqual(MIN_SPACING);
         }
       expect(svg.outline.endsWith(" Z")).toBe(p.closed);
+      // No line segment runs straight over another dot (dot radius ~5 units).
+      const segs = p.points.map((a, i) => [a, p.points[i + 1] ?? (p.closed ? p.points[0]! : null)] as const);
+      segs.forEach(([a, b], si) => {
+        if (!b) return;
+        p.points.forEach((q, qi) => {
+          if (q === a || q === b) return;
+          const t = Math.max(0, Math.min(1, ((q.x - a.x) * (b.x - a.x) + (q.y - a.y) * (b.y - a.y)) / ((b.x - a.x) ** 2 + (b.y - a.y) ** 2)));
+          const d = Math.hypot(a.x + t * (b.x - a.x) - q.x, a.y + t * (b.y - a.y) - q.y);
+          expect(d, `${p.id} segment ${si + 1} over dot ${qi + 1}`).toBeGreaterThanOrEqual(5);
+        });
+      });
     }
   });
 

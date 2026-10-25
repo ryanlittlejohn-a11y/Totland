@@ -125,6 +125,8 @@ export function ConnectDotsGame({
     onEnter: (i) => {
       const c = stRef.current.connected;
       if (i < c) return true;
+      // Sliding over a later dot on the way is not a mistake — keep the drag alive.
+      if (i > c) return true;
       return touch(i);
     },
   });

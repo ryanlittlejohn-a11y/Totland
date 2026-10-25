@@ -18,7 +18,7 @@ export type DotsPuzzle = {
   points: TracePoint[];
 };
 
-/** Finger hit radius in board units — kinder than Line Tracing's 11 at level 1 is not possible at 20 dots, so equal. */
+/** Finger hit radius in board units — matches Line Tracing's level-1 tolerance (11). Nearest dot wins when zones touch. */
 export const HIT_RADIUS = 11;
 /** Minimum distance between any two dots (board units). */
 export const MIN_SPACING = 11;

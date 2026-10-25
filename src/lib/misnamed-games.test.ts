@@ -128,9 +128,9 @@ describe("misnamed games open their real scenes", () => {
     }
   });
 
-  it("free/Premium split: 125 games, 49 free (Trace Shapes + Free Draw free, Trace Numbers Premium)", () => {
-    expect(GAMES).toHaveLength(125);
-    expect(GAMES.filter((g) => !g.premium)).toHaveLength(49);
+  it("free/Premium split: 126 games, 50 free (Trace Shapes + Free Draw + Connect the Dots free, Trace Numbers Premium)", () => {
+    expect(GAMES).toHaveLength(126);
+    expect(GAMES.filter((g) => !g.premium)).toHaveLength(50);
   });
 
   it("every place-pieces round is solvable in English and Spanish", () => {

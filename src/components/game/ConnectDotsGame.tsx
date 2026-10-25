@@ -146,7 +146,7 @@ export function ConnectDotsGame({
         ref={boardRef}
         {...boardProps}
         className="dots-board relative mx-auto mt-4 aspect-square w-full max-w-[640px] select-none overflow-hidden rounded-3xl"
-        style={{ touchAction: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none" }}
+        style={{ touchAction: "none", WebkitUserSelect: "none", WebkitTouchCallout: "none", containerType: "inline-size" }}
         data-dots-board
         data-puzzle={puzzle.id}
       >
@@ -166,7 +166,7 @@ export function ConnectDotsGame({
               data-dot={n}
               aria-label={isDone ? L(`Dot ${n}, connected`, `Punto ${n}, unido`) : isNext ? L(`Dot ${n}, next`, `Punto ${n}, siguiente`) : L(`Dot ${n}`, `Punto ${n}`)}
               disabled={done}
-              onClick={() => { if (stRef.current.connected !== i + 0 || true) touch(i); }}
+              onClick={() => touch(i)}
               className={`dots-dot absolute grid place-items-center rounded-full font-ui font-bold ${isDone ? "is-done" : ""} ${isNext ? "is-next" : ""} ${wrong === i ? "is-wrong" : ""}`}
               style={{ left: `${p.x}%`, top: `${p.y}%`, width: `${size}%`, fontSize: `clamp(14px, ${size * 0.5}cqw, 34px)` }}
             >

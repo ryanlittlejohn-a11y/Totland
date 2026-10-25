@@ -48,9 +48,9 @@ describe("Group 1 re-pointed games", () => {
     expect(byTitle("Number Fishing").kind).not.toBe(byTitle("Catch the Number").kind);
   });
 
-  it("free/Premium flags: 49 free / 76 Premium (Trace Shapes + Free Draw free, Trace Numbers Premium), Simple Jigsaw free", () => {
-    expect(GAMES).toHaveLength(125);
-    expect(GAMES.filter((g) => !g.premium)).toHaveLength(49);
+  it("free/Premium flags: 50 free / 76 Premium (Trace Shapes + Free Draw + Connect the Dots free, Trace Numbers Premium), Simple Jigsaw free", () => {
+    expect(GAMES).toHaveLength(126);
+    expect(GAMES.filter((g) => !g.premium)).toHaveLength(50);
     expect(byTitle("Simple Jigsaw").premium).toBe(false);
   });
 

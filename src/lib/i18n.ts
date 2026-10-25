@@ -339,6 +339,7 @@ const TITLES: Record<string, string> = {
   "Trace Shapes": "Trazar figuras", "Trace shapes stroke by stroke": "Traza figuras trazo a trazo",
   "Trace Numbers": "Trazar números", "Trace numbers 0 to 9": "Traza los números del 0 al 9",
   "Free Draw": "Dibujo libre", "Draw anything you like": "Dibuja lo que quieras",
+  "Connect the Dots": "Une los puntos", "Join numbered dots to reveal a picture": "Une los puntos numerados para descubrir un dibujo",
   "Word Tracing: 2 Letters": "Trazar palabras de 2 letras", "Trace two-letter words": "Traza palabras de dos letras",
   "Word Tracing: 3 Letters": "Trazar palabras de 3 letras", "Trace three-letter words": "Traza palabras de tres letras",
   "Word Tracing: 4 Letters": "Trazar palabras de 4 letras", "Trace four-letter words": "Traza palabras de cuatro letras",

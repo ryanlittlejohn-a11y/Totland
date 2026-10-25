@@ -349,6 +349,13 @@
 - [x] Recorded 4 new narration lines (2 EN Hannah / 2 ES Lucy, 141 characters) — 2026-10-24, scan confirms all present
 - [x] Multi-stroke tracing engine + games #123 "Trace Shapes" (FREE) and #124 "Trace Numbers" (PREMIUM) — 2026-10-25: ordered strokes with numbered green start dots, generous start zone, lift keeps progress, strict order default with per-child "free order" toggle in the parent dashboard (profile.freeTraceOrder, optional field, old profiles unaffected); 8 shapes + digits 0-9 hand-authored (US school print, top-to-bottom, left-to-right) in src/lib/trace-strokes.ts; 106 tests pass; contact sheet + full playthrough verified at 360px and iPad widths; Trace Numbers lock screen confirmed. Free/Premium for Trace Numbers is the trailing 1 on its catalog row (src/lib/catalog.ts).
 - [x] Narration for Trace Shapes/Numbers: recorded all 72 lines (36 EN Hannah / 36 ES Lucy, 1,300 characters) — 2026-10-25; library scan confirms all 72 present; 572 ElevenLabs credits used, 172,287 remaining
-- [ ] Update hand-written counts (now 124 games, 48 free / 76 Premium) in store listing, review notes and marketing docs
+- [ ] Update hand-written counts (now 125 games, 49 free / 76 Premium) in store listing, review notes and marketing docs
 - [ ] Later (after teachers pick a handwriting style): "Trace Big Letters" and "Trace Small Letters" plug into the same engine
 - [ ] Ryan: real-device finger check on phone + iPad (stroke order, start zones, free-order toggle, Spanish names); not published
+
+## Free Draw game (approved 2026-10-25)
+- [x] Game #125 "Free Draw" / "Dibujo libre" (FREE, Color Cove, ages explorer/learner/reader): blank-page canvas, smooth retina strokes (pointer events, coalesced moves, quadratic smoothing, round caps), single-pointer rule, touch-action none on the canvas only; 10 colour-blind-distinct swatches, 3 brush sizes, eraser, multi-step undo, two-tap Clear (3s window), calm "I'm finished" reward once; no timer/score/sharing/network
+- [x] Privacy: drawings never enter the profile or family sync; last drawing per child kept on-device only under storage key `totland.freedraw.v1` (localStorage on web, native storage in the packaged app), removed on child deletion (removeChild) and account deletion (parent.subscription); Privacy Notice wording checked — still accurate, no tweak needed
+- [x] 119 tests pass (undo stack, eraser flag, clear confirm, finish-once, single pointer, persistence caps, catalog totals 125/49/76); browser playthrough at 360px and iPad: strokes, undo, eraser, clear confirm, reward, reload persistence all verified
+- [ ] Narration: 4 new lines listed, NOT recorded (awaiting approval) — EN "Draw anything you like!" (22) / "What a lovely drawing!" (22); ES "¡Dibuja lo que quieras!" (23) / "¡Qué dibujo tan bonito!" (23) ≈ 90 characters total
+- [ ] Ryan: real-device finger check (palm rejection, fast scribbles, Clear two-tap, Spanish labels); not published

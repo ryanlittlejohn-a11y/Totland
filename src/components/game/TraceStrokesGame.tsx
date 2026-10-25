@@ -107,7 +107,7 @@ export function TraceStrokesGame({ set, onFinish }: { set: "shapes" | "numbers";
         className="relative mt-4 w-full touch-none select-none overflow-hidden rounded-3xl bg-card wood-block"
         style={{ aspectRatio: `${BOARD_W} / ${BOARD_H}` }}
         role="img"
-        aria-label={L(`Dotted ${character.label.en} to trace from the green dot`, `${character.label.en === "star" ? "Figura" : "Figura"} punteada para trazar desde el punto verde`)}
+        aria-label={L(`Dotted ${character.label.en} to trace from the green dot`, `Figura punteada para trazar desde el punto verde`)}
       >
         <svg viewBox={`0 0 ${BOARD_W} ${BOARD_H}`} className="absolute inset-0 h-full w-full" aria-hidden>
           {character.guides &&

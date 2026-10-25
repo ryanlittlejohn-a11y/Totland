@@ -367,4 +367,13 @@
 - [x] Narration: recorded 59 missing lines (Hannah EN / Lucy ES, 1,125 chars, 492 credits) — 2026-10-25, lookup scan confirms all 62 present
 - [ ] Hand-written game-count quotes (store listing, review notes, marketing docs) → 126 / 50 free / 76 Premium
 - [ ] Ryan real-device check: 29px dots on phones at 20-dot level, drag feel, Spanish lines
-- [ ] Next: printable PDFs reusing puzzleSvg
+- [x] Printable PDFs — see Teachers & printables below
+
+## Teachers & printables — Build 1 (approved 2026-10-25)
+- [x] "Teachers & printables" page inside /parent (behind the existing gate), dashboard card + Printables tab; no child-screen links
+- [x] Pure sheet catalogue/layout in src/lib/printables.ts: Letter (default) / A4 remembered on device, 0.5in margins, 1 or 2 per page, Name/Date line on by default, typed name never saved, black-and-white photocopy-safe sizes
+- [x] Sheets: Connect the Dots (30), dashed Line Tracing (30) with start dot + arrow + end ring, Blank page with border; free = first 3 by level per type, Blank always free; Premium via existing verified check
+- [x] jsPDF loaded only on "Make PDF" (dynamic import); web Download PDF / Open to print; native app shows "Coming in the next app update"
+- [x] Tests: margins Letter/A4, 1 vs 2 per page, free-sample rules, page counts, PDF page count + numbers; browser check through the gate at 360px and iPad, PDF rasterized
+- [ ] Build 2: Trace Shapes/Numbers sheets, dashed/dotted toggle, Filesystem + Share plugins, native share/print (needs new native build)
+- [ ] Ryan: real printout/photocopy check of line weights and dash spacing

@@ -55,7 +55,7 @@ export const PUZZLES: DotsPuzzle[] = [
   { id: "umbrella", en: "an umbrella", es: "un paraguas", level: 3, closed: true, fill: "plum", points: P(50, 12, 78, 22, 92, 46, 72, 42, 50, 48, 28, 42, 8, 46, 22, 22) },
   // Level 4 — 11 to 15 dots
   { id: "butterfly", en: "a butterfly", es: "una mariposa", level: 4, closed: true, fill: "plum", points: P(50, 30, 64, 14, 86, 12, 92, 30, 78, 48, 90, 68, 76, 86, 56, 72, 44, 72, 24, 86, 10, 68, 22, 48, 8, 30, 14, 12, 36, 14) },
-  { id: "cottage", en: "a cottage", es: "una cabaña", level: 4, closed: true, fill: "clay", points: P(50, 10, 64, 22, 64, 12, 74, 12, 74, 31, 92, 46, 80, 44, 80, 88, 20, 88, 20, 44, 8, 46) },
+  { id: "cottage", en: "a cottage", es: "una cabaña", level: 4, closed: true, fill: "clay", points: P(50, 10, 64, 22, 64, 8, 76, 8, 76, 32, 92, 46, 80, 44, 80, 88, 20, 88, 20, 44, 8, 46) },
   { id: "car", en: "a car", es: "un coche", level: 4, closed: true, fill: "sky", points: P(8, 72, 8, 54, 24, 50, 36, 30, 64, 30, 78, 50, 92, 54, 92, 72, 76, 72, 66, 82, 56, 72, 44, 72, 34, 82, 24, 72) },
   { id: "owl", en: "an owl", es: "un búho", level: 4, closed: true, fill: "amber", points: P(30, 10, 40, 24, 60, 24, 70, 10, 76, 36, 86, 56, 76, 82, 58, 92, 42, 92, 24, 82, 14, 56, 24, 36) },
   { id: "apple", en: "an apple", es: "una manzana", level: 4, closed: true, fill: "clay", points: P(50, 28, 52, 10, 64, 6, 64, 22, 80, 24, 92, 42, 88, 66, 72, 88, 50, 82, 28, 88, 12, 66, 8, 42, 20, 24, 36, 22) },

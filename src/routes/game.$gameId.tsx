@@ -16,6 +16,7 @@ import { WordSearchGame } from "@/components/game/WordSearchGame";
 import { TracingGame } from "@/components/game/TracingGame";
 import { WordTracingGame } from "@/components/game/WordTracingGame";
 import { LineTracingGame } from "@/components/game/LineTracingGame";
+import { FreeDrawGame } from "@/components/game/FreeDrawGame";
 import { TraceStrokesGame } from "@/components/game/TraceStrokesGame";
 import { FlashCards } from "@/components/game/FlashCards";
 import { StoryReader } from "@/components/game/StoryReader";
@@ -165,6 +166,8 @@ function GameHost() {
         <MemoryGame key={key} kind={game.kind} theme={theme} onFinish={finish} />
       ) : engine === "wordsearch" ? (
         <WordSearchGame key={key} kind={game.kind} onFinish={finish} />
+      ) : engine === "draw" ? (
+        <FreeDrawGame key={key} onFinish={finish} />
       ) : engine === "tracing" && game.kind === "lines" ? (
         <LineTracingGame key={key} onFinish={finish} />
       ) : engine === "tracing" && (game.kind === "traceShapes" || game.kind === "traceNumbers") ? (

@@ -13,7 +13,7 @@ import { isNativeApp, pluginReady, withTimeout } from "./native";
  * through to native storage in the background.
  */
 
-export const STORAGE_KEYS = ["totland.family.v1", "totland.profile.v1"] as const;
+export const STORAGE_KEYS = ["totland.family.v1", "totland.profile.v1", "totland.freedraw.v1"] as const;
 
 const MIGRATED_KEY = "totland.storage.migrated.v1";
 

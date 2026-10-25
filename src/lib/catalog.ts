@@ -31,7 +31,8 @@ export type EngineId =
   | "train"
   | "garden"
   | "paint"
-  | "tapcount";
+  | "tapcount"
+  | "draw";
 
 export type WorldId =
   | "alphabet-forest"
@@ -244,6 +245,8 @@ const ROWS: Row[] = [
   // Trace Numbers is Premium via the trailing 1 — delete that one flag to make it free.
   [123, "Trace Shapes", "🔺", "tracing", "traceShapes", C, "shapes", "Trace shapes stroke by stroke", "elr"],
   [124, "Trace Numbers", "🔢", "tracing", "traceNumbers", N, "numbers", "Trace numbers 0 to 9", "lr", 1],
+  // Blank-page drawing: calm, no timer, no score; drawings stay on the device.
+  [125, "Free Draw", "🖍️", "draw", "freeDraw", C, "colors", "Draw anything you like", "elr"],
 ];
 
 const MODE_MAP: Record<string, AgeMode> = { e: "explorer", l: "learner", r: "reader" };
@@ -273,7 +276,7 @@ export const GAMES: GameRecord[] = ROWS.map((r) => {
       : engine === "fishing" || engine === "monster" || engine === "rocket" || engine === "jigsaw" || engine === "sort" || engine === "assemble" || engine === "train" || engine === "paint" ? "drag"
       : engine === "order" ? "sequence"
       : engine === "memory" ? "flip"
-      : engine === "tracing" || engine === "maze" ? "trace"
+      : engine === "tracing" || engine === "maze" || engine === "draw" ? "trace"
       : engine === "story" || engine === "storybuilder" ? "read"
       : "tap",
     minutes: engine === "adventure" ? 8 : 2,

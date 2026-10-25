@@ -6,6 +6,7 @@
 import { useCallback, useEffect, useState } from "react";
 import type { SkillId } from "./content";
 import { setLang, type Lang } from "./i18n";
+import { deleteDrawing } from "./free-draw";
 import { storageGet, storageSet } from "./storage";
 
 
@@ -654,6 +655,8 @@ export function updateChild(id: string, fn: (p: Profile) => Profile) {
 
 export function removeChild(id: string) {
   const f = loadFamily();
+  // Free Draw artwork lives outside the profile, keyed by child — delete it too.
+  deleteDrawing(id);
   const children = f.children.map((c) => (c.id === id ? { ...c, deleted: true, dirty: true } : c));
   const remaining = children.filter((c) => !c.deleted);
   saveFamily({

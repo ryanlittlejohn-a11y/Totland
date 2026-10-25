@@ -167,7 +167,7 @@ function PrintablesPage() {
           {!premium && (
             <p className="mt-3 text-sm text-inksoft">
               {L("Locked sheets unlock with Premium.", "Las hojas bloqueadas se desbloquean con Premium.")}{" "}
-              <Link to="/parent/subscription" className="font-semibold text-ink underline">{L("See Premium", "Ver Premium")}</Link>
+              <Link to="/parent/subscription" search={{ checkout: undefined }} className="font-semibold text-ink underline">{L("See Premium", "Ver Premium")}</Link>
             </p>
           )}
         </section>

@@ -60,6 +60,8 @@ export interface Profile {
   musicVolume: number;
   reducedMotion: boolean;
   highContrast: boolean;
+  /** Per-child: let tracing games accept strokes in any order (default off = numbered order). Optional so older saved profiles keep working. */
+  freeTraceOrder?: boolean;
   premium: boolean;
   stars: number;
   stickers: string[];

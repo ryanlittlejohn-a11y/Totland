@@ -359,3 +359,12 @@
 - [x] 119 tests pass (undo stack, eraser flag, clear confirm, finish-once, single pointer, persistence caps, catalog totals 125/49/76); browser playthrough at 360px and iPad: strokes, undo, eraser, clear confirm, reward, reload persistence all verified
 - [x] Narration: recorded all 4 lines (2 EN Hannah / 2 ES Lucy, 90 characters) — 2026-10-25; lookup-only scan confirms all 4 present; credit counter unchanged at 16,454 used / 172,287 remaining (usage below refresh granularity)
 - [ ] Ryan: real-device finger check (palm rejection, fast scribbles, Clear two-tap, Spanish labels); not published
+
+## Connect the Dots (approved 2026-10-25)
+- [x] Game #126 "Connect the Dots" / "Une los puntos" (FREE via no trailing flag, Number Valley/numbers, ages explorer/learner/reader), engine/kind `dots:connectDots`
+- [x] 30 original hand-authored puzzles in src/lib/connect-dots.ts (5 levels, 3→20 dots), strict numeric order, gentle nudge, hit radius 11, frozen deal of 3 per session, once-only completion; `puzzleSvg` helper for printables
+- [x] Tests: ordering, nudge, completion once, hit radius, sequential/in-bounds/non-overlapping dots, no line crossing over another dot; totals 126 / 50 free / 76 Premium
+- [ ] Narration: 59 missing lines (~1,125 chars) listed — awaiting Ryan's approval; record nothing yet
+- [ ] Hand-written game-count quotes (store listing, review notes, marketing docs) → 126 / 50 free / 76 Premium
+- [ ] Ryan real-device check: 29px dots on phones at 20-dot level, drag feel, Spanish lines
+- [ ] Next: printable PDFs reusing puzzleSvg

@@ -851,3 +851,21 @@ html[data-reduced-motion="1"] .bubble--popped,
 html[data-reduced-motion="1"] .bubble__drops,
 html[data-reduced-motion="1"] .train-depart > * { animation: none !important; }
 html[data-reduced-motion="1"] .bubble--popped { opacity: 0.25; }
+
+/* Connect the Dots */
+.dots-board { background: var(--card); border: 3px solid color-mix(in oklch, var(--ink) 18%, transparent); }
+.dots-line { stroke: var(--ink); stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.dots-live { stroke: var(--ink); stroke-opacity: 0.45; stroke-width: 2; stroke-linecap: round; }
+.dots-fill { stroke: var(--ink); stroke-width: 2.6; stroke-linejoin: round; transition: opacity 500ms ease; }
+.dots-fill-amber { fill: var(--amber); } .dots-fill-moss { fill: var(--moss); } .dots-fill-clay { fill: var(--clay); }
+.dots-fill-sky { fill: var(--sky); } .dots-fill-plum { fill: var(--plum); }
+.dots-dot {
+  aspect-ratio: 1; transform: translate(-50%, -50%); line-height: 1;
+  background: var(--card); color: var(--ink); border: 3px solid var(--ink); touch-action: none;
+}
+.dots-dot.is-done { background: var(--ink); color: var(--card); }
+.dots-dot.is-next { background: var(--amber); border-width: 4px; box-shadow: 0 0 0 4px color-mix(in oklch, var(--amber) 45%, transparent); }
+.dots-dot.is-wrong { animation: dots-nudge 450ms ease-in-out; }
+@keyframes dots-nudge { 25% { transform: translate(-56%, -50%); } 75% { transform: translate(-44%, -50%); } }
+@media (prefers-reduced-motion: reduce) { .dots-dot, .dots-fill { animation: none !important; transition: none; } }
+html[data-reduced-motion="1"] .dots-dot, html[data-reduced-motion="1"] .dots-fill { animation: none !important; transition: none; }

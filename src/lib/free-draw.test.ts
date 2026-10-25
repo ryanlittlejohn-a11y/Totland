@@ -152,9 +152,9 @@ describe("Free Draw catalog entry", () => {
     expect(GAMES.filter((x) => `${x.engine}:${x.kind}` === "draw:freeDraw")).toHaveLength(1);
   });
 
-  it("totals are now 125 games, 49 free / 76 Premium", () => {
-    expect(GAMES).toHaveLength(125);
-    expect(GAMES.filter((g) => !g.premium)).toHaveLength(49);
+  it("totals are now 126 games, 50 free / 76 Premium", () => {
+    expect(GAMES).toHaveLength(126);
+    expect(GAMES.filter((g) => !g.premium)).toHaveLength(50);
     expect(GAMES.filter((g) => g.premium)).toHaveLength(76);
   });
 });

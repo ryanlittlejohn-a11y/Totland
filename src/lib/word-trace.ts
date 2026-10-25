@@ -1,7 +1,11 @@
 /** Pure rules for tracing a whole word in one frame (no DOM). */
 
 /** Share of a letter's ink cells that must be painted before it finishes. */
-export const WORD_TRACE_THRESHOLD = 0.7;
+export const WORD_TRACE_THRESHOLD = 0.60;
+/** Finger-centre allowance outside the ink; visible paint remains glyph-clipped. */
+export const WORD_TOUCH_ALLOWANCE_RATIO = 0.10;
+/** Brush size relative to the letter slot. */
+export const WORD_BRUSH_RADIUS_RATIO = 0.07;
 /** Smallest usable letter slot (CSS px) for ages 2–4; below this the frame scrolls. */
 export const MIN_SLOT = 90;
 /** Largest letter slot (CSS px) so iPad letters don't become huge. */
@@ -10,7 +14,8 @@ export const MAX_SLOT = 170;
 export const CELLS_PER_SLOT = 36;
 
 /** A narrow brush, with only a small allowance outside the glyph for little fingers. */
-export const wordBrushRadius = (slot: number): number => slot * 0.05;
+export const wordBrushRadius = (slot: number): number => slot * WORD_BRUSH_RADIUS_RATIO;
+export const wordTouchAllowance = (slot: number): number => slot * WORD_TOUCH_ALLOWANCE_RATIO;
 
 export function nearLetterInk(x: number, y: number, ink: ReadonlySet<number>, cell: number, cols: number, margin: number): boolean {
   const reach = margin + cell * Math.SQRT1_2;

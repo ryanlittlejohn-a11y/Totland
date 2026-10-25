@@ -128,9 +128,9 @@ describe("misnamed games open their real scenes", () => {
     }
   });
 
-  it("free/Premium split is unchanged: 122 games, 47 free (Line Tracing added free)", () => {
-    expect(GAMES).toHaveLength(122);
-    expect(GAMES.filter((g) => !g.premium)).toHaveLength(47);
+  it("free/Premium split: 124 games, 48 free (Trace Shapes free, Trace Numbers Premium)", () => {
+    expect(GAMES).toHaveLength(124);
+    expect(GAMES.filter((g) => !g.premium)).toHaveLength(48);
   });
 
   it("every place-pieces round is solvable in English and Spanish", () => {

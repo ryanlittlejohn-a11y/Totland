@@ -372,6 +372,25 @@ function Dashboard() {
               />
             </label>
           ))}
+          <label className="flex items-center justify-between gap-3 text-sm font-medium text-ink">
+            <span>
+              {L("Free stroke order in tracing games", "Orden libre de trazos")}
+              <span className="block text-xs font-normal text-inksoft">
+                {L("Off: strokes must be traced in the numbered order.", "Apagado: los trazos se hacen en el orden numerado.")}
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              checked={Boolean(stats.freeTraceOrder)}
+              onChange={(e) => {
+                const on = e.target.checked;
+                selected
+                  ? updateChild(selected.id, (p) => ({ ...p, freeTraceOrder: on }))
+                  : update((p) => ({ ...p, freeTraceOrder: on }));
+              }}
+              className="size-6 shrink-0 accent-[oklch(0.68_0.148_32)]"
+            />
+          </label>
           <label className="block text-sm font-medium text-ink">
             <span className="flex items-center justify-between">
               {L("Music volume", "Volumen de la música")}

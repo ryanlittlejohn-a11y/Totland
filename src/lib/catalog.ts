@@ -240,6 +240,10 @@ const ROWS: Row[] = [
   [121, "Falling Numbers", "🌧️", "rain", "findNumber", N, "numbers", "Relaxed numeral recognition with no timer", "lr", 1],
   // Pre-writing strokes: follow a dashed path from the green start dot.
   [122, "Line Tracing", "〰️", "tracing", "lines", A, "tracing", "Follow dashed lines and curves", "elr"],
+  // Multi-stroke tracing on the same engine: shapes (free) and digits 0-9.
+  // Trace Numbers is Premium via the trailing 1 — delete that one flag to make it free.
+  [123, "Trace Shapes", "🔺", "tracing", "traceShapes", C, "shapes", "Trace shapes stroke by stroke", "elr"],
+  [124, "Trace Numbers", "🔢", "tracing", "traceNumbers", N, "numbers", "Trace numbers 0 to 9", "lr", 1],
 ];
 
 const MODE_MAP: Record<string, AgeMode> = { e: "explorer", l: "learner", r: "reader" };

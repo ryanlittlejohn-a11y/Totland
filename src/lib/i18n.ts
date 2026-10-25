@@ -336,6 +336,8 @@ const TITLES: Record<string, string> = {
   "Matching & Memory": "Parejas y memoria", "Flip and match pairs": "Voltea y forma parejas",
   Puzzles: "Rompecabezas", "Slide the pieces home": "Coloca las piezas",
   "Letter Tracing": "Trazar letras", "Line Tracing": "Trazar líneas", "Follow dashed lines and curves": "Sigue líneas y curvas punteadas", "Trace big and small letters": "Traza letras grandes y pequeñas",
+  "Trace Shapes": "Trazar figuras", "Trace shapes stroke by stroke": "Traza figuras trazo a trazo",
+  "Trace Numbers": "Trazar números", "Trace numbers 0 to 9": "Traza los números del 0 al 9",
   "Word Tracing: 2 Letters": "Trazar palabras de 2 letras", "Trace two-letter words": "Traza palabras de dos letras",
   "Word Tracing: 3 Letters": "Trazar palabras de 3 letras", "Trace three-letter words": "Traza palabras de tres letras",
   "Word Tracing: 4 Letters": "Trazar palabras de 4 letras", "Trace four-letter words": "Traza palabras de cuatro letras",

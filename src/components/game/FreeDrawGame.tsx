@@ -100,6 +100,7 @@ export function FreeDrawGame({ onFinish }: { onFinish: (stars: number, accuracy:
 
   // Retina-crisp sizing: backing store matches device pixels.
   useEffect(() => {
+    if (!hydrated) return; // The canvas mounts only after profile hydration.
     const wrap = wrapRef.current;
     const canvas = canvasRef.current;
     if (!wrap || !canvas) return;
@@ -116,7 +117,7 @@ export function FreeDrawGame({ onFinish }: { onFinish: (stars: number, accuracy:
     const observer = new ResizeObserver(resize);
     observer.observe(wrap);
     return () => observer.disconnect();
-  }, [fullRedraw]);
+  }, [hydrated, fullRedraw]);
 
   // Load this child's last drawing once (device-only storage), then keep it saved.
   useEffect(() => {

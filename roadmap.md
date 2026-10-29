@@ -1,5 +1,9 @@
 # Roadmap
 
+## Dependency security alerts (2026-10-29)
+- [x] vite 8.1.5 → 8.3.4 (within 8.x, no caret in package.json — same pinning convention): fixed 5 Dependabot alerts (GHSA-9jrq low, GHSA-rq7h moderate, GHSA-698v/GHSA-r825/GHSA-587h moderate/high — all launch-editor code bundled inside vite's dev-server middleware at ≤8.1.5, confirmed via `bun audit`, not the separately-declared top-level launch-editor@2.14.2 which was already patched). Verified: tsc, 158/158 tests, production build byte-identical (index.js 380466, client.js 218725, 3.6M total — vite is build-tooling only), dev server starts on 8.3.4, home/game routes and /parent/printables PDF generation all confirmed working in-browser at 360px.
+- [ ] zod 3.25.76: GHSA-mrhx-c7xc-m3w5 (high) has no 3.x patched release — only fixed in zod ≥4.6.6, a major bump. Left open per instructions. Confirmed unreachable in this codebase: zero `z.array()`/`.array()` schemas exist anywhere zod is used (diag.ts, payments.functions.ts, contact.functions.ts — all flat bounded-string/enum objects). Low real risk; revisit alongside a future major-dependency pass, not urgent.
+
 ## Google Play submission materials (2026-10-17)
 - [x] Audit Android Data Safety code, SDK guidance and prior release manifest; flag provider sharing/deletion and IP-fingerprint classification uncertainties
 - [x] Draft short/full listing with current counts and accurate narration wording; approved full iOS description absent from saved materials

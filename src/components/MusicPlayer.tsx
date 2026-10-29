@@ -2,6 +2,7 @@ import { useLocation } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { setMusic, setMusicLanguage, setMusicRoute, setMusicVolume, stopMusic } from "@/lib/music";
 import { useProfile } from "@/lib/profile";
+import { musicAllowed } from "@/lib/calm";
 
 const SILENT_PREFIXES = ["/parent", "/terms", "/privacy", "/refund", "/delete-account"];
 
@@ -10,7 +11,7 @@ export function MusicPlayer() {
   const { profile } = useProfile();
   const { pathname } = useLocation();
   const silent = SILENT_PREFIXES.some((p) => pathname === p || pathname.startsWith(`${p}/`));
-  const on = Boolean(profile.music) && !silent;
+  const on = musicAllowed(profile) && !silent;
 
   useEffect(() => {
     setMusicLanguage(profile.language);

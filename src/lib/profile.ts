@@ -63,6 +63,8 @@ export interface Profile {
   highContrast: boolean;
   /** Per-child: let tracing games accept strokes in any order (default off = numbered order). Optional so older saved profiles keep working. */
   freeTraceOrder?: boolean;
+  /** Per-child Calm mode (default off): layered on top of family motion/sound/music settings, never changes them. Optional so older saved profiles keep working. */
+  calmMode?: boolean;
   premium: boolean;
   stars: number;
   stickers: string[];

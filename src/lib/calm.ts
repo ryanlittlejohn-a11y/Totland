@@ -33,6 +33,20 @@ export function calmSound(kind: "correct" | "retry" | "reward", calm: boolean): 
   return kind === "retry" ? null : CALM_TONE;
 }
 
+const STEP_LABELS: Record<string, { icon: string; en: string; es: string }> = {
+  letters: { icon: "🔤", en: "Letters", es: "Letras" },
+  numbers: { icon: "🔢", en: "Numbers", es: "Números" },
+  words: { icon: "🗣️", en: "Words", es: "Palabras" },
+  puzzles: { icon: "🧩", en: "Puzzles", es: "Rompecabezas" },
+  colors: { icon: "🎨", en: "Colors", es: "Colores" },
+};
+const CARDS_LABEL = { icon: "🃏", en: "Picture cards", es: "Tarjetas" };
+
+/** The "what's next" cue for Adventure step `step` (the last step is the picture cards). */
+export function calmAdventureStep(plan: readonly SkillId[], step: number) {
+  return step < plan.length ? (STEP_LABELS[plan[step]!] ?? { icon: "⭐", en: plan[step]!, es: plan[step]! }) : CARDS_LABEL;
+}
+
 /* ------------------------------------------------------------ live state */
 
 let active = false;

@@ -8,6 +8,8 @@ import { adventurePlan } from "@/lib/games";
 import { CHARACTERS, type SkillId } from "@/lib/content";
 import { skillOf, useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
+import { CALM_ADVENTURE_ORDER, calmAdventureStep, isCalm } from "@/lib/calm";
+import { loadProfile } from "@/lib/profile";
 
 export const Route = createFileRoute("/adventure")({
   head: () => ({
@@ -30,17 +32,22 @@ export const Route = createFileRoute("/adventure")({
 
 function AdventurePage() {
   const { profile, hydrated } = useProfile();
-  const plan = useMemo(() => {
+  // Calm mode is read once when the Adventure opens; its order is fixed and never re-sorts mid-session.
+  const [calm] = useState(() => isCalm(loadProfile()));
+  const adaptivePlan = useMemo(() => {
     const levels: Partial<Record<SkillId, number>> = {};
     (["letters", "numbers", "words", "puzzles", "colors"] as SkillId[]).forEach((s) => {
       levels[s] = skillOf(profile, s).level;
     });
     return adventurePlan(levels);
   }, [profile]);
+  const plan = calm ? CALM_ADVENTURE_ORDER : adaptivePlan;
 
   const [step, setStep] = useState(0);
   const [stars, setStars] = useState(0);
   const [finished, setFinished] = useState(false);
+  /** Calm: between activities, show "Next: ___" and wait for a tap. */
+  const [between, setBetween] = useState(false);
 
   if (!hydrated) return <PlayFrame title={L("Today's Adventure", "La aventura de hoy")}>{null}</PlayFrame>;
 
@@ -48,8 +55,12 @@ function AdventurePage() {
   const advance = (earned: number) => {
     setStars((s) => s + earned);
     if (step + 1 >= total) setFinished(true);
-    else setStep(step + 1);
+    else {
+      setStep(step + 1);
+      if (calm) setBetween(true);
+    }
   };
+  const next = calmAdventureStep(plan, step);
 
   return (
     <PlayFrame title={L("Today's Adventure", "La aventura de hoy")} progress={{ done: step, total }}>
@@ -60,8 +71,18 @@ function AdventurePage() {
             setStep(0);
             setStars(0);
             setFinished(false);
+            setBetween(false);
           }}
         />
+      ) : calm && between ? (
+        <div className="rounded-[2rem] bg-card p-6 text-center wood-block" data-testid="calm-next-cue">
+          <p className="font-ui text-sm font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Next", "Ahora")}</p>
+          <p className="mt-2 text-5xl" aria-hidden>{next.icon}</p>
+          <p className="mt-2 font-ui text-2xl font-bold text-ink">{L(next.en, next.es)}</p>
+          <button type="button" onClick={() => setBetween(false)} className="mt-6 w-full rounded-2xl bg-moss py-5 font-ui text-2xl font-bold text-primary-foreground wood-block">
+            {L("Next", "Siguiente")} <span aria-hidden>▶</span>
+          </button>
+        </div>
       ) : step < plan.length ? (
         <ChoiceGame
           key={step}
@@ -71,6 +92,15 @@ function AdventurePage() {
         />
       ) : (
         <FlashCards key="cards" onFinish={advance} />
+      )}
+      {calm && !finished && (
+        <button
+          type="button"
+          onClick={() => setFinished(true)}
+          className="mt-4 w-full rounded-2xl bg-felt py-4 font-ui text-lg font-bold text-ink wood-block"
+        >
+          {L("Finish", "Terminar")} <span aria-hidden>✋</span>
+        </button>
       )}
     </PlayFrame>
   );

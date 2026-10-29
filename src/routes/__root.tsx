@@ -1,3 +1,4 @@
+import { isCalm, motionReduced, setCalmActive } from "@/lib/calm";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { ErrorComponentProps } from "@tanstack/react-router";
 import {
@@ -183,9 +184,16 @@ function AccessibilityPreferences() {
   }, [profile.highContrast]);
 
   useEffect(() => {
-    if (profile.reducedMotion) document.documentElement.setAttribute("data-reduced-motion", "1");
+    if (motionReduced(profile)) document.documentElement.setAttribute("data-reduced-motion", "1");
     else document.documentElement.removeAttribute("data-reduced-motion");
-  }, [profile.reducedMotion]);
+  }, [profile.reducedMotion, profile.calmMode]);
+
+  useEffect(() => {
+    const calm = isCalm(profile);
+    setCalmActive(calm);
+    if (calm) document.documentElement.setAttribute("data-calm", "1");
+    else document.documentElement.removeAttribute("data-calm");
+  }, [profile.calmMode]);
 
   return null;
 }

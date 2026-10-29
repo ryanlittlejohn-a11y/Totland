@@ -378,3 +378,13 @@
 - [x] Tests: margins Letter/A4, 1 vs 2 per page, free-sample rules, page counts, PDF page count + numbers; browser check through the gate at 360px and iPad, PDF rasterized
 - [ ] Build 2: Trace Shapes/Numbers sheets, dashed/dotted toggle, Filesystem + Share plugins, native share/print (needs new native build)
 - [ ] Ryan: real printout/photocopy check of line weights and dash spacing
+
+## Calm mode — Build A (approved 2026-10-29)
+- [x] Per-child `calmMode` (optional, default off, not family-wide), dashboard switch behind the gate (EN/ES)
+- [x] No animation at all, music off, one quiet tone (silent on wrong answers), narration stays on
+- [x] Games never move on by themselves: a big "Next" button waits for the child (all round-advance steps)
+- [x] Quiet "All done" reward with one star; sticker saved silently (no reveal); language pop-up held back during play
+- [x] Today's Adventure: fixed order, "Next: ___" card between activities, Finish button always visible
+- [x] Tests (setting survives old profiles + sync merge, sounds, no auto-advance, finish once); checked at 360px and iPad
+- [ ] Ryan: real-device check (quiet tone loudness, music stays off, Next button reach, VoiceOver)
+- [ ] Large mode — Build B, later (separate switch)

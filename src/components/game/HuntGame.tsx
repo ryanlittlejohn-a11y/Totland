@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import { huntSet } from "@/lib/rounds";
 import type { SkillId } from "@/lib/content";
@@ -66,7 +67,7 @@ export function HuntGame({
         const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;
         update((p) => recordGameComplete(p, skill, stars, 1));
         chime("reward", profile.sfx);
-        finishTimerRef.current = window.setTimeout(() => onFinishRef.current(stars, accuracy), 800);
+        finishTimerRef.current = advanceAfter(() => onFinishRef.current(stars, accuracy), 800);
       }
     } else {
       say(L(`Keep looking for ${set.label}.`, `Sigue buscando ${set.label}.`));

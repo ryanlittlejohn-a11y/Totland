@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang } from "@/lib/i18n";
@@ -71,7 +72,7 @@ export function ChoiceGame({
       setMessage(`${praise} ${round.reveal ?? ""}`.trim());
       themeChime(theme.motif, profile.sfx);
       sayParts([praise, round.reveal ?? ""]);
-      window.setTimeout(() => {
+      advanceAfter(() => {
         if (index + 1 >= ROUNDS) {
           const total = stars + (misses === 0 ? 2 : 1);
           update((p) => recordGameComplete(p, skill, total, 1));

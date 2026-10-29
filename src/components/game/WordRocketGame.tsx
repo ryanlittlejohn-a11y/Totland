@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { orderSet } from "@/lib/rounds";
 import { shuffle, type SkillId } from "@/lib/content";
@@ -112,7 +113,7 @@ export function WordRocketGame({
       setMessage(text);
       chime("reward", profile.sfx);
       say(stripEmoji(text));
-      window.setTimeout(() => {
+      advanceAfter(() => {
         update((p) => recordGameComplete(p, skill, 3, 1));
         onFinish(3, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses));
       }, 2600);

@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import { alphabet, type SkillId } from "@/lib/content";
 import { L, getLang } from "@/lib/i18n";
@@ -93,7 +94,7 @@ export function NumberMazeGame({
       setMessage(text + reveal.emoji);
       chime("reward", profile.sfx);
       say(stripEmoji(text));
-      window.setTimeout(() => {
+      advanceAfter(() => {
         if (round + 1 < tier.rounds) setRound(round + 1);
         else {
           update((p) => recordGameComplete(p, skill, 3, 1));

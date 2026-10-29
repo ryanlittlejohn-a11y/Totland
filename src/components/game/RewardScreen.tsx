@@ -2,21 +2,42 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { STICKERS, pick } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
-import { awardSticker, useProfile } from "@/lib/profile";
+import { awardSticker, loadProfile, useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
+import { isCalm } from "@/lib/calm";
 
 export function RewardScreen({ stars, onAgain }: { stars: number; onAgain: () => void }) {
   const { profile, update } = useProfile();
   const [sticker, setSticker] = useState<string | null>(null);
+  // Decided once when the screen opens, so a settings change can't swap the screen mid-way.
+  const [calm] = useState(() => isCalm(loadProfile()));
 
   useEffect(() => {
     const s = pick(STICKERS.filter((x) => !profile.stickers.includes(x)).length ? STICKERS.filter((x) => !profile.stickers.includes(x)) : STICKERS);
     setSticker(s);
     update((p) => awardSticker(p, s));
     chime("reward", profile.sfx);
-    say(L("Amazing work! You earned a new sticker.", "¡Excelente trabajo! Ganaste una calcomanía nueva."));
+    // Calm: the sticker is still saved quietly (it shows later on the shelf), but no reveal and no announcement.
+    if (!calm) say(L("Amazing work! You earned a new sticker.", "¡Excelente trabajo! Ganaste una calcomanía nueva."));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (calm) {
+    return (
+      <div className="rounded-[2rem] bg-card p-6 text-center wood-block" data-testid="calm-reward">
+        <p className="font-ui text-3xl font-bold text-ink">{L("All done", "Terminado")}</p>
+        <p className="mt-4 text-5xl" aria-hidden>⭐</p>
+        <div className="mt-6 flex gap-3">
+          <Link to="/" className="grid flex-1 place-items-center rounded-2xl bg-felt py-4 font-ui text-lg font-bold text-ink wood-block">
+            {L("Map", "Mapa")}
+          </Link>
+          <button type="button" onClick={onAgain} className="flex-1 rounded-2xl bg-clay py-4 font-ui text-lg font-bold text-primary-foreground wood-block">
+            {L("Play again", "Jugar otra vez")}
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="rounded-[2rem] bg-card p-6 text-center wood-block">

@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import type { SkillId } from "@/lib/content";
 import { chime, say, themeChime } from "@/lib/speech";
@@ -81,7 +82,7 @@ export function TapCountGame({
     const msg = L(`${set.count}! Great counting!`, `¡${set.count}! ¡Muy bien contado!`);
     setMessage(msg);
     say(msg);
-    timer.current = window.setTimeout(() => {
+    timer.current = advanceAfter(() => {
       if (round + 1 >= ROUNDS) {
         const accuracy = tally.current.right / Math.max(1, tally.current.total);
         const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;

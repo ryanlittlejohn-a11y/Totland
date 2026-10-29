@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { COLORS, PRAISE, SHAPES, alphabet, pick, shuffle, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
@@ -104,7 +105,7 @@ export function FeedTheLetterMonsterGame({
     }));
     themeChime(theme.motif, profile.sfx);
     sayParts([praise, round.reveal ?? ""]);
-    window.setTimeout(() => {
+    advanceAfter(() => {
       if (index + 1 >= ROUNDS) {
         const total = stars.current;
         update((p) => recordGameComplete(p, skill, total, 1));

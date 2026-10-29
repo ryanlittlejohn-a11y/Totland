@@ -1,3 +1,4 @@
+import { advanceAfter, motionReduced } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import { TRACING_WORDS, type TracingWord } from "@/lib/content";
 import { L } from "@/lib/i18n";
@@ -90,10 +91,10 @@ export function WordTracingGame({ length, onFinish }: { length: 2 | 3 | 4 | 5; o
       finishRef.current(3, 1);
       return;
     }
-    window.setTimeout(() => {
+    advanceAfter(() => {
       setWordIndex(nextWord);
       setLetterIndex(0);
-    }, profile.reducedMotion ? 300 : 900);
+    }, motionReduced(profile) ? 300 : 900);
   };
 
   return (
@@ -110,7 +111,7 @@ export function WordTracingGame({ length, onFinish }: { length: 2 | 3 | 4 | 5; o
         ))}
       </div>
       <p className="mt-2 text-center font-ui text-sm text-inksoft">{L(`Word ${wordIndex + 1} of 3`, `Palabra ${wordIndex + 1} de 3`)}</p>
-      <WordTraceFrame key={`${wordIndex}-${item.word}`} letters={letters} reducedMotion={profile.reducedMotion} onLetter={letterDone} onWord={wordDone} />
+      <WordTraceFrame key={`${wordIndex}-${item.word}`} letters={letters} reducedMotion={motionReduced(profile)} onLetter={letterDone} onWord={wordDone} />
     </div>
   );
 }

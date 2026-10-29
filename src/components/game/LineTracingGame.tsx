@@ -1,3 +1,4 @@
+import { advanceAfter, motionReduced } from "@/lib/calm";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathTrace } from "@/hooks/usePathTrace";
 import {
@@ -133,19 +134,19 @@ export function LineTracingGame({ onFinish }: { onFinish: (stars: number, accura
     if (next >= lines.length) {
       if (finished.current) return;
       finished.current = true;
-      window.setTimeout(() => {
+      advanceAfter(() => {
         update((current) => recordGameComplete(current, "tracing", 3, 2));
         finishRef.current(3, 1);
-      }, profile.reducedMotion ? 900 : 1600);
+      }, motionReduced(profile) ? 900 : 1600);
       return;
     }
-    window.setTimeout(() => {
+    advanceAfter(() => {
       traceRef.current = startLine();
       setTrace(traceRef.current);
       setShowPicture(false);
       setIndex(next);
       say(PROMPT());
-    }, profile.reducedMotion ? 900 : 1600);
+    }, motionReduced(profile) ? 900 : 1600);
   }, [livePos]);
 
   if (!hydrated || !pattern) return null;

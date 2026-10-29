@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buildWordFind, type WordFindPuzzle } from "@/lib/wordfind-puzzle";
 import { wordEmoji, type WordFindTheme } from "@/lib/wordfinds";
@@ -48,7 +49,7 @@ export function WordFindGame({
     }));
     chime("reward", profile.sfx);
     say(L("You found them all! Great job!", "¡Las encontraste todas! ¡Buen trabajo!"));
-    const t = window.setTimeout(() => onFinish(stars, accuracy), 1000);
+    const t = advanceAfter(() => onFinish(stars, accuracy), 1000);
     return () => window.clearTimeout(t);
   }, [found, puzzle, tries, update, onFinish, profile.sfx, theme.id]);
 

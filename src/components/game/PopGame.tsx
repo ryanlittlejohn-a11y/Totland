@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import { PRAISE, pick, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang } from "@/lib/i18n";
@@ -115,7 +116,7 @@ export function PopGame({
     const praise = pick(getLang() === "es" ? PRAISE_ES.correct : PRAISE.correct);
     setMessage(`${praise} ${round.reveal ?? ""}`.trim());
     sayParts([praise, round.reveal ?? ""]);
-    timer.current = window.setTimeout(() => {
+    timer.current = advanceAfter(() => {
       if (index + 1 >= rounds) {
         const accuracy = tally.current.right / Math.max(1, tally.current.total);
         const stars = accuracy > 0.9 ? 3 : accuracy > 0.6 ? 2 : 1;

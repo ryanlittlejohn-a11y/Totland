@@ -399,6 +399,28 @@ function Dashboard() {
               className="size-6 shrink-0 accent-[oklch(0.68_0.148_32)]"
             />
           </label>
+          <label className="flex items-center justify-between gap-3 text-sm font-medium text-ink">
+            <span>
+              {L("Calm mode", "Modo calma")}
+              <span className="block text-xs font-normal text-inksoft">
+                {L(
+                  "For this child: no animations or music, one soft sound, and games wait for “Next”.",
+                  "Para este niño: sin animaciones ni música, un sonido suave, y los juegos esperan a “Siguiente”.",
+                )}
+              </span>
+            </span>
+            <input
+              type="checkbox"
+              checked={Boolean(stats.calmMode)}
+              onChange={(e) => {
+                const on = e.target.checked;
+                selected
+                  ? updateChild(selected.id, (p) => ({ ...p, calmMode: on }))
+                  : update((p) => ({ ...p, calmMode: on }));
+              }}
+              className="size-6 shrink-0 accent-[oklch(0.68_0.148_32)]"
+            />
+          </label>
           <label className="block text-sm font-medium text-ink">
             <span className="flex items-center justify-between">
               {L("Music volume", "Volumen de la música")}

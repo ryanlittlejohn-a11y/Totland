@@ -1,85 +1,48 @@
-# Teachers & printables — scoping plan (nothing built)
+# Calm mode and Large mode — scoping (no code changed)
 
-## What I checked
-- Installed native add-ons: app, browser, network, preferences, splash-screen, status-bar. **There are no Filesystem or Share add-ons and no PDF library yet.**
-- `puzzleSvg()` exists in connect-dots.ts. `LINE_PATTERNS` (board 100×70) is in line-trace.ts. Shape and number strokes are in trace-strokes.ts.
-- The grown-up pages are /parent (the gated layout), parent.index, parent.children and parent.subscription. Word Finds already use a "first N free" Premium pattern, which we can reuse.
+## Key finding first
+Sound effects, music, reduced motion and high contrast already exist, but they are **family-wide** settings (shared by every child on the device). Only `freeTraceOrder` is truly per-child. Calm and Large should be per-child like `freeTraceOrder` and **layer on top** of those settings without changing them. A calm child turns things down, and their siblings keep their own experience.
 
-## 1. Making the PDF on the device
-- **Library: jsPDF.** It draws lines, curves and dashes directly, so the output stays sharp vector. I'd write a small drawing step that turns our point/stroke data into jsPDF calls, which skips the svg2pdf add-on.
-  - It adds about 100 KB gzipped. We'd load it only when the grown-up taps "Make PDF", so the website's first load doesn't change.
-  - pdf-lib was the other option. It's a similar size but has no dash helpers, so it isn't worth it.
-- **Web:** download the file with a Blob link, and open it in a new tab for printing.
-- **iOS and Android:** we need `@capacitor/filesystem` and `@capacitor/share` (official, v7). The file is written to the app's private cache folder, then the system share sheet opens, which offers Print, Files and AirDrop.
-  - This means a **new native build and a store review**. Both add-ons are standard and low risk, and they make no network calls.
-  - A no-plugin fallback, opening the file through the existing browser add-on, doesn't work reliably with local files.
+## 1. Calm mode: candidate behaviours
+Built on existing tools: the `data-reduced-motion` CSS switch (only 7 files read `reducedMotion` in code, so most animation is CSS), the sfx/music flags, and high-contrast styles.
+- Motion off for that child: no floating, bobbing or twinkling, no confetti or flash, no wiggle or shake on wrong answers, Connect the Dots nudge shown as text only, and the start-dot pulse is static. Calm mode does everything reduced motion does.
+- Sound: music off, and sound effects soft or off (one quiet tone instead of celebratory jingles). Narration stays on because it is helpful and predictable. No sudden loud reward sounds.
+- Rewards: one quiet "All done" screen with a single star, no animated sticker reveal and no surprise unlock pop-ups (save them for the dashboard).
+- Predictability: Today's Adventure in a fixed order (no shuffle), a "Next: ___" picture cue, and a "Finish" button always visible. Games keep their frozen rounds as they are now.
+- Timers: no game has a time limit or countdown (searched, none found). Some games use `setTimeout` for short delays, such as reward pacing and auto-advance after a correct answer. Calm mode would lengthen or remove auto-advance so the child taps "Next".
+- No surprise pop-ups: suppress language and companion pop-ups during play.
 
-## 2. Page layout
-- US Letter is the default, with A4 as a choice (remembered on the device). Margins are 0.5 in / 12.7 mm.
-- One puzzle per page by default. Two per page is an option for Connect the Dots and Trace Numbers only.
-- An optional "Name ____ Date ____" line at the top, on by default. A small "TotLand" footer, with no web address on the sheet.
-- Black and white only:
-  - Guide lines at 2.5 pt, solid.
-  - Tracing dashes 3 pt thick, with a 6 pt dash and a 5 pt gap. The trace-dots option uses 2.5 pt dots spaced 7 pt apart.
-  - Start dot 9 pt with a number. A small arrow head at the start of each stroke (cheap, because the stroke direction is already known).
-  - These sizes survive photocopying. They still need checking on one real printout.
-- Connect the Dots: numbers in 14 pt bold, dots 5 pt.
-- Blank page: a 4 pt rounded border plus the name line.
+## 2. Large mode
+- Comes mostly from shared styles, about 40%: a root `data-large` switch scales type and the menu, tile and button sizes. Menus become 2 columns, with fewer tiles per screen and more scrolling.
+- Per-game work, about 60%: games size boards in code and SVG units, and many have their own hit radii. Each engine needs a size multiplier (`hitScale`, about 1.3–1.5×): PlaceGame, PopGame, useDragToTarget, usePathTrace tolerances and start zone, Connect the Dots hit radius and dot size, and the word-tracing allowance. Bespoke scenes need checking one by one.
+- Fewer items per round, for example 3 choices instead of 4. That changes difficulty, so make it opt-in per engine.
 
-## 3. Screens
-- A new "Teachers & printables" page inside /parent, so it sits behind the same gate. A card on the parent dashboard links to it. **No child screen links to it.**
-- The picker:
-  - Type: Connect the Dots, Line Tracing, Trace Shapes, Trace Numbers, Blank page.
-  - A grid of thumbnails to tick (with "Select all").
-  - Paper size, 1 or 2 per page, name line on or off, dashed or dotted.
-  - A page count, then "Make PDF".
-- Preview: the thumbnails come from the same drawing data. A full-page preview uses the PDF itself.
-- Free vs Premium: 3 free sheets per type. The others show a lock with "Unlock with Premium", which goes to the existing subscription page. The Blank page is always free.
-  - Premium is read through the existing check, which comes from the server. Nothing about Premium changes.
-- All labels in English and Spanish, using the same "tú" wording as the other grown-up screens.
-- Optional type 5 (number order, 1–10 to circle) is trivial and can go in Build 2. I'd skip shape matching for now.
+## 3. Per-game risks to verify
+- Tracing games: wider tolerance can let a straight swipe finish a shape or letter. The swipe-resistance tests must be re-run at Large scale.
+- Connect the Dots at 20 dots: bigger hit zones can overlap. Either cap the zone at half the distance between dots or limit Large mode to levels 1–3.
+- Free Draw: Large mode means bigger toolbar buttons only, and the drawing surface must still size correctly (just fixed). Calm mode means no tap sounds.
+- Drag games: bigger drop targets must not overlap on a 360px phone.
+- Reward timer: Calm mode must not break the "finishes exactly once" protection.
+- Check at 360px and iPad widths with every engine type.
 
-## 4. Privacy and store review
-- The PDF is made on the device: no network, no analytics, nothing stored on our server. A file only leaves the device when the grown-up chooses to share or print it.
-- The sheets carry no child data except an optional printed name. That name is typed in at the moment and never saved.
-- Apple and Google kids rules: the share sheet is allowed behind the parental gate, and that's where it is. There are no outside links on the sheets.
-- Store notes need one new line saying the app makes printable PDFs on the device behind the gate. The Privacy Notice stays accurate, so no legal edit is needed.
+## 4. Where the settings live
+- Profile fields `calmMode?: boolean` and `largeMode?: boolean`. They are optional, so old saved profiles keep working, and they default to off. They stay out of SHARED_KEYS, like `freeTraceOrder`.
+- They sync through the existing per-child sync path. Database schema impact is expected to be none, since the profile is saved as one block, but this needs confirming during the build.
+- Parent dashboard: checkboxes next to "Free stroke order", behind the existing gate. Labels: "Calm mode" / "Modo calma", "Large mode" / "Modo grande", each with a one-line explanation, using L(en, es).
+- Updates must not reset them: the profile-merge code keeps unknown and optional fields. I'll add a test that an old profile without these fields loads as off, and a saved "on" survives a merge.
 
-## 5. Tests
-- **Logic tests:**
-  - Page layout fits inside the margins for Letter and A4.
-  - Sheets per page: 1 or 2.
-  - Free sample rules: exactly 3 per type, the rest locked unless Premium, Blank page always free.
-  - Selection becomes the right number of pages.
-  - Every stroke maps to a point inside the page.
-- **PDF checks:** make a PDF in a test and count the pages. Check the text holds the numbers 1..N for a Connect the Dots puzzle.
-- **Browser:** go through the gate, make a PDF and download it at phone and iPad widths.
-- **Real device only:**
-  - The share sheet and printing to AirPrint or Android printing.
-  - How the lines look after photocopying.
-  - Saving to Files.
+## 5. Effort and builds
+- **Build A, Calm mode, about 8–10h:** profile field and toggle, the root switch, motion/sound/reward overrides, the fixed Adventure order, the "Next" cue, the always-visible Finish button and tests.
+- **Build B, Large mode, about 12–16h:** shared size scaling, 2-column menus, the hit-scale multiplier across the engines, checking bespoke scenes, and swipe and overlap tests.
+- Narration: none needed. "Next: ___" can reuse existing game-name lines. If a spoken "All done" is wanted, it's about 4 short lines (around 50 characters), and nothing is recorded without approval.
 
-## 6. Two builds and decisions
+## 6. Questions for Ryan (and an autism educator)
+1. Calm sound: soft effects or none at all? Keep narration on?
+2. Should Calm mode remove auto-advance completely (the child always taps "Next")?
+3. Should Calm mode also use a softer, lower-saturation colour set, or keep colours as they are?
+4. Large mode: fewer choices per round (changes difficulty), or bigger targets only?
+5. Should Large mode hide the hardest levels (for example 20-dot puzzles)?
+6. Would an educator want a visual schedule ("first, then") or a finish-countdown warning ("2 more")?
+7. Should the two modes be separate switches, or one combined "Sensory-friendly" preset with options underneath?
 
-**Build 1 (web only, no native change, about 8–10 h).**
-- The drawing step and layout rules.
-- Connect the Dots, Line Tracing and Blank page.
-- The new page, free/Premium lock states, download or print on web.
-- Tests.
-- In the native app, the "Make PDF" button shows "Coming in the next app update".
-
-**Build 2 (about 6–8 h, plus a new native build).**
-- Trace Shapes and Trace Numbers sheets, the dashed/dotted toggle, start arrows, two per page.
-- Add the Filesystem and Share add-ons, run the native sync, share on iOS and Android.
-- Optional number-order sheet.
-
-**Decisions for Ryan:**
-1. Which 3 free sheets per type: I suggest the first 3 easiest.
-2. Letter by default: yes or no.
-3. Are the two new native add-ons OK, given they mean a new store review?
-4. Name line on by default.
-5. Should the Blank page always be free?
-
-**Narration:** none. These screens are for grown-ups only.
-
-**Not touched:** sign-in, payments, RevenueCat, Paddle, pricing, the parental gate itself and Premium logic.
+Guardrails: auth, payments, RevenueCat, Paddle, pricing, the parental gate and Premium stay untouched.

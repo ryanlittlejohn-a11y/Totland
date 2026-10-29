@@ -869,3 +869,12 @@ html[data-reduced-motion="1"] .bubble--popped { opacity: 0.25; }
 @keyframes dots-nudge { 25% { transform: translate(-56%, -50%); } 75% { transform: translate(-44%, -50%); } }
 @media (prefers-reduced-motion: reduce) { .dots-dot, .dots-fill { animation: none !important; transition: none; } }
 html[data-reduced-motion="1"] .dots-dot, html[data-reduced-motion="1"] .dots-fill { animation: none !important; transition: none; }
+
+/* ------------------------------------------------- calm mode (per child) */
+/* Calm mode also sets data-reduced-motion, so every rule above applies too.
+   On top of that, nothing animates at all: no wiggle, pulse, float, twinkle or flash. */
+html[data-calm="1"] *,
+html[data-calm="1"] *::before,
+html[data-calm="1"] *::after {
+  animation: none !important;
+}

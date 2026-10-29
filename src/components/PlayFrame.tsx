@@ -72,8 +72,10 @@ export function PlayFrame({
           </div>
         )}
       </div>
-      <div className="mt-5 flex-1">{children}</div>
-      <CalmNextButton />
+      <div className="mt-5 flex-1">
+        {children}
+        <CalmNextButton />
+      </div>
     </div>
   );
 }

@@ -1,3 +1,4 @@
+import { isCalm } from "@/lib/calm";
 import { useEffect, useState } from "react";
 import { useRouterState } from "@tanstack/react-router";
 
@@ -79,6 +80,8 @@ export function AppEntrance() {
 function LanguagePicker() {
   const { profile, update, hydrated } = useProfile();
   if (!hydrated || profile.languageChosen) return null;
+  // Calm mode: no surprise pop-ups during play; the picker waits for a calmer screen.
+  if (isCalm(profile) && /^\/(game|adventure|play|wordfind|story)/.test(window.location.pathname)) return null;
   const choose = (language: Lang) => {
     setLang(language);
     update((p) => ({ ...p, language, languageChosen: true }));

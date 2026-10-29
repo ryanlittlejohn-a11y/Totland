@@ -1,6 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
 import { L } from "@/lib/i18n";
+import { clearPendingAdvance, runPendingAdvance, usePendingAdvance } from "@/lib/calm";
 
 /** Matches the default viewport meta set in __root.tsx's head config. */
 const DEFAULT_VIEWPORT = "width=device-width, initial-scale=1, viewport-fit=cover";
@@ -39,6 +40,9 @@ export function PlayFrame({
     };
   }, [scrollable]);
 
+  // A parked Calm-mode step never outlives its screen.
+  useEffect(() => () => clearPendingAdvance(), []);
+
   return (
     <div
       className={`mx-auto flex min-h-screen w-full max-w-[520px] flex-col px-4 pb-8 pt-4 ${
@@ -69,6 +73,24 @@ export function PlayFrame({
         )}
       </div>
       <div className="mt-5 flex-1">{children}</div>
+      <CalmNextButton />
+    </div>
+  );
+}
+
+/** Calm mode: games wait here instead of moving on by themselves. */
+export function CalmNextButton() {
+  const waiting = usePendingAdvance();
+  if (!waiting) return null;
+  return (
+    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+      <button
+        type="button"
+        onClick={() => runPendingAdvance()}
+        className="pointer-events-auto w-full max-w-[480px] rounded-2xl bg-moss py-5 font-ui text-2xl font-bold text-primary-foreground wood-block"
+      >
+        {L("Next", "Siguiente")} <span aria-hidden>▶</span>
+      </button>
     </div>
   );
 }

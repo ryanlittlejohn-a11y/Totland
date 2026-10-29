@@ -83,7 +83,7 @@ export function CalmNextButton() {
   const waiting = usePendingAdvance();
   if (!waiting) return null;
   return (
-    <div className="pointer-events-none fixed inset-x-0 bottom-0 z-40 flex justify-center px-4 pb-[max(1rem,env(safe-area-inset-bottom))]">
+    <div className="pointer-events-none sticky bottom-0 z-40 mt-4 flex justify-center pb-[max(1rem,env(safe-area-inset-bottom))]">
       <button
         type="button"
         onClick={() => runPendingAdvance()}

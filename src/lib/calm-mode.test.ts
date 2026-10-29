@@ -13,7 +13,6 @@ const store = new Map<string, string>();
 const { loadFamily, loadProfile, mergeSyncedFamily, saveFamily, saveProfile, defaultProfile, updateStoredProfile } =
   await import("./profile");
 const calm = await import("./calm");
-const { gameCatalog } = await import("./catalog").catch(() => ({ gameCatalog: undefined }));
 
 beforeEach(() => {
   store.clear();
@@ -136,5 +135,4 @@ describe("Calm Adventure", () => {
     expect(calm.calmAdventureStep(calm.CALM_ADVENTURE_ORDER, 1).en).toBe("Numbers");
     expect(calm.calmAdventureStep(calm.CALM_ADVENTURE_ORDER, 5).en).toBe("Picture cards");
   });
-  void gameCatalog;
 });

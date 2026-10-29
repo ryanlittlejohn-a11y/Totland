@@ -6,6 +6,7 @@
  */
 import { PUZZLES, type DotsPuzzle } from "./connect-dots";
 import { LINE_PATTERNS, BOARD_W, BOARD_H, type LinePattern, type Pt } from "./line-trace";
+import { SHAPE_CHARACTERS, DIGIT_CHARACTERS, DIGIT_GUIDES, characterSamples, type StrokeCharacter } from "./trace-strokes";
 
 // ---- Paper & layout --------------------------------------------------------
 
@@ -26,6 +27,9 @@ export const STYLE = {
   guide: 2.5,
   trace: 3,
   dash: [6, 5] as [number, number],
+  /** Dotted alternative for tracing strokes: round dots via a near-zero dash length + round cap. */
+  dotWidth: 2.5,
+  dotDash: [0.01, 7] as [number, number],
   startDot: 9,
   endRing: 7,
   dot: 5,
@@ -35,6 +39,11 @@ export const STYLE = {
   header: 12,
   footer: 9,
 } as const;
+
+export type TraceStyle = "dash" | "dot";
+/** Stroke width/dash for the tracing sheet types (Line Tracing, Trace Shapes, Trace Numbers). */
+const strokeStyle = (s: TraceStyle): { width: number; dash: [number, number] } =>
+  s === "dot" ? { width: STYLE.dotWidth, dash: STYLE.dotDash } : { width: STYLE.trace, dash: STYLE.dash };
 
 export type Rect = { x: number; y: number; w: number; h: number };
 
@@ -53,6 +62,8 @@ export type SheetOptions = {
   /** Optional child name typed for this print only — never stored. */
   childName?: string;
   lang: "en" | "es";
+  /** Dashed vs dotted outline for tracing sheet types (lines, shapes, numbers). Ignored by dots/blank. */
+  traceStyle?: TraceStyle;
 };
 
 /** Area left for the activity after margins, header, footer. */
@@ -78,12 +89,14 @@ export function fit(r: Rect, w: number, h: number): Rect {
 
 // ---- Catalogue & free samples ---------------------------------------------
 
-export type SheetType = "dots" | "lines" | "blank";
+export type SheetType = "dots" | "lines" | "shapes" | "numbers" | "blank";
 export const FREE_PER_TYPE = 3;
 
 export type SheetItem =
   | { type: "dots"; id: string; level: number; puzzle: DotsPuzzle }
   | { type: "lines"; id: string; level: number; pattern: LinePattern }
+  | { type: "shapes"; id: string; level: number; character: StrokeCharacter }
+  | { type: "numbers"; id: string; level: number; character: StrokeCharacter }
   | { type: "blank"; id: string; level: number };
 
 const byLevel = <T extends { level: number }>(list: T[]) =>
@@ -92,6 +105,8 @@ const byLevel = <T extends { level: number }>(list: T[]) =>
 export function sheetItems(type: SheetType): SheetItem[] {
   if (type === "dots") return byLevel(PUZZLES).map((p) => ({ type: "dots", id: p.id, level: p.level, puzzle: p }));
   if (type === "lines") return byLevel(LINE_PATTERNS).map((p) => ({ type: "lines", id: p.id, level: p.level, pattern: p }));
+  if (type === "shapes") return byLevel(SHAPE_CHARACTERS).map((c) => ({ type: "shapes", id: c.id, level: c.level, character: c }));
+  if (type === "numbers") return byLevel(DIGIT_CHARACTERS).map((c) => ({ type: "numbers", id: c.id, level: c.level, character: c }));
   return [{ type: "blank", id: "blank", level: 1 }];
 }
 
@@ -132,11 +147,12 @@ const T = (lang: "en" | "es", en: string, es: string) => (lang === "es" ? es : e
 export function sheetTitle(item: SheetItem, lang: "en" | "es"): string {
   if (item.type === "dots") return T(lang, `Connect the dots from 1 to ${item.puzzle.points.length}`, `Une los puntos del 1 al ${item.puzzle.points.length}`);
   if (item.type === "lines") return T(lang, "Trace the line from the dot", "Traza la línea desde el punto");
+  if (item.type === "shapes" || item.type === "numbers") return T(lang, `Trace the ${item.character.label.en}`, `Traza ${item.character.label.es}`);
   return T(lang, "My drawing", "Mi dibujo");
 }
 
 /** Ops for one activity drawn inside `slot` (title on top). */
-export function drawItem(item: SheetItem, slot: Rect, lang: "en" | "es"): Op[] {
+export function drawItem(item: SheetItem, slot: Rect, lang: "en" | "es", traceStyle: TraceStyle = "dash"): Op[] {
   const ops: Op[] = [{ t: "text", x: slot.x + slot.w / 2, y: slot.y + STYLE.title, text: sheetTitle(item, lang), size: STYLE.title, bold: true, align: "center" }];
   const body: Rect = { x: slot.x, y: slot.y + TITLE_H, w: slot.w, h: slot.h - TITLE_H };
 
@@ -160,12 +176,38 @@ export function drawItem(item: SheetItem, slot: Rect, lang: "en" | "es"): Op[] {
     return ops;
   }
 
-  // Line tracing: dashed path, filled start dot + arrow, open end ring.
+  if (item.type === "shapes" || item.type === "numbers") {
+    const pad = 16;
+    const box = fit({ x: body.x + pad, y: body.y + pad, w: body.w - pad * 2, h: body.h - pad * 2 }, BOARD_W, BOARD_H);
+    const m = map(box, BOARD_W, BOARD_H);
+    const { width, dash } = strokeStyle(traceStyle);
+    if (item.character.guides) {
+      for (const gy of DIGIT_GUIDES) {
+        const a = m({ x: 8, y: gy }), b = m({ x: BOARD_W - 8, y: gy });
+        ops.push({ t: "path", pts: [a, b], width: 0.75, dash: [3, 3] });
+      }
+    }
+    for (const stroke of characterSamples(item.character)) {
+      const pts = stroke.map(m);
+      ops.push({ t: "path", pts, width, dash });
+      const s = pts[0]!;
+      const ahead = pts[Math.min(pts.length - 1, 4)]!;
+      const dir = { x: ahead.x - s.x, y: ahead.y - s.y };
+      const len = Math.hypot(dir.x, dir.y) || 1;
+      ops.push({ t: "dot", x: s.x, y: s.y, r: STYLE.startDot, fill: true });
+      const tip = { x: s.x + (dir.x / len) * (STYLE.startDot + 16), y: s.y + (dir.y / len) * (STYLE.startDot + 16) };
+      ops.push({ t: "path", pts: arrow(tip, dir, 8), width: STYLE.guide });
+    }
+    return ops;
+  }
+
+  // Line tracing: dashed/dotted path, filled start dot + arrow, open end ring.
   const pad = 16;
   const box = fit({ x: body.x + pad, y: body.y + pad, w: body.w - pad * 2, h: body.h - pad * 2 }, BOARD_W, BOARD_H);
   const m = map(box, BOARD_W, BOARD_H);
   const pts = item.pattern.points.map(m);
-  ops.push({ t: "path", pts, width: STYLE.trace, dash: STYLE.dash });
+  const { width, dash } = strokeStyle(traceStyle);
+  ops.push({ t: "path", pts, width, dash });
   const s = pts[0]!, e = pts[pts.length - 1]!;
   const ahead = pts[Math.min(pts.length - 1, 4)]!;
   ops.push({ t: "dot", x: s.x, y: s.y, r: STYLE.startDot, fill: true });
@@ -209,7 +251,7 @@ export function buildPages(items: SheetItem[], o: SheetOptions, copies = 1): Pag
       const group = items.slice(i, i + perPage);
       const ss = slots(area, perPage);
       const ops: Op[] = [...(o.nameLine ? header(o) : []), ...footer(o)];
-      group.forEach((it, k) => ops.push(...drawItem(it, ss[k]!, o.lang)));
+      group.forEach((it, k) => ops.push(...drawItem(it, ss[k]!, o.lang, o.traceStyle ?? "dash")));
       pages.push({ ops });
     }
   }
@@ -237,6 +279,22 @@ export function loadPaper(): PaperId {
 export function savePaper(p: PaperId) {
   try {
     localStorage.setItem(PAPER_PREF_KEY, p);
+  } catch {
+    /* ignore */
+  }
+}
+
+export const TRACE_STYLE_PREF_KEY = "totland.tracestyle.v1";
+export function loadTraceStyle(): TraceStyle {
+  try {
+    return localStorage.getItem(TRACE_STYLE_PREF_KEY) === "dot" ? "dot" : "dash";
+  } catch {
+    return "dash";
+  }
+}
+export function saveTraceStyle(s: TraceStyle) {
+  try {
+    localStorage.setItem(TRACE_STYLE_PREF_KEY, s);
   } catch {
     /* ignore */
   }

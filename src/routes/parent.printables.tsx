@@ -11,13 +11,16 @@ import {
   isFreeSheet,
   isSheetLocked,
   loadPaper,
+  loadTraceStyle,
   pageCount,
   perPageOptions,
   savePaper,
+  saveTraceStyle,
   sheetItems,
   type PaperId,
   type SheetItem,
   type SheetType,
+  type TraceStyle,
 } from "@/lib/printables";
 
 export const Route = createFileRoute("/parent/printables")({
@@ -38,8 +41,12 @@ export const Route = createFileRoute("/parent/printables")({
 const TYPES: { id: SheetType; en: string; es: string }[] = [
   { id: "dots", en: "Connect the Dots", es: "Une los puntos" },
   { id: "lines", en: "Line Tracing", es: "Trazar líneas" },
+  { id: "shapes", en: "Trace Shapes", es: "Trazar figuras" },
+  { id: "numbers", en: "Trace Numbers", es: "Trazar números" },
   { id: "blank", en: "Blank drawing page", es: "Hoja en blanco para dibujar" },
 ];
+
+const TRACING_TYPES: SheetType[] = ["lines", "shapes", "numbers"];
 
 const THUMB = { x: 0, y: 0, w: 200, h: 200 };
 
@@ -63,12 +70,15 @@ function PrintablesPage() {
   const [perPage, setPerPage] = useState<1 | 2>(1);
   const [nameLine, setNameLine] = useState(true);
   const [childName, setChildName] = useState(""); // this print only — never saved
+  const [traceStyle, setTraceStyle] = useState<TraceStyle>("dash");
   const [busy, setBusy] = useState(false);
   const [pdf, setPdf] = useState<{ blob: Blob; name: string; url: string } | null>(null);
   const [native, setNative] = useState(false);
+  const [nativeError, setNativeError] = useState(false);
 
   useEffect(() => {
     setPaper(loadPaper());
+    setTraceStyle(loadTraceStyle());
     setNative(isNativeApp());
   }, []);
 
@@ -76,11 +86,11 @@ function PrintablesPage() {
   const chosen = items.filter((i) => selected.includes(i.id) && !isSheetLocked(i, premium));
   const effectivePer = perPageOptions(type).includes(perPage) ? perPage : 1;
   const pages = pageCount(chosen.length, effectivePer);
-  const opts = { paper, perPage: effectivePer, nameLine, childName, lang } as const;
-  const preview = useMemo(() => (chosen.length ? buildPages(chosen.slice(0, effectivePer), opts)[0] : null), [chosen.map((c) => c.id).join(), paper, effectivePer, nameLine, childName, lang]);
+  const opts = { paper, perPage: effectivePer, nameLine, childName, lang, traceStyle } as const;
+  const preview = useMemo(() => (chosen.length ? buildPages(chosen.slice(0, effectivePer), opts)[0] : null), [chosen.map((c) => c.id).join(), paper, effectivePer, nameLine, childName, lang, traceStyle]);
 
   useEffect(() => () => { if (pdf) URL.revokeObjectURL(pdf.url); }, [pdf]);
-  const resetPdf = () => setPdf(null);
+  const resetPdf = () => { setPdf(null); setNativeError(false); };
 
   const pickType = (t: SheetType) => {
     setType(t);
@@ -102,6 +112,19 @@ function PrintablesPage() {
       const blob = await renderPdf(buildPages(chosen, opts), paper);
       const name = `totland-${type}-${paper}.pdf`;
       setPdf({ blob, name, url: URL.createObjectURL(blob) });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const shareNative = async () => {
+    if (!native || !chosen.length) return;
+    setBusy(true);
+    setNativeError(false);
+    try {
+      const { makeAndSharePdf } = await import("@/lib/printables-native");
+      const outcome = await makeAndSharePdf(buildPages(chosen, opts), paper, `totland-${type}-${paper}.pdf`);
+      if (outcome === "error") setNativeError(true);
     } finally {
       setBusy(false);
     }
@@ -151,7 +174,7 @@ function PrintablesPage() {
                     aria-label={`${idx + 1}. ${locked ? L("Locked, Premium", "Bloqueada, Premium") : isFreeSheet(it) ? L("Free", "Gratis") : ""}`}
                     className={`relative block w-full overflow-hidden rounded-xl text-ink ring-2 ${on ? "ring-night" : "ring-transparent"} ${locked ? "opacity-50" : ""}`}
                   >
-                    <PrintSheetSvg ops={drawItem(it, THUMB, lang).slice(1)} w={200} h={200} className="block aspect-square w-full" label="" />
+                    <PrintSheetSvg ops={drawItem(it, THUMB, lang, traceStyle).slice(1)} w={200} h={200} className="block aspect-square w-full" label="" />
                     <span className="absolute left-1 top-1 rounded-md bg-card px-1.5 text-[11px] font-bold">{idx + 1}</span>
                     {locked ? (
                       <span className="absolute right-1 top-1 rounded-md bg-night px-1.5 text-[11px] font-bold text-cream">🔒</span>
@@ -191,6 +214,15 @@ function PrintablesPage() {
             ))}
           </div>
         )}
+        {TRACING_TYPES.includes(type) && (
+          <div className="flex flex-wrap gap-2" role="group" aria-label={L("Outline style", "Estilo del trazo")}>
+            {(["dash", "dot"] as TraceStyle[]).map((s) => (
+              <button key={s} type="button" aria-pressed={traceStyle === s} className={chip(traceStyle === s)} onClick={() => { setTraceStyle(s); saveTraceStyle(s); resetPdf(); }}>
+                {s === "dash" ? L("Dashed", "Discontinuo") : L("Dotted", "Punteado")}
+              </button>
+            ))}
+          </div>
+        )}
         <label className="flex items-center gap-3 text-sm font-semibold text-ink">
           <input type="checkbox" className="size-5" checked={nameLine} onChange={(e) => { setNameLine(e.target.checked); resetPdf(); }} />
           {L("Name and date line", "Línea para nombre y fecha")}
@@ -217,9 +249,16 @@ function PrintablesPage() {
             : L("Pick at least one sheet.", "Elige al menos una hoja.")}
         </p>
         {native ? (
-          <p className="rounded-xl bg-cream/10 p-3 text-sm font-semibold" role="status">
-            {L("Coming in the next app update.", "Llegará en la próxima actualización de la app.")}
-          </p>
+          <div className="space-y-2">
+            <button type="button" disabled={!chosen.length || busy} onClick={shareNative} className="w-full rounded-xl bg-cream py-3 font-ui font-bold text-night disabled:opacity-50">
+              {busy ? L("Making…", "Creando…") : L("Print or share", "Imprimir o compartir")}
+            </button>
+            {nativeError && (
+              <p className="rounded-xl bg-cream/10 p-3 text-sm font-semibold" role="status">
+                {L("Couldn't share the PDF. Please try again.", "No se pudo compartir el PDF. Inténtalo de nuevo.")}
+              </p>
+            )}
+          </div>
         ) : pdf ? (
           <div className="flex flex-wrap gap-2">
             <button type="button" className="rounded-xl bg-cream px-4 py-3 font-ui font-bold text-night" onClick={() => downloadBlob(pdf.blob, pdf.name)}>

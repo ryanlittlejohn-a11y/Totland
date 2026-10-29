@@ -1,3 +1,4 @@
+import { calmActive, calmSound } from "./calm";
 /** Narration + gentle sound feedback.
  *  Primary voice: ElevenLabs "Hannah", cached on the device so repeat lines
  *  play instantly and keep working offline. Falls back to the platform voice
@@ -515,6 +516,11 @@ export function chime(kind: "correct" | "retry" | "reward", on = true) {
   try {
     ctx ??= new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     if (ctx.state === "suspended") void ctx.resume();
+    const calm = calmSound(kind, calmActive());
+    if (calm !== "normal") {
+      if (calm) tone(calm.freq, 0, calm.dur, calm.gain);
+      return;
+    }
     if (kind === "correct") {
       tone(660, 0, 0.16, 0.09);
       tone(880, 0.11, 0.22, 0.08);
@@ -547,6 +553,11 @@ export function themeChime(motif: ThemeMotif, on = true) {
   try {
     ctx ??= new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
     if (ctx.state === "suspended") void ctx.resume();
+    const calm = calmSound("correct", calmActive());
+    if (calm !== "normal") {
+      if (calm) tone(calm.freq, 0, calm.dur, calm.gain);
+      return;
+    }
     THEME_NOTES[motif].forEach((frequency, index) => tone(frequency, index * 0.075, 0.16, 0.055));
   } catch {
     /* sound is optional */

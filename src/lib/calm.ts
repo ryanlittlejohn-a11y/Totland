@@ -21,6 +21,18 @@ export const musicAllowed = (p: CalmFields) => Boolean(p.music) && !isCalm(p);
 /** Today's Adventure in Calm mode: always the same order, never re-sorted by level. */
 export const CALM_ADVENTURE_ORDER: readonly SkillId[] = ["letters", "numbers", "words", "puzzles", "colors"];
 
+/** The one quiet tone Calm mode plays (much softer than normal chimes, ~0.07–0.09). */
+export const CALM_TONE = { freq: 523, dur: 0.2, gain: 0.025 } as const;
+
+/**
+ * What a chime becomes. "normal" = play the usual sound; null = silence
+ * (wrong answers make no sound in Calm); otherwise one quiet tone — no jingles.
+ */
+export function calmSound(kind: "correct" | "retry" | "reward", calm: boolean): "normal" | null | typeof CALM_TONE {
+  if (!calm) return "normal";
+  return kind === "retry" ? null : CALM_TONE;
+}
+
 /* ------------------------------------------------------------ live state */
 
 let active = false;

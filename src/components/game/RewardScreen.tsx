@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { STICKERS, pick } from "@/lib/content";
 import { chime, say } from "@/lib/speech";
-import { awardSticker, useProfile } from "@/lib/profile";
+import { awardSticker, loadProfile, useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
 import { isCalm } from "@/lib/calm";
 
@@ -10,7 +10,7 @@ export function RewardScreen({ stars, onAgain }: { stars: number; onAgain: () =>
   const { profile, update } = useProfile();
   const [sticker, setSticker] = useState<string | null>(null);
   // Decided once when the screen opens, so a settings change can't swap the screen mid-way.
-  const [calm] = useState(() => isCalm(profile));
+  const [calm] = useState(() => isCalm(loadProfile()));
 
   useEffect(() => {
     const s = pick(STICKERS.filter((x) => !profile.stickers.includes(x)).length ? STICKERS.filter((x) => !profile.stickers.includes(x)) : STICKERS);
@@ -18,7 +18,7 @@ export function RewardScreen({ stars, onAgain }: { stars: number; onAgain: () =>
     update((p) => awardSticker(p, s));
     chime("reward", profile.sfx);
     // Calm: the sticker is still saved quietly (it shows later on the shelf), but no reveal and no announcement.
-    if (!isCalm(profile)) say(L("Amazing work! You earned a new sticker.", "¡Excelente trabajo! Ganaste una calcomanía nueva."));
+    if (!calm) say(L("Amazing work! You earned a new sticker.", "¡Excelente trabajo! Ganaste una calcomanía nueva."));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { PRAISE, pick, shuffle, type SkillId } from "@/lib/content";
 import { L, PRAISE_ES, getLang, enginePrompt } from "@/lib/i18n";
@@ -135,7 +136,7 @@ export function LetterRainGame({
     }));
     themeChime(theme.motif, profile.sfx);
     if (inOrder) say(round.answerId); else sayParts([praise, round.reveal ?? ""]);
-    window.setTimeout(() => {
+    advanceAfter(() => {
       if (index + 1 >= ROUND_COUNT) {
         const total = stars.current;
         update((current) => recordGameComplete(current, skill, total, 1));

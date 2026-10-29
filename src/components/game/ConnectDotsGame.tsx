@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import { L, getLang } from "@/lib/i18n";
 import { chime, say, setNarration, themeChime } from "@/lib/speech";
@@ -99,7 +100,7 @@ export function ConnectDotsGame({
     setMessage(text);
     chime("reward", profile.sfx);
     say(text);
-    window.setTimeout(() => {
+    advanceAfter(() => {
       if (round + 1 < puzzles.length) setRound(round + 1);
       else if (!finishedRef.current) {
         finishedRef.current = true;

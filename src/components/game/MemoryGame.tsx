@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import { memorySet } from "@/lib/rounds";
 import { shuffle } from "@/lib/content";
@@ -69,7 +70,7 @@ export function MemoryGame({
     const accuracy = pairs / Math.max(1, triesRef.current);
     const stars = triesRef.current <= pairs + 1 ? 3 : 2;
     update((p) => recordGameComplete(p, "memory", stars, 2));
-    finishTimer.current = window.setTimeout(() => onFinishRef.current(stars, accuracy), 900);
+    finishTimer.current = advanceAfter(() => onFinishRef.current(stars, accuracy), 900);
   }, [found, deck.length, update]);
 
   return (

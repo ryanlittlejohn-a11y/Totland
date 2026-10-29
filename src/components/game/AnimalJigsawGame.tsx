@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { shuffle, type SkillId } from "@/lib/content";
 import { L, getLang } from "@/lib/i18n";
@@ -128,7 +129,7 @@ export function AnimalJigsawGame({
       setMessage(text);
       chime("reward", profile.sfx);
       say(stripEmoji(text));
-      window.setTimeout(() => {
+      advanceAfter(() => {
         if (round + 1 < animals.length) {
           setRound(round + 1);
         } else {

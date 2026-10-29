@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { orderSet } from "@/lib/rounds";
 import { shuffle, type SkillId } from "@/lib/content";
@@ -55,7 +56,7 @@ export function OrderGame({
     update((p) => recordGameComplete(p, skill, stars, 1));
     chime("reward", profile.sfx);
     say(L("You did it! The whole line is in order.", "¡Lo lograste! Toda la fila está en orden."));
-    finishTimer.current = window.setTimeout(() => onFinishRef.current(stars, accuracy), 900);
+    finishTimer.current = advanceAfter(() => onFinishRef.current(stars, accuracy), 900);
   }, [placed, set, taps, skill, update, profile.sfx]);
 
   if (!set) return <div className="h-64 rounded-3xl felt-panel" />;

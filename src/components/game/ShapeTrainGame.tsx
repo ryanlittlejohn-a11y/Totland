@@ -1,3 +1,4 @@
+import { advanceAfter } from "@/lib/calm";
 import { useEffect, useRef, useState } from "react";
 import { SHAPES, shuffle, type SkillId } from "@/lib/content";
 import { L, noun } from "@/lib/i18n";
@@ -89,7 +90,7 @@ export function ShapeTrainGame({
       setMessage(text);
       chime("reward", profile.sfx);
       say(text);
-      window.setTimeout(() => {
+      advanceAfter(() => {
         update((p) => recordGameComplete(p, skill, 3, 1));
         onFinish(3, tally.current.hits / Math.max(1, tally.current.hits + tally.current.misses));
       }, 2600);

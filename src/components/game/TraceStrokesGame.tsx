@@ -1,3 +1,4 @@
+import { advanceAfter, motionReduced } from "@/lib/calm";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathTrace } from "@/hooks/usePathTrace";
 import {
@@ -77,18 +78,18 @@ export function TraceStrokesGame({ set, onFinish }: { set: "shapes" | "numbers";
     if (next >= chars.length) {
       if (finished.current) return;
       finished.current = true;
-      window.setTimeout(() => {
+      advanceAfter(() => {
         update((current) => recordGameComplete(current, skill, 3, 2));
         finishRef.current(3, 1);
-      }, profile.reducedMotion ? 900 : 1600);
+      }, motionReduced(profile) ? 900 : 1600);
       return;
     }
-    window.setTimeout(() => {
+    advanceAfter(() => {
       traceRef.current = startMulti(chars[next]!.strokes.length);
       setTrace(traceRef.current);
       setIndex(next);
       say(PROMPT(chars[next]!));
-    }, profile.reducedMotion ? 900 : 1600);
+    }, motionReduced(profile) ? 900 : 1600);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [livePos]);
 
@@ -146,7 +147,7 @@ export function TraceStrokesGame({ set, onFinish }: { set: "shapes" | "numbers";
             const isNext = freeOrder ? true : i === active;
             return (
               <g key={`dot-${i}`} transform={`translate(${start.x} ${start.y})`}>
-                <circle r={isNext ? 4.4 : 3.2} className={`fill-moss ${isNext && !profile.reducedMotion ? "animate-pulse" : ""}`} opacity={isNext ? 1 : 0.45} />
+                <circle r={isNext ? 4.4 : 3.2} className={`fill-moss ${isNext && !motionReduced(profile) ? "animate-pulse" : ""}`} opacity={isNext ? 1 : 0.45} />
                 <text y={0.1} textAnchor="middle" dominantBaseline="central" fontSize={4.6} fontWeight={700} className="fill-cream" style={{ pointerEvents: "none" }}>
                   {i + 1}
                 </text>

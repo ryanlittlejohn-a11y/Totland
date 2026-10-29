@@ -26,7 +26,7 @@ describe("Calm mode setting", () => {
     const f = loadFamily();
     const child = f.children[0]!;
     const old = { ...child.profile } as Record<string, unknown>;
-    delete old.calmMode;
+    delete old["calmMode"];
     saveFamily({ ...f, children: [{ ...child, profile: old as never }] });
     expect(calm.isCalm(loadProfile())).toBe(false);
   });
@@ -34,7 +34,7 @@ describe("Calm mode setting", () => {
   it("is per child: it is not a family-wide setting", () => {
     updateStoredProfile((p) => ({ ...p, calmMode: true }));
     const f = loadFamily();
-    expect((f.settings as Record<string, unknown>).calmMode).toBeUndefined();
+    expect((f.settings as Record<string, unknown>)["calmMode"]).toBeUndefined();
     expect(f.children[0]!.profile.calmMode).toBe(true);
   });
 

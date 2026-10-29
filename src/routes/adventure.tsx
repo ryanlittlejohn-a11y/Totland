@@ -6,10 +6,10 @@ import { FlashCards } from "@/components/game/FlashCards";
 import { RewardScreen } from "@/components/game/RewardScreen";
 import { adventurePlan } from "@/lib/games";
 import { CHARACTERS, type SkillId } from "@/lib/content";
-import { skillOf, useProfile } from "@/lib/profile";
+import { loadProfile, skillOf, useProfile } from "@/lib/profile";
 import { L } from "@/lib/i18n";
 import { CALM_ADVENTURE_ORDER, calmAdventureStep, isCalm } from "@/lib/calm";
-import { loadProfile } from "@/lib/profile";
+
 
 export const Route = createFileRoute("/adventure")({
   head: () => ({

@@ -376,8 +376,18 @@
 - [x] Sheets: Connect the Dots (30), dashed Line Tracing (30) with start dot + arrow + end ring, Blank page with border; free = first 3 by level per type, Blank always free; Premium via existing verified check
 - [x] jsPDF loaded only on "Make PDF" (dynamic import); web Download PDF / Open to print; native app shows "Coming in the next app update"
 - [x] Tests: margins Letter/A4, 1 vs 2 per page, free-sample rules, page counts, PDF page count + numbers; browser check through the gate at 360px and iPad, PDF rasterized
-- [ ] Build 2: Trace Shapes/Numbers sheets, dashed/dotted toggle, Filesystem + Share plugins, native share/print (needs new native build)
-- [ ] Ryan: real printout/photocopy check of line weights and dash spacing
+- [x] Build 2: Trace Shapes/Numbers sheets, dashed/dotted toggle, Filesystem + Share plugins, native share/print — see Teachers & printables Build 2 below
+
+## Teachers & printables — Build 2 (this build)
+- [x] Trace Shapes (8) and Trace Numbers (0–9) sheets, sourced from src/lib/trace-strokes.ts (same data the in-app game uses); same 3-free-per-type rule, Trace Numbers stays Premium-gated in-app (catalog.ts #124 untouched)
+- [x] Dashed/dotted outline toggle for Line Tracing, Trace Shapes, Trace Numbers (dots/blank unaffected); remembered on-device (totland.tracestyle.v1), same pattern as paper size
+- [x] Trace Numbers 2-per-page support (Trace Shapes gets it too, same generic layout code)
+- [x] Native print/share: @capacitor/filesystem + @capacitor/share (synced via cap sync ios/android, committed plugin wiring only), writes PDF to cache dir, hands file URI to the OS share sheet; replaces the "Coming in the next app update" placeholder; cancel treated as a non-error on both platforms
+- [x] Tests: margins (incl. dotted) Letter/A4, free-sample rule, 2-per-page, start-dot-per-stroke, free order, PDF page counts — 158/158 passing; tsc + production build clean
+- [x] Bundle check: measured before/after build — main entry chunk +3 bytes (route string only), client.js byte-identical, total assets unchanged at 3.6M; trace-strokes and printables-native are their own lazy chunks
+- [x] Browser-verified: gate + page at 360px and iPad (820×1180); generated and rasterized real Trace Shapes (dotted circle) and Trace Numbers (digit-1 with guide lines) PDFs — dashes/dots, start arrows and borders all render correctly
+- [ ] Native print/share cannot be verified without a device — needs a real Codemagic build + TestFlight/Play internal-testing check (share sheet, FileProvider on Android, file:// on iOS)
+- [ ] Ryan: real printout/photocopy check of the new Trace Shapes/Numbers sheets (line weight, dot spacing, guide lines)
 
 ## Calm mode — Build A (approved 2026-10-29)
 - [x] Per-child `calmMode` (optional, default off, not family-wide), dashboard switch behind the gate (EN/ES)

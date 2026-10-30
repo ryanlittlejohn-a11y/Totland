@@ -15,7 +15,7 @@ const AREA_SEO: Record<string, { title: string; description: string }> = {
   tracing: {
     title: "Letter Tracing Games — ABC Tracing Practice for Kids — Totland",
     description:
-      "Letter tracing games for ages 2–6: trace capital and lowercase letters with a finger, hear each letter name, and build handwriting skills before the pencil.",
+      "Free letter tracing games for ages 2–6: finger-trace capital and lowercase letters, digits 0–9 and dashed lines. Two-letter words unlock after letter practice.",
   },
 };
 

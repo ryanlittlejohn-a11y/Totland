@@ -1,5 +1,9 @@
 # Roadmap
 
+## Letter Tracing search-page descriptions (approved 2026-10-30)
+- [x] Replace generic tracing copy with accurate EN/ES free-activity descriptions, finger/mouse controls, beginner straight paths and the existing two-letter-word prerequisite; remove the unverified handwriting-benefit claim from the search description
+- [x] Verified descriptions and search description at 360px/1024px without overflow; free Letter Tracing opens with Clear/Done controls; 33 existing tracing-rule tests pass and build OK. Nothing published; games, entitlement, pricing and parental protections untouched
+
 ## Dependency security alerts, round 2 (2026-10-29)
 - [x] fast-uri 3.1.8 → 3.1.9: clears 4 advisories (GHSA-w74x/xhq7/wjr9/333x), build-time only (eslint/@hookform/resolvers/vite-plugin-pwa's ajv chains)
 - [x] serialize-javascript 7.1.2 → 7.1.3: GHSA-m5mm, build-time only (vite-plugin-pwa's workbox/terser chain)

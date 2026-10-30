@@ -89,12 +89,18 @@ const ABOUT: Record<string, { en: string[]; es: string[] }> = {
   },
   tracing: {
     en: [
-      "Your child traces big letters, numbers and short words with a finger, building the movements they'll use later with a pencil.",
-      "Word tracing grows from two-letter words up to five-letter words.",
+      "Free letter tracing games in Totland include Letter Tracing, Number Tracing, Word Tracing: 2 Letters and Line Tracing. These activities use a finger on a touch screen or a mouse on a computer, with spoken prompts in English or Spanish.",
+      "For a first tracing activity, try Line Tracing. Its first level uses straight paths across, down and diagonally. Start at the green dot and follow the dashed line and direction arrows; later levels add curves, waves, zigzags and loops.",
+      "Letter Tracing shows one large capital or lowercase letter at a time. Press and move your finger over the letter, lift between strokes, then tap Done. Clear lets you start that letter again. Number Tracing uses the same controls for the digits 0–9.",
+      "Word Tracing: 2 Letters is free, but opens only after your child has traced 10 different capital letters and 10 different lowercase letters in Letter Tracing. The whole word appears on one baseline; trace the highlighted letter, then move to the next when it fills in. Longer word activities go up to five letters.",
+      "Choose a starting point by what your child enjoys: simple lines for following a path, individual letters or digits for exploring their shapes, and short words after the letter practice. You can try the free activities without ads or signing in.",
     ],
     es: [
-      "Tu peque repasa con el dedo letras grandes, números y palabras cortas, practicando los trazos que luego hará con el lápiz.",
-      "Las palabras van de dos letras hasta cinco.",
+      "Los juegos de trazado gratuitos de Totland incluyen Trazar letras, Trazar números, Trazar palabras: 2 letras y Trazar líneas. Se juegan con el dedo en una pantalla táctil o con el ratón en una computadora, con indicaciones habladas en inglés o español.",
+      "Para empezar, prueba Trazar líneas. El primer nivel tiene recorridos rectos horizontales, verticales y diagonales. Empieza en el punto verde y sigue la línea discontinua y las flechas; los siguientes niveles añaden curvas, ondas, zigzags y bucles.",
+      "Trazar letras muestra una mayúscula o minúscula grande cada vez. Apoya el dedo y muévelo sobre la letra, levántalo entre trazos y toca Listo al terminar. Borrar permite empezar esa letra de nuevo. Trazar números usa los mismos controles para los dígitos del 0 al 9.",
+      "Trazar palabras: 2 letras es gratis, pero se abre cuando tu peque ha trazado 10 mayúsculas diferentes y 10 minúsculas diferentes en Trazar letras. La palabra completa aparece sobre una misma línea; repasa la letra resaltada y pasa a la siguiente cuando se rellene. Las actividades de palabras más largas llegan hasta cinco letras.",
+      "Elige por lo que le guste a tu peque: líneas sencillas para seguir un recorrido, letras o dígitos para explorar sus formas y palabras cortas después de practicar las letras. Puedes probar las actividades gratuitas sin anuncios ni iniciar sesión.",
     ],
   },
   flashcards: {

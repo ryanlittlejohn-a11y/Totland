@@ -1,4 +1,5 @@
 # Roadmap
+- [x] Draft parent/teacher social launch copy and capture checklist: [Social media launch](docs/social-media-launch.md) (2026-10-31; documentation only, nothing published).
 
 ## Letter Tracing search-page descriptions (approved 2026-10-30)
 - [x] Replace generic tracing copy with accurate EN/ES free-activity descriptions, finger/mouse controls, beginner straight paths and the existing two-letter-word prerequisite; remove the unverified handwriting-benefit claim from the search description

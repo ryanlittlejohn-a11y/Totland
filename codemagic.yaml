@@ -282,15 +282,15 @@ workflows:
               f"CURRENT_PROJECT_VERSION = {build_number};",
               project,
           )
-          if count != 4:
+          if count != 2:
               raise SystemExit(
-                  f"Expected to update 4 CURRENT_PROJECT_VERSION entries, updated {count}."
+                  f"Expected to update 2 CURRENT_PROJECT_VERSION entries, updated {count}."
               )
           project_path.write_text(updated)
           print(f"Set iOS build number to {build_number} in {count} build configurations.")
           PY
 
-          test "$(grep -c "CURRENT_PROJECT_VERSION = $IOS_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 4
+          test "$(grep -c "CURRENT_PROJECT_VERSION = $IOS_BUILD_NUMBER;" "$PROJECT_FILE")" -eq 2
       - name: Build ipa
         script: |
           set -euo pipefail

@@ -130,6 +130,7 @@ function Subscription() {
   // (App Review 2.3.10); Android and the website name what applies to them.
   const platformNow = nativePlatform();
   const storeEn = platformNow === "ios" ? "App Store" : platformNow === "android" ? "Google Play" : "App Store or Google Play";
+  const storeEnWithArticle = platformNow === "android" ? "a Google Play" : `an ${storeEn}`;
   const storeEs = platformNow === "ios" ? "del App Store" : platformNow === "android" ? "de Google Play" : "del App Store o Google Play";
   const storeParties = platformNow === "ios" ? "Apple and RevenueCat" : platformNow === "android" ? "Google and RevenueCat" : "Apple, Google and RevenueCat";
   const storePartiesEs = platformNow === "ios" ? "Apple y RevenueCat" : platformNow === "android" ? "Google y RevenueCat" : "Apple, Google y RevenueCat";
@@ -480,7 +481,7 @@ function Subscription() {
               <h3 className="font-ui text-sm font-bold text-clay">{L("Delete account", "Eliminar cuenta")}</h3>
               <p className="mt-2 text-xs text-inksoft">
                 {L(
-                  `This permanently deletes your grown-up account, the child profiles saved to it, your subscription record with us and any support messages you sent while signed in. It does not cancel an ${storeEn} subscription — ${storeParties} keep their own purchase records under their own policies — and it does not erase play progress or stars stored on this device. This cannot be undone.`,
+                  `This permanently deletes your grown-up account, the child profiles saved to it, your subscription record with us and any support messages you sent while signed in. It does not cancel ${storeEnWithArticle} subscription — ${storeParties} keep their own purchase records under their own policies — and it does not erase play progress or stars stored on this device. This cannot be undone.`,
                   `Esto elimina para siempre tu cuenta de adulto, los perfiles infantiles guardados en ella, tu registro de suscripción con nosotros y los mensajes de soporte que enviaste con la sesión iniciada. No cancela ninguna suscripción ${storeEs} (${storePartiesEs} conservan sus propios registros de compra según sus políticas) y no borra el progreso ni las estrellas guardados en este dispositivo. No se puede deshacer.`,
                 )}
               </p>

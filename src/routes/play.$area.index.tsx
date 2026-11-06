@@ -28,7 +28,7 @@ function AreaGamesPage() {
           ‹
         </Link>
         <h1 className="font-ui text-2xl font-bold text-ink">
-          {meta.emoji} {tTitle(meta.title)}
+          <span aria-hidden="true">{meta.emoji}</span> {tTitle(meta.title)}
         </h1>
       </div>
       <p className="mt-2 font-ui text-sm text-inksoft">

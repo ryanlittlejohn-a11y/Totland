@@ -5,6 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { isNativeApp } from "@/lib/native";
 import { nativeSignInWithOAuth } from "@/lib/native-oauth";
 import { L } from "@/lib/i18n";
+import appleLogoWhite from "@/assets/apple-signin/Logo - SIWA - Left-aligned - White - Medium.svg";
 
 /**
  * Grown-up sign in. Lives behind the parental gate; the child experience
@@ -119,20 +120,30 @@ export function ParentAuthCard() {
         </button>
       </form>
 
+      {/* Sign in with Apple, per Apple HIG: black button, white official logo
+          (file height = button height, uncropped) and white title at ~43% of the
+          button height. Placed above Google so it is at least as prominent. */}
       <button
         type="button"
-        onClick={google}
-        className="mt-3 w-full rounded-xl bg-felt py-3 font-ui font-semibold text-ink"
+        onClick={apple}
+        aria-label={L("Continue with Apple", "Continuar con Apple")}
+        className="mt-3 flex h-[44px] w-full items-center overflow-hidden rounded-xl bg-black p-0 text-left text-white"
       >
-        {L("Continue with Google", "Continuar con Google")}
+        <img src={appleLogoWhite} alt="" aria-hidden="true" height={44} className="block h-[44px] w-auto shrink-0" />
+        <span
+          className="flex-1 truncate pr-[8%] font-ui font-semibold leading-none"
+          style={{ fontSize: "19px" }}
+        >
+          {L("Continue with Apple", "Continuar con Apple")}
+        </span>
       </button>
 
       <button
         type="button"
-        onClick={apple}
-        className="mt-3 w-full rounded-xl bg-felt py-3 font-ui font-semibold text-ink"
+        onClick={google}
+        className="mt-3 flex h-[44px] w-full items-center justify-center rounded-xl bg-felt font-ui font-semibold text-ink"
       >
-         {L("Continue with Apple", "Continuar con Apple")}
+        {L("Continue with Google", "Continuar con Google")}
       </button>
 
       <button

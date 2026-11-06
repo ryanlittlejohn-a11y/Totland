@@ -126,6 +126,13 @@ function Subscription() {
   const active = (emailVerified && (sub?.active ?? false)) || storeActive;
   const renewalDate = formatDate(sub?.currentPeriodEnd ?? null);
   const storeName = nativePlatform() === "android" ? "Google Play" : "App Store";
+  // Wording for the delete-account notes: the iOS app names only Apple's store
+  // (App Review 2.3.10); Android and the website name what applies to them.
+  const platformNow = nativePlatform();
+  const storeEn = platformNow === "ios" ? "App Store" : platformNow === "android" ? "Google Play" : "App Store or Google Play";
+  const storeEs = platformNow === "ios" ? "del App Store" : platformNow === "android" ? "de Google Play" : "del App Store o Google Play";
+  const storeParties = platformNow === "ios" ? "Apple and RevenueCat" : platformNow === "android" ? "Google and RevenueCat" : "Apple, Google and RevenueCat";
+  const storePartiesEs = platformNow === "ios" ? "Apple y RevenueCat" : platformNow === "android" ? "Google y RevenueCat" : "Apple, Google y RevenueCat";
   const [managingSubscription, setManagingSubscription] = useState(false);
   const [manageError, setManageError] = useState<string | null>(null);
 
@@ -410,8 +417,8 @@ function Subscription() {
           <h2 className="font-ui text-lg font-bold text-ink">{L("Your account has been deleted", "Tu cuenta se ha eliminado")}</h2>
           <p className="mt-2 text-sm text-inksoft">
             {L(
-              "Your grown-up account, its saved child profiles, your subscription record with us and your signed-in support messages have been permanently removed. Play progress and stars stored on this device remain here. Any App Store or Google Play subscription must still be canceled in the store; Apple, Google and RevenueCat keep their own purchase records under their own policies.",
-              "Tu cuenta de adulto, los perfiles infantiles guardados, tu registro de suscripción con nosotros y los mensajes de soporte que enviaste con la sesión iniciada se han eliminado para siempre. El progreso y las estrellas guardados en este dispositivo siguen aquí. Cualquier suscripción del App Store o Google Play debe cancelarse en la tienda; Apple, Google y RevenueCat conservan sus propios registros de compra según sus políticas.",
+              `Your grown-up account, its saved child profiles, your subscription record with us and your signed-in support messages have been permanently removed. Play progress and stars stored on this device remain here. Any ${storeEn} subscription must still be canceled in the store; ${storeParties} keep their own purchase records under their own policies.`,
+              `Tu cuenta de adulto, los perfiles infantiles guardados, tu registro de suscripción con nosotros y los mensajes de soporte que enviaste con la sesión iniciada se han eliminado para siempre. El progreso y las estrellas guardados en este dispositivo siguen aquí. Cualquier suscripción ${storeEs} debe cancelarse en la tienda; ${storePartiesEs} conservan sus propios registros de compra según sus políticas.`,
             )}
           </p>
           <Link to="/" className="mt-3 inline-block rounded-xl bg-night px-4 py-2 font-ui text-sm font-bold text-cream">
@@ -473,8 +480,8 @@ function Subscription() {
               <h3 className="font-ui text-sm font-bold text-clay">{L("Delete account", "Eliminar cuenta")}</h3>
               <p className="mt-2 text-xs text-inksoft">
                 {L(
-                  "This permanently deletes your grown-up account, the child profiles saved to it, your subscription record with us and any support messages you sent while signed in. It does not cancel an App Store or Google Play subscription — Apple, Google and RevenueCat keep their own purchase records under their own policies — and it does not erase play progress or stars stored on this device. This cannot be undone.",
-                  "Esto elimina para siempre tu cuenta de adulto, los perfiles infantiles guardados en ella, tu registro de suscripción con nosotros y los mensajes de soporte que enviaste con la sesión iniciada. No cancela ninguna suscripción del App Store o Google Play (Apple, Google y RevenueCat conservan sus propios registros de compra según sus políticas) y no borra el progreso ni las estrellas guardados en este dispositivo. No se puede deshacer.",
+                  `This permanently deletes your grown-up account, the child profiles saved to it, your subscription record with us and any support messages you sent while signed in. It does not cancel an ${storeEn} subscription — ${storeParties} keep their own purchase records under their own policies — and it does not erase play progress or stars stored on this device. This cannot be undone.`,
+                  `Esto elimina para siempre tu cuenta de adulto, los perfiles infantiles guardados en ella, tu registro de suscripción con nosotros y los mensajes de soporte que enviaste con la sesión iniciada. No cancela ninguna suscripción ${storeEs} (${storePartiesEs} conservan sus propios registros de compra según sus políticas) y no borra el progreso ni las estrellas guardados en este dispositivo. No se puede deshacer.`,
                 )}
               </p>
               {active && (

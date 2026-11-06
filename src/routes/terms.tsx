@@ -29,7 +29,7 @@ function TermsPage() {
   return (
     <LegalPage
       title="Totland Terms &amp; Conditions: How to Use the App"
-      updated="September 15, 2026"
+      updated="November 6, 2026"
       spanishNote
     >
       <section>
@@ -200,17 +200,7 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>9. App Clip</h2>
-        <p>
-          On supported Apple devices, a small App Clip may open a short free
-          sample activity without installing the full app and without signing
-          in. The App Clip collects no account information and is provided for
-          demonstration only; these terms apply to it in the same way.
-        </p>
-      </section>
-
-      <section>
-        <h2>10. Service level</h2>
+        <h2>9. Service level</h2>
         <p>
           The Service is provided &ldquo;as is&rdquo; and &ldquo;as
           available.&rdquo; We do not guarantee that the Service will be
@@ -220,7 +210,7 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>11. Disclaimers and limitation of liability</h2>
+        <h2>10. Disclaimers and limitation of liability</h2>
         <p>
           To the fullest extent permitted by law, we disclaim all implied
           warranties, including merchantability and fitness for a particular
@@ -240,7 +230,7 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>12. Deleting your account</h2>
+        <h2>11. Deleting your account</h2>
         <p>
           You can delete your account at any time from Parents &rarr;
           Subscription &rarr; Your account inside the app. Deletion is
@@ -253,7 +243,7 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>13. Suspension and termination</h2>
+        <h2>12. Suspension and termination</h2>
         <p>
           We may suspend or terminate your access to the Service if you
           materially breach these terms, fail to pay amounts due, present a
@@ -266,7 +256,7 @@ function TermsPage() {
       </section>
 
       <section>
-        <h2>14. General</h2>
+        <h2>13. General</h2>
         <p>
           You may not assign these terms without our consent; we may assign
           them in connection with a merger, acquisition, or sale of assets.

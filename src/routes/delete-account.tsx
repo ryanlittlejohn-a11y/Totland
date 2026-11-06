@@ -1,4 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
+import { nativePlatform } from "@/lib/native";
 import { LegalPage } from "../components/LegalPage";
 
 export const Route = createFileRoute("/delete-account")({
@@ -24,6 +26,14 @@ export const Route = createFileRoute("/delete-account")({
 });
 
 function DeleteAccountPage() {
+  // Name only the store that applies: Apple in the iOS app, Google in the Android
+  // app, both on the website (App Review 2.3.10). Resolved after mount so the
+  // prerendered/website markup and the first client render always match.
+  const [platform, setPlatform] = useState<"ios" | "android" | "web">("web");
+  useEffect(() => setPlatform(nativePlatform()), []);
+  const storeWording =
+    platform === "ios" ? "an App Store" : platform === "android" ? "a Google Play" : "an App Store or Google Play";
+
   return (
     <LegalPage
       title="How to Delete Your Totland Account and Saved Child Profiles"
@@ -50,7 +60,7 @@ function DeleteAccountPage() {
         <p>
           Your grown-up account, the child profiles saved to it, your subscription record with us and
           support messages you sent while signed in. Play progress stored only on a device stays on
-          that device. Deleting your account does not cancel an App Store or Google Play subscription
+          that device. Deleting your account does not cancel {storeWording} subscription
           — cancel that in the store.
         </p>
       </section>

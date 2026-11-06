@@ -78,7 +78,6 @@ workflows:
           }
 
           fetch_profile App.totland.kids
-          fetch_profile App.totland.kids.Clip
 
           echo "Downloaded provisioning profiles:"
           for dir in "${PROFILE_DIRS[@]}"; do
@@ -127,19 +126,7 @@ workflows:
           ]
           team_id = "ZGHUXQGJJ9"
           required = {
-              "App.totland.kids": {
-                  "com.apple.developer.associated-domains": None,
-                  "com.apple.developer.associated-appclip-app-identifiers": [
-                      f"{team_id}.App.totland.kids.Clip"
-                  ],
-              },
-              "App.totland.kids.Clip": {
-                  "com.apple.developer.associated-domains": None,
-                  "com.apple.developer.on-demand-install-capable": True,
-                  "com.apple.developer.parent-application-identifiers": [
-                      f"{team_id}.App.totland.kids"
-                  ],
-              },
+              "App.totland.kids": {},
           }
           matches = {bundle_id: [] for bundle_id in required}
           lines = []
@@ -248,13 +235,13 @@ workflows:
 
               if wrong_values:
                   lines.append(
-                      f"ERROR: {bundle_id} profile has an incorrect App Clip relationship: "
+                      f"ERROR: {bundle_id} profile has incorrect entitlement values: "
                       + "; ".join(wrong_values)
                       + "."
                   )
                   lines.append(
-                      "  Confirm the clip is registered as an App Clip identifier belonging to "
-                      "App.totland.kids, save both identifiers, and rerun to download refreshed profiles."
+                      "  Check the App.totland.kids identifier in Apple Developer, then rerun to "
+                      "download a refreshed profile."
                   )
                   failed = True
 

@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
 import { nativePlatform } from "@/lib/native";
 import { LegalPage } from "../components/LegalPage";
 
@@ -27,10 +26,9 @@ export const Route = createFileRoute("/delete-account")({
 
 function DeleteAccountPage() {
   // Name only the store that applies: Apple in the iOS app, Google in the Android
-  // app, both on the website (App Review 2.3.10). Resolved after mount so the
-  // prerendered/website markup and the first client render always match.
-  const [platform, setPlatform] = useState<"ios" | "android" | "web">("web");
-  useEffect(() => setPlatform(nativePlatform()), []);
+  // app, both on the website (App Review 2.3.10). nativePlatform() is "web" on the
+  // server and in browsers, so the website markup is unchanged and cannot mismatch.
+  const platform = nativePlatform();
   const storeWording =
     platform === "ios" ? "an App Store" : platform === "android" ? "a Google Play" : "an App Store or Google Play";
 

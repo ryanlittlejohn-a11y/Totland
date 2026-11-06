@@ -1,5 +1,6 @@
 import { APP_STORE_LIVE, APP_STORE_URL, PLAY_STORE_LIVE, PLAY_STORE_URL } from "@/lib/app-links";
 import { L } from "@/lib/i18n";
+import { isNativeApp } from "@/lib/native";
 
 /**
  * "Get the app" card for the Parent Dashboard. Shows a real Apple/Google
@@ -7,6 +8,9 @@ import { L } from "@/lib/i18n";
  * state before that — never a dead/broken link either way.
  */
 export function GetTheAppCard() {
+  // Website-only: inside the packaged app (iOS or Android) this card would
+  // advertise another store (App Review 2.3.10), so it is not rendered at all.
+  if (isNativeApp()) return null;
   if (!APP_STORE_LIVE && !PLAY_STORE_LIVE) {
     return (
       <section className="rounded-3xl bg-card p-5 wood-block">

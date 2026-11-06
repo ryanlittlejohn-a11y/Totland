@@ -15,7 +15,7 @@ export const Route = createFileRoute("/play/$area/quick")({
     const areaMeta = AREAS.find((a) => a.id === params.area) ?? AREAS[0]!;
     const name = typeof areaMeta.title === "string" ? areaMeta.title : "Play & Learn";
     const title = `Quick ${name} Round — Totland`;
-    const description = `A short ${name.toLowerCase()} practice round for ages 2–6 on Totland, with gentle feedback and no ads.`;
+    const description = `A short ${name} practice round for ages 2–6 on Totland, with gentle feedback and no ads.`;
     const url = `https://totland.app/play/${params.area}/quick`;
     return {
       meta: [

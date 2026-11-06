@@ -127,12 +127,12 @@ export function ParentAuthCard() {
         type="button"
         onClick={apple}
         aria-label={L("Continue with Apple", "Continuar con Apple")}
-        className="mt-3 flex h-[44px] w-full items-center overflow-hidden rounded-xl bg-black p-0 text-left text-white"
+        className="mt-3 flex h-[44px] w-full items-center justify-center overflow-hidden rounded-xl bg-black p-0 text-white"
       >
         <img src={appleLogoWhite} alt="" aria-hidden="true" height={44} className="block h-[44px] w-auto shrink-0" />
         <span
-          className="flex-1 truncate pr-[8%] font-ui font-semibold leading-none"
-          style={{ fontSize: "19px" }}
+          className="truncate font-ui font-semibold leading-none"
+          style={{ fontSize: "19px", maxWidth: "calc(92% - 31px)" }}
         >
           {L("Continue with Apple", "Continuar con Apple")}
         </span>

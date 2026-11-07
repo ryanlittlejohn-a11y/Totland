@@ -331,6 +331,70 @@ Choose US Letter or A4, preview the page and make a black-and-white PDF. Free sa
 
 This is a website feature in these posts—not a promise that native print/share is in the current App Store build. Open the Parent area and choose Teachers & printables: https://totland.app
 
+## Batch 2: posts with cards (Nov 2026)
+
+Each entry pairs a finished portrait card (1080×1350, in `social/2026-11/cards/`) with English and Spanish captions. The cards are static images; post them as-is with the caption. All voice rules in section 1 still apply. Suggested posting order: storybook, puzzles, word finds, question, grown-up check, printables—spaced 1–2 days apart. Use the question post (FB14/IG14) on the day you want replies, and be available to answer comments that day.
+
+### FB9 / IG9 — Storybook card
+
+**Card:** `01_storybook_portrait.png` (“Story time, at their pace” / “Read-along stories”)
+
+**English caption:** A story you can slow down. Totland's read-along stories let you and your child move through each page together, in English or Spanish. Free games to start, plus optional Premium. Explore at totland.app—link in bio.
+
+**Spanish caption:** Un cuento a su ritmo. Los cuentos de Totland se pueden leer juntos, página a página, en español o inglés. Juegos gratuitos para empezar y un Premium opcional. Explora en totland.app; enlace en la biografía.
+
+**Hashtags (IG):** #Totland #StoryTime #ReadAloud #CuentosInfantiles #PreschoolActivities #LearningThroughPlay #PlayTogether #FamilyTime
+
+### FB11 / IG11 — Puzzles card
+
+**Card:** `03_puzzles_portrait.png` (“Little puzzles, big focus” / “Jigsaws made for small hands”)
+
+**English caption:** Little puzzles, made for small hands. Totland's jigsaws use original artwork and simple pieces, so your child can take their time. Free games plus optional Premium. Explore together at totland.app—link in bio.
+
+**Spanish caption:** Rompecabezas pensados para manos pequeñas, con ilustraciones originales y piezas sencillas. Juegos gratuitos y un Premium opcional. Explora en familia en totland.app; enlace en la biografía.
+
+**Hashtags (IG):** #Totland #PuzzlesForKids #JigsawPuzzles #Rompecabezas #PreschoolActivities #ToddlerActivities #LearningThroughPlay #PlayTogether
+
+### FB13 / IG13 — Word finds card
+
+**Card:** `05_word_finds_portrait_clean.png` (“Find the word” / “Gentle word-finding games”)
+
+**English caption:** A gentle word hunt. In Totland's word-finding games, your child looks for each word at their own pace—no timer, no rush. Free games plus optional Premium. Find it at totland.app—link in bio.
+
+**Spanish caption:** Una búsqueda de palabras tranquila, sin temporizador y sin prisas. Juegos gratuitos y un Premium opcional. Explora en totland.app; enlace en la biografía.
+
+**Hashtags (IG):** #Totland #WordGames #EarlyReading #PreschoolActivities #LearningThroughPlay #PlayTogether #ParentingIdeas #FamilyActivities
+
+### FB14 / IG14 — Question card
+
+**Card:** `06_question_portrait.png` (“What does learning play look like at your house?” / “Tell us in the comments”)
+
+**English caption:** What does learning play look like at your house? A few minutes of drawing, a puzzle together, a story before bed? Tell us in the comments—we read every one.
+
+**Spanish caption:** ¿Cómo es el juego de aprendizaje en tu casa? ¿Unos minutos de dibujo, un rompecabezas juntos, un cuento antes de dormir? Cuéntanos en los comentarios.
+
+**Hashtags (IG):** #Totland #PlayTogether #ParentingIdeas #FamilyActivities #LearningThroughPlay #EarlyYears #PreschoolActivities #FamilyTime
+
+### FB15 / IG15 — Grown-up check card
+
+**Card:** `07_grown_up_check_portrait.png` (“Grown-ups first” / “Purchases and settings sit behind a grown-up check”)
+
+**English caption:** Grown-ups first. In Totland, purchases and settings sit behind a grown-up check, so the play area stays simple. Free games plus optional Premium. Take a look at totland.app—link in bio.
+
+**Spanish caption:** Primero los adultos. En Totland, las compras y los ajustes están detrás de una comprobación para adultos, para que el área de juego siga siendo sencilla. Juegos gratuitos y un Premium opcional. Explora en totland.app; enlace en la biografía.
+
+**Hashtags (IG):** #Totland #AdFree #Parenting #LearningGames #PreschoolActivities #ToddlerActivities #PlayTogether #EarlyYears
+
+### FB16 / IG16 — Printables card
+
+**Card:** `08_printables_portrait.png` (“Print a page, take a break from screens” / “Free sample sheets on the website”)
+
+**English caption:** Want to take an activity onto paper? On the Totland website, the Parent area includes printable connect-the-dots, line tracing, shape and number sheets, plus a blank drawing page. Choose US Letter or A4 and make a black-and-white PDF. There are free sample sheets on the website, with more available through optional Premium. Open the Parent area at totland.app—link in bio.
+
+**Spanish caption:** ¿Quieres pasar una actividad al papel? En el sitio web de Totland, el área para padres incluye hojas imprimibles de unir puntos, trazos, formas y números. Hay hojas de muestra gratuitas en el sitio web, y más con el Premium opcional. Visita totland.app; enlace en la biografía.
+
+**Hashtags (IG):** #Totland #PrintableActivities #TracingActivities #ConnectTheDots #PreschoolTeachers #EarlyYearsTeachers #HomeschoolActivities #ParentingIdeas
+
 ## 5. Two-week posting schedule and capture checklist
 
 Start on the next suitable Monday **after checking the live website features**. This is a suggested schedule, not scheduled or published content. Three feed posts per week on each platform; reuse the same real captures. No fixed posting time is promised to improve reach.

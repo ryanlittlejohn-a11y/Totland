@@ -140,7 +140,7 @@ Five minutes is just a suggested window—not a target, a lesson plan or a promi
 
 Totland tiene juegos de letras, números, rompecabezas, cuentos, trazos y dibujo para edades de 2 a 6 años, con opciones en español e inglés.
 
-Sin anuncios y sin chat. Hay juegos gratuitos para empezar y un Premium opcional. Podéis elegir una actividad y explorar juntos, sin prisas.
+Sin anuncios y sin chat. Hay juegos gratuitos para empezar y un Premium opcional. Puedes elegir una actividad y explorar juntos, sin prisas.
 
 **Image/video idea:** Capture the Spanish menus, Dibujo libre and Une los puntos. Show the real Spanish labels; hide names and account details.
 

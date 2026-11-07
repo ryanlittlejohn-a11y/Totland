@@ -415,4 +415,4 @@
 - [x] Tests (setting survives old profiles + sync merge, sounds, no auto-advance, finish once); checked at 360px and iPad
 - [ ] Ryan: real-device check (quiet tone loudness, music stays off, Next button reach, VoiceOver)
 - [ ] Large mode — Build B, later (separate switch)
-- [ ] Social cards Nov 2026: 6 portrait PNGs + ZIP in Files (/mnt/documents/social/2026-11/cards)
+- [x] Social cards Nov 2026: 6 portrait PNGs + ZIP in Files (/mnt/documents/social/2026-11/cards)

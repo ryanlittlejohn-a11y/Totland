@@ -5,6 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { isNativeApp } from "@/lib/native";
 import { nativeSignInWithOAuth } from "@/lib/native-oauth";
 import { L } from "@/lib/i18n";
+import googleG from "@/assets/google-signin/google-g.svg";
 import appleLogoWhite from "@/assets/apple-signin/Logo - SIWA - Left-aligned - White - Medium.svg";
 
 /**
@@ -141,9 +142,18 @@ export function ParentAuthCard() {
       <button
         type="button"
         onClick={google}
-        className="mt-3 flex h-[44px] w-full items-center justify-center rounded-xl bg-felt font-ui font-semibold text-ink"
+        aria-label={L("Continue with Google", "Continuar con Google")}
+        className="mt-3 flex h-[44px] w-full items-center justify-center gap-3 rounded-xl border border-[#747775] bg-white px-3 font-ui text-[15px] font-medium leading-none text-[#1F1F1F] active:bg-[#F8F9FA]"
       >
-        {L("Continue with Google", "Continuar con Google")}
+        <img
+          src={googleG}
+          alt=""
+          aria-hidden="true"
+          width={20}
+          height={20}
+          className="block h-5 w-5 shrink-0"
+        />
+        <span className="truncate">{L("Continue with Google", "Continuar con Google")}</span>
       </button>
 
       <button

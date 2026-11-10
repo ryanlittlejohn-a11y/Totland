@@ -13,7 +13,7 @@ import { inNativeApp, webOnlyBeforeLoad } from "@/lib/web-only-route";
 
 const TITLE = "Best ad-free learning apps for toddlers and preschoolers (2026)";
 const DESCRIPTION =
-  "Seven ad-free learning apps for ages 2 to 6, checked against their official listings in November 2026: what each costs, which ages, which languages.";
+  "Seven ad-free learning apps for young children, checked against their official listings in November 2026: what each costs, which ages, which languages.";
 const URL = "https://totland.app/best/ad-free-toddler-learning-apps";
 
 export const Route = createFileRoute("/best/ad-free-toddler-learning-apps")({
@@ -68,7 +68,7 @@ function Roundup() {
           child.
         </p>
         <p>
-          Listed alphabetically; this is not a ranking. Facts below are {AS_OF}, US, from the linked
+          Listed alphabetically; this is not a ranking. Facts below are {AS_OF}, from the linked
           sources.
         </p>
       </section>
@@ -77,8 +77,8 @@ function Roundup() {
         <h2>Endless Learning Academy (ages 2 to 6+)</h2>
         <p>
           Vocabulary and early learning with animated words. The listing says &ldquo;100% free of
-          advertisements and offers.&rdquo; Free to download, with a 7-day trial and paid plans (the
-          listing shows $12.99 monthly and $55.99 annual). Limit: English only. ({AS_OF}, US.){" "}
+          advertisements and offers.&rdquo; Free to download, with a 7-day trial and paid plans (see
+          the listing for current prices). Limit: English only. ({AS_OF}, per the linked listing.){" "}
           <SourceLink href="https://apps.apple.com/au/app/id1034523226?l=en-au">Source</SourceLink>
         </p>
       </section>
@@ -87,7 +87,8 @@ function Roundup() {
         <h2>HOMER (ages 2 to 8)</h2>
         <p>
           Reading and learning programme with a monthly membership. The listing says &ldquo;Safe,
-          Ad-Free.&rdquo; Limit: English only, and prices vary by storefront. ({AS_OF}, US.){" "}
+          Ad-Free.&rdquo; Limit: English only, and prices vary by storefront. ({AS_OF}, per the
+          linked listing.){" "}
           <SourceLink href="https://apps.apple.com/no/app/id601437586?l=no">Source</SourceLink>
         </p>
       </section>
@@ -96,7 +97,8 @@ function Roundup() {
         <h2>Khan Academy Kids (ages 2 to 8)</h2>
         <p>
           Free, no ads, no subscriptions, from a nonprofit. Includes read-aloud storybooks in
-          English or Spanish. Limit: the app itself is listed in English only. ({AS_OF}, US.){" "}
+          English or Spanish. Limit: the app itself is listed in English only. ({AS_OF}, per the
+          linked listing.){" "}
           <SourceLink href="https://apps.apple.com/ca/app/id1378467217?l=en-ca">Source</SourceLink>.
           See our{" "}
           <Link to="/compare/totland-vs-khan-academy-kids">
@@ -111,7 +113,8 @@ function Roundup() {
         <p>
           Play-and-learn lessons. The listing says it is designed to be ad-free. The basic version
           has 10 free games; the full version is a subscription (website Plus is $13.49 a month or
-          $161.88 a year). Limit: most content needs the paid plan. ({AS_OF}, US.){" "}
+          $161.88 a year). Limit: most content needs the paid plan. ({AS_OF}, per the linked
+          listing.){" "}
           <SourceLink href="https://apps.apple.com/be/app/lingokids/id1002043426">
             App listing
           </SourceLink>{" "}
@@ -126,7 +129,8 @@ function Roundup() {
         <h2>Starfall (Pre-K to Grade 5)</h2>
         <p>
           Reading and math. &ldquo;No advertisements,&rdquo; for free users and subscribers alike.
-          Subscription listed at $5.99 a month. Limit: English only. ({AS_OF}, US.){" "}
+          Subscription listed at $5.99 a month. Limit: English only. ({AS_OF}, per the linked
+          listing.){" "}
           <SourceLink href="https://apps.apple.com/ru/app/starfall/id707189889">Source</SourceLink>
         </p>
       </section>
@@ -134,8 +138,9 @@ function Roundup() {
       <section>
         <h2>Teach Your Monster to Read (ages 3 to 6)</h2>
         <p>
-          Phonics games, no in-game adverts and no in-app purchases, paid once to download. Limit:
-          English only, and it focuses on reading, not numbers or shapes. ({AS_OF}, US.){" "}
+          Phonics games, no in-game adverts and no in-app purchases, listed as a paid download.
+          Limit: English only, and it focuses on reading, not numbers or shapes. ({AS_OF}, per the
+          linked listing.){" "}
           <SourceLink href="https://apps.apple.com/gb/app/id828392046?l=en-gb">Source</SourceLink>
         </p>
       </section>

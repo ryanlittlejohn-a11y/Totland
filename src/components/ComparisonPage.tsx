@@ -9,7 +9,7 @@ export function ComparisonIntro() {
         We make Totland. We&apos;ve tried to be fair; corrections welcome at{" "}
         <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>.
       </p>
-      <p className="text-sm text-muted-foreground">Last checked: {LAST_CHECKED} (US)</p>
+      <p className="text-sm text-muted-foreground">Last checked: {LAST_CHECKED}</p>
     </section>
   );
 }

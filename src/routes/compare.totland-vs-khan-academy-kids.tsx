@@ -13,7 +13,7 @@ import { inNativeApp, webOnlyBeforeLoad } from "@/lib/web-only-route";
 
 const TITLE = "Totland vs Khan Academy Kids: an honest comparison";
 const DESCRIPTION =
-  "Khan Academy Kids is free with no ads for ages 2 to 8. Totland is bilingual with tracing and printables for ages 2 to 6. What's different, so you can decide.";
+  "Khan Academy Kids is free with no ads for ages 2 to 8. Totland is bilingual, with tracing and printables for ages 2 to 6. What's different?";
 const URL = "https://totland.app/compare/totland-vs-khan-academy-kids";
 const KHAN_SOURCE = "https://apps.apple.com/ca/app/id1378467217?l=en-ca";
 
@@ -160,7 +160,7 @@ function Compare() {
           </table>
         </div>
         <p className="text-sm text-muted-foreground">
-          Khan Academy Kids facts are {AS_OF}, US, from its{" "}
+          Khan Academy Kids facts are {AS_OF}, from its{" "}
           <SourceLink href={KHAN_SOURCE}>App Store listing</SourceLink>. Totland prices:{" "}
           {TOTLAND_PRICE_NOTE}. A dash means we haven&rsquo;t verified that point here.
         </p>
@@ -209,7 +209,7 @@ function Compare() {
         <ul>
           <li>
             <SourceLink href={KHAN_SOURCE}>Khan Academy Kids, App Store listing</SourceLink> (
-            {AS_OF}, US)
+            {AS_OF})
           </li>
           <li>Totland&rsquo;s own pricing page.</li>
         </ul>

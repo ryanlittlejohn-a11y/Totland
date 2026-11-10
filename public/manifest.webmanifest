@@ -1,7 +1,7 @@
 {
   "name": "Totland — Learning That Feels Like Play",
   "short_name": "Totland",
-  "description": "Offline-first early-learning games for ages 2–6. Ad-free, privacy-first, with a parent dashboard.",
+  "description": "Early-learning games for ages 2–6. Ad-free, privacy-first, with a parent dashboard.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F7EEDF",

@@ -36,7 +36,7 @@ export function GetTheAppCard() {
   return (
     <section className="rounded-3xl bg-card p-5 wood-block">
       <h2 className="font-ui text-lg font-bold text-ink">{L("Get the app", "Descarga la app")}</h2>
-      <p className="mt-1 text-sm text-inksoft">{L("Download Totland for the best offline experience.", "Descarga Totland para jugar mejor sin conexión.")}</p>
+      <p className="mt-1 text-sm text-inksoft">{L("Download Totland to play on your phone or tablet. Offline play comes with Premium.", "Descarga Totland para jugar en tu móvil o tableta. Jugar sin conexión viene con Premium.")}</p>
       <div className="mt-3 flex flex-wrap gap-2">
         {APP_STORE_LIVE && (
           <a

@@ -21,7 +21,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          `${GAME_COUNT} bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Offline, ad-free, privacy-first.`,
+          `${GAME_COUNT} bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Ad-free and privacy-first, with offline play in Premium.`,
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://totland.app/" },
@@ -212,7 +212,7 @@ function Home() {
       <section className="mt-6">
         <div className="flex items-center justify-between px-1">
           <h2 className="font-ui text-[13px] font-semibold uppercase tracking-[0.14em] text-inksoft">{L("Skills to practice", "Habilidades")}</h2>
-          <span className="font-ui text-xs text-inksoft">{L(`${GAME_COUNT} games + ${WORD_FIND_COUNT} word finds offline`, `${GAME_COUNT} juegos + ${WORD_FIND_COUNT} sopas de letras sin conexión`)}</span>
+          <span className="font-ui text-xs text-inksoft">{L(`${GAME_COUNT} games + ${WORD_FIND_COUNT} word finds`, `${GAME_COUNT} juegos + ${WORD_FIND_COUNT} sopas de letras`)}</span>
         </div>
 
         <div className="mt-3 space-y-3">
@@ -298,8 +298,8 @@ function Home() {
       </Link>
       <p className="mt-3 text-center font-ui text-[11px] uppercase tracking-[0.18em] text-inksoft">
         {L(
-          "Offline-first · No ads · Data stays on device unless you sign in to sync",
-          "Sin conexión · Sin anuncios · Los datos quedan en el dispositivo salvo que inicies sesión para sincronizar",
+          "No ads · Data stays on device unless you sign in to sync",
+          "Sin anuncios · Los datos quedan en el dispositivo salvo que inicies sesión para sincronizar",
         )}
       </p>
       <WebLegalFooter />

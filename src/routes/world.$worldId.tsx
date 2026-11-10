@@ -7,7 +7,7 @@ export const Route = createFileRoute("/world/$worldId")({
   head: ({ params }) => {
     const world = WORLDS.find((w) => w.id === params.worldId) ?? WORLDS[0]!;
     const title = `${world.title} — Totland`;
-    const description = `${world.blurb}: every learning game inside ${world.title}, matched to your child's age mode. Ad-free and offline-friendly.`;
+    const description = `${world.blurb}: every learning game inside ${world.title}, matched to your child's age mode. Ad-free.`;
     return {
       meta: [
         { title },

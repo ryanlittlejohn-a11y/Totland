@@ -17,6 +17,7 @@ export const Route = createFileRoute("/privacy")({
           "How Totland collects, uses, and protects personal data, including voice, contact messages and subscriptions.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://totland.app/privacy" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://totland.app/privacy" }],

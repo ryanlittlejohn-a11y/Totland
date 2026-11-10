@@ -18,6 +18,7 @@ export const Route = createFileRoute("/terms")({
           "Terms and conditions for using Totland, the toddler learning adventure app.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://totland.app/terms" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://totland.app/terms" }],

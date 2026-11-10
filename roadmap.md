@@ -1,4 +1,7 @@
 # Roadmap
+## SEO findings (2026-11-10)
+- [x] Correct missing self-referencing social URLs on legal/contact, children/dashboard/printables and rewards pages; preserve existing headings, guide metadata, legal copy and all play/account/purchase/gate behavior.
+- [ ] Scanner verification: heading finding appears to overlook shared PlayFrame/LegalPage H1s and existing H2s; gated Parent layout has its own heading. Do not change parental gate or subscription code without separate approval. Missing guide image/description/URL claims already have corresponding tags; no replacement image invented.
 - [x] Draft parent/teacher social launch copy and capture checklist: [Social media launch](docs/social-media-launch.md) (2026-10-31; documentation only, nothing published).
 
 ## Letter Tracing search-page descriptions (approved 2026-10-30)

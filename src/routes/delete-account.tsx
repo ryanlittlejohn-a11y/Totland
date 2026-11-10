@@ -17,6 +17,7 @@ export const Route = createFileRoute("/delete-account")({
         content: "Request deletion of your Totland account and data, with or without the app installed.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://totland.app/delete-account" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://totland.app/delete-account" }],

@@ -151,7 +151,8 @@ function Guide() {
           Totland is an ad-free set of educational games for toddlers for ages 2–6 — ABCs, numbers, colors,
           shapes, first words, phonics, letter tracing, word finds and storybooks.{" "}
           <Link to="/">Start playing</Link>, or read about{" "}
-          <Link to="/privacy">how we handle your family's data</Link>.
+          <Link to="/privacy">how we handle your family's data</Link>. Comparing options? See our{" "}
+          <Link to="/best/ad-free-toddler-learning-apps">list of ad-free learning apps</Link>.
         </p>
       </section>
     </LegalPage>

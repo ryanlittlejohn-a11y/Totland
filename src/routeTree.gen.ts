@@ -23,6 +23,8 @@ import { Route as WelcomeRouteImport } from './routes/welcome'
 import { Route as WordfindsRouteImport } from './routes/wordfinds'
 import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as AuthNativeReturnRouteImport } from './routes/auth.native-return'
+import { Route as BestAdFreeToddlerLearningAppsRouteImport } from './routes/best.ad-free-toddler-learning-apps'
+import { Route as CompareTotlandVsKhanAcademyKidsRouteImport } from './routes/compare.totland-vs-khan-academy-kids'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as GuidesLearningGamesFor2YearOldsRouteImport } from './routes/guides.learning-games-for-2-year-olds'
 import { Route as GuidesLearningGamesFor3YearOldsRouteImport } from './routes/guides.learning-games-for-3-year-olds'
@@ -115,6 +117,18 @@ const AuthNativeReturnRoute = AuthNativeReturnRouteImport.update({
   path: '/auth/native-return',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BestAdFreeToddlerLearningAppsRoute =
+  BestAdFreeToddlerLearningAppsRouteImport.update({
+    id: '/best/ad-free-toddler-learning-apps',
+    path: '/best/ad-free-toddler-learning-apps',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const CompareTotlandVsKhanAcademyKidsRoute =
+  CompareTotlandVsKhanAcademyKidsRouteImport.update({
+    id: '/compare/totland-vs-khan-academy-kids',
+    path: '/compare/totland-vs-khan-academy-kids',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const GameGameIdRoute = GameGameIdRouteImport.update({
   id: '/game/$gameId',
   path: '/game/$gameId',
@@ -243,6 +257,8 @@ export interface FileRoutesByFullPath {
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/auth/native-return': typeof AuthNativeReturnRoute
+  '/best/ad-free-toddler-learning-apps': typeof BestAdFreeToddlerLearningAppsRoute
+  '/compare/totland-vs-khan-academy-kids': typeof CompareTotlandVsKhanAcademyKidsRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/learning-games-for-2-year-olds': typeof GuidesLearningGamesFor2YearOldsRoute
   '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
@@ -279,6 +295,8 @@ export interface FileRoutesByTo {
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/auth/native-return': typeof AuthNativeReturnRoute
+  '/best/ad-free-toddler-learning-apps': typeof BestAdFreeToddlerLearningAppsRoute
+  '/compare/totland-vs-khan-academy-kids': typeof CompareTotlandVsKhanAcademyKidsRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/learning-games-for-2-year-olds': typeof GuidesLearningGamesFor2YearOldsRoute
   '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
@@ -316,6 +334,8 @@ export interface FileRoutesById {
   '/wordfinds': typeof WordfindsRoute
   '/worlds': typeof WorldsRoute
   '/auth/native-return': typeof AuthNativeReturnRoute
+  '/best/ad-free-toddler-learning-apps': typeof BestAdFreeToddlerLearningAppsRoute
+  '/compare/totland-vs-khan-academy-kids': typeof CompareTotlandVsKhanAcademyKidsRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/learning-games-for-2-year-olds': typeof GuidesLearningGamesFor2YearOldsRoute
   '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
@@ -355,6 +375,8 @@ export interface FileRouteTypes {
     | '/wordfinds'
     | '/worlds'
     | '/auth/native-return'
+    | '/best/ad-free-toddler-learning-apps'
+    | '/compare/totland-vs-khan-academy-kids'
     | '/game/$gameId'
     | '/guides/learning-games-for-2-year-olds'
     | '/guides/learning-games-for-3-year-olds'
@@ -391,6 +413,8 @@ export interface FileRouteTypes {
     | '/wordfinds'
     | '/worlds'
     | '/auth/native-return'
+    | '/best/ad-free-toddler-learning-apps'
+    | '/compare/totland-vs-khan-academy-kids'
     | '/game/$gameId'
     | '/guides/learning-games-for-2-year-olds'
     | '/guides/learning-games-for-3-year-olds'
@@ -427,6 +451,8 @@ export interface FileRouteTypes {
     | '/wordfinds'
     | '/worlds'
     | '/auth/native-return'
+    | '/best/ad-free-toddler-learning-apps'
+    | '/compare/totland-vs-khan-academy-kids'
     | '/game/$gameId'
     | '/guides/learning-games-for-2-year-olds'
     | '/guides/learning-games-for-3-year-olds'
@@ -465,6 +491,8 @@ export interface RootRouteChildren {
   WordfindsRoute: typeof WordfindsRoute
   WorldsRoute: typeof WorldsRoute
   AuthNativeReturnRoute: typeof AuthNativeReturnRoute
+  BestAdFreeToddlerLearningAppsRoute: typeof BestAdFreeToddlerLearningAppsRoute
+  CompareTotlandVsKhanAcademyKidsRoute: typeof CompareTotlandVsKhanAcademyKidsRoute
   GameGameIdRoute: typeof GameGameIdRoute
   GuidesLearningGamesFor2YearOldsRoute: typeof GuidesLearningGamesFor2YearOldsRoute
   GuidesLearningGamesFor3YearOldsRoute: typeof GuidesLearningGamesFor3YearOldsRoute
@@ -580,6 +608,20 @@ declare module '@tanstack/react-router' {
       path: '/auth/native-return'
       fullPath: '/auth/native-return'
       preLoaderRoute: typeof AuthNativeReturnRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/best/ad-free-toddler-learning-apps': {
+      id: '/best/ad-free-toddler-learning-apps'
+      path: '/best/ad-free-toddler-learning-apps'
+      fullPath: '/best/ad-free-toddler-learning-apps'
+      preLoaderRoute: typeof BestAdFreeToddlerLearningAppsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/compare/totland-vs-khan-academy-kids': {
+      id: '/compare/totland-vs-khan-academy-kids'
+      path: '/compare/totland-vs-khan-academy-kids'
+      fullPath: '/compare/totland-vs-khan-academy-kids'
+      preLoaderRoute: typeof CompareTotlandVsKhanAcademyKidsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/game/$gameId': {
@@ -778,6 +820,8 @@ const rootRouteChildren: RootRouteChildren = {
   WordfindsRoute: WordfindsRoute,
   WorldsRoute: WorldsRoute,
   AuthNativeReturnRoute: AuthNativeReturnRoute,
+  BestAdFreeToddlerLearningAppsRoute: BestAdFreeToddlerLearningAppsRoute,
+  CompareTotlandVsKhanAcademyKidsRoute: CompareTotlandVsKhanAcademyKidsRoute,
   GameGameIdRoute: GameGameIdRoute,
   GuidesLearningGamesFor2YearOldsRoute: GuidesLearningGamesFor2YearOldsRoute,
   GuidesLearningGamesFor3YearOldsRoute: GuidesLearningGamesFor3YearOldsRoute,

@@ -19,6 +19,7 @@ export function WebLegalFooter() {
     <footer className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-[11px] text-inksoft">
       <Link to="/guides/toddler-learning-games" className="underline">{L("Guide", "Guía")}</Link>
       <Link to="/free-printables" className="underline">{L("Free printables", "Imprimibles gratis")}</Link>
+      <Link to="/pricing" className="underline">{L("Pricing", "Precios")}</Link>
       <Link to="/terms" className="underline">{L("Terms", "Condiciones")}</Link>
       <Link to="/privacy" className="underline">{L("Privacy", "Privacidad")}</Link>
       <Link to="/refund" className="underline">{L("Refunds", "Reembolsos")}</Link>

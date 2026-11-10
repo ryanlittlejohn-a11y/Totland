@@ -152,7 +152,8 @@ function Guide() {
           shapes, first words, phonics, letter tracing, word finds and storybooks.{" "}
           <Link to="/">Start playing</Link>, or read about{" "}
           <Link to="/privacy">how we handle your family's data</Link>. Comparing options? See our{" "}
-          <Link to="/best/ad-free-toddler-learning-apps">list of ad-free learning apps</Link>.
+          <Link to="/best/ad-free-toddler-learning-apps">list of ad-free learning apps</Link>, or{" "}
+          <Link to="/pricing">see what is free and what Premium adds</Link>.
         </p>
       </section>
     </LegalPage>

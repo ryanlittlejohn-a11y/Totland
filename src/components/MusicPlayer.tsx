@@ -4,7 +4,7 @@ import { setMusic, setMusicLanguage, setMusicRoute, setMusicVolume, stopMusic } 
 import { useProfile } from "@/lib/profile";
 import { musicAllowed } from "@/lib/calm";
 
-const SILENT_PREFIXES = ["/parent", "/terms", "/privacy", "/refund", "/delete-account", "/free-printables", "/best", "/compare"];
+const SILENT_PREFIXES = ["/parent", "/terms", "/privacy", "/refund", "/delete-account", "/free-printables", "/best", "/compare", "/pricing"];
 
 /** Runs the looping soundtracks on kid-facing screens only. */
 export function MusicPlayer() {

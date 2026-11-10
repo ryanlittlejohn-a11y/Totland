@@ -15,6 +15,7 @@ import { Route as ContactRouteImport } from './routes/contact'
 import { Route as DeleteAccountRouteImport } from './routes/delete-account'
 import { Route as FreePrintablesRouteImport } from './routes/free-printables'
 import { Route as ParentRouteImport } from './routes/parent'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as RefundRouteImport } from './routes/refund'
 import { Route as RewardsRouteImport } from './routes/rewards'
@@ -75,6 +76,11 @@ const FreePrintablesRoute = FreePrintablesRouteImport.update({
 const ParentRoute = ParentRouteImport.update({
   id: '/parent',
   path: '/parent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PrivacyRoute = PrivacyRouteImport.update({
@@ -249,6 +255,7 @@ export interface FileRoutesByFullPath {
   '/delete-account': typeof DeleteAccountRoute
   '/free-printables': typeof FreePrintablesRoute
   '/parent': typeof ParentRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
@@ -287,6 +294,7 @@ export interface FileRoutesByTo {
   '/contact': typeof ContactRoute
   '/delete-account': typeof DeleteAccountRoute
   '/free-printables': typeof FreePrintablesRoute
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
@@ -326,6 +334,7 @@ export interface FileRoutesById {
   '/delete-account': typeof DeleteAccountRoute
   '/free-printables': typeof FreePrintablesRoute
   '/parent': typeof ParentRouteWithChildren
+  '/pricing': typeof PricingRoute
   '/privacy': typeof PrivacyRoute
   '/refund': typeof RefundRoute
   '/rewards': typeof RewardsRoute
@@ -367,6 +376,7 @@ export interface FileRouteTypes {
     | '/delete-account'
     | '/free-printables'
     | '/parent'
+    | '/pricing'
     | '/privacy'
     | '/refund'
     | '/rewards'
@@ -405,6 +415,7 @@ export interface FileRouteTypes {
     | '/contact'
     | '/delete-account'
     | '/free-printables'
+    | '/pricing'
     | '/privacy'
     | '/refund'
     | '/rewards'
@@ -443,6 +454,7 @@ export interface FileRouteTypes {
     | '/delete-account'
     | '/free-printables'
     | '/parent'
+    | '/pricing'
     | '/privacy'
     | '/refund'
     | '/rewards'
@@ -483,6 +495,7 @@ export interface RootRouteChildren {
   DeleteAccountRoute: typeof DeleteAccountRoute
   FreePrintablesRoute: typeof FreePrintablesRoute
   ParentRoute: typeof ParentRouteWithChildren
+  PricingRoute: typeof PricingRoute
   PrivacyRoute: typeof PrivacyRoute
   RefundRoute: typeof RefundRoute
   RewardsRoute: typeof RewardsRoute
@@ -552,6 +565,13 @@ declare module '@tanstack/react-router' {
       path: '/parent'
       fullPath: '/parent'
       preLoaderRoute: typeof ParentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/privacy': {
@@ -812,6 +832,7 @@ const rootRouteChildren: RootRouteChildren = {
   DeleteAccountRoute: DeleteAccountRoute,
   FreePrintablesRoute: FreePrintablesRoute,
   ParentRoute: ParentRouteWithChildren,
+  PricingRoute: PricingRoute,
   PrivacyRoute: PrivacyRoute,
   RefundRoute: RefundRoute,
   RewardsRoute: RewardsRoute,

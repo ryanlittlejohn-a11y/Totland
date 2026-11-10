@@ -131,7 +131,8 @@ function Guide() {
           <Link to="/play/$area" params={{ area: "tracing" }}>
             Letter Tracing
           </Link>{" "}
-          games cover capitals and lowercase with spoken letter names as the child draws.
+          games cover capitals and lowercase with spoken letter names as the child draws. Prefer paper?
+          Try our <Link to="/free-printables">free printable tracing sheets</Link>.
         </p>
       </section>
 

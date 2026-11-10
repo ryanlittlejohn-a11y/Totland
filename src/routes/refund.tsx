@@ -17,6 +17,7 @@ export const Route = createFileRoute("/refund")({
           "How to get a refund or cancel Totland Premium, whether you bought on the website or in the App Store.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://totland.app/refund" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://totland.app/refund" }],

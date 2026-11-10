@@ -31,6 +31,7 @@ export const Route = createFileRoute("/parent/printables")({
       { property: "og:title", content: "Teachers & Printables — Totland" },
       { property: "og:description", content: "Printable activity sheets made on your device, behind the parental gate." },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://totland.app/parent/printables" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
     ],

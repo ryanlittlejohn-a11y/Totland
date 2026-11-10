@@ -25,6 +25,7 @@ export const Route = createFileRoute("/contact")({
           "Questions, feedback, or help with Totland? Send us a message and we'll get back to you.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://totland.app/contact" },
       { name: "twitter:card", content: "summary" },
     ],
     links: [{ rel: "canonical", href: "https://totland.app/contact" }],

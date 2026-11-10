@@ -2,6 +2,12 @@
 
 Drafted 31 October 2026. Audience: parents, carers and teachers—not children. Website: https://totland.app
 
+### Link targets
+
+- Printables posts link to https://totland.app/free-printables: free sample sheets, no sign-in or email required, and black-and-white PDFs in US Letter or A4 made on the device. More sheets come with optional Premium. Spanish page name: **Imprimibles gratis**.
+- The pricing page is https://totland.app/pricing; the existing no-prices rule for social copy still applies.
+- Do not link to the comparison pages from social posts yet.
+
 ## 1. Voice and rules
 
 - Warm, calm, parent-to-parent. Describe a real activity rather than promising an outcome.
@@ -10,7 +16,7 @@ Drafted 31 October 2026. Audience: parents, carers and teachers—not children. 
 - No health, developmental or educational-outcome promises. Do not describe Calm mode as treatment, autism therapy or a guarantee of comfort. No “safe,” “COPPA-certified,” “teacher-approved” or similar certification claims.
 - Address adults: “Explore with your child,” not “Kids, click here.” Never invite children to comment, message or submit drawings.
 - Say “English and Spanish,” not “every screen fully translated.” Say “original artwork,” not “hand-drawn,” “exclusive artwork” or “all art and audio are original.”
-- Keep printables explicitly **on the website, in the Parent area**. Do not imply current App Store availability or native printing/sharing.
+- Keep free sample sheets explicitly **on the website at totland.app/free-printables**, with more sheets through optional Premium. No sign-in or email is required for the free samples. Do not imply current App Store availability or native printing/sharing.
 - Offline wording needs a qualification: **offline play is a Premium feature; website activities/assets must be loaded while online first.** Sign-in, purchases, syncing and uncached audio/content need internet. Never say “everything works offline” or “free offline games.” The posts below avoid an unqualified offline promise.
 - Free games plus optional Premium is accurate. Do not imply every activity or worksheet is free.
 - Use actual screenshots or recordings of Totland, not staged gameplay or mock controls. Hide child names, account details and notifications. Do not request photos of children or their work.
@@ -28,7 +34,7 @@ Totland is a learning-games app for families with children aged 2–6. Explore l
 
 There are no ads and no chat feature. Start with free games, with an optional Premium for more activities. Optional Calm mode is set per child in the Parent area: music off, reduced motion, quieter feedback and a Next button so play can move at the child's pace.
 
-Parents and teachers can also make printable tracing, connect-the-dots, shape and number sheets on the website, in the Parent area. Free samples are available, with more sheets through Premium.
+Parents and teachers can also find free sample tracing, connect-the-dots, shape and number sheets on the website at totland.app/free-printables, with more sheets through optional Premium. Make black-and-white PDFs in US Letter or A4 on your device, without signing in or providing an email for the free samples.
 
 Explore Totland together: https://totland.app
 
@@ -80,15 +86,15 @@ Start with a simpler puzzle and explore together—there is no need to hurry.
 
 Want to take an activity onto paper?
 
-On the Totland website, the Parent area includes printable connect-the-dots, line tracing, shape and number sheets, plus a blank drawing page.
+Free sample sheets for connect-the-dots, line tracing, shapes and numbers, plus a blank drawing page, are on the website at totland.app/free-printables.
 
-Choose US Letter or A4 and make a black-and-white PDF. There are free sample sheets, with more available through optional Premium.
+Choose US Letter or A4 and make a black-and-white PDF on your device. No sign-in or email is needed for the free samples; more sheets come with optional Premium.
 
 For a quiet moment at home or an activity table in class.
 
-**Image/video idea:** Capture the website's worksheet picker and a real PDF preview; pair with a photographed printout. Use Safari on iPhone if needed, not the native app. Leave the name field blank.
+**Image/video idea:** Capture the public worksheet picker at totland.app/free-printables and a real PDF preview; pair with a photographed printout. Use Safari on iPhone if needed, not the native app. Leave the name field blank.
 
-**Call to action:** Open the Parent area on https://totland.app and choose Teachers & printables.
+**Call to action:** Explore the free sample sheets at https://totland.app/free-printables
 
 ### FB5 — Calm mode
 
@@ -164,7 +170,7 @@ Ad-free learning games for ages 2–6. English + Spanish. No chat. Free games + 
 
 ### Link-in-bio note
 
-Use https://totland.app as the profile link. Caption CTAs should say “Explore at totland.app—link in bio.” For printable posts, add “On the website, in the Parent area.” Do not label the link “Download now” unless the destination and store availability have been checked.
+Use https://totland.app as the profile link. Caption CTAs should say “Explore at totland.app—link in bio.” For printables posts, use https://totland.app/free-printables as the relevant bio link and say “Free sample sheets on the website at totland.app/free-printables; more sheets with optional Premium.” Do not label the link “Download now” unless the destination and store availability have been checked.
 
 ### IG1 — Meet Totland / carousel
 
@@ -192,9 +198,9 @@ Use https://totland.app as the profile link. Caption CTAs should say “Explore 
 
 ### IG4 — From screen to paper / carousel
 
-**Concept:** Website worksheet picker, PDF preview and an actual printout. Include “On the website” visibly. No child name on the sheet.
+**Concept:** Public worksheet picker at totland.app/free-printables, PDF preview and an actual printout. Include “Free sample sheets on the website” visibly. No child name on the sheet.
 
-**Caption:** For parents and teachers: printable dots, line tracing, shapes and numbers are on the Totland website, in the Parent area. Make black-and-white PDFs in US Letter or A4. Free samples, with more through optional Premium. Visit totland.app—link in bio.
+**Caption:** For parents and teachers: free sample sheets for dots, line tracing, shapes and numbers are on the website at totland.app/free-printables. Make black-and-white PDFs in US Letter or A4 on your device, with no sign-in or email needed for the free samples. More sheets come with optional Premium. Visit totland.app/free-printables—link in bio.
 
 **Hashtags:** #Totland #PrintableActivities #TracingActivities #ConnectTheDots #PreschoolTeachers #EarlyYearsTeachers #HomeschoolActivities #ParentingIdeas #PreschoolActivities #LearningThroughPlay
 
@@ -233,7 +239,7 @@ Use https://totland.app as the profile link. Caption CTAs should say “Explore 
 ### Three Story ideas
 
 1. **Choose an activity:** Two real screenshots: Free Draw and Connect the Dots. Optional adult-facing poll: “Which would you explore together?” / “Drawing” / “Dots.” Add a link sticker to https://totland.app. Do not request child photos or personal details.
-2. **Website worksheet preview:** Show the website Parent-area picker, then a blank-name PDF. Text: “Printables for parents & teachers · On the website.” Link sticker to https://totland.app; tell adults to open the Parent area.
+2. **Website worksheet preview:** Show the public picker at totland.app/free-printables, then a blank-name PDF. Text: “Free sample sheets on the website · More with optional Premium.” Link sticker to https://totland.app/free-printables. No sign-in or email is needed for the free samples.
 3. **Calm mode in a moment:** Show the adult switch and a game waiting for Next. Text: “Optional. Per child. A quieter pace.” Crop out names; no music or animated stickers. Link sticker to https://totland.app.
 
 ## 4. X (Twitter)
@@ -269,7 +275,7 @@ One numbered dot, then the next. Totland's free Connect the Dots activity works 
 
 **X4 — Website printables**
 
-Parents and teachers: printable dots, line tracing, shapes and numbers are on the Totland website, in the Parent area. Black-and-white PDFs, free samples and more through optional Premium. https://totland.app
+Parents and teachers: free sample sheets on the website, no sign-in or email. Black-and-white PDFs in US Letter or A4, made on your device. More sheets with optional Premium. https://totland.app/free-printables
 
 **X5 — Calm mode**
 
@@ -317,7 +323,7 @@ Keep it brief if that suits your family, and stop when your child is ready. Ther
 
 **1/4**
 
-For parents and teachers who want an activity on paper: Totland has printable worksheets on the website, inside the Parent area. https://totland.app
+For parents and teachers who want an activity on paper: free sample sheets are on the website at https://totland.app/free-printables, with more sheets through optional Premium.
 
 **2/4**
 
@@ -325,11 +331,11 @@ Choose connect-the-dots, line tracing, shapes or numbers. There is also a blank 
 
 **3/4**
 
-Choose US Letter or A4, preview the page and make a black-and-white PDF. Free sample sheets are available; optional Premium opens more. Leave the name field blank if you prefer.
+Choose US Letter or A4, preview the page and make a black-and-white PDF on your device. No sign-in or email is needed for the free samples; optional Premium opens more. Leave the name field blank if you prefer.
 
 **4/4**
 
-This is a website feature in these posts—not a promise that native print/share is in the current App Store build. Open the Parent area and choose Teachers & printables: https://totland.app
+This is a website feature in these posts—not a promise that native print/share is in the current App Store build. Explore free sample sheets at https://totland.app/free-printables; more sheets come with optional Premium.
 
 ## Batch 2: posts with cards (Nov 2026)
 
@@ -389,9 +395,9 @@ Each entry pairs a finished portrait card (1080×1350, in `social/2026-11/cards/
 
 **Card:** `08_printables_portrait.png` (“Print a page, take a break from screens” / “Free sample sheets on the website”)
 
-**English caption:** Want to take an activity onto paper? On the Totland website, the Parent area includes printable connect-the-dots, line tracing, shape and number sheets, plus a blank drawing page. Choose US Letter or A4 and make a black-and-white PDF. There are free sample sheets on the website, with more available through optional Premium. Open the Parent area at totland.app—link in bio.
+**English caption:** Want to take an activity onto paper? Free sample sheets for connect-the-dots, line tracing, shapes and numbers, plus a blank drawing page, are on the website at totland.app/free-printables. Choose US Letter or A4 and make a black-and-white PDF on your device. No sign-in or email is needed for the free samples; more sheets come with optional Premium. Visit totland.app/free-printables—link in bio.
 
-**Spanish caption:** ¿Quieres pasar una actividad al papel? En el sitio web de Totland, el área para padres incluye hojas imprimibles de unir puntos, trazos, formas y números. Hay hojas de muestra gratuitas en el sitio web, y más con el Premium opcional. Visita totland.app; enlace en la biografía.
+**Spanish caption:** ¿Quieres pasar una actividad al papel? En Imprimibles gratis, en totland.app/free-printables, hay hojas de muestra gratuitas de unir puntos, trazos, formas y números, además de una página en blanco para dibujar. Puedes elegir US Letter o A4 y crear un PDF en blanco y negro en tu dispositivo. No necesitas iniciar sesión ni dar tu correo electrónico para las muestras gratuitas; hay más hojas con un Premium opcional. Visita totland.app/free-printables; enlace en la biografía.
 
 **Hashtags (IG):** #Totland #PrintableActivities #TracingActivities #ConnectTheDots #PreschoolTeachers #EarlyYearsTeachers #HomeschoolActivities #ParentingIdeas
 
@@ -419,7 +425,7 @@ Start on the next suitable Monday **after checking the live website features**. 
 - [ ] Record a simple Connect the Dots puzzle at normal speed, with numbered dots legible and the finished picture visible.
 - [ ] Record a beginner Line Tracing path, showing its start marker and dashed path. Do not add instructional narration or fabricated controls.
 - [ ] Record Calm mode in the Parent area with profile names hidden, then a game waiting at Next and the still single-star All done reward. Capture without added music or flashing effects.
-- [ ] In Safari, capture the website's Teachers & printables picker and previews for dots, lines, shapes and numbers. Generate a blank-name PDF; photograph a real printout if available. Do not use the native share sheet as launch evidence yet.
+- [ ] In Safari, capture the public Imprimibles gratis / free-printables page at totland.app/free-printables and previews of its free sample dots, lines, shapes and numbers sheets. Generate a blank-name black-and-white PDF in US Letter or A4 on the device, without sign-in or email; photograph a real printout if available. Keep optional Premium sheets clearly distinguished. Do not use the native share sheet as launch evidence yet.
 - [ ] Capture Spanish menus plus Dibujo libre and Une los puntos. Check that the visible activity labels actually changed to Spanish.
 - [ ] Use short, steady recordings and sharp screenshots. Keep essential controls and text clear of social-platform caption overlays; check the final crop before posting.
 - [ ] Review original app audio rights before keeping music/narration in public clips. Silent clips with captions are the default; do not record or generate new narration.
@@ -427,7 +433,7 @@ Start on the next suitable Monday **after checking the live website features**. 
 ## 6. Do not post yet
 
 - **Anything presented as shipping in store release 1.0.78:** its public availability and contents are not verified here. No “now in the App Store,” update announcement or store screenshots showing new features until Ryan confirms the live release.
-- **Native print/share availability:** implementation exists in the source, but real-device/store-release verification remains open. Promote printables only **on the website** for now.
+- **Native print/share availability:** implementation exists in the source, but real-device/store-release verification remains open. Promote free sample sheets only **on the website at totland.app/free-printables** for now, with more sheets through optional Premium. The free samples need no sign-in or email; black-and-white PDFs in US Letter or A4 are made on the device.
 - **Recent game fixes or Calm mode as current store features:** check the installed public build first. Website captures must not be labelled as proof of the current native release.
 - **Unqualified offline claims:** no “all games work offline,” “free offline play,” “no internet ever needed” or promise of uncached narration. Only use qualified Premium/caching wording after checking the relevant device.
 - **Large mode, new letter-stroke games, color-by-number or other planned features:** do not present them as available. Large mode and teacher-reviewed handwriting additions are not part of this launch copy.

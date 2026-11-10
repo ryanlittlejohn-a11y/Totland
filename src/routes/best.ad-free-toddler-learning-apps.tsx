@@ -204,7 +204,10 @@ function Roundup() {
               Teach Your Monster to Read
             </SourceLink>
           </li>
-          <li>Totland: this site&rsquo;s own pricing and product pages.</li>
+          <li>
+            Totland: this site&rsquo;s own <Link to="/pricing">pricing</Link> and{" "}
+            <Link to="/free-printables">free printables</Link> pages.
+          </li>
         </ul>
       </section>
     </LegalPage>

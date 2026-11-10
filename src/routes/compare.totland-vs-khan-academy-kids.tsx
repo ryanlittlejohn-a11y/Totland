@@ -161,8 +161,9 @@ function Compare() {
         </div>
         <p className="text-sm text-muted-foreground">
           Khan Academy Kids facts are {AS_OF}, from its{" "}
-          <SourceLink href={KHAN_SOURCE}>App Store listing</SourceLink>. Totland prices:{" "}
-          {TOTLAND_PRICE_NOTE}. A dash means we haven&rsquo;t verified that point here.
+          <SourceLink href={KHAN_SOURCE}>App Store listing</SourceLink>. Totland{" "}
+          <Link to="/pricing">prices</Link>: {TOTLAND_PRICE_NOTE}. A dash means we haven&rsquo;t
+          verified that point here.
         </p>
       </section>
 
@@ -211,7 +212,9 @@ function Compare() {
             <SourceLink href={KHAN_SOURCE}>Khan Academy Kids, App Store listing</SourceLink> (
             {AS_OF})
           </li>
-          <li>Totland&rsquo;s own pricing page.</li>
+          <li>
+            Totland&rsquo;s own <Link to="/pricing">pricing page</Link>.
+          </li>
         </ul>
         <p>
           More options:{" "}

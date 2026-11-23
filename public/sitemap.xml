@@ -136,4 +136,20 @@
     <loc>https://totland.app/delete-account</loc>
     <priority>0.3</priority>
   </url>
+  <!--
+    Spanish pages. Leave commented until ES_INDEXABLE is set to true in src/lib/lang-route.ts
+    (the pages are noindex until then), then uncomment this block.
+  <url>
+    <loc>https://totland.app/es</loc>
+    <priority>0.9</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/es/free-printables</loc>
+    <priority>0.7</priority>
+  </url>
+  <url>
+    <loc>https://totland.app/es/pricing</loc>
+    <priority>0.6</priority>
+  </url>
+  -->
 </urlset>

@@ -6,17 +6,31 @@ import {
   TOTLAND_PRICE_YEARLY,
 } from "@/lib/comparison-facts";
 import { L } from "@/lib/i18n";
+import { absolute, esRobotsMeta, hreflangLinks, useIsEsRoute } from "@/lib/lang-route";
 import { inNativeApp, webOnlyBeforeLoad } from "@/lib/web-only-route";
 
-const TITLE = "Totland Pricing: Free Games Plus Optional Premium | Totland";
-const DESCRIPTION =
-  "Totland has free games plus optional Premium. No ads, no child accounts. See what's free, what Premium unlocks, US prices and how billing works.";
-const URL = "https://totland.app/pricing";
+const COPY = {
+  en: {
+    title: "Totland Pricing: Free Games Plus Optional Premium | Totland",
+    description:
+      "Totland has free games plus optional Premium. No ads, no child accounts. See what's free, what Premium unlocks, US prices and how billing works.",
+    path: "/pricing",
+  },
+  es: {
+    title: "Precios de Totland: juegos gratis y Premium opcional | Totland",
+    description:
+      "Totland tiene juegos gratis y Premium opcional. Sin anuncios y sin cuentas para niños. Mira qué es gratis, qué desbloquea Premium, los precios en EE. UU. y cómo se cobra.",
+    path: "/es/pricing",
+  },
+} as const;
 
-export const Route = createFileRoute("/pricing")({
-  beforeLoad: webOnlyBeforeLoad,
-  head: () => ({
+/** Head tags for the English page and its /es twin (same layout, own language and URLs). */
+export function pricingHead(lang: "en" | "es") {
+  const { title: TITLE, description: DESCRIPTION, path } = COPY[lang];
+  const URL = absolute(path);
+  return {
     meta: [
+      ...(lang === "es" ? esRobotsMeta() : []),
       { title: TITLE },
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: TITLE },
@@ -29,7 +43,7 @@ export const Route = createFileRoute("/pricing")({
       { name: "twitter:description", content: DESCRIPTION },
       { name: "twitter:image", content: "https://totland.app/og-image.jpg" },
     ],
-    links: [{ rel: "canonical", href: URL }],
+    links: [{ rel: "canonical", href: URL }, ...hreflangLinks("/pricing")],
     scripts: [
       {
         type: "application/ld+json",
@@ -39,21 +53,30 @@ export const Route = createFileRoute("/pricing")({
           name: TITLE,
           description: DESCRIPTION,
           url: URL,
-          inLanguage: "en",
+          inLanguage: lang,
           primaryImageOfPage: "https://totland.app/og-image.jpg",
           isPartOf: { "@type": "WebSite", name: "Totland", url: "https://totland.app" },
           publisher: { "@type": "Organization", name: "Totland" },
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/pricing")({
+  beforeLoad: webOnlyBeforeLoad,
+  head: () => pricingHead("en"),
   component: PricingPage,
 });
 
-function PricingPage() {
+export function PricingPage() {
+  const es = useIsEsRoute();
   if (inNativeApp()) return null;
   return (
-    <LegalPage title={L("Totland pricing", "Precios de Totland")} updated="November 10, 2026">
+    <LegalPage
+      title={L("Totland pricing", "Precios de Totland")}
+      updated={L("November 10, 2026", "10 de noviembre de 2026")}
+    >
       <section>
         <p>
           {L(
@@ -77,7 +100,9 @@ function PricingPage() {
           </li>
           <li>
             {L("Free sample printable sheets: ", "Hojas imprimibles de muestra gratis: ")}
-            <Link to="/free-printables">{L("see the free sheets", "ver las hojas gratis")}</Link>.
+            <Link to={es ? "/es/free-printables" : "/free-printables"}>
+              {L("see the free sheets", "ver las hojas gratis")}
+            </Link>.
           </li>
         </ul>
       </section>

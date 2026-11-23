@@ -6,30 +6,44 @@ import { useProfile } from "@/lib/profile";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { WebLegalFooter } from "@/components/WebLegalFooter";
 import { L, title as tTitle } from "@/lib/i18n";
+import { absolute, esRobotsMeta, hreflangLinks } from "@/lib/lang-route";
 
 
-export const Route = createFileRoute("/")({
-  head: () => ({
+const HOME_COPY = {
+  en: {
+    title: "Totland: Ad-Free Learning Games for Ages 2–6",
+    description: `Ad-free, privacy-first learning games for ages 2–6: ABCs, phonics, tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} short games, free to start.`,
+    ogDescription: `${GAME_COUNT} bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Ad-free and privacy-first, with offline play in Premium.`,
+    path: "/",
+  },
+  es: {
+    title: "Totland: juegos educativos sin anuncios para niños de 2 a 6 años",
+    description:
+      "Juegos educativos sin anuncios y que respetan la privacidad, para niños de 2 a 6 años: abecedario, sonidos, trazado, números, colores, figuras y cuentos. Gratis para empezar.",
+    ogDescription:
+      "Juegos cortos para niños pequeños y preescolares: sonidos, trazado de letras y más. Sin anuncios y con privacidad primero; jugar sin conexión es parte de Premium.",
+    path: "/es",
+  },
+} as const;
+
+/** Head tags for the home page and its /es twin. */
+export function homeHead(lang: "en" | "es") {
+  const c = HOME_COPY[lang];
+  const url = absolute(c.path);
+  return {
     meta: [
-      { title: "Totland: Ad-Free Learning Games for Ages 2–6" },
-      {
-        name: "description",
-        content:
-          `Ad-free, privacy-first learning games for ages 2–6: ABCs, phonics, tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} short games, free to start.`,
-      },
-      { property: "og:title", content: "Totland: Ad-Free Learning Games for Ages 2–6" },
-      {
-        property: "og:description",
-        content:
-          `${GAME_COUNT} bite-sized toddler learning games for toddlers and preschoolers — phonics, letter tracing and more. Ad-free and privacy-first, with offline play in Premium.`,
-      },
+      ...(lang === "es" ? esRobotsMeta() : []),
+      { title: c.title },
+      { name: "description", content: c.description },
+      { property: "og:title", content: c.title },
+      { property: "og:description", content: c.ogDescription },
       { property: "og:type", content: "website" },
-      { property: "og:url", content: "https://totland.app/" },
+      { property: "og:url", content: url },
       { property: "og:image", content: "https://totland.app/og-image.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
       { name: "twitter:image", content: "https://totland.app/og-image.jpg" },
     ],
-    links: [{ rel: "canonical", href: "https://totland.app/" }],
+    links: [{ rel: "canonical", href: url }, ...hreflangLinks("/")],
     scripts: [
       {
         type: "application/ld+json",
@@ -37,12 +51,11 @@ export const Route = createFileRoute("/")({
           "@context": "https://schema.org",
           "@type": "SoftwareApplication",
           name: "Totland",
-          url: "https://totland.app/",
+          url,
           applicationCategory: "EducationalApplication",
-          applicationSubCategory: "Early learning games",
+          applicationSubCategory: lang === "es" ? "Juegos de aprendizaje infantil" : "Early learning games",
           operatingSystem: "Web, iOS, Android",
-          description:
-            `Ad-free, privacy-first learning games for ages 2–6: ABCs, phonics, tracing, numbers, colors, shapes and storybooks. ${GAME_COUNT} short games, free to start.`,
+          description: c.description,
           isFamilyFriendly: true,
           inLanguage: ["en", "es"],
           audience: { "@type": "PeopleAudience", suggestedMinAge: 2, suggestedMaxAge: 6 },
@@ -54,7 +67,11 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/")({
+  head: () => homeHead("en"),
   component: Home,
 });
 
@@ -67,7 +84,7 @@ const TINT: Record<string, string> = {
   wood: "bg-wood/30",
 };
 
-function Home() {
+export function Home() {
   const { profile } = useProfile();
 
   return (

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { LegalPage } from "@/components/LegalPage";
 import { PrintSheetSvg } from "@/components/PrintSheetSvg";
 import { L, getLang } from "@/lib/i18n";
+import { absolute, esRobotsMeta, hreflangLinks } from "@/lib/lang-route";
 import { isNativeApp } from "@/lib/native";
 import {
   PAPERS,
@@ -21,20 +22,30 @@ import {
   type TraceStyle,
 } from "@/lib/printables";
 
-const PAGE_TITLE = "Free Printable Tracing Sheets for Preschoolers | Totland";
 const H1 = "Free printable tracing sheets for preschoolers";
-const DESCRIPTION =
-  "Download free black-and-white tracing, connect-the-dots and drawing sheets for preschoolers. Made on your device, no sign-up, US Letter or A4.";
-const PAGE_URL = "https://totland.app/free-printables";
 
-export const Route = createFileRoute("/free-printables")({
-  // Adult-facing page: inside the packaged iOS/Android app (Kids Category) go straight home.
-  // Runs client-side in the app's SPA; on the website isNativeApp() is false.
-  beforeLoad: () => {
-    if (isNativeApp()) throw redirect({ to: "/", replace: true });
+const COPY = {
+  en: {
+    title: "Free Printable Tracing Sheets for Preschoolers | Totland",
+    description:
+      "Download free black-and-white tracing, connect-the-dots and drawing sheets for preschoolers. Made on your device, no sign-up, US Letter or A4.",
+    path: "/free-printables",
   },
-  head: () => ({
+  es: {
+    title: "Hojas gratis para trazar para preescolares | Totland",
+    description:
+      "Descarga hojas gratis en blanco y negro para trazar, unir puntos y dibujar, para preescolares. Se crean en tu dispositivo, sin registro, en tamaño Carta o A4.",
+    path: "/es/free-printables",
+  },
+} as const;
+
+/** Head tags for the English page and its /es twin (same layout, own language and URLs). */
+export function freePrintablesHead(lang: "en" | "es") {
+  const { title: PAGE_TITLE, description: DESCRIPTION, path } = COPY[lang];
+  const PAGE_URL = absolute(path);
+  return {
     meta: [
+      ...(lang === "es" ? esRobotsMeta() : []),
       { title: PAGE_TITLE },
       { name: "description", content: DESCRIPTION },
       { property: "og:title", content: PAGE_TITLE },
@@ -47,7 +58,7 @@ export const Route = createFileRoute("/free-printables")({
       { name: "twitter:description", content: DESCRIPTION },
       { name: "twitter:image", content: "https://totland.app/og-image.jpg" },
     ],
-    links: [{ rel: "canonical", href: PAGE_URL }],
+    links: [{ rel: "canonical", href: PAGE_URL }, ...hreflangLinks("/free-printables")],
     scripts: [
       {
         type: "application/ld+json",
@@ -57,14 +68,23 @@ export const Route = createFileRoute("/free-printables")({
           name: PAGE_TITLE,
           description: DESCRIPTION,
           url: PAGE_URL,
-          inLanguage: "en",
+          inLanguage: lang,
           primaryImageOfPage: "https://totland.app/og-image.jpg",
           isPartOf: { "@type": "WebSite", name: "Totland", url: "https://totland.app" },
           publisher: { "@type": "Organization", name: "Totland" },
         }),
       },
     ],
-  }),
+  };
+}
+
+export const Route = createFileRoute("/free-printables")({
+  // Adult-facing page: inside the packaged iOS/Android app (Kids Category) go straight home.
+  // Runs client-side in the app's SPA; on the website isNativeApp() is false.
+  beforeLoad: () => {
+    if (isNativeApp()) throw redirect({ to: "/", replace: true });
+  },
+  head: () => freePrintablesHead("en"),
   component: FreePrintablesPage,
 });
 
@@ -131,7 +151,7 @@ function downloadBlob(blob: Blob, filename: string) {
   setTimeout(() => URL.revokeObjectURL(url), 60_000);
 }
 
-function FreePrintablesPage() {
+export function FreePrintablesPage() {
   const navigate = useNavigate();
   const lang = getLang() === "es" ? "es" : "en";
   const [native, setNative] = useState(false);
@@ -188,7 +208,7 @@ function FreePrintablesPage() {
   return (
     <LegalPage
       title={L(H1, "Hojas gratis para trazar para preescolares")}
-      updated="November 10, 2026"
+      updated={L("November 10, 2026", "10 de noviembre de 2026")}
     >
       <section>
         <p>

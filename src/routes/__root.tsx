@@ -6,6 +6,7 @@ import {
   Link,
   createRootRouteWithContext,
   useRouter,
+  useRouterState,
   HeadContent,
   Scripts,
 } from "@tanstack/react-router";
@@ -29,6 +30,8 @@ import { AppEntrance } from "../components/AppEntrance";
 
 import { MusicPlayer } from "../components/MusicPlayer";
 import { useProfile } from "../lib/profile";
+import { forceLang } from "../lib/i18n";
+import { isEsPath } from "../lib/lang-route";
 
 
 
@@ -117,9 +120,21 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   errorComponent: ErrorComponent,
 });
 
+/**
+ * The URL decides the language of the public Spanish pages (/es/...), on the server
+ * and the client alike, so crawlers see real Spanish. Every other route keeps using
+ * the language saved on the profile. Runs during render, before any child reads L().
+ */
+function useUrlLanguage(): "en" | "es" {
+  const es = useRouterState({ select: (s) => isEsPath(s.location.pathname) });
+  forceLang(es ? "es" : null);
+  return es ? "es" : "en";
+}
+
 function RootShell({ children }: { children: ReactNode }) {
+  const lang = useUrlLanguage();
   return (
-    <html lang="en">
+    <html lang={lang}>
       <head>
         <HeadContent />
       </head>
@@ -134,6 +149,7 @@ function RootShell({ children }: { children: ReactNode }) {
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   const router = useRouter();
+  useUrlLanguage();
   useEntitlementSync();
   useChildSync();
 

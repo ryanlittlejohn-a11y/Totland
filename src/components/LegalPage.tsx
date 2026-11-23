@@ -1,6 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { L } from "@/lib/i18n";
+import { LanguageSwitch } from "@/components/LanguageSwitch";
+import { useIsEsRoute } from "@/lib/lang-route";
 
 export function LegalPage({
   title,
@@ -14,11 +16,12 @@ export function LegalPage({
   spanishNote?: boolean;
   children: ReactNode;
 }) {
+  const es = useIsEsRoute();
   return (
     <div className="min-h-screen bg-background">
       <div className="mx-auto max-w-3xl px-6 py-12">
         <Link
-          to="/"
+          to={es ? "/es" : "/"}
           className="text-sm font-medium text-primary hover:underline"
         >
           &larr; {L("Back to Totland", "Volver a Totland")}
@@ -27,7 +30,7 @@ export function LegalPage({
           {title}
         </h1>
         <p className="mt-2 text-sm text-muted-foreground">
-          Last updated: {updated}
+          {L("Last updated", "Última actualización")}: {updated}
         </p>
         {spanishNote && (
           <p lang="es" className="mt-4 rounded-xl bg-muted/50 p-4 text-sm text-foreground/80">
@@ -51,6 +54,7 @@ export function LegalPage({
           <Link to="/contact" className="hover:text-primary hover:underline">
             {L("Contact Us", "Contacto")}
           </Link>
+          <LanguageSwitch className="hover:text-primary hover:underline" />
         </footer>
       </div>
     </div>

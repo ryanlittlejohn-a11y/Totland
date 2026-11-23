@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
 import { isNativeApp } from "@/lib/native";
 import { L } from "@/lib/i18n";
+import { LanguageSwitch } from "@/components/LanguageSwitch";
+import { useIsEsRoute } from "@/lib/lang-route";
 
 /**
  * Website-only footer with the policy links Paddle requires on the public site.
@@ -11,6 +13,7 @@ import { L } from "@/lib/i18n";
  */
 export function WebLegalFooter() {
   const [show, setShow] = useState(false);
+  const es = useIsEsRoute();
   useEffect(() => {
     setShow(!isNativeApp());
   }, []);
@@ -18,12 +21,13 @@ export function WebLegalFooter() {
   return (
     <footer className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1 font-ui text-[11px] text-inksoft">
       <Link to="/guides/toddler-learning-games" className="underline">{L("Guide", "Guía")}</Link>
-      <Link to="/free-printables" className="underline">{L("Free printables", "Imprimibles gratis")}</Link>
-      <Link to="/pricing" className="underline">{L("Pricing", "Precios")}</Link>
+      <Link to={es ? "/es/free-printables" : "/free-printables"} className="underline">{L("Free printables", "Imprimibles gratis")}</Link>
+      <Link to={es ? "/es/pricing" : "/pricing"} className="underline">{L("Pricing", "Precios")}</Link>
       <Link to="/terms" className="underline">{L("Terms", "Condiciones")}</Link>
       <Link to="/privacy" className="underline">{L("Privacy", "Privacidad")}</Link>
       <Link to="/refund" className="underline">{L("Refunds", "Reembolsos")}</Link>
       <Link to="/contact" className="underline">{L("Contact", "Contacto")}</Link>
+      <LanguageSwitch />
     </footer>
   );
 }

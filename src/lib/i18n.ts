@@ -9,13 +9,28 @@
 export type Lang = "en" | "es";
 
 let current: Lang = "en";
+/** Language the profile asked for; kept while a route forces another one. */
+let preferred: Lang = "en";
+/** Set by the root route on /es/... pages so the URL, not the profile, decides the page language. */
+let forced: Lang | null = null;
 
 export function getLang(): Lang {
   return current;
 }
 
 export function setLang(l: Lang) {
-  current = l === "es" ? "es" : "en";
+  preferred = l === "es" ? "es" : "en";
+  if (!forced) current = preferred;
+}
+
+/**
+ * URL-driven language for the public website: /es/... renders Spanish whatever the
+ * saved profile says (crawlers and first-time visitors have no profile). Pass null
+ * to go back to the profile language. Never writes to the profile.
+ */
+export function forceLang(l: Lang | null) {
+  forced = l;
+  current = l ?? preferred;
 }
 
 /** Inline pick — `L("Play", "Jugar")`. */

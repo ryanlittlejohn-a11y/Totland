@@ -7,6 +7,8 @@ vi.mock("@tanstack/react-router", async (orig) => ({
   createFileRoute: () => (opts: Record<string, unknown>) => ({ ...opts, options: opts, useSearch: () => ({}) }),
   Link: ({ children }: { children?: unknown }) => createElement("a", null, children as never),
   Outlet: () => null,
+  // Pages that offer a language switch read the current path; there is no router in these renders.
+  useRouterState: ({ select }: { select: (s: unknown) => unknown }) => select({ location: { pathname: "/" } }),
 }));
 vi.mock("@/lib/profile", async (orig) => ({
   ...((await orig()) as object),

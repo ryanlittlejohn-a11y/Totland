@@ -26,6 +26,9 @@ import { Route as WorldsRouteImport } from './routes/worlds'
 import { Route as AuthNativeReturnRouteImport } from './routes/auth.native-return'
 import { Route as BestAdFreeToddlerLearningAppsRouteImport } from './routes/best.ad-free-toddler-learning-apps'
 import { Route as CompareTotlandVsKhanAcademyKidsRouteImport } from './routes/compare.totland-vs-khan-academy-kids'
+import { Route as EsIndexRouteImport } from './routes/es.index'
+import { Route as EsFreePrintablesRouteImport } from './routes/es.free-printables'
+import { Route as EsPricingRouteImport } from './routes/es.pricing'
 import { Route as GameGameIdRouteImport } from './routes/game.$gameId'
 import { Route as GuidesLearningGamesFor2YearOldsRouteImport } from './routes/guides.learning-games-for-2-year-olds'
 import { Route as GuidesLearningGamesFor3YearOldsRouteImport } from './routes/guides.learning-games-for-3-year-olds'
@@ -135,6 +138,21 @@ const CompareTotlandVsKhanAcademyKidsRoute =
     path: '/compare/totland-vs-khan-academy-kids',
     getParentRoute: () => rootRouteImport,
   } as any)
+const EsIndexRoute = EsIndexRouteImport.update({
+  id: '/es/',
+  path: '/es/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsFreePrintablesRoute = EsFreePrintablesRouteImport.update({
+  id: '/es/free-printables',
+  path: '/es/free-printables',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EsPricingRoute = EsPricingRouteImport.update({
+  id: '/es/pricing',
+  path: '/es/pricing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GameGameIdRoute = GameGameIdRouteImport.update({
   id: '/game/$gameId',
   path: '/game/$gameId',
@@ -266,6 +284,8 @@ export interface FileRoutesByFullPath {
   '/auth/native-return': typeof AuthNativeReturnRoute
   '/best/ad-free-toddler-learning-apps': typeof BestAdFreeToddlerLearningAppsRoute
   '/compare/totland-vs-khan-academy-kids': typeof CompareTotlandVsKhanAcademyKidsRoute
+  '/es/free-printables': typeof EsFreePrintablesRoute
+  '/es/pricing': typeof EsPricingRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/learning-games-for-2-year-olds': typeof GuidesLearningGamesFor2YearOldsRoute
   '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
@@ -278,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/play/$area': typeof PlayAreaRouteWithChildren
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
+  '/es/': typeof EsIndexRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
   '/play/$area/quick': typeof PlayAreaQuickRoute
@@ -305,6 +326,8 @@ export interface FileRoutesByTo {
   '/auth/native-return': typeof AuthNativeReturnRoute
   '/best/ad-free-toddler-learning-apps': typeof BestAdFreeToddlerLearningAppsRoute
   '/compare/totland-vs-khan-academy-kids': typeof CompareTotlandVsKhanAcademyKidsRoute
+  '/es/free-printables': typeof EsFreePrintablesRoute
+  '/es/pricing': typeof EsPricingRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/learning-games-for-2-year-olds': typeof GuidesLearningGamesFor2YearOldsRoute
   '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
@@ -316,6 +339,7 @@ export interface FileRoutesByTo {
   '/parent/subscription': typeof ParentSubscriptionRoute
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
+  '/es': typeof EsIndexRoute
   '/parent': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
   '/play/$area/quick': typeof PlayAreaQuickRoute
@@ -345,6 +369,8 @@ export interface FileRoutesById {
   '/auth/native-return': typeof AuthNativeReturnRoute
   '/best/ad-free-toddler-learning-apps': typeof BestAdFreeToddlerLearningAppsRoute
   '/compare/totland-vs-khan-academy-kids': typeof CompareTotlandVsKhanAcademyKidsRoute
+  '/es/free-printables': typeof EsFreePrintablesRoute
+  '/es/pricing': typeof EsPricingRoute
   '/game/$gameId': typeof GameGameIdRoute
   '/guides/learning-games-for-2-year-olds': typeof GuidesLearningGamesFor2YearOldsRoute
   '/guides/learning-games-for-3-year-olds': typeof GuidesLearningGamesFor3YearOldsRoute
@@ -357,6 +383,7 @@ export interface FileRoutesById {
   '/play/$area': typeof PlayAreaRouteWithChildren
   '/wordfind/$themeId': typeof WordfindThemeIdRoute
   '/world/$worldId': typeof WorldWorldIdRoute
+  '/es/': typeof EsIndexRoute
   '/parent/': typeof ParentIndexRoute
   '/api/public/diag': typeof ApiPublicDiagRoute
   '/play/$area/quick': typeof PlayAreaQuickRoute
@@ -387,6 +414,8 @@ export interface FileRouteTypes {
     | '/auth/native-return'
     | '/best/ad-free-toddler-learning-apps'
     | '/compare/totland-vs-khan-academy-kids'
+    | '/es/free-printables'
+    | '/es/pricing'
     | '/game/$gameId'
     | '/guides/learning-games-for-2-year-olds'
     | '/guides/learning-games-for-3-year-olds'
@@ -399,6 +428,7 @@ export interface FileRouteTypes {
     | '/play/$area'
     | '/wordfind/$themeId'
     | '/world/$worldId'
+    | '/es/'
     | '/parent/'
     | '/api/public/diag'
     | '/play/$area/quick'
@@ -426,6 +456,8 @@ export interface FileRouteTypes {
     | '/auth/native-return'
     | '/best/ad-free-toddler-learning-apps'
     | '/compare/totland-vs-khan-academy-kids'
+    | '/es/free-printables'
+    | '/es/pricing'
     | '/game/$gameId'
     | '/guides/learning-games-for-2-year-olds'
     | '/guides/learning-games-for-3-year-olds'
@@ -437,6 +469,7 @@ export interface FileRouteTypes {
     | '/parent/subscription'
     | '/wordfind/$themeId'
     | '/world/$worldId'
+    | '/es'
     | '/parent'
     | '/api/public/diag'
     | '/play/$area/quick'
@@ -465,6 +498,8 @@ export interface FileRouteTypes {
     | '/auth/native-return'
     | '/best/ad-free-toddler-learning-apps'
     | '/compare/totland-vs-khan-academy-kids'
+    | '/es/free-printables'
+    | '/es/pricing'
     | '/game/$gameId'
     | '/guides/learning-games-for-2-year-olds'
     | '/guides/learning-games-for-3-year-olds'
@@ -477,6 +512,7 @@ export interface FileRouteTypes {
     | '/play/$area'
     | '/wordfind/$themeId'
     | '/world/$worldId'
+    | '/es/'
     | '/parent/'
     | '/api/public/diag'
     | '/play/$area/quick'
@@ -506,6 +542,8 @@ export interface RootRouteChildren {
   AuthNativeReturnRoute: typeof AuthNativeReturnRoute
   BestAdFreeToddlerLearningAppsRoute: typeof BestAdFreeToddlerLearningAppsRoute
   CompareTotlandVsKhanAcademyKidsRoute: typeof CompareTotlandVsKhanAcademyKidsRoute
+  EsFreePrintablesRoute: typeof EsFreePrintablesRoute
+  EsPricingRoute: typeof EsPricingRoute
   GameGameIdRoute: typeof GameGameIdRoute
   GuidesLearningGamesFor2YearOldsRoute: typeof GuidesLearningGamesFor2YearOldsRoute
   GuidesLearningGamesFor3YearOldsRoute: typeof GuidesLearningGamesFor3YearOldsRoute
@@ -515,6 +553,7 @@ export interface RootRouteChildren {
   PlayAreaRoute: typeof PlayAreaRouteWithChildren
   WordfindThemeIdRoute: typeof WordfindThemeIdRoute
   WorldWorldIdRoute: typeof WorldWorldIdRoute
+  EsIndexRoute: typeof EsIndexRoute
   ApiPublicDiagRoute: typeof ApiPublicDiagRoute
   ApiPublicPaymentsWebhookRoute: typeof ApiPublicPaymentsWebhookRoute
   ApiPublicRcWebhookRoute: typeof ApiPublicRcWebhookRoute
@@ -642,6 +681,27 @@ declare module '@tanstack/react-router' {
       path: '/compare/totland-vs-khan-academy-kids'
       fullPath: '/compare/totland-vs-khan-academy-kids'
       preLoaderRoute: typeof CompareTotlandVsKhanAcademyKidsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/es/': {
+      id: '/es/'
+      path: '/es'
+      fullPath: '/es/'
+      preLoaderRoute: typeof EsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/es/free-printables': {
+      id: '/es/free-printables'
+      path: '/es/free-printables'
+      fullPath: '/es/free-printables'
+      preLoaderRoute: typeof EsFreePrintablesRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/es/pricing': {
+      id: '/es/pricing'
+      path: '/es/pricing'
+      fullPath: '/es/pricing'
+      preLoaderRoute: typeof EsPricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/game/$gameId': {
@@ -843,6 +903,8 @@ const rootRouteChildren: RootRouteChildren = {
   AuthNativeReturnRoute: AuthNativeReturnRoute,
   BestAdFreeToddlerLearningAppsRoute: BestAdFreeToddlerLearningAppsRoute,
   CompareTotlandVsKhanAcademyKidsRoute: CompareTotlandVsKhanAcademyKidsRoute,
+  EsFreePrintablesRoute: EsFreePrintablesRoute,
+  EsPricingRoute: EsPricingRoute,
   GameGameIdRoute: GameGameIdRoute,
   GuidesLearningGamesFor2YearOldsRoute: GuidesLearningGamesFor2YearOldsRoute,
   GuidesLearningGamesFor3YearOldsRoute: GuidesLearningGamesFor3YearOldsRoute,
@@ -852,6 +914,7 @@ const rootRouteChildren: RootRouteChildren = {
   PlayAreaRoute: PlayAreaRouteWithChildren,
   WordfindThemeIdRoute: WordfindThemeIdRoute,
   WorldWorldIdRoute: WorldWorldIdRoute,
+  EsIndexRoute: EsIndexRoute,
   ApiPublicDiagRoute: ApiPublicDiagRoute,
   ApiPublicPaymentsWebhookRoute: ApiPublicPaymentsWebhookRoute,
   ApiPublicRcWebhookRoute: ApiPublicRcWebhookRoute,
